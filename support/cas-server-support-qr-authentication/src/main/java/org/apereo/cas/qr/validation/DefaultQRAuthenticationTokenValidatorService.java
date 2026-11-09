@@ -32,9 +32,17 @@ public class DefaultQRAuthenticationTokenValidatorService implements QRAuthentic
 
     private final QRAuthenticationDeviceRepository deviceRepository;
 
+    /**
+     * Validate the QR token against the ticket-granting ticket, principal, issuer and device it names. A token whose
+     * claims cannot be unpacked (one whose signature cannot be verified unpacks to nothing) is refused.
+     *
+     * @param request the request
+     * @return the validation result
+     */
     @Override
     public QRAuthenticationTokenValidationResult validate(final QRAuthenticationTokenValidationRequest request) {
-        val claims = jwtBuilder.unpack(request.getRegisteredService(), request.getToken());
+        val claims = Optional.ofNullable(jwtBuilder.unpack(request.getRegisteredService(), request.getToken()))
+            .orElseThrow(() -> new AuthenticationException("QR token cannot be verified"));
         LOGGER.trace("Unpacked QR token as [{}]", claims);
 
         val tgt = ticketRegistry.getTicket(claims.getJWTID(), TicketGrantingTicket.class);

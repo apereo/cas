@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/require-missing-attribute.*",
+  "id": 5,
+  "name": "RequireMissingAttribute",
+  "evaluationOrder": 5,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-yubikey"
+      ]
+    ],
+    "bypassPrincipalAttributeName": "affiliation",
+    "bypassPrincipalAttributeValue": "staff",
+    "bypassIfMissingPrincipalAttribute": false
+  }
+}

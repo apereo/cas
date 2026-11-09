@@ -120,7 +120,7 @@ Multiline strings with proper whitespace handling should also be supported:
     '''
     This is the description
     of this application here
-    ```
+    '''
 }
 ```
 

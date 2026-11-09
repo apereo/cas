@@ -1,0 +1,18 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/nameid-email-qualified$",
+  "name" : "EmailQualified",
+  "id" : 3,
+  "evaluationOrder" : 3,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "requiredNameIdFormat" : "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail"
+  },
+  "nameIdQualifier" : "https://idp.example.org/name-qualifier",
+  "serviceProviderNameIdQualifier" : "https://sp.example.org/sp-name-qualifier",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

@@ -2,6 +2,9 @@ package org.apereo.cas.util.cipher;
 
 import module java.base;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.RsaJwkGenerator;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,5 +37,20 @@ class StringCipherExecutorTests {
         assertNotNull(cipher.getSigningKeySetting());
         assertNotNull(cipher.getSigningKey());
         assertNotNull(cipher.getEncryptionKey());
+    }
+
+    @Test
+    void verifyPublicSigningKeyOnlyVerifies() throws Exception {
+        val jwk = RsaJwkGenerator.generateJwk(2048);
+        val signer = new BaseStringCipherExecutor(null, jwk.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE), false, true, 0, 0) {
+        };
+        val verifier = new BaseStringCipherExecutor(null, jwk.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY), false, true, 0, 0) {
+        };
+        assertInstanceOf(PublicKey.class, verifier.getSigningKey());
+        val encoded = signer.encode("value", ArrayUtils.EMPTY_OBJECT_ARRAY);
+        assertEquals("value", verifier.decode(encoded, ArrayUtils.EMPTY_OBJECT_ARRAY));
+
+        verifier.setSigningKey(null);
+        assertNull(verifier.decode(encoded, ArrayUtils.EMPTY_OBJECT_ARRAY));
     }
 }

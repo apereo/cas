@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentResolver;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -86,8 +88,7 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
 
         if (isPushedAuthorizationRequest(request.getRequestURI()) && !isValidAuthorizeRequest(request, response)) {
             LOGGER.warn("Invalid OIDC pushed authorization request at [{}]", request.getRequestURI());
-            response.setStatus(HttpStatus.SC_FORBIDDEN);
-            writeErrorResponseBody(response);
+            writePushedAuthorizationRequestError(request, response);
             return false;
         }
 
@@ -145,6 +146,30 @@ public class OidcHandlerInterceptorAdapter extends OAuth20HandlerInterceptorAdap
      */
     protected boolean isClientConfigurationRequest(final String requestPath) {
         return doesUriMatchPattern(requestPath, CollectionUtils.wrapList(OidcConstants.CLIENT_CONFIGURATION_URL));
+    }
+
+    /**
+     * Answer a pushed authorization request that the authorization request validators refuse as RFC 9126, section 2.3
+     * requires: {@code 400} with the error response of the token endpoint, carrying the {@code error} and
+     * {@code error_description} the validator recorded, such as {@code invalid_request_object}, or
+     * {@code invalid_request} when it recorded none.
+     *
+     * @param request  the request
+     * @param response the response
+     * @throws Exception the exception
+     */
+    protected void writePushedAuthorizationRequestError(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        val error = Optional.ofNullable(request.getAttribute(OAuth20Constants.ERROR))
+            .map(Object::toString)
+            .orElse(OAuth20Constants.INVALID_REQUEST);
+        val description = Optional.ofNullable(request.getAttribute(OAuth20Constants.ERROR_DESCRIPTION))
+            .map(Object::toString)
+            .orElse("Unable to accept this request");
+        response.setStatus(HttpStatus.SC_BAD_REQUEST);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        try (val writer = response.getWriter()) {
+            writer.write(OAuth20Utils.toJson(OAuth20Utils.getErrorResponseBody(error, description)));
+        }
     }
 
     /**

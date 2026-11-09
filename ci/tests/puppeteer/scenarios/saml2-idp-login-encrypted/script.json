@@ -10,6 +10,7 @@
 
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
+    "--cas.authn.saml-idp.algs.override-key-encryption-algorithms=http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

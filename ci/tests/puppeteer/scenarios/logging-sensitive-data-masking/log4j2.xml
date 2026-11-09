@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+Every appender is reached through a CasAppender, which hands the referenced appender a copy of the event whose
+message went through the CAS message sanitizer. The file is the one logging.file.name names for the logfile
+endpoint: the path here is relative to the working directory of the CAS process, which run.sh starts from the
+directory that ${PWD} in script.json stands for.
+-->
+<Configuration>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n" alwaysWriteExceptions="false"/>
+        </Console>
+        <File name="file" fileName="ci/tests/puppeteer/overlay/logging-sensitive-data-masking/cas.log"
+              append="false" immediateFlush="true">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n" alwaysWriteExceptions="false"/>
+        </File>
+        <CasAppender name="casConsole">
+            <AppenderRef ref="console"/>
+        </CasAppender>
+        <CasAppender name="casFile">
+            <AppenderRef ref="file"/>
+        </CasAppender>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo.cas" level="info"/>
+        <Logger name="org.apereo.inspektr" level="info" additivity="false">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </Logger>
+        <Root level="warn">
+            <AppenderRef ref="casConsole"/>
+            <AppenderRef ref="casFile"/>
+        </Root>
+    </Loggers>
+</Configuration>

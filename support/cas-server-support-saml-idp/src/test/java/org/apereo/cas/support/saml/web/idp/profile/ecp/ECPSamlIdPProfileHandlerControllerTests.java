@@ -17,6 +17,7 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
@@ -52,6 +53,13 @@ class ECPSamlIdPProfileHandlerControllerTests extends BaseSamlIdPConfigurationTe
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         val result = performEcpRequest(xml, headers);
         assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+        assertNull(result.getRequest().getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+        assertNull(result.getRequest().getAttribute(FaultString.class.getSimpleName()));
+        val content = result.getResponse().getContentAsString();
+        assertTrue(content.contains(":Envelope"));
+        assertTrue(content.contains("<saml2p:Response"));
+        assertTrue(content.contains(StatusCode.SUCCESS));
+        assertFalse(content.contains("<form"));
     }
 
     @Test

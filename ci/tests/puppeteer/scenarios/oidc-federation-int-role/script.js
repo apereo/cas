@@ -47,6 +47,10 @@ const assert = require("assert");
     assert(metadata2["openid_provider"] === undefined);
     assert(metadata2["openid_relying_party"] !== undefined);
     assert(decoded2["authority_hints"] === undefined);
+    const relyingPartyPolicy = decoded2["metadata_policy"]["openid_relying_party"];
+    assert(relyingPartyPolicy["scope"]["subset_of"].includes("openid"));
+    assert(relyingPartyPolicy["contacts"]["add"].includes("ops@example.org"));
+    assert(decoded2["metadata_policy_crit"] === undefined);
 
     const listUrl = "https://localhost:8443/cas/oidc/list";
     await cas.doGet(listUrl,

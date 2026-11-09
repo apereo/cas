@@ -7,8 +7,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.google.common.primitives.Longs;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -35,22 +33,23 @@ public class GenerateFullJwtCommand implements CasShellCommand {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
-     * Generate key string.
+     * Generate a JWT signed with the signing key of the keystore. Unsigned JWTs, whose algorithm is {@code none}, are
+     * neither issued nor accepted by CAS, so the keystore is required.
      *
-     * @param jwks   the jwks
+     * @param jwks   the jwks, which is required
      * @param iss    the iss
      * @param claims the claims
      * @param aud    the aud
      * @param exp    the exp
      * @param sub    the sub
-     * @return the string
+     * @return the signed JWT
      * @throws Exception the exception
      */
     @Command(group = "JWT", name = "generate-full-jwt", description = "Generate JWT and sign it using a given keystore")
     public String generateKey(
         @Option(
             longName = "jwks",
-            defaultValue = StringUtils.EMPTY,
+            required = true,
             description = "Path to the JWKS file used to sign the token"
         )
         final String jwks,
@@ -114,25 +113,20 @@ public class GenerateFullJwtCommand implements CasShellCommand {
         val otherClaims = MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
         otherClaims.forEach((key, value) -> jwtClaims.setClaim(key.toString(), value));
 
-        if (StringUtils.isNotBlank(jwks)) {
-            val keystore = new JsonWebKeySet(FileUtils.readFileToString(new File(jwks), StandardCharsets.UTF_8));
-            val jsonWebKey = (PublicJsonWebKey) keystore.getJsonWebKeys()
-                .stream()
-                .filter(key -> Strings.CI.equals(key.getUse(), "signing"))
-                .findFirst()
-                .orElseGet(() -> keystore.getJsonWebKeys().getFirst());
-            val jwt = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
-                jwtClaims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
-            val token = new String(jwt, StandardCharsets.UTF_8);
-            //CHECKSTYLE:OFF
-            LOGGER.info("Producing signed JWT:\n{}\n", token);
-            //CHECKSTYLE:ON
-            return token;
+        if (StringUtils.isBlank(jwks)) {
+            throw new IllegalArgumentException("A JWKS file is required to sign the JWT; unsigned JWTs are not supported");
         }
-        val jwt = new PlainJWT(JWTClaimsSet.parse(jwtClaims.getClaimsMap()));
-        val token = jwt.serialize();
+        val keystore = new JsonWebKeySet(FileUtils.readFileToString(new File(jwks), StandardCharsets.UTF_8));
+        val jsonWebKey = (PublicJsonWebKey) keystore.getJsonWebKeys()
+            .stream()
+            .filter(key -> Strings.CI.equals(key.getUse(), "signing"))
+            .findFirst()
+            .orElseGet(() -> keystore.getJsonWebKeys().getFirst());
+        val jwt = EncodingUtils.signJwsRSASha512(jsonWebKey.getPrivateKey(),
+            jwtClaims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
+        val token = new String(jwt, StandardCharsets.UTF_8);
         //CHECKSTYLE:OFF
-        LOGGER.info("Producing plain JWT:\n{}\n", token);
+        LOGGER.info("Producing signed JWT:\n{}\n", token);
         //CHECKSTYLE:ON
         return token;
     }

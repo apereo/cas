@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "codeclient",
+  "serviceId": "^https://localhost:9859/anything/codeclient.*",
+  "name": "SampleCode",
+  "id": 3,
+  "description": "Authorization code grant with private_key_jwt client authentication",
+  "evaluationOrder": 3,
+  "bypassApprovalPrompt": true,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "tokenEndpointAuthenticationMethod": "private_key_jwt",
+  "jwks": "file:${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/keystore.json"
+}

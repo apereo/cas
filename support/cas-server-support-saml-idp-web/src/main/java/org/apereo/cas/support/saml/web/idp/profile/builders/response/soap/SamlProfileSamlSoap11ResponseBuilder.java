@@ -1,12 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
 import module java.base;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSamlResponseBuilderConfigurationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.opensaml.messaging.context.ScratchContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Response;
@@ -51,14 +53,27 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     }
 
     /**
-     * Build saml2 response.
+     * Build the SAML2 response carried in the SOAP body. The response builder is told not to encode it, since the
+     * SOAP envelope is the only thing written to the HTTP response; the previous setting is put back afterwards so
+     * the envelope itself is still encoded.
      *
      * @param context the context
-     * @return the org . opensaml . saml . saml 2 . core . response
+     * @return the SAML2 response
      * @throws Exception the exception
      */
     protected Response buildSaml2Response(final SamlProfileBuilderContext context) throws Exception {
-        return (Response) getConfigurationContext().getSamlSoapResponseBuilder().build(context);
+        val scratch = context.getMessageContext().ensureSubcontext(ScratchContext.class);
+        val map = (Map) Objects.requireNonNull(scratch).getMap();
+        val previous = map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, Boolean.FALSE);
+        try {
+            return (Response) getConfigurationContext().getSamlSoapResponseBuilder().build(context);
+        } finally {
+            if (previous == null) {
+                map.remove(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE);
+            } else {
+                map.put(SamlProtocolConstants.PARAMETER_ENCODE_RESPONSE, previous);
+            }
+        }
     }
 
     @Override

@@ -92,7 +92,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> @Nullable T resolveJwtRequestParameter(final String jwtRequest, final RegisteredService registeredService,
                                                       final String name, final Class<T> clazz)
             throws Exception {
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        val jwt = unpackRequestObject(registeredService, decryptRequestObject(jwtRequest));
         return jwt == null ? null : getJwtRequestClaim(jwt, name, clazz);
     }
 
@@ -111,7 +111,7 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     public <T> Map<String, T> resolveJwtRequestParameters(final String jwtRequest, final RegisteredService registeredService,
                                                           final Collection<String> names, final Class<T> clazz)
             throws Exception {
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(registeredService), jwtRequest);
+        val jwt = unpackRequestObject(registeredService, decryptRequestObject(jwtRequest));
         val parameters = new LinkedHashMap<String, T>();
         if (jwt != null) {
             for (val name : names) {
@@ -124,6 +124,43 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         return parameters;
     }
 
+    /**
+     * Decrypt a request object encrypted to the authorization server, before it is unpacked and verified. Plain OAuth
+     * does not define encrypted request objects, so the request object is returned as it is.
+     *
+     * @param requestObject the request object
+     * @return the request object, decrypted
+     */
+    protected String decryptRequestObject(final String requestObject) {
+        return requestObject;
+    }
+
+    @Override
+    public boolean isRequestObjectVerified(final HttpServletRequest request) {
+        val jwtRequest = request.getParameter(OAuth20Constants.REQUEST);
+        if (StringUtils.isBlank(jwtRequest) || !isRequestParameterSupported(request)) {
+            return true;
+        }
+        try {
+            return unpackJwtRequest(request, jwtRequest) != null;
+        } catch (final Throwable e) {
+            LOGGER.warn("Request object cannot be decrypted or verified: [{}]", e.getMessage());
+            LOGGER.debug(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    /**
+     * Verify the request object, once decrypted, with the keys of the client and read its claims.
+     *
+     * @param registeredService the registered service of the client, if known
+     * @param requestObject     the request object
+     * @return the claims, or null when the request object cannot be read
+     */
+    protected @Nullable JWTClaimsSet unpackRequestObject(@Nullable final RegisteredService registeredService, final String requestObject) {
+        return jwtBuilder.unpack(Optional.ofNullable(registeredService), requestObject);
+    }
+
     private @Nullable JWTClaimsSet unpackJwtRequest(final HttpServletRequest request, final String jwtRequest) {
         val unpackedRequest = request.getAttribute(UnpackedJwtRequest.class.getName());
         if (unpackedRequest instanceof UnpackedJwtRequest(String requestObject, JWTClaimsSet claims) && requestObject.equals(jwtRequest)) {
@@ -131,11 +168,34 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
         }
         val id = Objects.requireNonNullElse(request.getParameter(OAuth20Constants.CLIENT_ID), StringUtils.EMPTY);
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(jwtBuilder.getServicesManager(), id);
-        val jwt = jwtBuilder.unpack(Optional.ofNullable(service), jwtRequest);
+        val jwt = unpackRequestObject(service, decryptRequestObject(jwtRequest));
+        if (jwt != null && !isIssuedForClient(jwt, id)) {
+            LOGGER.warn("Request object is for client [{}], not for client [{}] of the request", jwt.getClaim(OAuth20Constants.CLIENT_ID), id);
+            return null;
+        }
         if (jwt != null) {
             request.setAttribute(UnpackedJwtRequest.class.getName(), new UnpackedJwtRequest(jwtRequest, jwt));
         }
         return jwt;
+    }
+
+    /**
+     * Whether the request object names the client of the request: its {@code client_id}, when it has one, must be the
+     * {@code client_id} parameter, when the request has one (OpenID Connect Core 1.0, section 6.1; RFC 9101, section 5).
+     * The request object is verified with the keys of the client of the parameter, so a request object for another
+     * client is never used.
+     *
+     * @param requestObject the claims of the request object
+     * @param clientId      the client id parameter of the request
+     * @return true or false
+     */
+    private static boolean isIssuedForClient(final JWTClaimsSet requestObject, final String clientId) {
+        val claimed = requestObject.getClaim(OAuth20Constants.CLIENT_ID);
+        if (claimed == null || StringUtils.isBlank(clientId)) {
+            return true;
+        }
+        val values = claimed instanceof final Collection<?> collection ? new ArrayList<Object>(collection) : List.of(claimed);
+        return !values.isEmpty() && values.stream().allMatch(value -> clientId.equals(String.valueOf(value)));
     }
 
     @Override

@@ -57,3 +57,17 @@ Interrupt queries can be executed via the following ways:
 | Groovy          | [See this guide](Webflow-Customization-Interrupt-Groovy.html).         |
 | REST            | [See this guide](Webflow-Customization-Interrupt-REST.html).           |
 | Custom          | [See this guide](Webflow-Customization-Interrupt-Custom.html).         |
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS to determine the interrupt payload produced for a given user,
+optionally signing in to a given application. Every interrupt strategy is asked in order and its response, or
+the reason it failed, is reported along with the interrupt the login flow would present. The user is resolved
+from the configured attribute repositories and no credentials are verified. Conditions of the
+application's interrupt policy that are evaluated by the login flow itself, such as principal attributes or scripts,
+are not evaluated by this endpoint. Note that interrupt strategies may reach out to external services or run scripts.
+
+{% include_cached actuators.html endpoints="interrupts" casModule="cas-server-support-interrupt-webflow" %}
+
+The same inquiry is available in [Palantir](../installation/Admin-Dashboard.html), under *Interrupts* in the
+authentication section, when this endpoint is enabled and exposed.

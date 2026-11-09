@@ -47,49 +47,40 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseOidcJsonWebKeyTo
         return svc.getIdTokenSigningAlg();
     }
 
+    /**
+     * ID tokens are always signed. An unsigned ID token, whose algorithm is {@code none}, carries no proof of who issued it,
+     * so a service that asks for {@code none} is refused.
+     *
+     * @param registeredService the registered service
+     * @return true for OpenID Connect services
+     */
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
         if (registeredService instanceof final OidcRegisteredService service) {
-            if (!service.isSignIdToken()) {
-                LOGGER.trace("Service [{}] does not require ID token to be signed", registeredService.getServiceId());
-                return false;
-            }
             if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenSigningAlg())) {
-                if (!discoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-                    LOGGER.error("Service [{}] has defined 'none' for ID token signing algorithm, "
-                            + "yet CAS is configured to support the following signing algorithms: [{}]. "
-                            + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                        registeredService.getServiceId(), discoverySettings.getIdTokenSigningAlgValuesSupported());
-                    throw new IllegalArgumentException("Unable to use 'none' as ID token signing algorithm");
-                }
-                LOGGER.error("Service [{}] has defined 'none' for ID token signing algorithm", registeredService.getServiceId());
-                return false;
+                LOGGER.error("Service [{}] asks for unsigned ID tokens, which are not issued; choose an ID token signing algorithm "
+                    + "other than 'none'", registeredService.getServiceId());
+                throw new IllegalArgumentException("Unsigned ID tokens are not issued");
             }
             return true;
         }
         return false;
     }
 
+    /**
+     * ID tokens are encrypted when the service turns on encryption and defines the encryption algorithm and encoding;
+     * {@code none} as the encryption algorithm means no encryption.
+     *
+     * @param registeredService the registered service
+     * @return true or false
+     */
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
-        if (registeredService instanceof final OidcRegisteredService service) {
-            if (service.isEncryptIdToken() && AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())) {
-                if (!discoverySettings.getIdTokenSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-                    LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm, "
-                            + "yet CAS is configured to support the following encryption algorithms: [{}]. "
-                            + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                        registeredService.getServiceId(), discoverySettings.getIdTokenEncryptionAlgValuesSupported());
-                    throw new IllegalArgumentException("Unable to use 'none' as ID token encryption algorithm");
-                }
-                LOGGER.error("Service [{}] has defined 'none' for ID token encryption algorithm", registeredService.getServiceId());
-                return false;
-            }
-
-            return service.isEncryptIdToken()
-                && StringUtils.isNotBlank(service.getIdTokenEncryptionAlg())
-                && StringUtils.isNotBlank(service.getIdTokenEncryptionEncoding());
-        }
-        return false;
+        return registeredService instanceof final OidcRegisteredService service
+            && service.isEncryptIdToken()
+            && StringUtils.isNotBlank(service.getIdTokenEncryptionAlg())
+            && !AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getIdTokenEncryptionAlg())
+            && StringUtils.isNotBlank(service.getIdTokenEncryptionEncoding());
     }
 
     @Override

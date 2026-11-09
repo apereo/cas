@@ -1,0 +1,18 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/proxyrefused.*",
+  "name": "ProxyRefused",
+  "id": 6,
+  "proxyPolicy": {
+    "@class": "org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseProxyGrantingTicket": true
+  },
+  "publicKey": {
+    "@class": "org.apereo.cas.services.RegisteredServicePublicKeyImpl",
+    "location": "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/public.key",
+    "algorithm": "RSA"
+  }
+}

@@ -7,8 +7,8 @@ const assert = require("assert");
     const page = await cas.newPage(browser);
 
     const redirectUrl = "https://localhost:9859/anything/cas";
-    const request = "eyJhbGciOiJub25lIn0.eyJyZXNwb25zZV90eXBlIjoiY29kZSIsInJlZGlyZWN0X3VyaSI6Imh0dHBzOi8vbG9jYWxob3N0Ojk4NTkvYW55dGhpbmcvY2FzIiwic3RhdGUiOiJ2SU4xYjBZNENrIiwibm9uY2UiOiIxTjltcVBPOWZ0IiwiY2xpZW50X2lkIjoiY2xpZW50Iiwic2NvcGUiOiJvcGVuaWQifQ.";
-    const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&scope=openid&redirect_uri=https://unknown.net`;
+    const request = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjEyMzQ1Njc4OTAiLCJvcmcuYXBlcmVvLmNhcy5zZXJ2aWNlcy5SZWdpc3RlcmVkU2VydmljZSI6IjIxMzMyNDg2MjEifQ.CnsKICAic3ViIjogImNhc3VzZXIiLAogICJzY29wZSI6ICJvcGVuaWQiLAogICJpc3MiOiAiaHR0cHM6Ly9jYXMuZXhhbXBsZS5vcmciLAogICJyZXNwb25zZV90eXBlIjogImNvZGUiLAogICJyZWRpcmVjdF91cmkiOiAiaHR0cHM6Ly9sb2NhbGhvc3Q6OTg1OS9hbnl0aGluZy9jYXMiLAogICJpYXQiOiAxNjQ2NzMxODE5LAogICJqdGkiOiAiZWVkY2Q5Y2ItNDA1MS00ODAyLWFmYWUtYmFkMzU1NDNiYjU3IiwKICAiY2xpZW50X2lkIjogImNsaWVudCIKfQo.x1LLYmH_8jAbdfiYlQ5hreI2IY3m2olGbBM4Hi2O5wUE_fRPhFD3Z_YsMbK4Qp9Us1aqn3VdYaEovnBzr0W37WJhzTysWId2cffajH_z9xF47DIlkc5PXWNeWo0g8N_lMvFWkcQQNw1inU8J9370-sGZXyJSggLmCcbNjWrWGvFKtSBLMY-v-_HSnFKCDq9LK6mLN9HFqzWG3GhDrcCtl8JIsd1JC44QSoJ4WsxWIoUtto_j6EFwNyMC_2xI6E68L9uAbFfknXz3siuzp9NN9_M_peRGKXigKrZg8et9ggsRHqSHj2j5T-P9FmaFDlJz-rmCHytKE0KgKiYBkWG9Cg";
+    const url = `https://localhost:8443/cas/oidc/authorize?request=${request}&client_id=client&scope=openid&state=vIN1b0Y4Ck&nonce=1N9mqPO9ft&redirect_uri=https://unknown.net`;
 
     await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);

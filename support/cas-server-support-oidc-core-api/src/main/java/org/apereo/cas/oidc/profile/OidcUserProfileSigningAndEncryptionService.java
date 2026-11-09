@@ -47,45 +47,42 @@ public class OidcUserProfileSigningAndEncryptionService extends BaseOidcJsonWebK
     @Override
     public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService registeredService,
                                                 final JsonWebKey jsonWebKey) {
-        if (registeredService instanceof final OidcRegisteredService oidcService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService && isSigningRequested(oidcService)) {
             return oidcService.getUserInfoSigningAlg();
         }
         return super.getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
     }
 
+    /**
+     * User info is returned as a JWT when the service asks for signing or encryption, and every JWT is signed:
+     * a service that asks only for encryption gets the response signed with the default algorithm, then encrypted.
+     * {@code none} as the signing algorithm means no signing was asked for.
+     *
+     * @param registeredService the registered service
+     * @return true or false
+     */
     @Override
     public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
-        if (registeredService instanceof final OidcRegisteredService service) {
-            if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoSigningAlg())
-                && !discoverySettings.getUserInfoSigningAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-                LOGGER.error("Service [{}] has defined 'none' for user-info signing algorithm, "
-                             + "yet CAS is configured to support the following signing algorithms: [{}]. "
-                             + "This is quite likely due to misconfiguration of the CAS server or the service definition.",
-                    registeredService.getServiceId(), discoverySettings.getUserInfoSigningAlgValuesSupported());
-                throw new IllegalArgumentException("Unable to use 'none' for the user-info signing algorithm");
-            }
-            return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
-                   && !Strings.CI.equals(service.getUserInfoSigningAlg(), AlgorithmIdentifiers.NONE);
-        }
-        return false;
+        return registeredService instanceof final OidcRegisteredService service
+            && (isSigningRequested(service) || shouldEncryptToken(service));
     }
 
+    /**
+     * User info is encrypted when the service asks for an encryption algorithm other than {@code none}.
+     *
+     * @param registeredService the registered service
+     * @return true or false
+     */
     @Override
     public boolean shouldEncryptToken(final OAuthRegisteredService registeredService) {
-        if (registeredService instanceof final OidcRegisteredService service) {
+        return registeredService instanceof final OidcRegisteredService service
+            && StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())
+            && !Strings.CI.equals(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
+    }
 
-            if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(service.getUserInfoEncryptedResponseAlg())
-                && !discoverySettings.getUserInfoEncryptionAlgValuesSupported().contains(AlgorithmIdentifiers.NONE)) {
-                LOGGER.error("Service [{}] has defined 'none' for user-info encryption algorithm, "
-                             + "yet CAS is configured to support the following encryption algorithms: [{}]. "
-                             + "This is quite likely due to misconfiguration of the CAS server or the service definition",
-                    registeredService.getServiceId(), discoverySettings.getUserInfoEncryptionAlgValuesSupported());
-                throw new IllegalArgumentException("Unable to use 'none' as user-info encryption algorithm");
-            }
-            return StringUtils.isNotBlank(service.getUserInfoEncryptedResponseAlg())
-                   && !Strings.CI.equals(service.getUserInfoEncryptedResponseAlg(), AlgorithmIdentifiers.NONE);
-        }
-        return false;
+    private static boolean isSigningRequested(final OidcRegisteredService service) {
+        return StringUtils.isNotBlank(service.getUserInfoSigningAlg())
+            && !Strings.CI.equals(service.getUserInfoSigningAlg(), AlgorithmIdentifiers.NONE);
     }
 
     @Override

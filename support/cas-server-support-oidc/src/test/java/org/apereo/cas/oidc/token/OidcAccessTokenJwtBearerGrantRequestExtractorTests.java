@@ -13,11 +13,11 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfile;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.BasicIdentifiableKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
 import lombok.val;
 import org.jose4j.jwk.PublicJsonWebKey;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +64,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
         void verifyUnknownClientId() throws Throwable {
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
             request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
-            val assertion = JwtBuilder.buildPlain(JWTClaimsSet.parse(Map.of()), Optional.of(registeredService));
+            val assertion = new PlainJWT(JWTClaimsSet.parse(Map.of())).serialize();
             request.setParameter(OAuth20Constants.ASSERTION, assertion);
 
             assertTrue(extractor.supports(request));
@@ -77,7 +77,7 @@ class OidcAccessTokenJwtBearerGrantRequestExtractorTests {
             request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.JWT_BEARER.getType());
             request.setParameter(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope());
             val claims = JWTClaimsSet.parse(Map.of(OAuth20Constants.CLIENT_ID, registeredService.getClientId()));
-            val assertion = JwtBuilder.buildPlain(claims, Optional.of(registeredService));
+            val assertion = new PlainJWT(claims).serialize();
             request.setParameter(OAuth20Constants.ASSERTION, assertion);
             assertThrows(IllegalArgumentException.class, () -> extractor.extract(request, response));
         }
