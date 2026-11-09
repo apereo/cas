@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,configuration-metadata-repository,palantir,oidc,saml-idp,audit-jdbc,pac4j-cas,pac4j-oidc,gauth,simple-mfa,javers,session-ticket-registry,webauthn,consent-webflow,passwordless-webflow,trusted-mfa,heimdall,duo,scripting,discovery-profile",
+  "dependencies": "reports,configuration-metadata-repository,palantir,oidc,saml-idp,audit-jdbc,pac4j-cas,pac4j-oidc,gauth,simple-mfa,javers,session-ticket-registry,webauthn,consent-webflow,passwordless-webflow,trusted-mfa,heimdall,duo,scripting,discovery-profile,interrupt-webflow",
   "conditions": {
     "docker": "true",
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"

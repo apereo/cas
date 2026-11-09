@@ -16,7 +16,7 @@ definition to return an attribute that is already resolved for the principal as 
   "clientId": "client",
   "clientSecret": "secret",
   "serviceId" : "^<https://the-redirect-uri>",
-  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ]
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
   "usernameAttributeProvider" : {
     "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
     "usernameAttribute" : "cn"

@@ -252,7 +252,8 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:IncludeLocales=en-GB')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
-                def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize").getOrElse("14G")
+                def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize")
+                    .getOrElse(CasBuildSettings.isCi(project) ? "12G" : "14G")
                 buildArgs.add("-J-Xmx${nativeImageHeapSize}")
                 buildArgs.add('-J-Xms1G')
                 buildArgs.add('-J-XX:-UseParallelGC')

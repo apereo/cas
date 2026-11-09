@@ -16,7 +16,6 @@ import org.springframework.ai.mcp.annotation.McpTool;
 import org.springframework.ai.mcp.annotation.McpToolParam;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link CasInterruptTools}, available when authentication interrupts are included in the build.
@@ -59,7 +58,6 @@ public class CasInterruptTools {
             return new InterruptPreview(service, null, null, null, List.of(), null, "Authentication interrupts are not configured");
         }
         val context = evaluationContextFactory.build(username, service);
-        val requestContext = evaluationContextFactory.newWebflowRequestContext(context);
         val registeredService = context.registeredService();
         val interruptPolicy = registeredService instanceof final WebBasedRegisteredService webBasedService
             && webBasedService.getWebflowInterruptPolicy() != null
@@ -68,7 +66,7 @@ public class CasInterruptTools {
         val inquirers = new ArrayList<InquirerOutcome>();
         for (val inquirer : plan.getInterruptInquirers()) {
             val failure = new AtomicReference<String>();
-            val response = inquire(inquirer, context, requestContext, failure);
+            val response = inquire(inquirer, context, failure);
             if (response != null && response.isInterrupt()) {
                 inquirers.add(new InquirerOutcome(inquirer.getName(), "INTERRUPT", null));
                 return new InterruptPreview(context.service().getId(), context.principal().getId(),
@@ -84,11 +82,10 @@ public class CasInterruptTools {
 
     private static @Nullable InterruptResponse inquire(final InterruptInquirer inquirer,
                                                        final CasMcpEvaluationContextFactory.CasMcpEvaluationContext context,
-                                                       final RequestContext requestContext,
                                                        final AtomicReference<String> failure) {
         try {
             return inquirer.inquire(context.authentication(), context.registeredService(),
-                context.service(), context.credential(), requestContext);
+                context.service(), context.credential());
         } catch (final Throwable e) {
             failure.set(Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName()));
             return null;

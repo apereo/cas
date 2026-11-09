@@ -33,7 +33,8 @@ public interface OidcJsonWebKeystoreGeneratorService {
     }
 
     /**
-     * To json web key store.
+     * Read the json web key store from the resource, correcting elliptic-curve keys whose
+     * signing algorithm does not match their curve.
      *
      * @param resource the resource
      * @return the json web key set
@@ -42,7 +43,7 @@ public interface OidcJsonWebKeystoreGeneratorService {
     static JsonWebKeySet toJsonWebKeyStore(final Resource resource) throws Exception {
         try (val is = resource.getInputStream()) {
             val result = IOUtils.toString(is, StandardCharsets.UTF_8);
-            return new JsonWebKeySet(result);
+            return OidcJsonWebKeyStoreUtils.normalizeSigningAlgorithms(new JsonWebKeySet(result));
         }
     }
 

@@ -50,11 +50,22 @@ public class PermissiveYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry
         return new ArrayList<>(this.devices.values());
     }
 
+    /**
+     * Remove a device from an account. The stored account is replaced by a copy without the device rather than changed
+     * in place: the stored accounts may be read or serialized by other threads at the same time (the JSON registry
+     * writes the whole map to its file after every change), and removing from the account's device list while that
+     * happens fails the write with a {@link ConcurrentModificationException}.
+     *
+     * @param username the username
+     * @param deviceId the device id
+     */
     @Override
     public void delete(final String username, final long deviceId) {
-        if (devices.containsKey(username)) {
-            devices.get(username).getDevices().removeIf(device -> device.getId() == deviceId);
-        }
+        devices.computeIfPresent(username, (_, account) -> {
+            val updated = account.clone();
+            updated.getDevices().removeIf(device -> device.getId() == deviceId);
+            return updated;
+        });
     }
 
     @Override

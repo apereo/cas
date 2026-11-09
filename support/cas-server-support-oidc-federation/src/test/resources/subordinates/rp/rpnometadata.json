@@ -1,5 +1,29 @@
 {
-  "entityId" : "http://rpnometadata",
+  "entityId": "http://rpnometadata",
+  "entityTypes": [
+    "openid_relying_party"
+  ],
+  "metadataPolicy": {
+    "openid_relying_party": {
+      "scope": {
+        "subset_of": [
+          "openid",
+          "email"
+        ]
+      },
+      "contacts": {
+        "add": [
+          "ops@example.org"
+        ]
+      },
+      "client_name": {
+        "regexp": "^[A-Za-z ]+$"
+      }
+    }
+  },
+  "metadataPolicyCrit": [
+    "regexp"
+  ],
   "federationKeys": [
     {
       "kty": "EC",

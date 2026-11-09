@@ -1,0 +1,22 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "kid": "vc-verifier",
+      "use": "sig",
+      "x": "P9S-n-N3RF29yYb4mFSBno7VbohRUAkIv7auXPPLXr4",
+      "y": "miUYKkTvM-acGkc4lTBA9H1jsHCgZYQ6szDCdkPvuXg",
+      "d": "5WbFkYYjUD25nf5XIaDGw_aa6K82lgVjpaDMdQfoG1k"
+    },
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "kid": "vc-verifier-encryption",
+      "use": "enc",
+      "x": "_AiezWMOEDzkBLD_Tns5U4aNfiz0TBPTdg7qEQJpEBA",
+      "y": "_9WqsZ-ArSnGuaYEJkw7wDUzRRQGrwkmDBBh9fLtOIo",
+      "d": "eHRxAumPWvATcK7xVR7anSVYOcZYUJBEgYjxkPCz71A"
+    }
+  ]
+}

@@ -90,7 +90,10 @@ async function introspect(token) {
             "Content-Type": "application/json",
             "Accept": "application/token-introspection+jwt"
         });
-    const decoded = await cas.decodeJwt(jwt);
+    const complete = await cas.decodeJwt(jwt, true);
+    await cas.log("Introspection responses as JWTs are signed with the default algorithm when the client names none");
+    assert.equal(complete.header.alg, "RS512");
+    const decoded = complete.payload;
     assert(decoded.iss === "https://localhost:8443/cas/oidc");
     assert(decoded.aud === "client");
     assert(decoded.iat !== undefined);

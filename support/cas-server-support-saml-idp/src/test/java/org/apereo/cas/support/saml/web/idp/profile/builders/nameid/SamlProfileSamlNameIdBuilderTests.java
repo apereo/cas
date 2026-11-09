@@ -213,6 +213,34 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
     }
 
     @Test
+    void verifyNameIdQualifiersSetToNone() throws Throwable {
+        val service = getSamlRegisteredServiceForTestShib();
+        service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
+        service.setNameIdQualifier("none");
+        service.setServiceProviderNameIdQualifier("none");
+
+        val authnRequest = getAuthnRequestFor(service);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).orElseThrow();
+
+        val buildContext = SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(Optional.of(getAssertion()))
+            .registeredService(service)
+            .adaptor(adaptor)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
+
+        val subject = samlProfileSamlSubjectBuilder.build(buildContext);
+        assertNotNull(subject.getNameID());
+        assertEquals(NameIDType.PERSISTENT, subject.getNameID().getFormat());
+        assertNull(subject.getNameID().getSPNameQualifier());
+        assertNull(subject.getNameID().getNameQualifier());
+    }
+
+    @Test
     void verifyNameIdFormatSkipQualifiers() throws Throwable {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameIDType.PERSISTENT);
