@@ -68,7 +68,6 @@ import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionHandlerInterceptor;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
-import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.jayway.jsonpath.JsonPath;
 import com.yubico.data.CredentialRegistration;
@@ -103,7 +102,6 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.ServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -369,21 +367,21 @@ public abstract class BaseCasMcpTests {
                     return List.copyOf(inquirers);
                 }
             };
-            plan.registerInterruptInquirer(new McpTestInterruptInquirer("FailingInquirer", (authentication, requestContext) -> {
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("FailingInquirer", (authentication, registeredService, service, credential) -> {
                 throw new IllegalStateException("Interrupt endpoint is unavailable");
             }));
-            plan.registerInterruptInquirer(new McpTestInterruptInquirer("TermsInquirer", (authentication, requestContext) -> {
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("TermsInquirer", (authentication, registeredService, service, credential) -> {
                 if (!authentication.getPrincipal().getId().startsWith("interrupted-")) {
                     return InterruptResponse.none();
                 }
-                val service = Objects.requireNonNull(WebUtils.getService(requestContext));
-                val credential = Objects.requireNonNull(WebUtils.getCredential(requestContext));
-                return new InterruptResponse("Accept the terms of " + service.getId() + " as " + credential.getId())
+                return new InterruptResponse("Accept the terms of " + Objects.requireNonNull(service).getId()
+                    + " as " + Objects.requireNonNull(credential).getId())
                     .setLinks(Map.of("Terms", "https://terms.example.org"))
                     .setBlock(true)
                     .setInterrupt(true);
             }));
-            plan.registerInterruptInquirer(new McpTestInterruptInquirer("QuietInquirer", (authentication, requestContext) -> InterruptResponse.none()));
+            plan.registerInterruptInquirer(new McpTestInterruptInquirer("QuietInquirer",
+                (authentication, registeredService, service, credential) -> InterruptResponse.none()));
             return plan;
         }
 
@@ -525,12 +523,13 @@ public abstract class BaseCasMcpTests {
         @Getter
         private final String name;
 
-        private final BiFunction<Authentication, RequestContext, InterruptResponse> inquiry;
+        private final InterruptInquirer inquiry;
 
         @Override
         public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
-                                         final Service service, final Credential credential, final RequestContext requestContext) {
-            return inquiry.apply(authentication, requestContext);
+                                         final Service service, final Credential credential)
+                throws Throwable {
+            return inquiry.inquire(authentication, registeredService, service, credential);
         }
     }
 }

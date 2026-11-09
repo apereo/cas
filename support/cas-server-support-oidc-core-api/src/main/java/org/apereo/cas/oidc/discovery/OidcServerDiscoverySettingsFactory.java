@@ -4,7 +4,9 @@ import module java.base;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.federation.OidcFederationRole;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.jws.AlgorithmIdentifiers;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -23,6 +27,8 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
+    private static final String CLIENT_REGISTRATION_TYPE_AUTOMATIC = "automatic";
+
     protected final CasConfigurationProperties casProperties;
 
     protected final OidcIssuerService issuerService;
@@ -32,6 +38,17 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
     @Override
     public OidcServerDiscoverySettings getObject() {
         return populateDiscovery(createDiscovery());
+    }
+
+    /**
+     * Whether CAS is an OpenID provider of an OpenID Federation, the only case in which relying parties register
+     * automatically (OpenID Federation 1.0, section 12.1) and {@code client_registration_types_supported} is published.
+     *
+     * @return true when the federation module is present and CAS plays the OpenID provider role
+     */
+    protected boolean isFederationOpenIdProvider() {
+        return CasFeatureModule.FeatureCatalog.OpenIDConnect.isRegistered("federation")
+            && casProperties.getAuthn().getOidc().getFederation().getRole() == OidcFederationRole.OPENID_PROVIDER;
     }
 
     protected OidcServerDiscoverySettings createDiscovery() {
@@ -73,15 +90,14 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setClaimsParameterSupported(discoveryConfig.isClaimsParameterSupported());
         discovery.setPromptValuesSupported(new LinkedHashSet<>(discoveryConfig.getPromptValuesSupported()));
 
-        discovery.setIdTokenSigningAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getIdTokenSigningAlgValuesSupported()));
+        discovery.setIdTokenSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getIdTokenSigningAlgValuesSupported()));
         discovery.setIdTokenEncryptionAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionAlgValuesSupported()));
         discovery.setIdTokenEncryptionEncodingValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIdTokenEncryptionEncodingValuesSupported()));
 
         discovery.setIntrospectionSignedResponseAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getIntrospectionSignedResponseAlgValuesSupported()));
+            withoutUnsignedAlgorithm(discoveryConfig.getIntrospectionSignedResponseAlgValuesSupported()));
         discovery.setIntrospectionEncryptedResponseAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getIntrospectionEncryptedResponseAlgValuesSupported()));
         discovery.setIntrospectionEncryptedResponseEncodingValuesSupported(
@@ -93,8 +109,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setDPopSigningAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getDpopSigningAlgValuesSupported()));
 
-        discovery.setUserInfoSigningAlgValuesSupported(
-            new LinkedHashSet<>(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
+        discovery.setUserInfoSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getUserInfoSigningAlgValuesSupported()));
         discovery.setUserInfoEncryptionAlgValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getUserInfoEncryptionAlgValuesSupported()));
         discovery.setUserInfoEncryptionEncodingValuesSupported(
@@ -106,13 +121,19 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discovery.setNativeSsoSupported(discoveryConfig.isNativeSsoSupported());
         discovery.setRequestParameterSupported(discoveryConfig.isRequestParameterSupported());
         discovery.setRequestUriParameterSupported(discoveryConfig.isRequestUriParameterSupported());
-        discovery.setRequestObjectSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));
-        discovery.setRequestObjectEncryptionAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported()));
+        discovery.setRequestObjectSigningAlgValuesSupported(withoutUnsignedAlgorithm(discoveryConfig.getRequestObjectSigningAlgValuesSupported()));
+        discovery.setRequestObjectEncryptionAlgValuesSupported(discoveryConfig.getRequestObjectEncryptionAlgValuesSupported()
+            .stream()
+            .filter(algorithm -> !KeyManagementAlgorithmIdentifiers.RSA1_5.equals(algorithm))
+            .collect(Collectors.toCollection(LinkedHashSet::new)));
         discovery.setRequestObjectEncryptionEncodingValuesSupported(
             new LinkedHashSet<>(discoveryConfig.getRequestObjectEncryptionEncodingValuesSupported()));
 
         discovery.setAuthorizationResponseIssuerParameterSupported(discoveryConfig.isAuthorizationResponseIssuerParameterSupported());
         discovery.setClientIdMetadataDocumentSupported(oidc.getRegistration().getClientIdMetadataDocument().isEnabled());
+        if (isFederationOpenIdProvider()) {
+            discovery.setClientRegistrationTypesSupported(new LinkedHashSet<>(Set.of(CLIENT_REGISTRATION_TYPE_AUTOMATIC)));
+        }
         discovery.setTlsClientCertificateBoundAccessTokens(discoveryConfig.isTlsClientCertificateBoundAccessTokens());
 
         discovery.setAcrValuesSupported(new LinkedHashSet<>(discoveryConfig.getAcrValuesSupported()));
@@ -136,9 +157,24 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         
         discovery.setBackchannelUserCodeParameterSupported(discoveryConfig.isBackchannelUserCodeParameterSupported());
         discovery.setBackchannelTokenDeliveryModesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelTokenDeliveryModesSupported()));
-        discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(new LinkedHashSet<>(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
+        discovery.setBackchannelAuthenticationRequestSigningAlgValuesSupported(
+            withoutUnsignedAlgorithm(discoveryConfig.getBackchannelAuthenticationRequestSigningAlgValuesSupported()));
 
         return discovery;
+    }
+
+    /**
+     * Signing algorithms without {@code none}: unsigned JWTs are neither issued nor accepted, so {@code none} is never
+     * advertised, even when configured.
+     *
+     * @param algorithms the configured signing algorithms
+     * @return the signing algorithms without none
+     */
+    private static Set<String> withoutUnsignedAlgorithm(final Collection<String> algorithms) {
+        return algorithms
+            .stream()
+            .filter(algorithm -> !AlgorithmIdentifiers.NONE.equalsIgnoreCase(algorithm))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**

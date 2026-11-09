@@ -5,6 +5,7 @@
     "--cas.authn.pm.core.password-policy-pattern=.+",
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
     "--cas.authn.pm.reset.security-questions-enabled=false",
+    "--cas.authn.pm.history.core.enabled=true",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

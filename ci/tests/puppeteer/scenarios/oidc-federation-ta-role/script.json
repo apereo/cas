@@ -8,6 +8,10 @@
     "--cas.authn.oidc.federation.role=TRUST_ANCHOR",
     "--cas.authn.oidc.federation.organization=ApereoTA",
     "--cas.authn.oidc.federation.jwks-file=file:${#systemProperties['java.io.tmpdir']}/tmpfederation.jwks",
-    "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates"
+    "--cas.authn.oidc.federation.subordinate-directory=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/subordinates",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=oidcFederationJwks",
+    "--management.endpoints.access.default=UNRESTRICTED"
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "attested-dpop",
+  "serviceId": "^https://localhost:9859/anything/dpopattested",
+  "name": "AttestedDPoP",
+  "id": 3,
+  "description": "Client that authenticates with a client attestation and a DPoP proof made with the attested key",
+  "evaluationOrder": 101,
+  "tokenEndpointAuthenticationMethod": "attest_jwt_client_auth_dpop",
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

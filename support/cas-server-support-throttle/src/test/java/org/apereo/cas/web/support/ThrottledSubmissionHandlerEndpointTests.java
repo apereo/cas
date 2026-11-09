@@ -57,6 +57,7 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
         request.setRemoteUser("cas");
+        request.addParameter("username", "casuser");
         request.addHeader(HttpHeaders.USER_AGENT, "Firefox");
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
@@ -72,6 +73,11 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
             .getContentAsString(), new TypeReference<List<ThrottledSubmission>>() {
         });
         assertFalse(records.isEmpty());
+
+        assertTrue(recordsOf("casuser").stream().allMatch(submission -> "casuser".equals(submission.getUsername())));
+        assertEquals(records.size(), recordsOf("casuser").size());
+        assertEquals(records.size(), recordsOf("CASUSER").size());
+        assertTrue(recordsOf("unknown").isEmpty());
 
         mockMvc.perform(delete("/actuator/throttles")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,5 +99,18 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
                 .queryParam("clear", "false")
             )
             .andExpect(status().isOk());
+    }
+
+    private List<ThrottledSubmission> recordsOf(final String username) throws Exception {
+        return MAPPER.readValue(mockMvc.perform(get("/actuator/throttles")
+                .queryParam("username", username)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), new TypeReference<>() {
+        });
     }
 }

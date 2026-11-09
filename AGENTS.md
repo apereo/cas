@@ -26,7 +26,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-ldap`](.claude/skills/cas-ldap/SKILL.md) | LDAP modules |
 | [`cas-mcp-server`](.claude/skills/cas-mcp-server/SKILL.md) | `support/cas-server-support-mcp` |
 | [`cas-oauth-oidc-authentication`](.claude/skills/cas-oauth-oidc-authentication/SKILL.md) | OAuth/OIDC/UMA client authentication, access-token-protected endpoints, `OAuth20UserProfile`, login callback |
-| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*` |
+| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*`, OpenID Federation |
 | [`cas-oid4vc`](.claude/skills/cas-oid4vc/SKILL.md) | `support/cas-server-support-oidc-vc*`, wallets, SD-JWT/mdoc |
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
 | [`cas-protocol`](.claude/skills/cas-protocol/SKILL.md) | Service/proxy validation, SAML 1.1 |
@@ -103,6 +103,12 @@ When you learn something new, record it in the skill that owns the area, or here
 - `SubjectConfirmationData.Address` identifies the presenter, not the ACS server. Use trusted proxy-aware client information or omit it; never perform a synchronous DNS lookup of the ACS host while building assertions.
 - Scope caches that contain service-specific metadata, keys, validation filters, or trust policy to the registered-service boundary. Address entries by their complete key; do not scan unrelated cached values for a matching entity.
 - When replacing a library that verifies tokens, check what it does when nothing is configured: pac4j's `JwtAuthenticator` with no signature configuration skipped verification and accepted unsigned tokens, which let any `sub` log in through JWT authentication. Token validation in CAS refuses everything when the service defines no signing secret (`TokenAuthenticationSecurity`); keep it that way.
+- A string cipher executor (`BaseStringCipherExecutor`) refuses a value whose signature cannot be verified by returning
+  null from `decode` rather than throwing. Callers that turn the decoded value into an identity must reject a null or
+  blank result themselves; `SimplePrincipal` accepts a null id, so a handler that relied on the exception
+  (`RemoteCookieAuthenticationHandler`) authenticated any cookie. `JwtBuilder.unpack` likewise returns null for a JWT
+  whose signature cannot be verified. Refuse the null explicitly with the exception the caller already uses for a bad
+  input (`Optional.ofNullable(...).orElseThrow(...)`) instead of letting it fail later through a dereference.
 
 ## Test, concurrency, and hand-off expectations
 
@@ -111,6 +117,10 @@ When you learn something new, record it in the skill that owns the area, or here
 - Prefer real protocol artifacts for crypto tests: sign/encrypt with matching test credentials, serialize and unmarshal when validating embedded XML, and include negative cases for tampering, blocked algorithms, or mismatched destinations.
 - Keep tests deterministic and independent of external DNS or network availability. Use loopback addresses, local mock servers, classpath resources, and uniquely named temporary files; clean up local resources in `finally` or try-with-resources blocks.
 - Changes and tests must tolerate Gradle parallel mode. Avoid shared mutable static state, fixed temporary filenames, cross-test cache assumptions, and mutation of shared application state when a local fixture will work.
+- In-memory registries whose stored objects other threads may read or serialize at the same time (the JSON-backed ones
+  write the whole map after every change) must replace a stored object with a changed copy, never mutate it in place:
+  `PermissiveYubiKeyAccountRegistry` removed a device from the stored account's list and failed a concurrent JSON write
+  with `ConcurrentModificationException`.
 - Never add the Java `synchronized` keyword. When mutual exclusion is genuinely required, use `CasReentrantLock` and its execution helpers consistently with nearby CAS code.
 - If the user requests a `PLANS.md` plan, create it before implementation work and check off each step as it is completed.
 - When code cannot be compiled locally, check overridden and called signatures for checked exceptions (for example `ByteArrayResource.getInputStream()` declares `IOException`) and reuse helpers' existing filtering instead of repeating it.

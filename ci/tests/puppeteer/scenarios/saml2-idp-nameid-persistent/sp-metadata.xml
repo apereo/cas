@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntitiesDescriptor Name="urn:apereo:cas:puppeteer:nameid" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <!-- The service requires the persistent format, which overrides the transient format listed here. -->
+    <EntityDescriptor entityID="https://localhost:9859/nameid-persistent-a">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- No format is required by the service, so the format comes from this metadata. -->
+    <EntityDescriptor entityID="https://localhost:9859/nameid-persistent-c">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <EntityDescriptor entityID="https://localhost:9859/nameid-email-qualified">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <EntityDescriptor entityID="https://localhost:9859/nameid-email-unqualified">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+</EntitiesDescriptor>

@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
+import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
@@ -14,7 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -28,8 +31,13 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
+import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
+import org.opensaml.xmlsec.keyinfo.impl.X509KeyInfoGeneratorFactory;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -197,7 +205,7 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             builder = (SOAPObjectBuilder) openSamlConfigBean.getBuilderFactory()
                 .getBuilder(Body.DEFAULT_ELEMENT_NAME);
             val body = (Body) builder.buildObject();
-            val query = getSignedAttributeQuery(NameIDType.TRANSIENT, UUID.randomUUID().toString());
+            val query = getAttributeQuerySignedByServiceProvider(UUID.randomUUID().toString());
             body.getUnknownXMLObjects().add(query);
             envelope.setBody(body);
 
@@ -211,6 +219,11 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
             val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
             val result = performSoapPost(xml);
             assertEquals(HttpStatus.SC_OK, result.getResponse().getStatus());
+            assertNull(result.getRequest().getAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR));
+            val content = result.getResponse().getContentAsString();
+            assertTrue(content.contains(":Envelope"));
+            assertTrue(content.contains(":Assertion"));
+            assertFalse(content.contains("<form"));
         }
 
         @Test
@@ -313,6 +326,40 @@ class SamlIdPSaml2AttributeQueryProfileHandlerControllerTests {
 
             query.getAttributes().add(attr2);
             return query;
+        }
+
+        /**
+         * Build an attribute query signed with the key pair whose certificate the metadata of the service provider
+         * lists, so the identity provider can verify it. A query signed by {@link #getSignedAttributeQuery} carries the
+         * signature of the identity provider's own generated key, which no service provider metadata lists, and is
+         * refused before it is processed.
+         *
+         * @param nameIdValue the name id value
+         * @return the signed attribute query
+         * @throws Exception the exception
+         */
+        private AttributeQuery getAttributeQuerySignedByServiceProvider(final String nameIdValue) throws Exception {
+            val credentialFactory = new BasicX509CredentialFactoryBean();
+            credentialFactory.setCertificateResources(List.of(new ClassPathResource("metadata/idp-signing.crt")));
+            credentialFactory.setPrivateKeyResource(new ClassPathResource("metadata/idp-signing.key"));
+            val parameters = new SignatureSigningParameters();
+            parameters.setSigningCredential(credentialFactory.getObject());
+            parameters.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+            parameters.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
+            parameters.setSignatureCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+            val keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
+            keyInfoGeneratorFactory.setEmitEntityCertificate(true);
+            parameters.setKeyInfoGenerator(keyInfoGeneratorFactory.newInstance());
+
+            val query = getAttributeQuery(NameIDType.TRANSIENT, nameIdValue);
+            val messageContext = new MessageContext();
+            messageContext.setMessage(query);
+            messageContext.ensureSubcontext(SecurityParametersContext.class).setSignatureSigningParameters(parameters);
+            val handler = new SAMLOutboundProtocolMessageSigningHandler();
+            handler.initialize();
+            handler.invoke(messageContext);
+            val xml = SamlUtils.transformSamlObject(openSamlConfigBean, query).toString();
+            return Objects.requireNonNull(SamlUtils.transformSamlObject(openSamlConfigBean, xml, AttributeQuery.class));
         }
 
         private AttributeQuery getSignedAttributeQuery(final String nameIdFormat,

@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/nameid-persistent-a$",
+  "name" : "PersistentRequired",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "requiredNameIdFormat" : "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "salt" : "Q0FTLXBlcnNpc3RlbnQtaWQtc2FsdA"
+    }
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

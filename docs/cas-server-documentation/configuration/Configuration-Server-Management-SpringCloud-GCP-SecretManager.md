@@ -20,7 +20,7 @@ verbatim inside a CAS server overlay and do not exclusively belong to a Spring C
 primarily useful when inside the Spring Cloud Configuration server, it nonetheless may also be used inside a CAS server overlay 
 directly to fetch settings from a source.</p></div>
 
-{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.gcp.secretmanager" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.gcp.secretmanager" thirdPartyExactMatch="spring.config.import" %}
 
 ## Secret Manager Config Data Resource
 
@@ -42,7 +42,7 @@ sm@<project-id>/<secret-id>/<version-id>
 
 # 4. Short form - default project; specify secret + version
 #
-# The project is inferred from the spring.cloud.gcp.secretmanager.project-id setting
+# The project is inferred from the Secret Manager project id setting
 # in your bootstrap.properties (see Configuration) or from application-default credentials if
 # this is not set.
 sm@<secret-id>/<version>
@@ -51,12 +51,10 @@ sm@<secret-id>/<version>
 sm@<secret-id>
 ```
 
-You can use this syntax in your CAS configuration:
+You can use this syntax in your CAS configuration. Depending on your setup, `sm@` may also need to be listed
+among the Spring configuration imports.
 
 ```properties
-# This may be optional
-# spring.config.import=sm@
-
 # Example of the project-secret long-form syntax.
 cas.some.property=${sm@projects/<project-id>/secrets/cas_some_property}
 ```

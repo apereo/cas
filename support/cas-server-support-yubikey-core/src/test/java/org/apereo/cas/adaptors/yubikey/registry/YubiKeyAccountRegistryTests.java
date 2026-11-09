@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import module java.base;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -60,6 +61,33 @@ class YubiKeyAccountRegistryTests {
         val result = registry.getAccount("cas");
         assertTrue(result.isPresent());
         assertTrue(result.get().getDevices().isEmpty());
+    }
+
+    @Test
+    void verifyDeviceRemovalDoesNotChangeStoredAccountInPlace() {
+        val account = YubiKeyAccount.builder()
+            .devices(CollectionUtils.wrapList(newDevice(1), newDevice(2)))
+            .username("casuser")
+            .build();
+        val registry = new PermissiveYubiKeyAccountRegistry(new ConcurrentHashMap<>(), mock(YubiKeyAccountValidator.class));
+        registry.save(account);
+
+        registry.delete("casuser", 1);
+        assertEquals(2, account.getDevices().size());
+        assertEquals(List.of(2L), registry.getAccountInternal("casuser").getDevices()
+            .stream().map(YubiKeyRegisteredDevice::getId).toList());
+
+        registry.delete("unknown", 2);
+        assertNull(registry.getAccountInternal("unknown"));
+    }
+
+    private static YubiKeyRegisteredDevice newDevice(final long id) {
+        return YubiKeyRegisteredDevice.builder()
+            .id(id)
+            .name("device-" + id)
+            .publicId("public-id-" + id)
+            .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+            .build();
     }
 
 }

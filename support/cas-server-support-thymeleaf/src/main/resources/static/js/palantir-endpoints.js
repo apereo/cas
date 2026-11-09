@@ -259,6 +259,10 @@ class CasActuatorEndpoints {
         return this.endpoints().passwordless;
     }
 
+    static interrupts() {
+        return this.endpoints().interrupts;
+    }
+
     static startup() {
         return this.endpoints().startup;
     }

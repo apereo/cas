@@ -1,0 +1,6 @@
+<%
+if (who == "auditfail") {
+    URI.create("http://localhost:5614/groovy-failure?action=" + action).toURL().text
+    throw new IllegalStateException("Audit trail is unavailable for " + action)
+}
+%>${who} ${action} ${what}
