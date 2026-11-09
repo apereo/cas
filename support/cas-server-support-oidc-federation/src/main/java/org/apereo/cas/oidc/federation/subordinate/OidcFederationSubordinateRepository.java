@@ -12,8 +12,8 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is {@link OidcFederationSubordinateRepository}.
@@ -27,8 +27,11 @@ public class OidcFederationSubordinateRepository {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    /**
+     * The subordinates by entity identifier, read concurrently by the federation endpoints.
+     */
     @Getter
-    private final Map<String, OidcFederationSubordinate> subordinates = new HashMap<>();
+    private final Map<String, OidcFederationSubordinate> subordinates = new ConcurrentHashMap<>();
 
     public OidcFederationSubordinateRepository(final OidcProperties oidcProperties) {
         loadSubordinates(oidcProperties.getFederation().getSubordinateDirectory());
@@ -49,7 +52,11 @@ public class OidcFederationSubordinateRepository {
                     val file = path.toFile();
                     LOGGER.debug("Parsing [{}]...", file);
                     val subordinate = MAPPER.readValue(file, OidcFederationSubordinate.class);
-                    subordinates.put(subordinate.getEntityId(), subordinate);
+                    if (StringUtils.isBlank(subordinate.getEntityId())) {
+                        LOGGER.warn("Subordinate [{}] defines no entity identifier and is ignored", file);
+                    } else {
+                        subordinates.put(subordinate.getEntityId(), subordinate);
+                    }
                 }));
             } catch (final IOException e) {
                 throw new IllegalArgumentException("Cannot read/load from subordinate directory", e);

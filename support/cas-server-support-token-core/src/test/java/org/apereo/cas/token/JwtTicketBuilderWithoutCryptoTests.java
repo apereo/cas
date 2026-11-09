@@ -2,7 +2,6 @@ package org.apereo.cas.token;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -22,11 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Tickets")
 class JwtTicketBuilderWithoutCryptoTests extends BaseJwtTokenTicketBuilderTests {
 
+    /**
+     * Without keys to sign or encrypt it, the service ticket would be an unsigned JWT, which is never issued.
+     */
     @Test
-    void verifyJwtForServiceTicketEncoding() throws Throwable {
-        val jwt = tokenTicketBuilder.build("ST-123456", CoreAuthenticationTestUtils.getWebApplicationService());
-        assertNotNull(jwt);
-        val claims = JWTParser.parse(jwt).getJWTClaimsSet();
-        assertEquals("casuser", claims.getSubject());
+    void verifyJwtForServiceTicketEncoding() {
+        val service = CoreAuthenticationTestUtils.getWebApplicationService();
+        assertThrows(IllegalStateException.class, () -> tokenTicketBuilder.build("ST-123456", service));
     }
 }

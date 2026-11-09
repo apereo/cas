@@ -1589,4 +1589,5 @@ async function initializeAuthenticationOperations() {
         hideElements($("#passwordlessauthn-tab"));
     }
 
+    initializeInterruptInquiry();
 }

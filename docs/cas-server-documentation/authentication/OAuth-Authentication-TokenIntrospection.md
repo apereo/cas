@@ -45,7 +45,8 @@ may be useful or even required to return a signed JWT as the introspection respo
 A token introspection request may ask for a JWT introspection response by sending an introspection request 
 with an `Accept` HTTP header field set to `application/token-introspection+jwt`. The introspection endpoint responds with a JWT, 
 setting the `Content-Type` HTTP header field to `application/token-introspection+jwt` and the JWT `typ` ("type") header 
-parameter to `token-introspection+jwt`.
+parameter to `token-introspection+jwt`. The JWT is always signed, and encrypted when the client asks for it; an unsigned 
+JWT, whose algorithm is `none`, is never issued.
 
 The example response JWT payload contains the following JSON document:
  

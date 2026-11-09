@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The signing certificate below expired on 2016-01-01 (CN=expired-sp). -->
+<EntityDescriptor entityID="https://localhost:9859/sig-expired-cert" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                     protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <KeyDescriptor use="signing">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+                        MIICtjCCAZ6gAwIBAgIUDTQL9AC5VK+xpO7+SLA3jhgaYHkwDQYJKoZIhvcNAQEL
+                        BQAwFTETMBEGA1UEAwwKZXhwaXJlZC1zcDAeFw0xNTAxMDEwMDAwMDBaFw0xNjAx
+                        MDEwMDAwMDBaMBUxEzARBgNVBAMMCmV4cGlyZWQtc3AwggEiMA0GCSqGSIb3DQEB
+                        AQUAA4IBDwAwggEKAoIBAQCN/vy3tRrVXyv40EHjU9LFVE3NfFj98t5Vwpv8NuQV
+                        +iUmFbb7yrZSCyV0Zi0kWx1JQByWKKHcsyDQ2nI2OdnNV5YRGWK2ByQpaBJRTJgL
+                        QdQ4rplOWkAqxicaF8n8d1fXOSbSflneudd6uZRaxUp0bykIEShluaEqYghWwiDh
+                        fujGhAcVCXkST7OfWJNfkD18o1LOcfflhe5UJlvuva0JnxOXa9+OxD2yAJO8MayT
+                        VasLI14HhhBKue0ricIWscKqLbur/4njVQL90YHJkpypPhlrW6Sk7Q+0HEwbpNER
+                        q0dbMcOgl0kH9oSbeKr0LY68UA865A/Pv2LuVVecFsOJAgMBAAEwDQYJKoZIhvcN
+                        AQELBQADggEBAEIkHS4Z8CTpK/MGAIaNYT44YbwBYcE5YyoEljIenqs7lUf5Qh/k
+                        3r1mMU6LzZX8qVmFCG7x7x+VMgExvZcL4MQZUX7nJnw54+gqyiwhUkQxOP01DBuL
+                        mcQr/vRZ2x+aqi/OnrS/BrTpqXfrUWFKiBPmrWTg+lmfgM1Ac/3WvE1WhYYmcZ7z
+                        Z3AUTvZTZySlbi0+sHt1gqW8Pb6Qopw+okZq2dZStTrv2BPeMPbyuPKCJPUL4eyb
+                        PqJDDS6ctmgLwXOLZ8wyWdejPlSRdRgrwMn3tXPaajxriYiB/UXPUf3OCXSqhbqU
+                        Va1H2wGDthkt5auqCYisOvr0v1gZ18MybQM=
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </KeyDescriptor>
+        <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                  Location="https://localhost:9859/post" index="0" isDefault="true"/>
+    </SPSSODescriptor>
+</EntityDescriptor>

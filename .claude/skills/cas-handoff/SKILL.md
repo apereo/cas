@@ -12,7 +12,8 @@ Run these steps, in order, before reporting the work as done. The rules behind t
    missing test dependency shows (see Conventions in AGENTS.md, the `cas-testing` skill and, in a sandbox without
    Gradle, the `cas-sandbox-verification` skill).
 2. Run Checkstyle on every changed Java file (rule below), and fix overloads, imports and file length it reports.
-3. Run `git --no-optional-locks diff --check`.
+3. Run `git --no-optional-locks diff --check`, and check that changed documentation pages (release notes aside) name no
+   CAS setting, inline or in `properties` blocks (`cas-docs-site` skill).
 4. Cross-check the puppeteer scenarios that cover the change and update them (`cas-puppeteer-scenarios` skill).
 5. Add the release-notes entry when the work calls for one (security notes: see "Test, concurrency, and hand-off
    expectations" in AGENTS.md; release-notes format: `cas-docs-site` skill).

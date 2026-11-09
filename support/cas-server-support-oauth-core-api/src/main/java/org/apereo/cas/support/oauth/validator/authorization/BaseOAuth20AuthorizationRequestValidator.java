@@ -64,12 +64,32 @@ public abstract class BaseOAuth20AuthorizationRequestValidator implements OAuth2
             return false;
         }
 
+        if (!verifyRequestObject(request)) {
+            return false;
+        }
+
         if (!verifyRequestedResources(request, registeredService)) {
             return false;
         }
 
         val responseType = getResponseTypeFromRequest(request);
         return verifyResponseType(request, responseType);
+    }
+
+    /**
+     * A request object that cannot be decrypted or verified refuses the request with {@code invalid_request_object}
+     * (OpenID Connect Core 1.0, section 6.3.2; RFC 9101, section 6.3), sent to the redirect URI already checked
+     * against the service, instead of letting the request continue on its query parameters alone.
+     *
+     * @param request the request
+     * @return true/false
+     */
+    private boolean verifyRequestObject(final HttpServletRequest request) {
+        if (!requestParameterResolver.isRequestObjectVerified(request)) {
+            setErrorDetails(request, OAuth20Constants.INVALID_REQUEST_OBJECT, "Request object cannot be decrypted or verified", true);
+            return false;
+        }
+        return true;
     }
 
     private boolean verifyRequestedResources(final HttpServletRequest request, final OAuthRegisteredService registeredService) {

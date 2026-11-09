@@ -11,7 +11,7 @@
     "--cas.http-web-request.header.content-security-policy=",
     
     "--cas.google-recaptcha.enabled=false",
-    "--cas.google-recaptcha.verify-url=https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    "--cas.google-recaptcha.verify-url=http://localhost:5611/siteverify",
     "--cas.google-recaptcha.site-key=0x4AAAAAAAcdWAsikHjWm_lV",
     "--cas.google-recaptcha.secret=0x4AAAAAAAcdWHaIf6P3GB-Lhaf0-xO6YjU",
     "--cas.google-recaptcha.version=TURNSTILE",

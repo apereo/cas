@@ -1,0 +1,18 @@
+{
+  "dependencies": "reports",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--logging.config=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/log4j2.xml",
+    "--logging.file.name=${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}/cas.log",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=logfile,ssoSessions",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

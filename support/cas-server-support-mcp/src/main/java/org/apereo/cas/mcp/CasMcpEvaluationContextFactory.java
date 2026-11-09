@@ -14,7 +14,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +23,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.test.MockRequestContext;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
@@ -38,7 +34,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * service that matches it, the principal resolved from the attribute repositories (no credential is verified) and an
  * authentication for that principal. Tools that call request-aware components also get a view of the live MCP request
  * that carries no parameters, headers, cookies or query string, so nothing the MCP caller sent leaks into the evaluation,
- * apart from client details the tool was given for the login attempt, or a webflow request context built over it.
+ * apart from client details the tool was given for the login attempt.
  *
  * @author Misagh Moayyed
  * @since 8.1.0
@@ -148,26 +144,6 @@ public class CasMcpEvaluationContextFactory {
                 ClientInfoHolder.clear();
             }
         }
-    }
-
-    /**
-     * Build a Spring Webflow request context over the stripped live request, holding the service, registered service,
-     * credential and authentication the way the login webflow holds them once the person has authenticated.
-     *
-     * @param context the evaluation context
-     * @return the webflow request context
-     * @throws IllegalStateException when called outside of an HTTP request
-     */
-    public RequestContext newWebflowRequestContext(final CasMcpEvaluationContext context) {
-        val exchange = currentHttpExchange();
-        val requestContext = new MockRequestContext();
-        requestContext.setExternalContext(new ServletExternalContext(exchange.request().getServletContext(),
-            exchange.request(), exchange.response()));
-        WebUtils.putServiceIntoFlowScope(requestContext, context.service());
-        WebUtils.putRegisteredService(requestContext, context.registeredService());
-        WebUtils.putCredential(requestContext, context.credential());
-        WebUtils.putAuthentication(context.authentication(), requestContext);
-        return requestContext;
     }
 
     /**

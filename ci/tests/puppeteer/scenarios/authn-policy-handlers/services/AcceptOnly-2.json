@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/acceptonly$",
+  "id": 2,
+  "name": "AcceptOnly",
+  "description": "Requires the AcceptHandler; no criteria, so SSO participation is not filtered and only the global policy can refuse the ticket",
+  "authenticationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "AcceptHandler" ]]
+  }
+}

@@ -137,7 +137,7 @@ jobs:
           timeout_minutes: 55
           max_attempts: 2
           # publish.sh exits 1 for failures worth another attempt (clone, build, push);
-          # 3 (broken internal links) and 4 (broken external links) fail at once.
+          # 3 (broken internal links), 4 (broken external links) and 5 (documentation checks) fail at once.
           retry_on_exit_code: 1
           shell: bash
           command: ./ci/docs/publish.sh --branch ${{ env.DOCS_BRANCH }} --proof-read "$DOCS_PROOF_READ" --proof-external "$DOCS_PROOF_EXTERNAL"

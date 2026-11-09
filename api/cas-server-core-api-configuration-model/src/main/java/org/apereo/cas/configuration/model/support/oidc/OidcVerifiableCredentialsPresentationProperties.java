@@ -34,6 +34,9 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
      * of the verifier; only then can the request object be served by reference. {@code X509_HASH}, which the
      * OpenID4VC High Assurance Interoperability Profile requires, signs the request object the same way and
      * identifies CAS by the hash of the leaf certificate, so the certificate needs no particular name.
+     * {@code OPENID_FEDERATION} identifies CAS by its OpenID Federation entity identifier, its OpenID Connect issuer:
+     * wallets resolve its trust chain and take its keys and verifier metadata from its entity configuration, so it
+     * requires CAS to take part in an OpenID Federation as an OpenID provider.
      */
     private ClientIdentifierPrefixes clientIdentifierPrefix = ClientIdentifierPrefixes.REDIRECT_URI;
 
@@ -71,7 +74,15 @@ public class OidcVerifiableCredentialsPresentationProperties implements Serializ
          * The client identifier is the base64url-encoded SHA-256 hash of the DER-encoded leaf certificate used to
          * sign the request object. It requires the CAS OIDC signing key to carry a certificate chain.
          */
-        X509_HASH("x509_hash");
+        X509_HASH("x509_hash"),
+        /**
+         * The client identifier is the OpenID Federation entity identifier of CAS, its OpenID Connect issuer. Request
+         * objects are signed with the CAS OIDC signing key, which wallets verify with the keys of the
+         * {@code openid_credential_verifier} metadata in the entity configuration of CAS, found through its trust
+         * chain; encrypted responses use the encryption keys of the CAS OIDC keystore published there. It requires the
+         * OpenID Federation module, with CAS in the OpenID provider role.
+         */
+        OPENID_FEDERATION("openid_federation");
 
         private final String value;
     }

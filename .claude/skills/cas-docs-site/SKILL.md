@@ -10,7 +10,7 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
 
 - Documentation pages on gh-pages are pre-rendered per version, but they load the stylesheet and script from the shared site root, and every publish overwrites those root files. The current design ships as `stylesheets/site.css`, `stylesheets/site-print.css` and `javascripts/site.js`; the root `stylesheet.css`, `print.css` and `main.js` belong to the released versions' old markup. A redesign that changes page markup must use new asset names, never replace the ones older versions link.
 - The documentation data generator (`docs/cas-server-documentation-processor`) runs as `java @build/casdocsgen.args ...`, an argument file written by its `docsGeneratorArguments` task from `sourceSets.main.runtimeClasspath`; `publish.sh` no longer builds the ~1 GB `casdocsgen.jar` boot jar. Its Gradle run adds `-DskipErrorProneCompiler=true` (override with `DOCS_GENERATOR_GRADLE_OPTIONS`, an empty value restores Error Prone). It still needs every CAS module compiled: actuators, feature toggles and shell commands are found by ClassGraph scans of the runtime classpath, and third-party settings come from the dependencies' metadata. Those lookups go through `CasDocumentationClassIndex`, one ClassGraph scan of `org` shared by the exporters; add new class lookups there rather than calling `ReflectionUtils`, which scans the whole classpath on every call.
-- `ci/docs/publish.sh` exit codes carry meaning for the workflow retry (`retry_on_exit_code: 1`): 1 is a failure worth another attempt, 3 is broken internal links/images/scripts (fails at once, nothing is published), 4 is broken external links only (the site is published first, then the job fails). Keep new failure paths on 1 unless a rerun cannot help. External links are checked only on the weekly schedule or when asked (`--proof-external`, the `proofReadExternal` input or `vars.DOCS_PROOF_EXTERNAL`), with successful results cached for 7 days in `build/htmlproofer`.
+- `ci/docs/publish.sh` exit codes carry meaning for the workflow retry (`retry_on_exit_code: 1`): 1 is a failure worth another attempt, 3 is broken internal links/images/scripts (fails at once, nothing is published), 4 is broken external links only (the site is published first, then the job fails), 5 is a failed docs check (`ci/docs/checks.js`, fails at once). Keep new failure paths on 1 unless a rerun cannot help. External links are checked only on the weekly schedule or when asked (`--proof-external`, the `proofReadExternal` input or `vars.DOCS_PROOF_EXTERNAL`), with successful results cached for 7 days in `build/htmlproofer`.
 - Actuator endpoint blocks (`_includes_site/actuators.html`) take their operations from the `cas_actuator_operations` filter in `_plugins/cas_actuators.rb` (sorted, parameters normalized, curl built there), and settings snippets from `cas_actuator_enable_snippet` / `cas_actuator_security_snippet` via `cas-actuator-snippet.html` in all three formats. Per operation, render only what differs (parameters, response, example); setup, security, settings and troubleshooting are rendered once per include in the shared tabs. The operations table is excluded from `responsiveTables()`.
 - Settings search: `ci/docs/index.js` writes `assets/data/<version>/index.json` as `{generated, docs}` (no lunr index; each doc carries name, short type, description, default, kind required/optional/thirdparty, module, duration, deprecation). `site.js` searches it directly (`searchCasSettings`, shared by the Configuration Properties page and the Shift-Shift palette); the page state lives in the URL (`?q=&exact=1&scope=name&kind=cas|thirdparty&deprecated=hide`). The layout exposes `data-docs-base`, `data-docs-version` and `data-docs-build` on `<body>` for these URLs.
 - Feature toggles (`Configuration-Feature-Toggles.md`) render through `_includes_site/cas-feature-toggles.html` from the `cas_feature_catalog` filter in `_plugins/cas_features.rb`, which derives feature and module from the `CasFeatureModule.<Feature>[.<module>].enabled` property, groups features by area and links docs only when the target page exists for that version. Add title overrides, groups or docs links there, not in the include. The environment variable form maps both `.` and `-` to `_` (`CasFeatureEnabledCondition` reads through `Environment.getProperty`), unlike the relaxed-binding form used for regular settings.
@@ -45,7 +45,9 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
 - Settings in docs (required, standing rule from the maintainer): never refer to a configuration setting by name in
   documentation pages, neither inline nor in fenced `properties` blocks. Describe the feature, say that it is available,
   and say that it is enabled, disabled or tuned through CAS settings; the page's `casproperties` include lists them. The
-  only exception is release notes, which may name CAS or other settings.
+  only exceptions are release notes, which may name CAS or other settings, and `planning/Quick-Start.md`. This covers
+  third-party settings too (`spring.profiles.active` is "the active profiles", `spring.application.name` "the application
+  name"); a page that needs a third-party setting includes it with `casproperties.html thirdPartyExactMatch=...`.
 - Setting links in release notes (required): every setting named in release notes must be marked so readers can look
   it up in place. Inline, write `` `cas.server.name`{: .cas-setting} ``
   (an assignment such as `` `cas.tgc.secure=false`{: .cas-setting} `` works too; the value is ignored for the lookup). For a
@@ -79,3 +81,23 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
 - Large topics are split into one page per concern with a sidebar submenu (see `authorization/Heimdall-Authorization-*.md`
   and `multitenancy/Multitenancy-*.md`); when moving a section, update cross-page anchors and links in release notes.
 - JSON examples pasted into the documentation are pretty-printed (one member per line, two-space indent), never minified.
+- Docs checks (`ci/docs/checks.js`, run by `publish.sh` before the link proofer when proofreading, exit 5): unique titles;
+  a usable opening paragraph or description (from the rendered pages); JSON blocks parse (Hjson comments, trailing
+  commas and `'''` strings allowed, `...` placeholders skipped) and keep one object member per line; no setting names in
+  pages outside release notes and Quick Start (inline, properties and shell blocks; Liquid tags, HTML tags and URLs are
+  ignored); settings marked in release notes exist in the catalog (exact, or a segment-aligned prefix or suffix);
+  every top-level `sidebar.md` section is in a `CAS_SIDEBAR_GROUPS` group. Run locally with
+  `node ci/docs/checks.js docs/cas-server-documentation [rendered version dir] [index.json]`.
+- Markdown copies: after the Jekyll build, `ci/docs/markdown.js` writes `<page>.md` next to every rendered page that has
+  `#cas-docs-container`, plus `<version>/llms.txt` (sections from the rendered `sidebar.html`, descriptions from the
+  meta tags, other pages under `## Optional`). It has its own small HTML parser (no npm dependency) and knows the CAS
+  widgets: settings lists become one line per setting, only the active `casmodule` pane and the `.properties` snippets of
+  actuator blocks are kept, tab panes get bold labels, the "Notes on configuration" topic and UI controls are dropped.
+  The `.md` files carry no front matter so GitHub Pages serves them as is. The layout adds
+  `<link rel="alternate" type="text/markdown">` for versioned pages and the toolbar's Markdown button copies that file.
+  When adding a new interactive widget, teach `markdown.js` to skip its controls. Tests: `node --test ci/docs/scripts.test.cjs`.
+- Settings changes: in the data phase `ci/docs/settings-changes.js` compares `assets/data/<version>/index.json` with the
+  catalog of the next entry in `documentation_versions` (CAS settings only; names compared without `[0]`/`[key]`; equal
+  durations such as `10000` and `PT10S` are not a change) and writes `assets/data/<version>/settings-changes.json` and
+  `_data/<data dir>/settings-changes.json`, which `configuration/Configuration-Properties-Changes.md` renders through
+  `_includes_site/settings-changes.html`.

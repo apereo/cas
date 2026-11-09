@@ -3,12 +3,22 @@ package org.apereo.cas.support.oauth.web.mgmt;
 import module java.base;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionOperations;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -60,6 +70,32 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").exists());
+    }
+
+    @Test
+    void verifyTokensAreScannedInTicketTransaction() {
+        val inTransaction = new AtomicBoolean();
+        val scans = new ArrayList<Boolean>();
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTickets(ArgumentMatchers.<Predicate<Ticket>>any())).thenAnswer(_ -> {
+            scans.add(inTransaction.get());
+            return Stream.empty();
+        });
+        val ticketTransactionOperations = new TransactionOperations() {
+            @Override
+            public <T> T execute(final TransactionCallback<T> action) {
+                inTransaction.set(true);
+                try {
+                    return action.doInTransaction(new SimpleTransactionStatus());
+                } finally {
+                    inTransaction.set(false);
+                }
+            }
+        };
+        val endpoint = new OAuth20TokenManagementEndpoint(casProperties, new DirectObjectProvider<>(registry),
+            new DirectObjectProvider<>(mock(JwtBuilder.class)), ticketTransactionOperations);
+        assertTrue(endpoint.getTokens().isEmpty());
+        assertEquals(List.of(true), scans);
     }
 
     @Test

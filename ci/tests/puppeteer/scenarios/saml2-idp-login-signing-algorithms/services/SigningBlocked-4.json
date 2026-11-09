@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://signing\\.example\\.org/sp-blocked$",
+  "name" : "SigningBlocked",
+  "id" : 4,
+  "evaluationOrder" : 4,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "signAssertions" : true,
+  "signingSignatureAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" ] ],
+  "signingSignatureBlackListedAlgorithms" : [ "java.util.ArrayList", [ "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
