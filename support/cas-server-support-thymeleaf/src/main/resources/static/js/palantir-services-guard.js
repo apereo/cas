@@ -5,10 +5,13 @@
  * Once the definition differs from it, closing the dialog asks whether to keep editing, keep a draft and close,
  * or discard the changes, and a draft is kept in this browser's storage while the edits stay unsaved, so a page
  * reload or a closed tab can be picked up again. Reopening the same application, or a new application of the
- * same type, offers to resume the draft. Saving or discarding removes it. Nothing is sent to the server.
+ * same type, offers to resume the draft. Saving or discarding removes it, and a draft older than thirty days is
+ * dropped. Nothing is sent to the server.
  */
 class PalantirServiceEditGuard {
     static STORAGE_PREFIX = "PalantirServiceDraft:";
+
+    static DRAFT_LIFETIME_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 
     static MODES = {
         wizard: {dialog: "#editServiceWizardDialog", editor: "wizardServiceEditor"},
@@ -69,12 +72,52 @@ class PalantirServiceEditGuard {
             : `${mode}:new:${serviceClass}`;
     }
 
+    /**
+     * Whether a kept draft is too old to offer, or has no time it was kept.
+     *
+     * @param draft the draft
+     * @returns {boolean} true when the draft should be dropped
+     */
+    static isExpired(draft) {
+        const savedAt = new Date(draft?.savedAt).getTime();
+        return Number.isNaN(savedAt) || Date.now() - savedAt > PalantirServiceEditGuard.DRAFT_LIFETIME_MILLISECONDS;
+    }
+
     static readDraft(key) {
         try {
             const stored = window.localStorage.getItem(PalantirServiceEditGuard.STORAGE_PREFIX + key);
-            return stored ? JSON.parse(stored) : null;
+            const draft = stored ? JSON.parse(stored) : null;
+            if (draft && PalantirServiceEditGuard.isExpired(draft)) {
+                PalantirServiceEditGuard.removeDraft(key);
+                return null;
+            }
+            return draft;
         } catch (error) {
             return null;
+        }
+    }
+
+    /**
+     * Drop every kept draft that has expired, or that can no longer be read.
+     */
+    static removeExpiredDrafts() {
+        try {
+            const storage = window.localStorage;
+            const keys = Array.from({length: storage.length}, (_, index) => storage.key(index))
+                .filter(key => key?.startsWith(PalantirServiceEditGuard.STORAGE_PREFIX));
+            for (const key of keys) {
+                let draft = null;
+                try {
+                    draft = JSON.parse(storage.getItem(key));
+                } catch (error) {
+                    draft = null;
+                }
+                if (!draft || PalantirServiceEditGuard.isExpired(draft)) {
+                    storage.removeItem(key);
+                }
+            }
+        } catch (error) {
+            console.debug("Palantir could not look for expired drafts of applications", error);
         }
     }
 
@@ -286,13 +329,15 @@ class PalantirServiceEditGuard {
     }
 
     /**
-     * Warn before the page is left while a dialog holds unsaved edits; the draft is kept either way.
+     * Drop expired drafts, and warn before the page is left while a dialog holds unsaved edits; the draft is kept
+     * either way.
      */
     static initialize() {
         if (PalantirServiceEditGuard.initialized) {
             return;
         }
         PalantirServiceEditGuard.initialized = true;
+        PalantirServiceEditGuard.removeExpiredDrafts();
         window.addEventListener("beforeunload", event => {
             const dirty = Object.keys(PalantirServiceEditGuard.MODES).filter(mode => PalantirServiceEditGuard.isDirty(mode));
             if (dirty.length > 0) {

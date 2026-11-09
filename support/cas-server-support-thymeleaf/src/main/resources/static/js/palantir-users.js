@@ -218,22 +218,49 @@ class PalantirUserLookup {
                         .sort((first, second) => String(second.whenActionWasPerformed ?? "")
                             .localeCompare(String(first.whenActionWasPerformed ?? "")));
                 },
-                render: records => `
-                    <table class="palantir-user-card__table">
-                        <thead><tr><th scope="col">When</th><th scope="col">Action</th>
-                            <th scope="col">Resource</th><th scope="col">Client</th></tr></thead>
-                        <tbody>${records.slice(0, 100).map(record => `
-                            <tr>
-                                <td>${escapePalantirMarkup(PalantirUserLookup.when(record.whenActionWasPerformed))}</td>
-                                <td><code>${escapePalantirMarkup(record.actionPerformed ?? "")}</code></td>
-                                <td class="palantir-user-card__resource">${escapePalantirMarkup(
-                    typeof record.resourceOperatedUpon === "string"
-                        ? record.resourceOperatedUpon : JSON.stringify(record.resourceOperatedUpon ?? ""))}</td>
-                                <td>${escapePalantirMarkup(record.clientInfo?.clientIpAddress ?? "")}</td>
-                            </tr>`).join("")}
+                render: () => `
+                    <table id="userLookupActivityTable" class="mdc-data-table__table table table-striped noborder">
+                        <thead>
+                        <tr class="mdc-data-table__header-row">
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">When</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Action</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client</th>
+                        </tr>
+                        </thead>
+                        <tbody class="mdc-data-table__content">
                         </tbody>
-                    </table>
-                    ${records.length > 100 ? `<p class="palantir-user-card__more">Showing the latest 100 of ${records.length} events.</p>` : ""}`
+                    </table>`,
+                afterRender: records => {
+                    const table = $("#userLookupActivityTable").DataTable({
+                        pageLength: 10,
+                        autoWidth: false,
+                        order: [],
+                        columnDefs: [
+                            {
+                                targets: 0,
+                                render: (data, type) => type === "display"
+                                    ? escapePalantirMarkup(PalantirUserLookup.when(data)) : data
+                            },
+                            {targets: 2, className: "palantir-user-card__resource"}
+                        ],
+                        drawCallback: () => {
+                            $("#userLookupActivityTable tr").addClass("mdc-data-table__row");
+                            $("#userLookupActivityTable td").addClass("mdc-data-table__cell");
+                        }
+                    });
+                    for (const record of records) {
+                        const resource = typeof record.resourceOperatedUpon === "string"
+                            ? record.resourceOperatedUpon : JSON.stringify(record.resourceOperatedUpon ?? "");
+                        table.row.add({
+                            0: String(record.whenActionWasPerformed ?? ""),
+                            1: `<code>${escapePalantirMarkup(record.actionPerformed ?? "")}</code>`,
+                            2: escapePalantirMarkup(resource),
+                            3: escapePalantirMarkup(record.clientInfo?.clientIpAddress ?? "")
+                        });
+                    }
+                    table.draw();
+                }
             }
         ];
     }

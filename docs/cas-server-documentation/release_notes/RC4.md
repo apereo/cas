@@ -227,7 +227,7 @@ selected version from the same dialog. Under *Interrupts*, the authentication se
 source answered.
 
 Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
-closing with unsaved changes, keeping a draft in the browser that can be resumed later. A keyboard shortcut overlay opens
+closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days. A keyboard shortcut overlay opens
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
 

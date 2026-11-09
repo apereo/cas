@@ -3310,8 +3310,7 @@ html.palantir-page[data-theme="dark"] .palantir-user-card__note.is-error {
     font-size: 12px;
 }
 
-.palantir-user-card code.palantir-user-card__code,
-.palantir-user-card__table code {
+.palantir-user-card code.palantir-user-card__code {
     color: var(--palantir-text-2);
     font-size: 12px;
     word-break: break-all;
@@ -3321,37 +3320,7 @@ html.palantir-page[data-theme="dark"] .palantir-user-card__note.is-error {
     flex: none;
 }
 
-.palantir-user-card__body:has(.palantir-user-card__table) {
-    overflow-x: auto;
-}
-
-.palantir-user-card__table {
-    width: 100%;
-    min-width: 640px;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.palantir-user-card__table :is(th, td) {
-    padding: 6px 8px;
-    border-bottom: 1px solid var(--palantir-divider);
-    color: var(--palantir-text);
-    text-align: left;
-    vertical-align: top;
-    overflow-wrap: normal;
-}
-
-.palantir-user-card__table code {
-    word-break: normal;
-}
-
-.palantir-user-card__table th {
-    color: var(--palantir-text-muted);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.palantir-user-card__resource {
+td.palantir-user-card__resource {
     max-width: 420px;
     color: var(--palantir-text-2);
     word-break: break-all;
@@ -3382,12 +3351,6 @@ html.palantir-page[data-theme="dark"] .palantir-user-card__note.is-error {
 
 .palantir-user-card__body > .palantir-button {
     margin: 4px 0;
-}
-
-.palantir-user-card__more {
-    margin: 8px 0 0;
-    color: var(--palantir-text-muted);
-    font-size: 12px;
 }
 
 @media (max-width: 599px) {

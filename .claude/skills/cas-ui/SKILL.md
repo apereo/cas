@@ -144,7 +144,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   cells. Never put such markup in the page with `.html()` directly.
 - The wizard and the plain editor are guarded by `PalantirServiceEditGuard` (`palantir-services-guard.js`): each dialog's
   `beforeClose` asks when its JSON differs from the settled baseline, drafts live in localStorage under
-  `PalantirServiceDraft:<wizard|editor>:<id|new:<class>>`, and a successful save must call `saved(mode)` before closing.
+  `PalantirServiceDraft:<wizard|editor>:<id|new:<class>>` as `{text, savedAt}` (drafts older than 30 days or without a
+  readable `savedAt` are dropped on read and swept by `initialize()`), and a successful save must call `saved(mode)` before closing.
   Scripts and scenarios that cancel a dialog after changing fields must answer "Discard your changes?" (deny button).
 - Keyboard shortcuts are listed from `palantirShortcutGroups()` (palantir-hotkeys.js) for both the `?` overlay and the
   Settings tab; add a new hotkey there too.
