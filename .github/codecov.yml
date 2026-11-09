@@ -2,6 +2,10 @@ codecov:
   max_report_age: off
   strict_yaml_branch: master
 
+parsers:
+  jacoco:
+    partials_as_hits: true
+
 coverage:
   round: up
   range: "80...90"
@@ -12,11 +16,7 @@ coverage:
         # basic
         target: 90%
         threshold: 0%
-        base: auto 
-        flags: 
-          - unit
-        paths: 
-          - "src"
+        base: auto
        # advanced
         branches: 
           - master

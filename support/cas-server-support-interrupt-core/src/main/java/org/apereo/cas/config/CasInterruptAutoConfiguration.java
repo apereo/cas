@@ -2,12 +2,16 @@ package org.apereo.cas.config;
 
 import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquirer;
+import org.apereo.cas.interrupt.InterruptInquiryEndpoint;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.InterruptTrackingCookieCipherExecutor;
@@ -17,6 +21,7 @@ import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 import org.apereo.cas.interrupt.SimpleInterruptTrackingEngine;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -36,6 +41,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -151,6 +157,27 @@ public class CasInterruptAutoConfiguration {
                     cfg.configureInterruptInquiryExecutionPlan(plan);
                 });
             return plan;
+        }
+    }
+
+    @Configuration(value = "CasInterruptEndpointConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class CasInterruptEndpointConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        public InterruptInquiryEndpoint interruptInquiryEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(InterruptInquirer.BEAN_NAME)
+            final ObjectProvider<InterruptInquiryExecutionPlan> interruptInquirer,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> principalResolver) {
+            return new InterruptInquiryEndpoint(casProperties, applicationContext, interruptInquirer,
+                servicesManager, webApplicationServiceFactory, principalResolver);
         }
     }
 

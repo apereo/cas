@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link BaseInterruptInquirer}.
@@ -22,13 +21,12 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
     public final InterruptResponse inquire(final Authentication authentication,
                                            final RegisteredService registeredService,
                                            final Service service,
-                                           final Credential credential,
-                                           final RequestContext requestContext)
+                                           final Credential credential)
             throws Throwable {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
-        return inquireInternal(authentication, registeredService, service, credential, requestContext);
+        return inquireInternal(authentication, registeredService, service, credential);
     }
 
     protected boolean shouldSkipInterruptForRegisteredService(final RegisteredService registeredService) {
@@ -49,7 +47,6 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
     protected abstract InterruptResponse inquireInternal(Authentication authentication,
                                                          RegisteredService registeredService,
                                                          Service service,
-                                                         Credential credential,
-                                                         RequestContext requestContext)
+                                                         Credential credential)
             throws Throwable;
 }

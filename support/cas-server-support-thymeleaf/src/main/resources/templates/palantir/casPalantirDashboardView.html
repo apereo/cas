@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout(mainContentClass='container-xxl')}">
+      layout:decorate="~{layout(mainContentClass='container-xxl', themeBuilderDisabled=true)}">
 
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -41,6 +41,7 @@
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.notyf.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.jsyaml.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.jsdiff.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.hotkeys.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.tomselect.js}}"></script>
 
@@ -97,14 +98,19 @@
     <script type="text/javascript" th:src="@{/js/palantir-tasks.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-sso.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-authn.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-interrupts.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-authz.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-charts.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-cas-discovery.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-cas-features.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-cas-events.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-users.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-command-palette.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-hotkeys.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-sections.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-services-history.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-services-guard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-cas.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
@@ -155,6 +161,7 @@
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/mfatab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/multitenancytab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/clustertab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/userstab :: main}"/>
         </div>
 
         <div th:replace="~{fragments/palantir/settingspanel :: main}"/>

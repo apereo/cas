@@ -35,7 +35,7 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
                     return new JsonWebKeySet(json);
                 }),
                 () -> {
-                    LOGGER.warn("JWKS file for UMA RPT tokens cannot be located. Tokens will not be signed");
+                    LOGGER.warn("JWKS file for UMA RPT tokens cannot be located. Tokens cannot be signed and will not be issued");
                     return new JsonWebKeySet();
                 })
             .get();
@@ -46,6 +46,17 @@ public class UmaRequestingPartyTokenSigningService extends BaseTokenSigningAndEn
     public String encode(final OAuthRegisteredService registeredService, final JwtClaims claims) throws Throwable {
         LOGGER.debug("Generated claims to put into token are [{}]", claims.toJson());
         return signTokenIfNecessary(claims, registeredService);
+    }
+
+    /**
+     * Requesting party tokens are always signed with the keys of the JWKS file; unsigned JWTs are not issued.
+     *
+     * @param registeredService the registered service
+     * @return true
+     */
+    @Override
+    public boolean shouldSignToken(final OAuthRegisteredService registeredService) {
+        return true;
     }
 
     @Override

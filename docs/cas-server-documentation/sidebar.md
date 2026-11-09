@@ -87,6 +87,7 @@ layout: null
         *   [Docker Secrets](/cas/{{ version }}/configuration/Configuration-Properties-Security-DockerSecrets.html)
     *   [Configuration Metadata](/cas/{{ version }}/configuration/Configuration-Metadata-Repository.html)
     *   [Configuration Properties](/cas/{{ version }}/configuration/Configuration-Properties.html)
+    *   [Configuration Changes](/cas/{{ version }}/configuration/Configuration-Properties-Changes.html)
     *   [Configuration Extensions](/cas/{{ version }}/configuration/Configuration-Management-Extensions.html)
     *   [Configuration Reloading](/cas/{{ version }}/configuration/Configuration-Management-Reload.html)
     *   [Configuration Discovery](/cas/{{ version }}/configuration/Configuration-Discovery.html)

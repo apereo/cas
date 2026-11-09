@@ -47,9 +47,9 @@ CREATE INDEX idx_ticket_expiration ON cas_tickets (expiration_time);
 
 To scan large tables without reading every row into memory, CAS sets `useCursorFetch=true` for MySQL, together with
 `cachePrepStmts=true`, `prepStmtCacheSize=250` and `prepStmtCacheSqlLimit=2048`, unless the
-`cas.ticket.registry.jpa.properties`{: .cas-setting} settings or the JDBC URL already set them. Connector/J uses a
+additional JPA properties of the ticket registry or the JDBC URL already set them. Connector/J uses a
 server-side cursor only for statements with a fetch size, so CAS applies the configured
-`cas.ticket.registry.jpa.fetch-size`{: .cas-setting} only to queries that stream tickets, such as the cleaner's scan;
+fetch size only to queries that stream tickets, such as the cleaner's scan;
 single-ticket lookups read their row directly. With `useCursorFetch`, Connector/J prepares every statement on the
 server, and the prepared statement cache keeps that to one round trip per lookup.
 
@@ -103,12 +103,8 @@ ALTER TABLE cas_tickets ALTER COLUMN attributes TYPE jsonb USING attributes::jso
 This ticket registry implementation automatically supports [distributed locking](../ticketing/Ticket-Registry-Locking.html).
 The tables that track locking operations come from [Spring Integration](https://spring.io/projects/spring-integration) JDBC support.
 Spring Integration only creates them on its own for embedded databases; for any other database, either create them
-up front from the schema scripts that ship with Spring Integration, or let CAS create them on startup with:
-
-```properties
-spring.integration.jdbc.initialize-schema=always
-```
-{: .cas-settings-linked}
+up front from the schema scripts that ship with Spring Integration, or let CAS create them on startup by setting the
+Spring Integration JDBC schema initialization mode to `always`.
 
 Without these tables, every attempt to lock a ticket fails, and CAS cannot issue service tickets.
 

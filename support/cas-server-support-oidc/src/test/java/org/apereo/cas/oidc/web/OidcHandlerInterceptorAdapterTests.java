@@ -73,7 +73,9 @@ class OidcHandlerInterceptorAdapterTests {
         @ValueSource(strings = {
             "%6FidcAuthorize", "%6FidcAccessToken", "%6FidcToken", "%6FidcCiba",
             "%6FidcVcCredentialOfferTransactions", "%6FidcVcPresentationRequest",
-            "%6FidcPushAuthorize", "%72egister", "%63lientConfig"
+            "%6FidcPushAuthorize", "%72egister", "%63lientConfig",
+            "oidcAccessToken;x=y", "oidcToken;x=y", "oidcCiba;x=y", "oidcPushAuthorize;x=y", "oidcPushAuthorize;x=y/",
+            "register;x=y", "clientConfig;x=y", "oidcVcCredentialOfferTransactions;x=y"
         })
         void verifyEncodedEndpointPathsRequireAuthentication(final String endpoint) throws Throwable {
             val clientId = UUID.randomUUID().toString();

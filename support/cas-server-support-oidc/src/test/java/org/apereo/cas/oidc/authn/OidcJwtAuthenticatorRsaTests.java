@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.DefaultOAuth20ClientAuthenticationProvider;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationProvider;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticationToken;
+import org.apereo.cas.support.oauth.profile.OAuth20UserProfile;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -48,6 +49,18 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
 
     @Test
     void verifyAction() throws Throwable {
+        val audience = casProperties.getServer().getPrefix().concat('/'
+                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
+        assertTrue(authenticateWithAudience(audience).isPresent());
+    }
+
+    @Test
+    void verifyIssuerAsAudience() throws Throwable {
+        assertTrue(authenticateWithAudience(casProperties.getAuthn().getOidc().getCore().getIssuer()).isPresent());
+        assertTrue(authenticateWithAudience("https://unknown.example.org").isEmpty());
+    }
+
+    private Optional<OAuth20UserProfile> authenticateWithAudience(final String audience) throws Throwable {
         val auth = getAuthenticator();
 
         val request = new MockHttpServletRequest();
@@ -66,8 +79,6 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
         registeredService.setJwks("file://" + file.getAbsolutePath());
         servicesManager.save(registeredService);
 
-        val audience = casProperties.getServer().getPrefix().concat('/'
-                + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.ACCESS_TOKEN_URL);
         val claims = getClaims(registeredService.getClientId(), registeredService.getClientId(),
                 registeredService.getClientId(), audience);
         val webKeys = oidcServiceJsonWebKeystoreCache.get(
@@ -77,8 +88,7 @@ class OidcJwtAuthenticatorRsaTests extends AbstractOidcTests {
             claims.toJson().getBytes(StandardCharsets.UTF_8), Map.of());
         val credentials = getCredential(request, OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER,
             new String(jwt, StandardCharsets.UTF_8), registeredService.getClientId());
-
-        assertTrue(auth.authenticate(credentials).isPresent());
+        return auth.authenticate(credentials);
     }
 
     @Test

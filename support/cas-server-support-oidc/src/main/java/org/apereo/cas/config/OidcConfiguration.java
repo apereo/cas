@@ -54,6 +54,7 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.OidcRegisteredServiceJsonWebKeystoreCacheLoader;
 import org.apereo.cas.oidc.jwks.OidcServiceJsonWebKeystoreCacheExpirationPolicy;
+import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.register.ClientJwksRegistrationStore;
 import org.apereo.cas.oidc.nativesso.OidcDeviceSecretGenerator;
 import org.apereo.cas.oidc.profile.OidcProfileScopeToAttributesFilter;
@@ -86,6 +87,7 @@ import org.apereo.cas.oidc.web.OidcCallbackAuthorizeViewResolver;
 import org.apereo.cas.oidc.web.OidcCasAuthenticationInterceptor;
 import org.apereo.cas.oidc.web.OidcCasClientRedirectActionBuilder;
 import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
+import org.apereo.cas.oidc.web.OidcRequestObjectDecrypter;
 import org.apereo.cas.oidc.web.OidcRequestParameterResolver;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientRegistrationRequestTranslator;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDefaultClientRegistrationRequestTranslator;
@@ -231,8 +233,22 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
             @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
-            final JwtBuilder accessTokenJwtBuilder) {
-            return new OidcRequestParameterResolver(accessTokenJwtBuilder);
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(OidcRequestObjectDecrypter.BEAN_NAME)
+            final OidcRequestObjectDecrypter oidcRequestObjectDecrypter,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator) {
+            return new OidcRequestParameterResolver(accessTokenJwtBuilder, oidcRequestObjectDecrypter, oauth20ClientSecretValidator);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = OidcRequestObjectDecrypter.BEAN_NAME)
+        public OidcRequestObjectDecrypter oidcRequestObjectDecrypter(
+            @Qualifier("oidcJsonWebKeystoreGeneratorService")
+            final ObjectProvider<OidcJsonWebKeystoreGeneratorService> oidcJsonWebKeystoreGeneratorService,
+            final CasConfigurationProperties casProperties) {
+            return new OidcRequestObjectDecrypter(oidcJsonWebKeystoreGeneratorService::getObject, casProperties);
         }
 
         @Bean
@@ -1035,9 +1051,15 @@ class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcClientRegistrationRequestTranslator")
         public OidcClientRegistrationRequestTranslator oidcClientRegistrationRequestTranslator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
-            return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext);
+            val timeout = Beans.newDuration(casProperties.getAuthn().getOidc().getRegistration().getClientIdMetadataDocument().getTimeout());
+            return new OidcDefaultClientRegistrationRequestTranslator(oidcConfigurationContext,
+                new DefaultOidcClientIdMetadataDocumentFetcher(httpClient, timeout,
+                    OidcDefaultClientRegistrationRequestTranslator.MAXIMUM_SECTOR_IDENTIFIER_DOCUMENT_SIZE, false));
         }
 
         @Bean

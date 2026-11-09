@@ -9,9 +9,9 @@ import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProp
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +24,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.webflow.execution.RequestContext;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -42,12 +41,21 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
 
     private final RestfulInterruptProperties restProperties;
 
+    /**
+     * Ask the REST endpoint for the interrupt. The {@code Accept-Language} header of the current HTTP request, when
+     * there is one on this thread, is passed along to the endpoint.
+     *
+     * @param authentication    the authentication
+     * @param registeredService the registered service
+     * @param service           the service
+     * @param credential        the credential
+     * @return the interrupt response, or none when the endpoint fails or answers with an error
+     */
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication,
                                              final RegisteredService registeredService,
                                              final Service service,
-                                             final Credential credential,
-                                             final RequestContext requestContext) {
+                                             final Credential credential) {
         HttpResponse response = null;
         try {
             val parameters = new HashMap<String, String>();
@@ -61,10 +69,10 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             }
 
             val headers = new HashMap<String, String>();
-            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-            val acceptedLanguage = request.getHeader("accept-language");
+            val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+            val acceptedLanguage = request != null ? request.getHeader(HttpHeaders.ACCEPT_LANGUAGE) : null;
             if (StringUtils.isNotBlank(acceptedLanguage)) {
-                headers.put("Accept-Language", acceptedLanguage);
+                headers.put(HttpHeaders.ACCEPT_LANGUAGE, acceptedLanguage);
             }
             headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());

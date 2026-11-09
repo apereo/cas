@@ -20,4 +20,6 @@ const assert = require("assert");
     assert(rp.jwks !== undefined);
     assert(rp.token_endpoint_auth_method === "private_key_jwt");
 
+    await cas.doRequest("https://localhost:8443/cas/rp/unknown/.well-known/openid-federation", "GET", {}, 404);
+
 })();

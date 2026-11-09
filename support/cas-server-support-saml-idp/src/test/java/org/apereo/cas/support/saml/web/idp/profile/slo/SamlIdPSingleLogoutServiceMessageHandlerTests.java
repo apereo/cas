@@ -153,11 +153,13 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
         val properties = new HashMap<String, String>();
         properties.put(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING, SAMLConstants.SAML2_SOAP11_BINDING_URI);
         val logoutRequest = DefaultSingleLogoutRequestContext.builder().properties(properties).build();
-        val logoutMsg = SingleLogoutMessage.builder().payload("SOAP_envelop").build();
+        val envelope = "<soap11:Envelope xmlns:soap11=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap11:Body/></soap11:Envelope>";
+        val logoutMsg = SingleLogoutMessage.builder().payload(envelope).build();
         val msg = samlSingleLogoutServiceMessageHandler.prepareLogoutHttpMessageToSend(logoutRequest, logoutMsg);
         assertNotNull(msg);
         assertEquals(MediaType.TEXT_XML_VALUE, msg.getContentType());
         assertNull(((LogoutHttpMessage) msg).getLogoutRequestParameter());
+        assertEquals(envelope, msg.getMessage());
     }
 
     @Test

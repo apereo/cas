@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
@@ -48,6 +49,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
                 service.getAttributes().put(TicketGrantingTicket.class.getSimpleName(), CollectionUtils.wrapList(ticketGrantingTicket.getId()));
                 service.getAttributes().put(RegisteredService.class.getSimpleName(), CollectionUtils.wrapList(relyingParty));
                 service.getAttributes().put("owner", CollectionUtils.wrapList(getTicketType().getName()));
+                service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, CollectionUtils.wrapList(relyingParty));
                 return new SamlAttributeQueryTicketImpl(codeId, service,
                     expirationPolicyBuilder.buildTicketExpirationPolicy(),
                     relyingParty,

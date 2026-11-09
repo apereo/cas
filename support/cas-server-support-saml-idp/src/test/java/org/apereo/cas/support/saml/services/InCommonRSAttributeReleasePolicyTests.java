@@ -77,8 +77,32 @@ class InCommonRSAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTest
     }
 
     @Test
+    void verifyEntityIdMatch() throws Throwable {
+        val filter = new InCommonRSAttributeReleasePolicy();
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService("https://cassp.example.org");
+        registeredService.setAttributeReleasePolicy(filter);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser",
+                CollectionUtils.wrap("eduPersonPrincipalName", "cas-eduPerson-user",
+                    "mail", "cas@example.org",
+                    "sn", "surname")))
+            .build();
+        assertTrue(filter.getAttributes(context).isEmpty());
+
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://cassp\\.example\\.org$"));
+        val attributes = filter.getAttributes(context);
+        assertTrue(attributes.containsKey("eduPersonPrincipalName"));
+        assertTrue(attributes.containsKey("mail"));
+        assertTrue(attributes.containsKey("sn"));
+    }
+
+    @Test
     void verifySerializationToJson() throws IOException {
         val filter = new InCommonRSAttributeReleasePolicy();
+        filter.setEntityIds(CollectionUtils.wrapSet("^https://sp\\.example\\.org/.+"));
         MAPPER.writeValue(JSON_FILE, filter);
         val strategyRead = MAPPER.readValue(JSON_FILE, InCommonRSAttributeReleasePolicy.class);
         assertEquals(filter, strategyRead);

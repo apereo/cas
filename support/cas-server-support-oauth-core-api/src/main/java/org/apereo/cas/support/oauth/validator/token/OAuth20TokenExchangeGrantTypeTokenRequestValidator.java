@@ -95,6 +95,15 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         return tokenExchangePolicy == null || tokenExchangePolicy.isTokenExchangeAllowed(registeredService, resources, audience, requestedTokenType);
     }
 
+    /**
+     * Locate the registered service that owns the subject token. A JWT subject token whose claims cannot be unpacked
+     * (one whose signature cannot be verified unpacks to nothing) is refused.
+     *
+     * @param subjectTokenType the subject token type
+     * @param subjectToken     the subject token
+     * @return the registered service
+     * @throws Exception the exception
+     */
     protected @Nullable OAuthRegisteredService extractRegisteredService(final String subjectTokenType,
                                                                         final String subjectToken)
             throws Exception {
@@ -105,7 +114,8 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
                 yield OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), accessToken.getClientId());
             }
             case JWT -> {
-                val claimSet = configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken);
+                val claimSet = Optional.ofNullable(configurationContext.getAccessTokenJwtBuilder().unpack(Optional.empty(), subjectToken))
+                    .orElseThrow(() -> new IllegalArgumentException("Subject token cannot be verified"));
                 jwtClaimsSetVerifier.verify(claimSet, new SimpleSecurityContext());
                 val service = Objects.requireNonNull(configurationContext.getWebApplicationServiceServiceFactory().createService(claimSet.getIssuer()));
                 service.getAttributes().put(OAuth20Constants.CLIENT_ID, List.of(claimSet.getSubject()));

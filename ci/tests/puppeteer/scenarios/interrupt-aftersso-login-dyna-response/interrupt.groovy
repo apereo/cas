@@ -6,8 +6,7 @@ def run(final Object... args) {
     def attributes = args[1]
     def service = args[2]
     def registeredService = args[3] as RegisteredService
-    def requestContext = args[4]
-    def logger = args[5]
+    def logger = args[4]
 
     logger.debug("Constructing interrupt response for [{}]", principal)
     def group = registeredService.properties.get("group").value()

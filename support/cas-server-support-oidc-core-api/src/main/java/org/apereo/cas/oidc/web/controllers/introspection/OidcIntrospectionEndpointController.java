@@ -12,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.PlainJWT;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -98,26 +96,10 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
         val responseEntity = super.buildIntrospectionEntityResponse(request, introspect, registeredService);
         return Optional.ofNullable(request.getHeader(HttpHeaders.ACCEPT))
             .filter(headerValue -> Strings.CI.equalsAny(headerValue, OAuth20Constants.INTROSPECTION_JWT_HEADER_CONTENT_TYPE))
-            .map(headerValue -> {
-                val signingAndEncryptionService = getConfigurationContext().getIntrospectionSigningAndEncryptionService();
-                return FunctionUtils.doAndHandle(() -> {
-                    if (signingAndEncryptionService.shouldSignToken(registeredService) || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
-                        return signAndEncryptIntrospection(request, introspect, registeredService);
-                    }
-                    return buildPlainIntrospectionClaims(request, introspect, registeredService);
-                }, e -> ResponseEntity.badRequest().body("Unable to produce introspection JWT claims")).get();
-            })
+            .map(headerValue -> FunctionUtils.doAndHandle(
+                () -> signAndEncryptIntrospection(request, introspect, registeredService),
+                e -> ResponseEntity.badRequest().body("Unable to produce introspection JWT claims")).get())
             .orElse(responseEntity);
-    }
-
-    protected ResponseEntity<String> buildPlainIntrospectionClaims(final HttpServletRequest request,
-                                                                            final OAuth20IntrospectionAccessTokenResponse introspect,
-                                                                            final OAuthRegisteredService registeredService)
-            throws Exception {
-        val claims = convertIntrospectionIntoClaims(introspect, registeredService);
-        val jwt = new PlainJWT(JWTClaimsSet.parse(claims.getClaimsMap()));
-        val jwtRequest = jwt.serialize();
-        return buildResponseEntity(jwtRequest, registeredService);
     }
 
     private JwtClaims convertIntrospectionIntoClaims(final OAuth20IntrospectionAccessTokenResponse introspect,

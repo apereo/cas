@@ -1,5 +1,5 @@
 {
-  "dependencies": "core,jpa-ticket-registry",
+  "dependencies": "core,jpa-ticket-registry,reports",
   "conditions": {
     "docker": "true"
   },
@@ -18,9 +18,25 @@
     "--cas.ticket.registry.jpa.user=postgres",
     "--cas.ticket.registry.jpa.password=password",
     "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets",
-    "--logging.level.org.apereo.cas.ticket.registry=info"
+    "--logging.level.org.apereo.cas.ticket.registry=info",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.ticket.tgt.primary.max-time-to-live-in-seconds=PT20S",
+    "--cas.ticket.tgt.primary.time-to-kill-in-seconds=PT20S",
+    "--cas.ticket.tgt.remember-me.enabled=true",
+    "--cas.ticket.tgt.remember-me.time-to-kill-in-seconds=PT1H",
+    "--cas.ticket.st.time-to-kill-in-seconds=PT20S",
+
+    "--cas.ticket.registry.cleaner.schedule.enabled=true",
+    "--cas.ticket.registry.cleaner.schedule.start-delay=PT5S",
+    "--cas.ticket.registry.cleaner.schedule.repeat-interval=PT5S",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=ssoSessions,ticketRegistry",
+    "--management.endpoints.access.default=UNRESTRICTED"
     ],
-  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "loadScript": "./ci/tests/puppeteer/scenarios/jpa-ticket-registry/test.js",
   "samplesRequested": 5,
   "concurrencyRequested": 5

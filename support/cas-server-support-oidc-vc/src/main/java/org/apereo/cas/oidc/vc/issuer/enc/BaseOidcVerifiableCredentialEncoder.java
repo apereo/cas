@@ -147,8 +147,8 @@ public abstract class BaseOidcVerifiableCredentialEncoder implements OidcVerifia
      * Sign the credential with the issuer's own key.
      * <p>
      * A credential is not an ID token and must not be signed as one. It is always signed and never
-     * encrypted, whatever the relying party's {@code signIdToken} and {@code encryptIdToken} settings
-     * say, and its algorithm comes from the credential configuration's
+     * encrypted, whatever the relying party's {@code encryptIdToken} setting says, and its algorithm
+     * comes from the credential configuration's
      * {@code credentialSigningAlgValuesSupported} rather than the client's {@code idTokenSigningAlg},
      * so that what the issuer produces is what the issuer metadata advertises and what a verifier,
      * including this one, will accept. The advertised list is also handed to the signer as its
