@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.authn;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
@@ -11,6 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import com.jayway.jsonpath.JsonPath;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
@@ -116,6 +118,13 @@ class OAuth20ProofOfPossessionValidatorTests extends AbstractOidcTests {
             .andExpect(status().isOk());
         performProfileRequest(new DPoPAccessToken(accessToken), profileDpopProof.serialize())
             .andExpect(status().isUnauthorized());
+
+        val maximumAge = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
+        val usedProof = ticketRegistry.getTickets(ticket -> ticket instanceof final TransientSessionTicket transientTicket
+                && profileDpopProof.serialize().equals(transientTicket.getPropertyAsString(OAuth20Constants.DPOP)))
+            .findFirst()
+            .orElseThrow();
+        assertTrue(usedProof.getExpirationPolicy().getTimeToLive() >= 2 * maximumAge);
     }
 
     @Test

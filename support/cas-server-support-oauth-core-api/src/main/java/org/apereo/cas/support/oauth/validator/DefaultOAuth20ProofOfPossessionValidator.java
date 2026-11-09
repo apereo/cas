@@ -9,12 +9,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -301,7 +303,10 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
 
     /**
      * Replay protection for the proof's {@code jti}, kept in the ticket registry so that the check
-     * holds across a cluster rather than within one node's memory.
+     * holds across a cluster rather than within one node's memory. A proof is accepted while its {@code iat} is within
+     * the maximum age of now in either direction, so a proof issued ahead of the clock of CAS stays acceptable for up to
+     * twice that age after it is first used; it is remembered that long, and at least for the lifetime of transient
+     * session tickets.
      *
      * @param dPopProof the proof
      * @param clientId  the client id
@@ -316,7 +321,14 @@ public class DefaultOAuth20ProofOfPossessionValidator implements OAuth20ProofOfP
                 throw new AlreadyUsedException("DPoP proof has already been used: " + dPoPProofUse.getJWTID().getValue());
             } catch (final InvalidTicketException e) {
                 val factory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
-                val ticket = factory.create(ticketId, Map.of(OAuth20Constants.DPOP, dPopProof, OAuth20Constants.CLIENT_ID, clientId));
+                val transientLifetime = Objects.requireNonNullElse(
+                    factory.getExpirationPolicyBuilder().buildTicketExpirationPolicy().getTimeToLive(), 0L);
+                val properties = new HashMap<String, Serializable>();
+                properties.put(OAuth20Constants.DPOP, dPopProof);
+                properties.put(OAuth20Constants.CLIENT_ID, clientId);
+                properties.put(ExpirationPolicy.class.getName(),
+                    new HardTimeoutExpirationPolicy(Math.max(1, Math.max(transientLifetime, 2 * getMaximumAgeInSeconds()))));
+                val ticket = factory.create(ticketId, properties);
                 FunctionUtils.doUnchecked(_ -> ticketRegistry.addTicket(ticket));
             }
         };

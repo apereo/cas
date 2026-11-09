@@ -104,3 +104,5 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   new negative scenario rather than a rerun.
 - `gcpLogs` preserves missing log timestamps as null. Its `LogEvent.timestamp` must remain `@Nullable` to match
   `DateTimeUtils.zonedDateTimeOf(Instant)`; do not substitute the current time for a missing event timestamp.
+- `ThrottledSubmissionHandlerEndpoint` obtains entries from a raw `ThrottledSubmissionsStore`; declare the local
+  `Stream<ThrottledSubmission>` explicitly so username-filter predicates receive submissions instead of `Object`.

@@ -1,0 +1,95 @@
+dn: cn=expiresoon,ou=pwpolicies,dc=example,dc=org
+objectClass: top
+objectClass: device
+objectClass: pwdPolicy
+cn: expiresoon
+pwdAttribute: userPassword
+pwdMaxAge: 172800
+pwdExpireWarning: 345600
+
+dn: cn=expiring,ou=pwpolicies,dc=example,dc=org
+objectClass: top
+objectClass: device
+objectClass: pwdPolicy
+cn: expiring
+pwdAttribute: userPassword
+pwdMaxAge: 432000
+pwdExpireWarning: 864000
+
+dn: cn=graceperiod,ou=pwpolicies,dc=example,dc=org
+objectClass: top
+objectClass: device
+objectClass: pwdPolicy
+cn: graceperiod
+pwdAttribute: userPassword
+pwdMaxAge: 1
+pwdGraceAuthNLimit: 3
+
+dn: cn=lockout,ou=pwpolicies,dc=example,dc=org
+objectClass: top
+objectClass: device
+objectClass: pwdPolicy
+cn: lockout
+pwdAttribute: userPassword
+pwdLockout: TRUE
+pwdMaxFailure: 3
+pwdFailureCountInterval: 300
+pwdLockoutDuration: 300
+
+dn: uid=ppexpiresoon,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ppexpiresoon
+cn: Password Expires Soon
+sn: ExpiresSoon
+description: pwdwarn
+userPassword: Mellon
+pwdPolicySubentry: cn=expiresoon,ou=pwpolicies,dc=example,dc=org
+
+dn: uid=ppexpiring,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ppexpiring
+cn: Password Expiring
+sn: Expiring
+description: pwdwarn
+userPassword: Mellon
+pwdPolicySubentry: cn=expiring,ou=pwpolicies,dc=example,dc=org
+
+dn: uid=ppexpiringquiet,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ppexpiringquiet
+cn: Password Expiring Quietly
+sn: ExpiringQuietly
+userPassword: Mellon
+pwdPolicySubentry: cn=expiring,ou=pwpolicies,dc=example,dc=org
+
+dn: uid=ppgrace,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: ppgrace
+cn: Password Grace Logins
+sn: Grace
+description: pwdwarn
+userPassword: Mellon
+pwdPolicySubentry: cn=graceperiod,ou=pwpolicies,dc=example,dc=org
+
+dn: uid=pplocked,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+uid: pplocked
+cn: Password Lockout
+sn: Lockout
+userPassword: Mellon
+pwdPolicySubentry: cn=lockout,ou=pwpolicies,dc=example,dc=org

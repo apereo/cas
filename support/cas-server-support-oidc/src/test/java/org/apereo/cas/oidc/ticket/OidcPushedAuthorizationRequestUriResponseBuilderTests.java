@@ -56,6 +56,8 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
             .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .responseType(OAuth20ResponseTypes.CODE)
             .userProfile(profile)
+            .authorizationDetails("[{\"type\":\"openid_credential\",\"credential_configuration_id\":\"myorg\"}]")
+            .issuerState("issuer-state")
             .build();
 
         var authzRequest = OAuth20AuthorizationRequest.builder()
@@ -95,6 +97,9 @@ class OidcPushedAuthorizationRequestUriResponseBuilderTests extends AbstractOidc
             holder.getAuthentication(), holder.getService(), holder.getRegisteredService()).get().build();
         val accessTokenRequest = authzRequest.getAccessTokenRequest();
         assertTrue(authzRequest.isSingleSignOnSessionRequired());
+        assertEquals(holder.getAuthorizationDetails(), authzRequest.getAuthorizationDetails());
+        assertEquals(holder.getIssuerState(), authzRequest.getIssuerState());
+        assertEquals(holder.getAuthorizationDetails(), accessTokenRequest.getAuthorizationDetails());
         assertNotNull(accessTokenRequest.getAuthentication());
         assertNotNull(accessTokenRequest.getRegisteredService());
         assertNotNull(accessTokenRequest.getResponseType());

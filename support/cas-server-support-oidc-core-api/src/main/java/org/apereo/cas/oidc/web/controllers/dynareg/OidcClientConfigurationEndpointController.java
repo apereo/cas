@@ -19,6 +19,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.SerializationException;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,7 +46,9 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
     }
 
     /**
-     * Handle request response entity.
+     * Answer the registration of the client, as RFC 7592 describes for its client configuration endpoint. An expired
+     * client secret is renewed on a copy of the registered client, which is then saved, so that the instance the services
+     * manager keeps is not changed before it is saved; a client that cannot be copied is renewed in place.
      *
      * @param clientId the client id
      * @param request  the request
@@ -66,9 +70,10 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         }
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), clientId);
-        if (service instanceof final OidcRegisteredService oidcRegisteredService) {
+        if (service instanceof final OidcRegisteredService registeredService) {
+            val oidcRegisteredService = copyOf(registeredService);
             if (processClientSecretExpirationIfAny(oidcRegisteredService)) {
-                getConfigurationContext().getServicesManager().save(service);
+                getConfigurationContext().getServicesManager().save(oidcRegisteredService);
             }
             val regResponse = OidcClientRegistrationUtils.getClientRegistrationResponse(oidcRegisteredService, getConfigurationContext());
             return new ResponseEntity<>(regResponse, HttpStatus.OK);
@@ -78,13 +83,17 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
     }
 
     /**
-     * Handle updates response entity.
+     * Update the client with the metadata sent, as RFC 7592 describes for its client configuration endpoint, here with
+     * {@code PATCH}. The update, and the renewal of an expired client secret, are applied to a copy of the registered
+     * client, so that the instance the services manager keeps is not changed before the update is saved; an update that
+     * cannot be accepted, or of a client that cannot be copied, is answered with {@code invalid_client_metadata} and leaves
+     * the client as it was.
      *
      * @param clientId  the client id
-     * @param jsonInput the json input
+     * @param jsonInput the client metadata
      * @param request   the request
      * @param response  the response
-     * @return the response entity
+     * @return the client registration response
      * @throws Exception the exception
      */
     @PatchMapping(value = {
@@ -114,12 +123,19 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
         var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
             getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
         if (service != null) {
-            if (StringUtils.isNotBlank(jsonInput)) {
-                val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
-                    .getClientRegistrationRequestSerializer().from(jsonInput);
-                LOGGER.debug("Received client registration request [{}]", registrationRequest);
-                service = getConfigurationContext().getClientRegistrationRequestTranslator()
-                    .translate(registrationRequest, Optional.of(service));
+            try {
+                service = SerializationUtils.clone(service);
+                if (StringUtils.isNotBlank(jsonInput)) {
+                    val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()
+                        .getClientRegistrationRequestSerializer().from(jsonInput);
+                    LOGGER.debug("Received client registration request [{}]", registrationRequest);
+                    service = getConfigurationContext().getClientRegistrationRequestTranslator()
+                        .translate(registrationRequest, Optional.of(service));
+                }
+            } catch (final Exception e) {
+                LOGGER.warn("Client metadata update of [{}] is refused: [{}]", clientId, e.getMessage());
+                val body = OAuth20Utils.getErrorResponseBody("invalid_client_metadata", "Unable to accept client metadata");
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
             val secretUpdated = processClientSecretExpirationIfAny(service);
             if (StringUtils.isNotBlank(jsonInput) || secretUpdated) {
@@ -129,6 +145,15 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             return new ResponseEntity<>(clientResponse, HttpStatus.OK);
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    private static OidcRegisteredService copyOf(final OidcRegisteredService service) {
+        try {
+            return SerializationUtils.clone(service);
+        } catch (final SerializationException e) {
+            LOGGER.warn("Client [{}] cannot be copied, so its expired client secret is renewed in place: [{}]", service.getClientId(), e.getMessage());
+            return service;
+        }
     }
 
     protected boolean processClientSecretExpirationIfAny(final OidcRegisteredService service) {

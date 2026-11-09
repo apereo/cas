@@ -1,0 +1,14 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://signing\\.example\\.org/sp-assertion$",
+  "name" : "SigningAssertion",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataLocation" : "file://${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/sp-metadata.xml",
+  "signAssertions" : true,
+  "signResponses" : false,
+  "signingSignatureCanonicalizationAlgorithm" : "http://www.w3.org/2001/10/xml-exc-c14n#WithComments",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

@@ -6,6 +6,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.dynareg.OidcClientIdMetadataDocumentResolver;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.util.OidcRequestSupport;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -58,7 +59,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     protected boolean isConsentApprovalBypassed(final HttpServletRequest request, final HttpServletResponse response,
                                                 final OAuthRegisteredService service) {
         if (service instanceof final OidcRegisteredService oidcService) {
-            if (request.getRequestURL().toString().endsWith(OidcConstants.PUSHED_AUTHORIZE_URL)) {
+            if (OidcRequestSupport.isRequestForEndpoint(request, OidcConstants.PUSHED_AUTHORIZE_URL)) {
                 LOGGER.trace("Consent approval is bypassed for pushed authorization requests");
                 return true;
             }

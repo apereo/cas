@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/authnrequest-signed-sp$",
+  "name" : "SignedAuthnRequests",
+  "id" : 3,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-signed-metadata.xml"
+}

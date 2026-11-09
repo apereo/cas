@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "otherclient",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/otherclient.*",
+  "name": "OtherSample",
+  "id": 2,
+  "description": "A client with its own key set, which did not sign the request objects of client",
+  "evaluationOrder": 20,
+  "jwks": "file:${#environmentVars['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVars['SCENARIO']}/other-client-keystore.json",
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

@@ -106,6 +106,16 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
 
 ## Mocks, test servers and compilation
 
+- `DependenciesEndpoint` reports the number of distinct vulnerable dependencies, not the number of findings; two OSV
+  findings for one dependency still give `vulnerabilitiesCount=1`. OSV `querybatch` pages each query on its own
+  (`next_page_token` per result, `page_token` per query in the follow-up, only for those queries); mock responses must
+  follow that shape. Its MockMvc tests use a static `HttpUtils` mock, which is thread-local and works because MockMvc
+  runs the request on the test thread, so OSV responses and failures need no external network.
+- Change-stream watcher tests can use a cursor backed by a blocking queue for `tryNext`, avoiding a busy loop and
+  allowing `stop()` to interrupt the worker. Always stop the watcher before verifying cursor cleanup. Debounce tests
+  set a real quiet period and assert with `await().during(...)` that only one reload happens.
+- Client-attestation rejection tests should re-sign modified claims with the trusted fixture key and then accept the
+  valid attestation with the same unconsumed proof, proving the rejection was not caused by replay or invalid setup.
 - Mockito: never call another mock inside `thenReturn(...)` (`thenReturn(accessToken.getAuthentication())` with a mocked
   token is an UnfinishedStubbingException); read the values into locals first.
 - MariaDB runs on host port 3307 (`ci/tests/mariadb/run-mariadb-server.sh` maps `3307:3306`), MySQL on 3306, so `testJDBC`

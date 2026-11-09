@@ -448,6 +448,36 @@ function generateToolbarIcons() {
     historyLink += editablePage;
 
     $("#toolbarIcons").append(`<a target='_blank' rel='noopener' href='${historyLink}'><i class='fa fa-history' aria-hidden='true'></i><span class='visually-hidden'>View commit history on GitHub</span></a>`);
+
+    const markdown = document.querySelector("link[rel='alternate'][type='text/markdown']");
+    if (markdown) {
+        const button = $(`<button type='button' class='page-markdown-copy' title='Copy page as Markdown'><i class='fab fa-markdown' aria-hidden='true'></i><span class='visually-hidden'>Copy page as Markdown</span></button>`);
+        button.on("click", () => copyPageAsMarkdown(button[0], markdown.href));
+        $("#toolbarIcons").append(button);
+    }
+}
+
+function copyPageAsMarkdown(button, href) {
+    const icon = button.querySelector("i");
+    const status = document.getElementById("docs-status");
+    const markdown = fetch(href).then(response => {
+        if (!response.ok) {
+            throw new Error(`Unable to fetch ${href}: ${response.status}`);
+        }
+        return response.text();
+    });
+    const copied = window.ClipboardItem && navigator.clipboard.write
+        ? navigator.clipboard.write([new ClipboardItem({"text/plain": markdown.then(text => new Blob([text], {type: "text/plain"}))})])
+        : markdown.then(text => navigator.clipboard.writeText(text));
+    copied.then(() => {
+        icon.className = "fa fa-check";
+        status.textContent = "Copied the page as Markdown";
+    }).catch(() => {
+        icon.className = "fa fa-triangle-exclamation";
+        status.textContent = "The Markdown copy of this page is not available";
+    }).finally(() => setTimeout(() => {
+        icon.className = "fab fa-markdown";
+    }, 1500));
 }
 
 function generatePageTOC() {

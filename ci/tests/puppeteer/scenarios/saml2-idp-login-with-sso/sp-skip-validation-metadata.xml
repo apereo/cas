@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor entityID="https://localhost:9859/authnrequest-skip-validation-sp" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <SPSSODescriptor AuthnRequestsSigned="true" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:9859/post" index="1"/>
+    </SPSSODescriptor>
+</EntityDescriptor>

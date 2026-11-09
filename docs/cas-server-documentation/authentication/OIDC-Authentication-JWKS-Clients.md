@@ -53,6 +53,16 @@ in the application registration entry as follows:
 
 {% endtabs %}
 
+## Request Objects
+
+A signed request object is verified with the keys of the application, as defined above. A request object signed with
+`HS256`, `HS384` or `HS512` is verified with the client secret of the application instead, as
+[OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html#Signing) describes: each client secret that has
+not expired is tried, provided it is at least as long as the hash output of the algorithm, that is 32, 48 or 64 bytes.
+Client secrets are checked for expiry and decoded the same way as when the application authenticates with them.
+Request objects must be signed: an unsigned request object, whose algorithm is `none`, carries no proof of who sent it
+and is refused with `invalid_request_object`, and discovery does not advertise `none` for request objects.
+
 ## Dynamic JWKS Registration
 
 CAS does allow client applications and relying parties to register their JWKS dynamically separately and outside
