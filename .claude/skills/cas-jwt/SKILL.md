@@ -3,6 +3,8 @@ name: cas-jwt
 description: "Issue and read JWTs anywhere in CAS (JwtBuilder, JsonWebTokenEncryptor, OAuth/OIDC ID, access and refresh tokens, request objects, token exchange, token authentication, risk/QR tokens, the shell): CAS never issues or accepts unsigned (alg none) JWTs, per-service signing and encryption decisions, and how tests sign. Use when touching JWT creation, parsing, signing or encryption, or OIDC signing algorithms."
 ---
 
+# JWTs in CAS
+
 Discovery metadata and keystore algorithms are in `cas-oauth-oidc`.
 
 ## Unsigned JWTs

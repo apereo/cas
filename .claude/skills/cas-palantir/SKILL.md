@@ -3,6 +3,8 @@ name: cas-palantir
 description: "Change Palantir, the CAS admin dashboard (templates under palantir/, palantir-*.js and palantir-meridian.css): layout and themes, navigation, tabs and the command palette, dialogs and widgets (jQuery UI, MDC, DataTables, SweetAlert), the applications table and cards, the service wizard and JSON editor, edit guards, feature toggles, endpoint access levels and SAML2 metadata tools. Use when touching Palantir UI code or its scenarios."
 ---
 
+# Palantir admin dashboard
+
 General view, theme and template rules are in the `cas-ui` skill.
 
 ## Layout, themes, navigation and accessibility

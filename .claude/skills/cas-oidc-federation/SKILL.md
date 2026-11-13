@@ -3,6 +3,8 @@ name: cas-oidc-federation
 description: "Review and change OpenID Federation 1.0 in CAS (support/cas-server-support-oidc-federation): entity configurations and roles (OP, intermediate, trust anchor), automatic and explicit client registration, trust chain resolution, constraints and metadata policies, federation keys, historical keys and trust anchors, trust marks, the fetch/list/resolve endpoints, federation HTTP limits and the oidc-federation-* scenarios (go-oidfed). Use when touching federation code, its docs or scenarios."
 ---
 
+# OpenID Federation
+
 Core OIDC behavior that federation builds on (request objects, keys, client registration, pairwise subjects, the
 address policy) is in the `cas-oauth-oidc` skill; unsigned JWTs are in `cas-jwt`.
 
