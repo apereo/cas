@@ -9,7 +9,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.callback.DefaultOAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
 import lombok.val;
-import org.apache.hc.core5.net.URIBuilder;
 
 /**
  * This is {@link OidcAuthorizationModelAndViewBuilder}.
@@ -32,17 +31,23 @@ public class OidcAuthorizationModelAndViewBuilder extends DefaultOAuth20Authoriz
     }
 
 
+    /**
+     * Prepare the redirect url. RFC 9207: {@code iss} travels with the other response parameters, so the response mode
+     * places it in the query, fragment, form or response JWT. Adding it to the redirect URL as well sent it twice in
+     * query mode and in the query of a fragment or form_post response.
+     *
+     * @param registeredService the registered service
+     * @param redirectUrl       the redirect url
+     * @param parameters        the response parameters
+     * @return the redirect url
+     * @throws Exception the exception
+     */
     @Override
     protected String prepareRedirectUrl(final OAuthRegisteredService registeredService,
                                         final String redirectUrl, final Map<String, String> parameters) throws Exception {
         val discovery = casProperties.getAuthn().getOidc().getDiscovery();
         if (registeredService instanceof final OidcRegisteredService oidcService && discovery.isAuthorizationResponseIssuerParameterSupported()) {
-            val issuer = issuerService.determineIssuer(Optional.of(oidcService));
-            parameters.put(OidcConstants.ISS, issuer);
-            return new URIBuilder(redirectUrl)
-                .addParameter(OidcConstants.ISS, issuer)
-                .build()
-                .toString();
+            parameters.put(OidcConstants.ISS, issuerService.determineIssuer(Optional.of(oidcService)));
         }
         return super.prepareRedirectUrl(registeredService, redirectUrl, parameters);
     }

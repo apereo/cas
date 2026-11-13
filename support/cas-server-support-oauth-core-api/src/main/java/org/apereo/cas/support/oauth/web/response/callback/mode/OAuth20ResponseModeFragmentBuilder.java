@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.hc.core5.net.URIBuilder;
 import org.jspecify.annotations.NonNull;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -37,6 +36,9 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
      * Each parameter name and value is percent-encoded as a URI component, so values such as a JSON {@code state}
      * reach the client intact (RFC 6749, section 4.2.2 and appendix B) instead of breaking the fragment or the
      * redirect. The URL is complete once built here, so the redirect view does not expand URI template variables.
+     * The redirect URI keeps its own query, minus any parameter the response carries in the fragment. The query is
+     * replaced rather than added to, which used to repeat every parameter of the redirect URI, and its values are
+     * kept as they were encoded in the redirect URI.
      *
      * @param registeredService the registered service
      * @param redirectUrl       the redirect url
@@ -48,22 +50,23 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
     public ModelAndView build(final RegisteredService registeredService, final String redirectUrl,
                               final Map<String, String> parameters) throws Exception {
 
-        val urlBuilder = new URIBuilder(redirectUrl);
-        val currentParams = urlBuilder.getQueryParams();
-        urlBuilder.removeQuery();
-        currentParams.removeIf(p -> parameters.containsKey(p.getName()));
         val fragment = parameters.entrySet()
             .stream()
             .map(entry -> UriUtils.encode(entry.getKey(), StandardCharsets.UTF_8)
                 + '=' + UriUtils.encode(entry.getValue(), StandardCharsets.UTF_8))
             .collect(Collectors.joining("&"));
 
-        val queryParams = new LinkedMultiValueMap<@NonNull String, @NonNull String>(currentParams.size());
-        currentParams.forEach(param -> queryParams.put(param.getName(), List.of(param.getValue())));
-        
-        val resultUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+        val urlBuilder = UriComponentsBuilder.fromUriString(redirectUrl);
+        val queryParams = new LinkedMultiValueMap<@NonNull String, @NonNull String>();
+        urlBuilder.build().getQueryParams().forEach((name, values) -> {
+            if (!parameters.containsKey(name)) {
+                queryParams.put(name, values);
+            }
+        });
+
+        val resultUrl = urlBuilder
+            .replaceQueryParams(queryParams)
             .fragment(fragment)
-            .queryParams(queryParams)
             .build()
             .toUriString();
         

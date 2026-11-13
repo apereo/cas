@@ -35,7 +35,7 @@ class OidcAuthorizationModelAndViewBuilderTests extends AbstractOidcTests {
             OAuth20ResponseModeTypes.FORM_POST, "https://localhost:8443/app/redirect", parameters);
         assertTrue(results.getModel().containsKey("originalUrl"));
         val url = results.getModel().get("originalUrl").toString();
-        assertTrue(url.contains(OidcConstants.ISS.concat("=")));
+        assertFalse(url.contains(OidcConstants.ISS.concat("=")));
         val params = (Map) results.getModel().get("parameters");
         assertTrue(params.containsKey(OidcConstants.ISS));
     }
