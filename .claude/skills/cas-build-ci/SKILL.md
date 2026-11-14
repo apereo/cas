@@ -88,6 +88,8 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
   `hazelcast-discovery-zookeeper` declare `libraries.springintegration` (core only) and pass `registry::obtain`. The JPA
   registry also needs `spring-boot-integration` (in `springintegrationjdbc`) for `spring.integration.jdbc.initialize-schema`,
   and its tests import `IntegrationAutoConfiguration` explicitly; `SpringBootTestAutoConfigurations` no longer lists it.
+  Spring Integration used to supply the `taskScheduler` bean that OAuth, OIDC and UMA inject in tests; it now comes from
+  `TaskSchedulingAutoConfiguration` in `SpringBootTestAutoConfigurations`, as it does in the web application.
 - Before adding a library to a bundle that every module gets through `project-conventions` (`jakarta`, `commons`,
   `springboot`, ...), check the default Tomcat war: anything there ships in every deployment. The size review and the
   remaining candidates are in the `claude/webapp-war-size-review.md` project doc.

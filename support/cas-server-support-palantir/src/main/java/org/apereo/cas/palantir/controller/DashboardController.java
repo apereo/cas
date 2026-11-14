@@ -127,8 +127,8 @@ public class DashboardController extends AbstractController {
         mav.addObject("isRoleAdmin", isRoleAdmin(authentication));
 
         val basePath = webEndpointProperties.getBasePath();
-        val endpoints = endpointLinksResolver.resolveLinks(basePath);
-        val actuatorEndpoints = endpoints
+        val resolvedLinks = endpointLinksResolver.resolveLinks(basePath);;
+        val actuatorEndpoints = resolvedLinks
             .entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), casProperties.getServer().getPrefix() + entry.getValue().getHref()))
