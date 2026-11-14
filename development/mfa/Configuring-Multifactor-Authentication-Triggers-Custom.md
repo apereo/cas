@@ -1,0 +1,105 @@
+# Multifactor Authentication Custom Triggers
+
+Source: https://apereo.github.io/cas/development/mfa/Configuring-Multifactor-Authentication-Triggers-Custom.html
+
+To create your own custom multifactor authentication trigger, you will need to design a component that is able to resolve events in the CAS authentication chain. The trigger’s (i.e. event resolver’s) job is to examine a set of conditions and requirements and provide an event id to CAS that would indicate the next step in the authentication flow.
+
+A typical custom trigger, as an example, might be:
+
+- Activate MFA provider identified by `mfa-duo` if the client browser’s IP address matches the pattern `123.+`.
+
+Note that:
+
+- You are really not doing anything *custom* per se. All built-in CAS triggers behave in the same exact way when they attempt to resolve the next event.
+- As you will observe below, the event resolution machinery is completely oblivious to multifactor authentication; all it cares about is finding the next event in the chain in a very generic way. Our custom implementation of course wants to have the next event deal with some form of MFA via a provider, but in theory we could have resolved the next event to be `hello-world`.
+
+## Requirements
+
+You will need to have compile-time access to the following modules in the Overlay:
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-core-webflow"
+}
+```
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-core-webflow-mfa-api"
+}
+```
+
+These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
+
+## Design Triggers
+
+The below example demonstrates a reasonable outline of a custom event resolver:
+
+```java
+package org.apereo.cas.custom.mfa;
+
+public class ExampleMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+   @Override
+   public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                  final RegisteredService registeredService,
+                                                                  final HttpServletRequest httpServletRequest,
+                                                                  final Service service) {
+
+       return Optional.empty();
+   }
+}
+```
+
+## Register Triggers
+
+The event resolver trigger then needs to be registered as a bean tagged with the `@MultifactorAuthenticationWebflowEventResolver` annotation. CAS collects every bean carrying this annotation from the application context and adds it to the initial authentication event resolver, so the resolver does not need to locate or register itself with any other component. Resolvers are invoked in the order indicated by their `Ordered` implementation or `@Order` annotation, if any.
+
+The below example demonstrates a reasonable outline of a custom event resolver:
+
+```java
+package org.apereo.cas.custom.config;
+
+@AutoConfiguration
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class SomethingConfiguration {
+    @Bean
+    public MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger() {
+        return new ExampleMultifactorAuthenticationTrigger();
+    }
+
+    @Bean
+    @MultifactorAuthenticationWebflowEventResolver
+    public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver(
+        @Qualifier(CasWebflowEventResolutionConfigurationContext.BEAN_NAME)
+        final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
+        @Qualifier("exampleMultifactorAuthenticationTrigger")
+        final MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger) {
+        return new DefaultMultifactorAuthenticationProviderWebflowEventResolver(
+            casWebflowConfigurationContext, exampleMultifactorAuthenticationTrigger);
+    }
+}
+```
+
+> **Remember**
+>
+> The same annotation must be placed on any bean that replaces one of the built-in trigger event resolvers under the same bean name; a resolver bean without the annotation is not consulted by the initial authentication event resolver.
+
+Do not forget to register the configuration class with CAS. [See this guide](https://apereo.github.io/cas/development/configuration/Configuration-Management-Extensions.html) for better details.

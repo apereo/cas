@@ -1,0 +1,52 @@
+# Authentication Resolution Strategy
+
+Source: https://apereo.github.io/cas/development/authentication/Configuring-Authentication-Resolution.html
+
+Authentication handlers are typically defined globally and then executed and tried by the authentication engine. The collection of handlers can be narrowed down using a selection criteria that defines an eligibility criteria for the handler based on the current authentication transaction, provided credentials, service definition policy and many other controls.
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.authn.core.groovy-authentication-resolution.location` (Required; type `Resource`): The location of the resource. Resources can be URLs, or files found either on the classpath or outside somewhere in the file system. In the event the configured resource is a Groovy script, especially if the script is set to reload on changes, you may need to adjust the total number of `inotify` instances. On Linux, you may need to add the following line to `/etc/sysctl.conf`: `fs.inotify.max_user_instances = 256`. You can check the current value via `cat /proc/sys/fs/inotify/max_user_instances`. In situations and scenarios where CAS is able to automatically watch the underlying resource for changes and detect updates and modifications dynamically, you may be able to specify the following setting as either an environment variable or system property with a value of `false` to disable the resource watcher: `org.apereo.cas.util.io.PathWatcherService`.
+- `cas.authn.core.groovy-authentication-resolution.order` (Optional; type `Integer`; default `0`): The execution order of this resolver in the chain of authentication handler resolvers.
+- `cas.authn.core.service-authentication-resolution.order` (Optional; type `Integer`; default `0`): The execution order of this resolver in the chain of authentication handler resolvers.
+
+**Groovy scripting**
+
+CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default, dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality described here, you may need to prepare CAS to support and integrate with Apache Groovy.
+
+Please [review this guide](https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html) to configure your build.
+
+## Per Registered Service
+
+Each registered application in the registry may be assigned a set of identifiers/names for the required authentication handlers available and configured in CAS. These names can be used to enforce a service definition to only use the authentication strategy carrying that name when an authentication request is submitted to CAS.
+
+Please [review this guide](https://apereo.github.io/cas/development/services/Configuring-Service-AuthN-Policy.html) to learn more.
+
+## Groovy Script
+
+The global collection of authentication handlers can also pass through a Groovy script as a filter to narrow down the list of candidates for the current transaction. The outline of the script may be designed as:
+
+```groovy
+def run(Object[] args) {
+    def (handlers,transaction,servicesManager,logger) = args
+    return handlers
+}
+
+def supports(Object[] args) {
+    def (handlers,transaction,servicesManager,logger) = args
+    true
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter | Description |
+| --- | --- |
+| `handlers` | Collection of available and candidate `AuthenticationHandler`s. |
+| `transaction` | The authentication transaction currently in progress. |
+| `servicesManager` | The `ServicesManager` object responsible for locating service definitions attached to this transaction. |
+| `logger` | The object responsible for issuing log messages such as `logger.info(...)`. |
+
+The outcome of the script should be the collection of selected handlers with the type `Set<AuthenticationHandler>`.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html).

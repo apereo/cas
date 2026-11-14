@@ -1,0 +1,22 @@
+# Service Registry Initialization
+
+Source: https://apereo.github.io/cas/development/services/AutoInitialization-Service-Management.html
+
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. Populating the registry with a set of default services serves as *a starting point* and an example at that where one is able to immediately start integrating applications. For production purposes, it is recommended that you pick a more relevant [option for storage](https://apereo.github.io/cas/development/services/Service-Management.html) and disable this behavior.
+
+The default service definitions that are used by the initializer component ship with CAS by default and are put on the classpath. The initializer is able to detect all service definitions files found on the classpath (i.e. `src/main/resources/services`) and import them into the *real* service registry used while also taking into account all active Spring application profiles. For example, if the current Spring application profiles are `dev` and `qa`, then the following locations will be evaluated by CAS to locate service definitions:
+
+- `classpath*:/services/dev/*.json`
+- `classpath*:/services/qa/*.json`
+- `classpath*:/services/*.json`
+
+This means that if this behavior is enabled and additional files are found on the classpath at the relevant paths, CAS will take the default services as well as any and all other services found in order to import them into the service registry used. Note that the location of the JSON files while typically set to the classpath may be controlled via CAS properties; the same setting property that controls the location of the JSON service files for the JSON service registry is used by the initialization logic to locate service files.
+
+Again, this behavior is only useful as a starting point, an example and for small and specialized deployments. It is recommended that you take explicit control over the registry and register services and applications which you have fully authorized.
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.service-registry.core.index-services` (Optional; type `Boolean`; default `true`): When set to true, CAS creates in-memory indexes for specific pre-chosen fields of the registered services, allowing it to find a service definition by its friendly name, client id, etc. This is particularly useful for querying operations in OAuth or OpenID Connect, as there would be no need to loop through all service definitions looking for a matching client id. The indexes allow CAS to execute a direct query on loaded service objects to find the relevant definition.
+- `cas.service-registry.core.init-default-services` (Optional; type `Boolean`; default `true`): Flag that indicates whether service definitions that ship with CAS by default should be included in the initialization process and imported into CAS service registry. Default service files that ship with CAS are found on the classpath inside the `JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY` directory.
+- `cas.service-registry.core.init-from-json` (Optional; type `Boolean`; default `false`): Flag that indicates whether to initialise active service registry implementation with a set of service definitions included with CAS by default in JSON format. The initialization generally tends to find JSON service definitions from `JsonServiceRegistryProperties#getLocation()`. In cases where the location points to an embedded directory or resource inside a JAR/ZIP file, such as those that might have been packaged with the CAS application as part of the build and assembly process, embedded services are first exported out into a temporary directory and then read as file-system resources. In such scenarios, you may want to turn off the watcher via `JsonServiceRegistryProperties#isWatcherEnabled()`. If the default location offered by CAS, `JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY`, is used, CAS would attempt to locate JSON service files by forming the following pattern for each active spring application profile: ``` classpath*:/JsonServiceRegistryProperties#DEFAULT_LOCATION_DIRECTORY/profile-id/*.json ``` You may also control whether default services should be included and initialized via `#isInitDefaultServices()`.
+- `cas.service-registry.core.maximum-service-id-length` (Optional; type `Integer`; default `4096`)

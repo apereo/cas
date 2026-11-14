@@ -1,0 +1,1992 @@
+{
+  "version": "development",
+  "baseline": "8.0.x",
+  "added": [
+    {
+      "name": "cas.audit.redis.max-age",
+      "type": "String",
+      "defaultValue": "P180D",
+      "kind": "optional",
+      "module": "cas-server-support-audit-redis",
+      "summary": "Indicates how long audit records should be kept in Redis.",
+      "area": "cas.audit"
+    },
+    {
+      "name": "cas.authn.attribute-repository.mapped.id",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-person-directory",
+      "summary": "A value can be assigned to this field to uniquely identify this resolver.",
+      "area": "cas.authn.attribute-repository.mapped"
+    },
+    {
+      "name": "cas.authn.attribute-repository.mapped.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-person-directory",
+      "summary": "The order of this attribute repository in the chain of repositories.",
+      "area": "cas.authn.attribute-repository.mapped"
+    },
+    {
+      "name": "cas.authn.attribute-repository.mapped.people",
+      "type": "Map<String,List<String>>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-person-directory",
+      "summary": "Map of people and their attributes.",
+      "area": "cas.authn.attribute-repository.mapped"
+    },
+    {
+      "name": "cas.authn.attribute-repository.mapped.state",
+      "type": "AttributeRepositoryStates",
+      "defaultValue": "active",
+      "kind": "optional",
+      "module": "cas-server-support-person-directory",
+      "summary": "Whether attribute resolution based on this source is enabled.",
+      "area": "cas.authn.attribute-repository.mapped"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.core.hints",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-webauthn",
+      "summary": "User-agent hints, in descending order of preference, sent with registration and authentication requests to guide the browser towards the kind of authenticator to offer first.",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.core.passkey-enroll-url",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-webauthn",
+      "summary": "URL of the page where a user creates a passkey for the account, published as enroll in the passkey endpoints document at /.well-known/passkey-endpoints, so that password managers can send users straight to it.",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.core.passkey-manage-url",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-webauthn",
+      "summary": "URL of the page where a user manages the account's passkeys, published as manage in the passkey endpoints document at /.well-known/passkey-endpoints.",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.core.passkey-upgrade-enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-webauthn",
+      "summary": "Offer a passkey right after a password login: CAS shows a short page that asks the browser's password manager to create a passkey for the account on its own (WebAuthn conditional create), then continues as usual.",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.oauth.core.allowed-resources",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oauth",
+      "summary": "Resources, as regular expressions, that every OAuth client may request with the RFC 8707 resource parameter, in addition to those allowed by its registered service.",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oidc.client-attestation.challenge.enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Whether CAS hands out challenges at its challenge endpoint, advertised as challenge_endpoint, and requires the challenge claim of every client attestation proof of possession to carry one.",
+      "area": "cas.authn.oidc.client-attestation"
+    },
+    {
+      "name": "cas.authn.oidc.client-attestation.challenge.time-to-live",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "How long a challenge may be used.",
+      "area": "cas.authn.oidc.client-attestation"
+    },
+    {
+      "name": "cas.authn.oidc.client-attestation.signing-alg-values-supported",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Signing algorithms accepted for client attestations and their proofs of possession, advertised as client_attestation_signing_alg_values_supported and client_attestation_pop_signing_alg_values_supported.",
+      "area": "cas.authn.oidc.client-attestation"
+    },
+    {
+      "name": "cas.authn.oidc.client-attestation.trust-anchors",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Locations of PEM-encoded certificates of the trust anchors that client attestations must chain to, such as those of wallet providers.",
+      "area": "cas.authn.oidc.client-attestation"
+    },
+    {
+      "name": "cas.authn.oidc.core.pairwise-subject-salt",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Salt used to calculate the pairwise subject identifiers of clients whose definition carries no salt of its own, such as clients that CAS registers itself, dynamically or through OpenID Federation, when they ask for pairwise subject ident...",
+      "area": "cas.authn.oidc.core"
+    },
+    {
+      "name": "cas.authn.oidc.discovery.token-endpoint-auth-signing-alg-values-supported",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Signing algorithms supported by the token endpoint for the JWT that authenticates the client under the private_key_jwt and client_secret_jwt authentication methods.",
+      "area": "cas.authn.oidc.discovery"
+    },
+    {
+      "name": "cas.authn.oidc.dpop.nonce.enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Whether DPoP proofs must carry a nonce that CAS handed out.",
+      "area": "cas.authn.oidc.dpop"
+    },
+    {
+      "name": "cas.authn.oidc.dpop.nonce.time-to-live",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "How long a nonce may be used.",
+      "area": "cas.authn.oidc.dpop"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks",
+      "type": "List<OidcFederationIssuedTrustMarkProperties>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Trust marks this entity issues as a trust mark issuer, each type with the entities it is issued to.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].delegation",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The delegation that allows this entity to issue trust marks of a type it does not own, a signed JWT obtained from the owner of the type, given as a resource such as a file or a URL, or the JWT itself.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].expiration",
+      "type": "String",
+      "defaultValue": "P30D",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "How long an issued trust mark is valid.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].logo-uri",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "URL of a logo for the trust mark, published as logo_uri.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].ref",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "URL of human-readable information about the issuance of the trust mark, published as ref.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].subjects",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "Entity identifiers of the entities this trust mark type is issued to.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.issued-trust-marks[].trust-mark-type",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "The trust mark type identifier of the trust marks issued.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.max-authority-hints",
+      "type": "Integer",
+      "defaultValue": "5",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The maximum number of authority hints followed from any entity configuration while resolving the trust chains of a relying party that registers automatically.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.max-concurrent-resolutions",
+      "type": "Integer",
+      "defaultValue": "10",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The maximum number of resolutions that run at the same time, for automatic registration and the resolve endpoint together.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.max-path-length",
+      "type": "Integer",
+      "defaultValue": "3",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The maximum number of intermediate entities between a relying party that registers automatically and a trust anchor.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.max-requests-per-resolution",
+      "type": "Integer",
+      "defaultValue": "50",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The maximum number of requests a single resolution may send: entity configurations, subordinate statements, historical keys and trust mark status requests, counted together across the trust chains of the entity and those of the issuers o...",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.required-trust-marks",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Trust mark types that a relying party must hold to be registered automatically by this OpenID provider.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.resolution-timeout",
+      "type": "String",
+      "defaultValue": "PT10S",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The longest time a single resolution may take, all of its requests together; every response is also limited in size.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.resolve-endpoint-authentication",
+      "type": "OidcFederationEndpointAuthenticationModes",
+      "defaultValue": "none",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Client authentication at the resolve endpoint of this entity as a trust anchor or intermediate.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.cron-expression",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "A cron-like expression, extending the usual UN*X definition to include triggers on the second, minute, hour, day of month, month, and day of week.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.cron-time-zone",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "A time zone for which the cron expression will be resolved.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Whether scheduler should be enabled to schedule the job to run.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.enabled-on-host",
+      "type": "String",
+      "defaultValue": ".*",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Overrides SchedulingProperties#enabled property value of true if this property does not match hostname of CAS server.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.repeat-interval",
+      "type": "String",
+      "defaultValue": "PT2M",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "String representation of a repeat interval of re-loading data for a data store implementation.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.revocation.schedule.start-delay",
+      "type": "String",
+      "defaultValue": "PT15S",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "String representation of a start delay of loading data for a data store implementation.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.cron-expression",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "A cron-like expression, extending the usual UN*X definition to include triggers on the second, minute, hour, day of month, month, and day of week.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.cron-time-zone",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "A time zone for which the cron expression will be resolved.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Whether scheduler should be enabled to schedule the job to run.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.enabled-on-host",
+      "type": "String",
+      "defaultValue": ".*",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Overrides SchedulingProperties#enabled property value of true if this property does not match hostname of CAS server.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.repeat-interval",
+      "type": "String",
+      "defaultValue": "PT2M",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "String representation of a repeat interval of re-loading data for a data store implementation.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.rotation.schedule.start-delay",
+      "type": "String",
+      "defaultValue": "PT15S",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "String representation of a start delay of loading data for a data store implementation.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-anchors",
+      "type": "List<OidcFederationTrustAnchorProperties>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The trust anchors whose trust chains an OpenID provider accepts when relying parties register automatically, and that an intermediate resolves entities to at its resolve endpoint, with their keys obtained out of band.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-anchors[].entity-id",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "The entity identifier of the trust anchor.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-anchors[].jwks",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The public keys of the trust anchor, obtained out of band, as a JSON web key set: a resource such as a file or a URL, or the JSON document itself.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-endpoint-authentication",
+      "type": "OidcFederationEndpointAuthenticationModes",
+      "defaultValue": "none",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Client authentication at the trust mark endpoint of this entity as a trust mark issuer.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-issuers",
+      "type": "List<OidcFederationTrustMarkIssuerProperties>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "For a trust anchor, the trust mark types of the federation and the entities accepted as their issuers, published as trust_mark_issuers in its entity configuration.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-issuers[].issuers",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Entity identifiers of the entities accepted as issuers of trust marks of this type.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-issuers[].trust-mark-type",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "The trust mark type identifier.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-owners",
+      "type": "List<OidcFederationTrustMarkOwnerProperties>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "For a trust anchor, the owners of trust mark types whose issuance is delegated to trust mark issuers, published as trust_mark_owners in its entity configuration.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-owners[].jwks",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "The keys of the owner, with which delegations are verified, as a JSON web key set or a resource such as a file or a URL that holds one.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-owners[].owner",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "Entity identifier of the owner of the trust mark type, who delegates its issuance to trust mark issuers.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-mark-owners[].trust-mark-type",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-support-oidc",
+      "summary": "The trust mark type identifier.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.trust-marks",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Trust marks issued to this entity, published in its entity configuration.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.federation.unresolved-entity-retention",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "How long an entity identifier whose trust chains could not be resolved is remembered.",
+      "area": "cas.authn.oidc.federation"
+    },
+    {
+      "name": "cas.authn.oidc.id-token.collector-script.location",
+      "type": "Resource",
+      "defaultValue": "",
+      "kind": "required",
+      "module": "cas-server-core-util",
+      "summary": "The location of the resource.",
+      "area": "cas.authn.oidc.id-token"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Whether clients may use client ID metadata documents.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.maximum-cache-duration",
+      "type": "String",
+      "defaultValue": "PT24H",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The longest time a fetched document is used before CAS fetches it again, whatever its cache headers allow.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.maximum-clients",
+      "type": "Integer",
+      "defaultValue": "1000",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The maximum number of clients registered from client ID metadata documents.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.minimum-cache-duration",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "The shortest time a fetched document is used before CAS fetches it again, also used when the response carries no cache headers or forbids caching.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.retention",
+      "type": "String",
+      "defaultValue": "P30D",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "How long a client stays registered after its document was last fetched successfully.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.registration.client-id-metadata-document.timeout",
+      "type": "String",
+      "defaultValue": "PT5S",
+      "kind": "optional",
+      "module": "cas-server-support-oidc",
+      "summary": "Maximum time to wait for the document.",
+      "area": "cas.authn.oidc.registration"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.batch-size",
+      "type": "Integer",
+      "defaultValue": "10",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Maximum number of credential requests accepted in a single batch.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].disclosable",
+      "type": "boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "A claim that is candidate for Selective Disclosure.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].display",
+      "type": "List<OidcVerifiableCredentialClaimProperties.CredentialClaimDisplay>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Control display settings for this claim.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].display[].locale",
+      "type": "String",
+      "defaultValue": "en-US",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Locale that controls this configuration's display.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].display[].name",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Display name for this configuration.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].mandatory",
+      "type": "boolean",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether this claim is mandatory.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].claims.[key].namespace",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Name space of this claim in an ISO/IEC 18013-5 mdoc, such as org.iso.18013.5.1.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].credential-validity",
+      "type": "String",
+      "defaultValue": "P30D",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Length of time for which a credential issued by this configuration remains valid.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].deferred-issuance",
+      "type": "boolean",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether credentials of this configuration are issued in a deferred manner.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display",
+      "type": "List<OidcVerifiableCredentialConfigurationProperties.CredentialConfigurationDisplay>",
+      "defaultValue": "org.apereo.cas.configuration.model.support.oidc.OidcVerifiableCredentialConfigurationProperties$CredentialConfigurationDisplay@3af356f",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Control display settings of this credential configuration used in metadata generation.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].background-color",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Background color for this configuration.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].description",
+      "type": "String",
+      "defaultValue": "My verifiable credential that belongs to my organization",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Description for this configuration.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].locale",
+      "type": "String",
+      "defaultValue": "en-US",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Locale that controls this configuration's display.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].logo",
+      "type": "String",
+      "defaultValue": "https://apereo.github.io/cas/images/cas_logo.png",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Logo url.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].name",
+      "type": "String",
+      "defaultValue": "My Verifiable Credential",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Display name for this configuration.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].display[].text-color",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Text color for this configuration.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].doctype",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Document type of an ISO/IEC 18013-5 mdoc, required by the mso_mdoc format and ignored by the others, for example org.iso.18013.5.1.mDL for a mobile driving licence.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].key-attestations.key-storage",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Attack potential resistance levels of the key storage this credential configuration accepts, such as iso_18045_high or iso_18045_moderate.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].key-attestations.required",
+      "type": "boolean",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether every proof for this credential configuration must come with a key attestation, either in the key_attestation header of a jwt proof or as an attestation proof.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.credential-configurations.[key].key-attestations.user-authentication",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Attack potential resistance levels of user authentication this credential configuration accepts, such as iso_18045_high.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.deferred-issuance.interval",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How long a wallet should wait before asking for the credentials of a deferred transaction again, advertised as the interval of the credential response.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.deferred-issuance.time-to-live",
+      "type": "String",
+      "defaultValue": "P7D",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How long a deferred transaction is kept.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.display",
+      "type": "List<OidcVerifiableCredentialsIssuerProperties.IssuerDisplay>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How wallets present this credential issuer, one entry per language.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.display[].locale",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Language of this display, as a BCP 47 language tag such as en-US.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.display[].logo",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "URL of the credential issuer's logo.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.display[].logo-alt-text",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Alternative text for the logo; defaults to the display name.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.display[].name",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Display name of the credential issuer.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.encryption.alg-values-supported",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "JWE key management algorithms (alg) the issuer accepts in the key a wallet supplies for response encryption.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.encryption.enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether the issuer metadata advertises credential_request_encryption and credential_response_encryption, and the credential endpoint accepts encrypted requests and encrypts responses when asked to.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.encryption.enc-values-supported",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "JWE content encryption algorithms (enc) accepted for encrypted requests and offered for encrypted responses.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.encryption.request-encryption-required",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether every credential request must be encrypted.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.encryption.response-encryption-required",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether every credential response must be encrypted, so that a wallet has to supply credential_response_encryption with each request.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.key-attestation.trust-anchors",
+      "type": "List<String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Locations of PEM-encoded certificates of the trust anchors that key attestations must chain to, such as those of wallet providers.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.status-list.enabled",
+      "type": "Boolean",
+      "defaultValue": "false",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether issued SD-JWT VC credentials carry a status claim that points into a status list published by CAS.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.status-list.expiration",
+      "type": "String",
+      "defaultValue": "PT24H",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How long a status list token is valid after it is issued, advertised as its exp claim.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.status-list.size",
+      "type": "Integer",
+      "defaultValue": "131072",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Number of entries in each status list.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.issuer.status-list.time-to-live",
+      "type": "String",
+      "defaultValue": "PT10M",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How long a verifier may cache a status list token before fetching it again, advertised as its ttl claim.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.metadata.include-claims",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether claims should be included in the metadata.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.metadata.signed-metadata-expiration",
+      "type": "String",
+      "defaultValue": "P1D",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How long signed credential issuer metadata, returned to wallets that ask for application/jwt, remains valid, advertised as its exp claim.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.offer.required-principal-attribute",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "The principal attribute that must be present in the authenticated principal for the offer to be valid.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.offer.required-principal-attribute-value",
+      "type": "String",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "The value of the principal attribute that must be present in the authenticated principal for the offer to be valid.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.offer.transaction-code-enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "Whether a transaction code should be attached to credential offers that use the pre-authorized code flow.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.presentation.client-identifier-prefix",
+      "type": "OidcVerifiableCredentialsPresentationProperties.ClientIdentifierPrefixes",
+      "defaultValue": "REDIRECT_URI",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How the wallet is expected to identify and authenticate CAS as the verifier, expressed as an OpenID4VP client identifier prefix.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.oidc.vc.presentation.response-mode",
+      "type": "OidcVerifiableCredentialsPresentationProperties.ResponseModes",
+      "defaultValue": "DIRECT_POST",
+      "kind": "optional",
+      "module": "cas-server-support-oidc-vc",
+      "summary": "How the wallet delivers its authorization response, expressed as an OpenID4VP response mode.",
+      "area": "cas.authn.oidc.vc"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.core.failure-cache-expiration",
+      "type": "String",
+      "defaultValue": "PT1M",
+      "kind": "optional",
+      "module": "cas-server-support-saml-idp",
+      "summary": "How long a failure to load metadata for a service provider is remembered before the metadata source is consulted again.",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.core.maximum-cache-duration",
+      "type": "String",
+      "defaultValue": "P1D",
+      "kind": "optional",
+      "module": "cas-server-support-saml-idp",
+      "summary": "The longest time service provider metadata is cached when the metadata itself asks for a longer time with its cacheDuration.",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.core.minimum-cache-duration",
+      "type": "String",
+      "defaultValue": "PT1M",
+      "kind": "optional",
+      "module": "cas-server-support-saml-idp",
+      "summary": "The shortest time service provider metadata is cached when the metadata itself asks for a shorter time with its cacheDuration, so that metadata asking to be cached for no time at all is not loaded again on every request.",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.file-system.change-detection-interval",
+      "type": "String",
+      "defaultValue": "PT5S",
+      "kind": "optional",
+      "module": "cas-server-support-saml-idp",
+      "summary": "How often CAS may check whether service provider metadata kept in local files has changed.",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.http.metadata-backup-max-age",
+      "type": "String",
+      "defaultValue": "P7D",
+      "kind": "optional",
+      "module": "cas-server-support-saml-idp",
+      "summary": "How long a metadata backup file may go without being confirmed by its source before it is reported as stale.",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.cluster.core.cluster-name",
+      "type": "String",
+      "defaultValue": "cas-hazelcast-cluster",
+      "kind": "optional",
+      "module": "cas-server-support-hazelcast-core",
+      "summary": "Name of the Hazelcast cluster.",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.heimdall.jwt-assertion-max-lifetime",
+      "type": "String",
+      "defaultValue": "PT5M",
+      "kind": "optional",
+      "module": "cas-server-support-heimdall",
+      "summary": "Maximum lifetime of a JWT bearer assertion presented to Heimdall, measured between its iat and exp claims.",
+      "area": "cas.heimdall"
+    },
+    {
+      "name": "cas.mcp.oauth.operator-required-attributes",
+      "type": "Map<String,String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-mcp",
+      "summary": "Principal attributes that the person behind an access token must have to be granted the MCP_OPERATOR role, which the tools that change CAS require, keyed by attribute name, with a regular expression as the value.",
+      "area": "cas.mcp"
+    },
+    {
+      "name": "cas.mcp.oauth.required-attributes",
+      "type": "Map<String,String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-mcp",
+      "summary": "Principal attributes that the person behind an access token must have to be granted the MCP_ADMIN role, keyed by attribute name, with a regular expression as the value.",
+      "area": "cas.mcp"
+    },
+    {
+      "name": "cas.service-registry.amazon-s3.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-aws-s3-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.core.maximum-service-id-length",
+      "type": "Integer",
+      "defaultValue": "4096",
+      "kind": "optional",
+      "module": "cas-server-core-services",
+      "summary": "Maximum length of a service identifier, such as the service parameter, that CAS will try to match against registered service definitions.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.dynamo-db.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-dynamodb-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.git.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-git-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.jpa.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-jpa-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.json.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-json-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.ldap.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-ldap-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.change-stream.enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-support-mongo-service-registry",
+      "summary": "Watch the service registry collection through a MongoDb change stream and reload service definitions as soon as they change, on every CAS node.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.change-stream.quiet-period",
+      "type": "String",
+      "defaultValue": "PT2S",
+      "kind": "optional",
+      "module": "cas-server-support-mongo-service-registry",
+      "summary": "How long to wait after the last observed change before reloading service definitions, so that a burst of changes, such as a bulk import, results in a single reload.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-mongo-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.redis.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-redis-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.rest.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-rest-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.cluster.core.cluster-name",
+      "type": "String",
+      "defaultValue": "cas-hazelcast-cluster",
+      "kind": "optional",
+      "module": "cas-server-support-hazelcast-core",
+      "summary": "Name of the Hazelcast cluster.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.yaml.order",
+      "type": "Integer",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-support-yaml-service-registry",
+      "summary": "The execution order of this registry which will determine its position in a chain in case multiple registries are defined.",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.tgc.crypto.encryption-enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Whether crypto encryption operations are enabled.",
+      "area": "cas.tgc"
+    },
+    {
+      "name": "cas.tgc.crypto.signing-enabled",
+      "type": "Boolean",
+      "defaultValue": "true",
+      "kind": "optional",
+      "module": "cas-server-core-util",
+      "summary": "Whether crypto signing operations are enabled.",
+      "area": "cas.tgc"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.core.cluster-name",
+      "type": "String",
+      "defaultValue": "cas-hazelcast-cluster",
+      "kind": "optional",
+      "module": "cas-server-support-hazelcast-core",
+      "summary": "Name of the Hazelcast cluster.",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.in-memory.properties",
+      "type": "Map<String,String>",
+      "defaultValue": "",
+      "kind": "optional",
+      "module": "cas-server-core-tickets",
+      "summary": "Free-form key-value pairs to configure the specific registry with custom settings.",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.cluster.core.cluster-name",
+      "type": "String",
+      "defaultValue": "cas-hazelcast-cluster",
+      "kind": "optional",
+      "module": "cas-server-support-hazelcast-core",
+      "summary": "Name of the Hazelcast cluster.",
+      "area": "cas.webflow"
+    }
+  ],
+  "removed": [
+    {
+      "name": "cas.authn.oauth.csrf-cookie.domain",
+      "type": "java.lang.String",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.http-only",
+      "type": "java.lang.Boolean",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.max-age",
+      "type": "java.lang.String",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.name",
+      "type": "java.lang.String",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.path",
+      "type": "java.lang.String",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.same-site-policy",
+      "type": "java.lang.String",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.oauth.csrf-cookie.secure",
+      "type": "java.lang.Boolean",
+      "area": "cas.authn.oauth"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.cluster.core.async-fillup",
+      "type": "java.lang.Boolean",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.cluster.core.replicated",
+      "type": "java.lang.Boolean",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.core.enable-jet",
+      "type": "java.lang.Boolean",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.consistency-level",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.container",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.create-container",
+      "type": "java.lang.Boolean",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.database",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.database-throughput",
+      "type": "java.lang.Integer",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.endpoint-discovery-enabled",
+      "type": "java.lang.Boolean",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.indexing-mode",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.key",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.max-retry-attempts-on-throttled-requests",
+      "type": "java.lang.Integer",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.max-retry-wait-time",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.mode",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.preferred-regions",
+      "type": "java.util.List<java.lang.String>",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.uri",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.cosmos-db.user-agent-suffix",
+      "type": "java.lang.String",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.cluster.core.async-fillup",
+      "type": "java.lang.Boolean",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.cluster.core.replicated",
+      "type": "java.lang.Boolean",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.core.enable-jet",
+      "type": "java.lang.Boolean",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.consistency-level",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.alg",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.enabled",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.encryption.key",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.encryption.key-size",
+      "type": "java.lang.Integer",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.signing-enabled",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.signing.key",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.crypto.signing.key-size",
+      "type": "java.lang.Integer",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.database",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.database-throughput",
+      "type": "java.lang.Integer",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.endpoint-discovery-enabled",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.indexing-mode",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.key",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.max-retry-attempts-on-throttled-requests",
+      "type": "java.lang.Integer",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.max-retry-wait-time",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.mode",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.preferred-regions",
+      "type": "java.util.List<java.lang.String>",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.uri",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.cosmos-db.user-agent-suffix",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.core.async-fillup",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.core.replicated",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.core.enable-jet",
+      "type": "java.lang.Boolean",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.stateless.storage-type",
+      "type": "java.lang.String",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.cluster.core.async-fillup",
+      "type": "java.lang.Boolean",
+      "area": "cas.webflow"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.cluster.core.replicated",
+      "type": "java.lang.Boolean",
+      "area": "cas.webflow"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.core.enable-jet",
+      "type": "java.lang.Boolean",
+      "area": "cas.webflow"
+    }
+  ],
+  "replaced": [],
+  "defaults": [
+    {
+      "name": "cas.acceptable-usage-policy.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.acceptable-usage-policy"
+    },
+    {
+      "name": "cas.acceptable-usage-policy.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.acceptable-usage-policy"
+    },
+    {
+      "name": "cas.acceptable-usage-policy.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.acceptable-usage-policy"
+    },
+    {
+      "name": "cas.acceptable-usage-policy.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.acceptable-usage-policy"
+    },
+    {
+      "name": "cas.audit.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.audit"
+    },
+    {
+      "name": "cas.audit.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.audit"
+    },
+    {
+      "name": "cas.audit.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.audit"
+    },
+    {
+      "name": "cas.audit.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.audit"
+    },
+    {
+      "name": "cas.authn.mfa.gauth.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.mfa.gauth"
+    },
+    {
+      "name": "cas.authn.mfa.gauth.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.mfa.gauth"
+    },
+    {
+      "name": "cas.authn.mfa.gauth.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.mfa.gauth"
+    },
+    {
+      "name": "cas.authn.mfa.gauth.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.mfa.gauth"
+    },
+    {
+      "name": "cas.authn.mfa.trusted.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.mfa.trusted"
+    },
+    {
+      "name": "cas.authn.mfa.trusted.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.mfa.trusted"
+    },
+    {
+      "name": "cas.authn.mfa.trusted.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.mfa.trusted"
+    },
+    {
+      "name": "cas.authn.mfa.trusted.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.mfa.trusted"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.core.trust-source.fido.metadata-blob-url",
+      "before": "https://mds.fidoalliance.org/",
+      "after": "https://mds3.fidoalliance.org/",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.web-authn.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.mfa.web-authn"
+    },
+    {
+      "name": "cas.authn.mfa.yubikey.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.mfa.yubikey"
+    },
+    {
+      "name": "cas.authn.mfa.yubikey.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.mfa.yubikey"
+    },
+    {
+      "name": "cas.authn.mfa.yubikey.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.mfa.yubikey"
+    },
+    {
+      "name": "cas.authn.mfa.yubikey.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.mfa.yubikey"
+    },
+    {
+      "name": "cas.authn.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.mongo"
+    },
+    {
+      "name": "cas.authn.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.mongo"
+    },
+    {
+      "name": "cas.authn.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.mongo"
+    },
+    {
+      "name": "cas.authn.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.mongo"
+    },
+    {
+      "name": "cas.authn.oidc.jwks.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.oidc.jwks"
+    },
+    {
+      "name": "cas.authn.oidc.jwks.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.oidc.jwks"
+    },
+    {
+      "name": "cas.authn.oidc.jwks.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.oidc.jwks"
+    },
+    {
+      "name": "cas.authn.oidc.jwks.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.oidc.jwks"
+    },
+    {
+      "name": "cas.authn.pac4j.saml[].metadata.service-provider.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.pac4j.saml"
+    },
+    {
+      "name": "cas.authn.pac4j.saml[].metadata.service-provider.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.pac4j.saml"
+    },
+    {
+      "name": "cas.authn.pac4j.saml[].metadata.service-provider.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.pac4j.saml"
+    },
+    {
+      "name": "cas.authn.pac4j.saml[].metadata.service-provider.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.pac4j.saml"
+    },
+    {
+      "name": "cas.authn.passwordless.accounts.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.accounts.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.accounts.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.accounts.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.tokens.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.tokens.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.tokens.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.passwordless.tokens.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.passwordless"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.saml-idp.metadata.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.authn.saml-idp.metadata"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.cluster.core.eviction-policy",
+      "before": "LRU",
+      "after": "NONE",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.authn.throttle.hazelcast.cluster.core.map-merge-policy",
+      "before": "PUT_IF_ABSENT",
+      "after": "LATEST_UPDATE",
+      "area": "cas.authn.throttle"
+    },
+    {
+      "name": "cas.consent.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.consent"
+    },
+    {
+      "name": "cas.consent.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.consent"
+    },
+    {
+      "name": "cas.consent.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.consent"
+    },
+    {
+      "name": "cas.consent.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.consent"
+    },
+    {
+      "name": "cas.events.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.events"
+    },
+    {
+      "name": "cas.events.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.events"
+    },
+    {
+      "name": "cas.events.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.events"
+    },
+    {
+      "name": "cas.events.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.events"
+    },
+    {
+      "name": "cas.javers.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.javers"
+    },
+    {
+      "name": "cas.javers.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.javers"
+    },
+    {
+      "name": "cas.javers.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.javers"
+    },
+    {
+      "name": "cas.javers.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.javers"
+    },
+    {
+      "name": "cas.monitor.mongo[].pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.monitor"
+    },
+    {
+      "name": "cas.monitor.mongo[].pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.monitor"
+    },
+    {
+      "name": "cas.monitor.mongo[].pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.monitor"
+    },
+    {
+      "name": "cas.monitor.mongo[].pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.monitor"
+    },
+    {
+      "name": "cas.service-registry.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.cluster.core.eviction-policy",
+      "before": "LRU",
+      "after": "NONE",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.service-registry.stream.hazelcast.config.cluster.core.map-merge-policy",
+      "before": "PUT_IF_ABSENT",
+      "after": "LATEST_UPDATE",
+      "area": "cas.service-registry"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.core.eviction-policy",
+      "before": "LRU",
+      "after": "NONE",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.hazelcast.cluster.core.map-merge-policy",
+      "before": "PUT_IF_ABSENT",
+      "after": "LATEST_UPDATE",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.mongo.pool.idle-time",
+      "before": "PT30S",
+      "after": "PT5M",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.mongo.pool.life-time",
+      "before": "PT60S",
+      "after": "PT30M",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.mongo.pool.max-size",
+      "before": "10",
+      "after": "100",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.registry.mongo.pool.max-wait-time",
+      "before": "PT60S",
+      "after": "PT10S",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.ticket.tst.time-to-kill-in-seconds",
+      "before": "PT15M",
+      "after": "PT5M",
+      "area": "cas.ticket"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.cluster.core.eviction-policy",
+      "before": "LRU",
+      "after": "NONE",
+      "area": "cas.webflow"
+    },
+    {
+      "name": "cas.webflow.session.server.hazelcast.cluster.core.map-merge-policy",
+      "before": "PUT_IF_ABSENT",
+      "after": "LATEST_UPDATE",
+      "area": "cas.webflow"
+    }
+  ]
+}

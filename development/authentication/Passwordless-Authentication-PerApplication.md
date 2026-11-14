@@ -1,0 +1,24 @@
+# Passwordless Authentication - Per Application
+
+Source: https://apereo.github.io/cas/development/authentication/Passwordless-Authentication-PerApplication.html
+
+Passwordless authentication can be selectively controlled for specific applications. By default, all services and applications are eligible for passwordless authentication.
+
+```json
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app.example.org",
+  "name": "App",
+  "id": 1,
+  "passwordlessPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy",
+    "enabled": false
+  }
+}
+```
+
+The following passwordless policy settings are supported:
+
+| Name | Description |
+| --- | --- |
+| `enabled` | Boolean to define whether passwordless authentication is allowed for this service. |

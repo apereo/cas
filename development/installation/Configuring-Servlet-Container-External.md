@@ -1,0 +1,96 @@
+# External Servlet Container Configuration
+
+Source: https://apereo.github.io/cas/development/installation/Configuring-Servlet-Container-External.html
+
+A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support the servlet specification `6.0.0` at a minimum. In these scenarios, the following vanilla CAS web application may be used, in the [WAR Overlay](https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html) :
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+        Including this module in the CAS WAR overlay is optional and unnecessary. This module is automatically included
+        and bundled with the CAS server distribution and there are alternative options baked in to allow one to replace
+        this module with another. The entry below is listed for reference only.
+    */
+    implementation "org.apereo.cas:cas-server-webapp"
+}
+```
+
+While there is no official project support, the following containers should be compatible with a CAS deployment:
+
+- [Apache Tomcat](https://tomcat.apache.org/) (At a minimum, Apache Tomcat `11` is required)
+- [Jetty](https://projects.eclipse.org/projects/rt.jetty) (At a minimum, Jetty `12.1` is required)
+- [JBoss](https://www.jboss.org/)
+- [Wildfly](https://wildfly.org/)
+- [GlassFish](https://glassfish.java.net/)
+- [WebSphere](https://www.ibm.com/cloud/websphere-hybrid-edition)
+
+Remember that an external container’s configuration is **NEVER** automated by CAS in any way which means you are responsible for upgrades, maintenance and all other manners of configuration such as logging, SSL, etc. CAS does not provide official support and troubleshooting guidelines, etc for an external container’s configuration or issues. Refer to the servlet container’s own documentation for more info.
+
+Note for JBoss, Wildfly and EAP, you may need to add a `jboss-deloyment-structure.xml` file to `src/main/webapp/WEB-INF` in your overlay in order for CAS to start properly.
+
+```xml
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="jdk.unsupported" />
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>
+```
+
+## Configuration
+
+Support for external containers is enabled by including the following module in the overlay:
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-webapp"
+}
+```
+
+## Async Support
+
+In the event that an external servlet container is used, you MAY need to make sure it’s configured correctly to support asynchronous requests in the event you get related errors and your container requires this. This is typically handled by setting `<async-supported>true</async-supported>` inside the container’s main `web.xml`
+file (i.e. For Apache Tomcat, that would be `$CATALINA_HOME/conf/web.xml`).
+
+## Logging
+
+When using an external container, you may need to ensure that logging configuration file that ships with CAS by default is disabled and turned into a no-op **specially** if the log configuration and location is to be controlled via CAS settings. This is required because initialization of the CAS web applications context inside an external servlet container tends to prematurely initialize the log configuration from classpath before CAS itself has had a chance to control logging via settings.
+
+To disable CAS’ own logging, define a `log4j2.xml` under `src/main/resources` and put the following content in it:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <AsyncRoot level="off">
+            <AppenderRef ref="casConsole"/>
+        </AsyncRoot>
+    </Loggers>
+</Configuration>
+```
+
+The above configuration will turn the logging initialization moot, allowing the location and configuration of logs to be defined via CAS settings.
+
+### Async Logging
+
+CAS logging automatically inserts itself into the runtime application context and will clean up the logging context once the container is instructed to shut down. However, Apache Tomcat in particular seems to by default ignore all JAR files named `log4j*.jar`, which prevents this feature from working. You may need to change the `catalina.properties` and remove `log4j*.jar` from the `jarsToSkip` property. Failure to do so will prevent the container to gracefully shut down and causes logger context threads to hang.
+
+You may need to do something similar on other containers if they skip scanning Log4j JAR files.

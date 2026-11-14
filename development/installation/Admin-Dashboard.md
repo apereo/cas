@@ -1,0 +1,79 @@
+# Admin Console & Dashboard
+
+Source: https://apereo.github.io/cas/development/installation/Admin-Dashboard.html
+
+CAS provides a number of facilities and dashboard that can be used to administer and manage the CAS server deployment. Such options usually are not mutually exclusive and are designed to work together and present various aspects of the CAS configuration and build that might include application registrations, configuration properties, etc.
+
+**Palantir**
+
+Palantir is the next generation of the [CAS Management](https://github.com/apereo/cas-management) tool. It is now part of the CAS codebase in an attempt to both streamline the development and release processes and to ensure the tool remains consistent and up to date. Its intention is to act as the overall admin management tool and console for the CAS server, and presents a user interface to allow one to add and modify application registrations, observe CAS server status, state of single sign-on sessions, access strategy and authorization, protocol payload simulations and a lot more.
+
+Support is enabled by adding the following module into the overlay:
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-support-palantir"
+}
+```
+
+Accessing the Palantir dashboard will by default require a form-based user authentication. The credentials used to access this feature are those presented by Spring Security configuration:
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `spring.security.user.name` (Third party; type `String`; default `user`): Default user name.
+- `spring.security.user.password` (Third party; type `String`): Password for the default user name.
+- `spring.security.user.roles` (Third party; type `List<String>`): Granted roles for the default user name.
+
+You need to make sure the authenticated user is assigned a `ROLE_ADMIN` role/authority to be able to access critical functionality.
+
+Palantir also supports routing authentication requests to the CAS server itself. This feature is disabled by default and needs to be explicitly enabled.
+
+**Feature Activation**
+
+To activate this feature, the following feature toggle(s) must be turned on:
+
+```properties
+CasFeatureModule.Palantir.cas-authentication.enabled=true
+```
+
+To learn more about configuration feature toggles, please [see this page](https://apereo.github.io/cas/development/configuration/Configuration-Feature-Toggles.html).
+
+Once enabled, you may create an application registration entry for Palantir and assign a specific access strategy to it to only allow access to authorized users, or you may instruct Palantir to reject authentication attempts that do not pass the access requirement rules.
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.palantir.cas-authentication.required-attribute-name` (Required; type `String`)
+- `cas.palantir.cas-authentication.required-attribute-value` (Required; type `String`)
+
+By default, authenticated users are assigned a `ROLE_USER` role/authority. To access critical functionality as an admin, you will need to resolve and release a `role` attribute to Palantir with a value of `ADMIN` or `ROLE_ADMIN`
+
+Furthermore, note that Palantir requires a number of actuator endpoints, such as `info`, `env`, etc that are provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You will need to make sure these endpoints are enabled and exposed for your CAS deployment. There are startup checks in place to ensure required actuator endpoints are present and configured. For best results, you may want to enable and expose all actuator endpoints and certainly require authentication access for each endpoint.
+
+Once enabled, Palantir is available at `/cas/palantir`.
+
+Palantir follows the light or dark appearance of the operating system. The theme button in its navigation bar switches between light and dark, and the settings dialog can return Palantir to the operating system’s choice; the choice is remembered by the browser.
+
+The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or section of Palantir, a registered application by its name, identifier or service id, and common actions such as creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and `Enter` opens one. Typing a username also offers to look that user up.
+
+The *Users* page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices, trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless account, password history, throttled login attempts, the interrupt the user would see at login and recent audit events, over the last day, week or month. Each source that has something recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session, removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
+
+When the history of application definitions is recorded, the change history of an application lists its versions, latest first, and shows the selected version side by side with the current definition or with the version before it, highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition again, after a confirmation.
+
+The authentication section lists, under *Interrupts*, which [interrupt](https://apereo.github.io/cas/development/webflow/Webflow-Customization-Interrupt.html) a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt, whether it blocks the login, and what each interrupt source answered.
+
+*Duplicate Application* opens a copy of an application in the wizard as a new application, named after the original, with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or discard the changes. Drafts are kept by the browser, never on the server, while changes stay unsaved, so a reload or a closed tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft. A draft is dropped once it is thirty days old.
+
+Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut. Rows with actions in Palantir’s tables can be reached with the keyboard: `Enter` chooses the focused row and `Shift+F10` opens its actions, as a right click does.
+
+**Spring Boot Admin**
+
+CAS takes advantage of Spring Boot Admin server to manage and monitor its internal state visually. As a Spring Boot Admin client, CAS registers itself with the Spring Boot Admin server over HTTP and reports back its status and health to the server’s web interface.
+
+More details about this integration is [available here](https://apereo.github.io/cas/development/monitoring/Configuring-SpringBootAdmin.html).

@@ -1,0 +1,89 @@
+# CSS
+
+Source: https://apereo.github.io/cas/development/ux/User-Interface-Customization-CSSJS.html
+
+The default styles are all contained in one single file located in `src/main/resources/static/css/cas.css`. This location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library and design specification as a base for its user experience.
+
+If you would like to create your own `css/my.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
+
+```bash
+cas.standard.css.file=/css/cas.css
+cas.standard.js.file=/js/cas.js
+```
+
+Please note that,
+
+- Multiple CSS or JavaScript files can be defined and separated by a comma.
+- The order of the files is important. The files are loaded in the order they are defined.
+- CAS will always load a `/css/custom.css` and `/js/custom.js` by default to allow for overrides and customizations.
+
+## Responsive Design
+
+CSS media queries bring responsive design features to CAS which would allow the adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `cas.css` file. They follow the Bootstrap breakpoints and grid.
+
+## Buttons, Fields, Alerts & Tables
+
+Every page that renders through the common `layout.html` marks its main element with the `cas-ui` class. Under that class, the end of `cas.css` gives page elements one look without moving them around on the page:
+
+- Text fields put the label above a rounded input; buttons are pill-shaped, with round icon buttons for actions such as revealing a password.
+- Alert boxes (`banner-*` and `alert-*`) get rounded corners and soft tones for information, success, warning and errors.
+- Tables get a rounded frame with a quiet header row, and their search, page-size and paging controls match the fields and buttons.
+- Progress bars use the same rounded track as the password strength meter.
+
+Colors come from the `--cas-theme-*` variables declared at the top of `cas.css`, so overriding those in `custom.css` recolors every page, the Palantir admin dashboard included.
+
+## Theme Builder
+
+The CAS header carries a palette button, next to the notifications button, that opens the theme builder: a panel on the side of the page where you adjust the theme and watch the page you are on change as you go, without reloading it.
+
+- **Properties** lists every theme property of `cas-theme-default.properties` with its description and the value the current theme resolves. Properties that change the page, such as the logo, the drawer menu, the language selector, the footer, the login form legend or the password management links, are previewed live; the others are marked as taking effect after deployment.
+- **Styles** edits what `custom.css` usually controls: the `--cas-theme-*` colors, the colors, corner radius and field height of cards and fields, the font family, the header and footer colors, the logo height and the background image, plus any additional CSS you want to append.
+- **Export** shows and downloads the resulting files: `cas-theme-custom.properties` (or `<theme>.properties` for a named theme) with only the properties that differ from `cas-theme-default.properties`, and `custom.css` with the generated rules between `cas-theme-builder:start` and `cas-theme-builder:end` markers, followed by your additional CSS.
+
+Put the properties file in your overlay next to the other theme files (for example `src/main/resources`) and `custom.css` under `src/main/resources/static/css`. When the builder opens again on a server that serves such a `custom.css`, it reads the marked block back, so you can keep refining the same file.
+
+> **Usage Warning**
+>
+> Nothing the theme builder does is saved on the server: changes apply only to your own browser tab until you deploy the files, and the draft is discarded when you reset it or log out. The theme builder is turned on by default to help with customization; turn it off for production deployments with `cas.theme-builder.enabled=false` in your theme properties.
+
+While the theme builder is on, elements that a theme property turns off are still rendered, hidden, so that the preview can show them again; with the builder turned off, pages render exactly as before.
+
+# JavaScript
+
+If you need to add some JavaScript, feel free to append to `src/main/resources/static/js/cas.js`.
+
+You can also create your own custom JavaScript file and include it in `scripts.html` like so:
+
+```html
+<script type="text/javascript" src="/js/my.js"></script>
+```
+
+If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.standard.js.file` setting.
+
+Most importantly, the following JavaScript libraries are utilized by CAS automatically:
+
+- [JQuery](https://github.com/jquery/jquery)
+- [Bootstrap for grid / flex utilities](https://getbootstrap.com/)
+- [Material.io](https://material.io/)
+
+## Checking CAPSLOCK
+
+CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check is enforced by the `cas.js` file.
+
+## Browser Cookie Support
+
+For CAS to honor a single sign-on session, the browser MUST support and accept cookies. CAS will notify the user if the browser has turned off its support for cookies. This behavior is controlled via the `cas.js` file.
+
+## Preserving Anchor Fragments
+
+Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url. This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking. CAS is configured by default to preserve anchor fragments where and when specified. There is nothing further for you to do.
+
+## WebJARs for JavaScript/CSS Libraries
+
+The CAS application packages third party static resources inside the CAS webapp rather than referencing CDN links so that CAS may be deployed on networks with limited internet access.
+
+The Third party static resources are packaged in “WebJAR” jar files and served up via the servlet `3.0` feature that merges any folders under `META-INF/resources` in web application jars with the application’s web root.
+
+### Building WebJARs
+
+You can search for webjars at https://webjars.org. There are three flavors of WebJARs that you can read about but the NPM and Bower types can be created automatically for any version (if they don’t already exist) as long as there exists an NPM or Bower package for the web resources you want to use. Click the “Add a webjar” button and follow the instructions. If customizing the UI in an overlay, the deployer can add webjars as dependencies to their overlay project and reference the URLs of the resource directly in an html file.
