@@ -19,6 +19,7 @@ import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustedDevicesReportE
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -40,7 +41,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -113,7 +113,7 @@ class MultifactorAuthnTrustConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerMfaAuthnTrust() {
-            return new PseudoTransactionManager();
+            return new PseudoPlatformTransactionManager();
         }
     }
 

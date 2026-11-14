@@ -261,12 +261,10 @@ dependencies {
     api libraries.spring
     api libraries.jackson
     api libraries.httpclient
-    api libraries.quartz
     api libraries.caffein
     api libraries.springcloud
     api libraries.springboot
     api libraries.springsecurity
-    api libraries.springintegration
     api libraries.springwebflow
     api libraries.jakarta
     api libraries.jspecify
@@ -287,8 +285,6 @@ dependencies {
     testImplementation libraries.jakartapersistence
     testImplementation libraries.thymeleaf
     testImplementation libraries.springboottomcat
-
-    runtimeOnly libraries.httpclient4
 
     jvmAgents(libs.mockito.core) {
         transitive = false

@@ -88,7 +88,7 @@ configurations.configureEach {
                     details.useVersion(libs.classgraph.get().version)
                 }
                 if (requested.group == 'org.eclipse.angus' && requested.name.contains('mail')) {
-                    details.useVersion(libs.jakarta.mail.get().version)
+                    details.useVersion(libs.angus.mail.get().version)
                 }
                 if (requested.group == 'org.springframework.session') {
                     details.useVersion(libs.spring.session.core.get().version)

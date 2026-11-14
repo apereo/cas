@@ -18,8 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -87,6 +91,28 @@ class RegisteredServicesEventListenerCacheTests {
             listener.handleRegisteredServicesLoadedEvent(
                 new CasRegisteredServicesLoadedEvent(mock(ServicesManager.class), List.of(), ClientInfoHolder.getClientInfo()));
             verify(servicesManager, never()).load();
+        }
+
+        @Test
+        void verifyApplicationReadyLoadsServices() {
+            val applicationContext = mock(ConfigurableApplicationContext.class);
+            when(applicationContext.getBean(ServicesManager.BEAN_NAME, ServicesManager.class)).thenReturn(servicesManager);
+            listener.handleApplicationReadyEvent(new ApplicationReadyEvent(new SpringApplication(), new String[0], applicationContext, Duration.ZERO));
+            verify(servicesManager).load();
+        }
+
+        /**
+         * Spring Boot clears the class loader caches on the context refreshed event, closing the nested jars of an
+         * executable web application; an asynchronous listener on that event races with it and fails with
+         * {@code Zip file closed}.
+         */
+        @Test
+        void verifyNoListenerRunsOnContextRefresh() {
+            val contextRefreshListeners = Arrays.stream(RegisteredServicesEventListener.class.getMethods())
+                .filter(method -> method.isAnnotationPresent(EventListener.class))
+                .filter(method -> Arrays.asList(method.getParameterTypes()).contains(ContextRefreshedEvent.class))
+                .toList();
+            assertTrue(contextRefreshListeners.isEmpty());
         }
 
         @Test

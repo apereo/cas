@@ -1,5 +1,28 @@
 import org.apereo.cas.gradle.CasBuildSettings
+import org.apereo.cas.gradle.WebjarTrimTransform
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.artifacts.type.ArtifactTypeDefinition
+
+def webjarsTrimmed = Attribute.of('org.apereo.cas.webjars-trimmed', Boolean)
+
+dependencies {
+    attributesSchema {
+        attribute(webjarsTrimmed)
+    }
+    artifactTypes.getByName(ArtifactTypeDefinition.JAR_TYPE) {
+        attributes.attribute(webjarsTrimmed, false)
+    }
+    registerTransform(WebjarTrimTransform) {
+        from.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            .attribute(webjarsTrimmed, false)
+        to.attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            .attribute(webjarsTrimmed, true)
+    }
+}
+
+configurations.named('runtimeClasspath') {
+    attributes.attribute(webjarsTrimmed, true)
+}
 
 configurations {
     configureEach {

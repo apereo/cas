@@ -93,3 +93,8 @@ description: "Review and change service registries and the services manager: loo
   the JSON, in-memory, DynamoDB and REST registries do) and stores explicit ids as given, so imported ids are kept.
   Do not bring back `@GeneratedValue`: Hibernate then refuses or replaces assigned ids. `service-registry-jpa` runs
   `cas.verifyServiceRegistry` against MySQL through `docker exec mysql-server mysql ...` (2-second reload schedule).
+- The initial services load runs on `ApplicationReadyEvent`, asynchronously. Never move an `@Async` listener back to
+  `ContextRefreshedEvent`: Spring Boot's `ClearCachesApplicationListener` closes the launcher class loader's nested jars
+  on that event, and the async thread then fails with `Zip file closed` (4 of 5 starts of an executable Tomcat war).
+  `RegisteredServicesEventListenerCacheTests` guards it. Reproduce with `java -jar` on a boot war, not with `bootRun`
+  or a flat class path, which do not use nested jars.

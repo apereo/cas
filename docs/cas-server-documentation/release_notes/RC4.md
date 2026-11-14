@@ -971,6 +971,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 ## Other Stuff
 
+- {: .fixed data-area="services"} When CAS runs as an executable web application, the initial load of
+  [registered services](../services/Service-Management.html) after startup no longer fails intermittently with a
+  `Zip file closed` error; it now starts once the application is ready, after Spring Boot has cleared its class loader caches.
 - {: .fixed data-area="mfa"} When CAS adds the user index to an existing DynamoDb table of
   [Google Authenticator devices](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html), it waits until the
   index is built before using it, so device lookups no longer fail while DynamoDb fills the index from existing devices.
@@ -982,6 +985,21 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
   follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
   and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
+- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
+  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
+  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
+  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
+  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
+  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
+  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
+  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
+  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
+  Jackson 2 wherever Groovy scripting is included. CAS
+  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
+  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
+  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
+  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
+  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}
