@@ -283,7 +283,7 @@ gradleLombok = "9.8.3"
 gradleNullAway = "3.3.0"
 gradleErrorProne = "5.2.0"
 gradleGraalVmNative = "1.1.18"
-gradleSonarqube = "7.5.0.8588"
+gradleSonarqube = "7.6.0.18749"
 gradleNmcpPublishing = "1.6.2"
 gradleJib = "3.5.4"
 
