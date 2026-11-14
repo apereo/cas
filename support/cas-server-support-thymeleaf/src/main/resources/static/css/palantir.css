@@ -3361,10 +3361,6 @@ select + span[role="combobox"] {
     font-size: 1.4rem;
 }
 
-.cluster-members-loading-dialog .mdc-linear-progress {
-    margin: 1.25rem 0 .5rem;
-}
-
 .cluster-topology-owners {
     display: grid;
     gap: 1rem;

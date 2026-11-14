@@ -1405,6 +1405,17 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
 /* ==========================================================================
    Interrupt inquiry: username, application and button on one row
    ========================================================================== */
+/* The look-up button sits on the same line as the field it searches with, as tall as the field's box. */
+#dashboard .passwordless-account-search {
+    align-items: end;
+}
+
+#dashboard .passwordless-account-search .passwordless-account-search-button.mdc-button {
+    align-self: end;
+    height: 52px;
+    min-height: 52px;
+}
+
 .passwordless-account-search.interrupt-inquiry-search {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) auto;
     align-items: end;
@@ -4917,4 +4928,61 @@ body.palantir-has-selection-bar #attribute-tab-0 {
 
 .ui-dialog .registered-service-wizard__hint .mdi {
     font-size: 16px;
+}
+
+/* A row of a mapped field (key, value, remove): the fields share the width and line up at their boxes, and a value
+   with a script editor keeps its button beside it instead of wrapping below. */
+[data-mapped-input-row="true"] {
+    align-items: flex-end;
+    gap: 8px;
+}
+
+[data-mapped-input-row="true"] > :is(.mdc-text-field, .palantir-code-input-group) {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-bottom: 0 !important;
+}
+
+.cas-ui [data-mapped-input-row="true"] > .palantir-code-input-group {
+    flex-wrap: nowrap;
+    width: auto;
+}
+
+[data-mapped-input-row="true"] > .palantir-code-input-group .palantir-code-editor-button {
+    flex: none;
+    min-width: 0;
+}
+
+/* An outlined select draws its own border; the line ripple belongs to the filled variant and drew a second line
+   under the box. */
+.mdc-select--outlined .mdc-line-ripple {
+    display: none;
+}
+
+/* Material dialogs cover the header and the navigation bar while they are open, like every other dialog. */
+html.palantir-page .mdc-dialog {
+    z-index: 95;
+}
+
+html.palantir-page .mdc-dialog .mdc-dialog__surface {
+    max-height: calc(100dvh - 32px);
+}
+
+/* Application startup: the filter and the expand and collapse buttons share a line, aligned on the filter's box and
+   as tall as it, and the filter is wide enough for long step names. */
+#dashboard .startup-toolbar > div {
+    align-items: flex-end !important;
+}
+
+#dashboard .startup-search-wrap {
+    margin-right: 0;
+}
+
+#dashboard .startup-search-field {
+    width: min(36rem, 100vw - 3rem);
+}
+
+#dashboard .startup-toolbar .startup-toolbar-button.mdc-button {
+    height: 52px;
+    min-height: 52px;
 }

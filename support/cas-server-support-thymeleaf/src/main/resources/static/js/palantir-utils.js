@@ -1133,7 +1133,7 @@ function applySharedDialogStyle() {
 }
 
 /**
- * Keep dialogs and select menus inside the window on screens with little height. A dialog never grows taller than
+ * Keep dialogs and select menus inside the window on small screens. A dialog never grows wider or taller than
  * the window: its content scrolls instead, and once it is open it is moved back into view whenever it grows or the
  * window shrinks. Select menus open above their field when there is no room below, in the window or in the dialog
  * that holds them, which clips what falls outside it, and scroll when they are long.
@@ -1149,6 +1149,9 @@ function keepPalantirPopupsInView() {
             return;
         }
         const widget = element.dialog("widget");
+        if (widget.outerWidth() > window.innerWidth - margin * 2) {
+            element.dialog("option", "width", window.innerWidth - margin * 2);
+        }
         const bounds = widget[0].getBoundingClientRect();
         if (bounds.top < margin || bounds.bottom > window.innerHeight - margin
             || bounds.left < 0 || bounds.right > window.innerWidth) {
