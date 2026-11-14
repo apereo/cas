@@ -93,6 +93,10 @@ public class CasJaversAutoConfiguration {
         @SuppressWarnings("UnusedMethod")
         record ServicesManagerJaversAspect(EntityHistoryRepository objectVersionRepository) {
 
+            @Pointcut("execution(* org.apereo.cas.services.ServicesManager.save(..))")
+            private void serviceManagementSaveOperation() {
+            }
+            
             /**
              * Record the history of every service the services manager saves. A single save returns the saved service,
              * or nothing when no manager supports it; the bulk saves return nothing, so their services are recorded as
@@ -134,9 +138,7 @@ public class CasJaversAutoConfiguration {
                 }
             }
 
-            @Pointcut("execution(* org.apereo.cas.services.ServicesManager.save(..))")
-            private void serviceManagementSaveOperation() {
-            }
+
         }
     }
 }

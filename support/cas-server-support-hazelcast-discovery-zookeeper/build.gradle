@@ -12,6 +12,7 @@ dependencies {
     implementation libraries.hazelcast
     implementation libraries.hazelcastzookeeper
     implementation libraries.zookeeper
+    implementation libraries.springintegration
 
     api project(":api:cas-server-core-api-ha")
     

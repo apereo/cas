@@ -9,6 +9,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.listener.CasAuthenticationAuthenticationEventListener;
 import org.apereo.cas.support.events.listener.CasAuthenticationEventListener;
 import org.apereo.cas.support.events.web.CasEventsReportEndpoint;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -101,7 +101,7 @@ public class CasCoreEventsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "transactionManagerEvents")
         public PlatformTransactionManager transactionManagerEvents() {
-            return new PseudoTransactionManager();
+            return new PseudoPlatformTransactionManager();
         }
     }
 

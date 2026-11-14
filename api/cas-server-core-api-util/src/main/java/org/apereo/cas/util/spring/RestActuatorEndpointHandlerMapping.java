@@ -44,9 +44,9 @@ public class RestActuatorEndpointHandlerMapping extends RequestMappingHandlerMap
     }
 
     private static Map<Object, RestActuatorControllerEndpoint> getHandlers(final Collection<RestActuatorControllerEndpoint> endpoints) {
-        val handlers = new LinkedHashMap<Object, RestActuatorControllerEndpoint>();
+        val handlers = new IdentityHashMap<Object, RestActuatorControllerEndpoint>();
         endpoints.forEach(endpoint -> handlers.put(endpoint.getEndpointBean(), endpoint));
-        return Map.copyOf(handlers);
+        return handlers;
     }
 
     @Override

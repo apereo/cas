@@ -53,6 +53,7 @@ on:
     branches:
       - master
       - next
+      - yolo
       - '!**.**.**'
       - '!heroku-*'
       - 'pr-*'

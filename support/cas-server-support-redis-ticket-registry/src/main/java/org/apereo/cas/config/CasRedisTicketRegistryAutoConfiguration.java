@@ -331,7 +331,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
             final LockRegistry casTicketRegistryRedisLockRegistry) {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultLockRepository(casTicketRegistryRedisLockRegistry))
+                .supply(() -> new DefaultLockRepository(casTicketRegistryRedisLockRegistry::obtain))
                 .otherwise(LockRepository::noOp)
                 .get();
         }

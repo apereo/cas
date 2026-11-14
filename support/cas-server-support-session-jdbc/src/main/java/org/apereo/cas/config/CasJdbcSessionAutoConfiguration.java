@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeaturesEnabled;
 import lombok.val;
@@ -16,7 +17,6 @@ import org.springframework.boot.session.jdbc.autoconfigure.JdbcSessionDataSource
 import org.springframework.boot.session.jdbc.autoconfigure.JdbcSessionProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.session.jdbc.config.annotation.SpringSessionDataSource;
 import org.springframework.session.jdbc.config.annotation.SpringSessionTransactionManager;
@@ -55,7 +55,7 @@ public class CasJdbcSessionAutoConfiguration {
     public PlatformTransactionManager jdbcSessionTransactionManager(
         final ObjectProvider<DataSource> dataSource) {
         val ds = dataSource.getIfAvailable();
-        return ds != null ? new DataSourceTransactionManager(ds) : new PseudoTransactionManager();
+        return ds != null ? new DataSourceTransactionManager(ds) : new PseudoPlatformTransactionManager();
     }
 
 }

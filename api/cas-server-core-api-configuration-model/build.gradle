@@ -31,6 +31,7 @@ dependencies {
     compileOnly libraries.log4j
 
     if (!skipConfigurationMetadata) {
+        annotationProcessor libraries.springbootconfigprocessor
         annotationProcessor libraries.springbootconfigmetadata
     }
 

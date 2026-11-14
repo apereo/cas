@@ -12,6 +12,8 @@ ext {
 
 dependencies {
     api libraries.groovy
+    runtimeOnly libraries.httpclient4
+    runtimeOnly libraries.jackson2
 
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")

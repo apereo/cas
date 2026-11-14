@@ -36,6 +36,7 @@ dependencies {
     implementation libraries.cqengine
     implementation libraries.jose4j
     implementation libraries.nimbus
+    implementation libraries.nimbusoidc
 
     testImplementation project(":support:cas-server-support-oauth-webflow")
     testImplementation project(":core:cas-server-core-notifications")

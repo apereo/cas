@@ -14,9 +14,12 @@ import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     properties = {
         "management.endpoints.web.exposure.include=myEndpoint,myExcludedEndpoint",
         "management.endpoints.web.exposure.exclude=myExcludedEndpoint",
+        "management.endpoint.myEndpoint.access=READ_ONLY",
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
     }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(CasTestExtension.class)
@@ -58,6 +62,8 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
     void verifyUnexposedEndpointsHaveNoMappings() throws Throwable {
         mockMvc.perform(get("/actuator/myEndpoint/hello"))
             .andExpect(status().isOk());
+        mockMvc.perform(post("/actuator/myEndpoint/hello"))
+            .andExpect(status().is4xxClientError());
         mockMvc.perform(get("/actuator/myHiddenEndpoint/hello"))
             .andExpect(status().is4xxClientError());
         mockMvc.perform(get("/actuator/myExcludedEndpoint/hello"))
@@ -68,7 +74,9 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
     static class MyTestConfiguration {
         @Bean
         public MyEndpoint myEndpoint() {
-            return new MyEndpoint();
+            val target = new MyEndpoint();
+            return (MyEndpoint) Enhancer.create(MyEndpoint.class,
+                (MethodInterceptor) (proxy, method, args, methodProxy) -> methodProxy.invoke(target, args));
         }
 
         @Bean
@@ -87,6 +95,11 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
 
             @GetMapping("/hello")
             public String hello() {
+                return "hello";
+            }
+
+            @PostMapping("/hello")
+            public String write() {
                 return "hello";
             }
         }

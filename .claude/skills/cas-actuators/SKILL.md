@@ -54,6 +54,10 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   a `NONE` endpoint is usually refused by security before the missing mapping matters.
   `ActuatorEndpointAccessControlTests` covers all of it, with `releaseAttributes` beside
   `registeredServices` as the Boot operation endpoint that has always behaved this way.
+- Keep REST actuator handler beans in a private identity map; do not convert it with `Map.copyOf`.
+  HotswapAgent's Spring proxies delegate `equals` to their target, so `proxy.equals(proxy)` can be false;
+  `Map.copyOf` then returns null even for a key obtained from its own key set, aborting handler registration.
+  `RestActuatorEndpointDiscovererTests` uses a delegating CGLIB endpoint proxy and verifies GET access and POST refusal.
 - Before changing what an access level does to these endpoints, measure the blast radius rather
   than reasoning from the annotation: every REST actuator endpoint declares
   `defaultAccess = Access.NONE` and the web application ships `management.endpoints.access.default=NONE`,
