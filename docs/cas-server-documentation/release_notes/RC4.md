@@ -40,6 +40,10 @@ account_profile_images:
   - src: img_34.png
     alt: Tokens listing an access token and a refresh token with the number of access tokens issued from it
     title: Refresh tokens next to access tokens
+palantir_images:
+  - src: img_35.png
+    alt: Palantir system metrics explorer showing HTTP requests with their statistics, a per-minute trend and a breakdown by URI
+    title: The metrics explorer, with values in their units, a live trend and a breakdown by tag
 release:
   line: 8.1.0 development
   summary: >-
@@ -221,7 +225,7 @@ single sign-on sessions, multifactor and trusted devices, consent decisions, res
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
 the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
-compares any recorded version side by side with the current definition or the version before it, and restores the
+names who made each change, and compares any recorded version side by side with the current definition or the version before it, and restores the
 selected version from the same dialog. Under *Interrupts*, the authentication section shows which
 [interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
 source answered.
@@ -232,7 +236,21 @@ searchable, and the editor checks the JSON as it is typed, shows problems on the
 theme and can switch to the wizard. Templates of your own can be offered through a folder the dashboard reads. SAML2 applications whose metadata is held by a metadata
 manager, such as MongoDB, show that source and link to its management under protocols, and the settings dialog can
 reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog,
-which stores their feature flags in a chosen dynamic configuration source for the next start.
+which stores their feature flags in a chosen dynamic configuration source for the next start. System metrics open on a board of
+pinned metrics with their current values, units and trends, flagged when usage runs high, and an explorer finds any
+metric by name and shows its statistics, a live trend and a breakdown by tag that narrows the metric with a click.
+ Zen mode, on <kbd>Shift</kbd>+<kbd>Z</kbd>, puts away the header, navigation bar and footer, and the browser remembers it.
+Palantir now opens on a *Home* page of widgets for the server, its health checks and resources, HTTP requests and
+runtime metrics, sessions, applications by type and recent changes to applications with who made them, across the
+cluster when the service change history is installed, which people can reorder; it is drawn from one summary the server keeps for a
+few seconds, so it stays light however many administrators have it open. Attribute definitions are shown as cards
+that give each definition's kind, the flags it turns on and the values it sets, with buttons to view, edit or delete it. Single sign-on sessions are cards too, giving when and from which
+browser and device the user signed in, how often the session was used and the applications it reached, and so are
+Spring sessions, with a bar for how long each has left before it expires for being idle. Registered multifactor
+devices are cards as well, flagging the ones that expired. *System Info* lists the CAS modules the server runs, as
+cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day.
+
+{% include imagegallery.html images=page.palantir_images gallery_id="palantir" %}
 
 Saving an application that someone else changed or deleted in the meantime shows what they changed and asks before
 overwriting it, and actions that would change something through a read-only endpoint are disabled with an explanation.
@@ -913,6 +931,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="ui"} When password management is turned off, the login page no longer links to `https://pwd.example.org`; the
   address of an external password recovery page is set with the `cas.pm-links.forgot-password.url` theme property, and
   nothing is shown when it is blank.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) shows values that come from requests, such as
+  usernames, browser user agents, device names, attribute values and configuration values, as text in its tables and
+  dialogs; they were inserted as markup. Palantir also no longer signs out when the server briefly answers with an
+  error, as while it restarts, and notices an expired session again.
 - {: .fixed data-area="ui"} Date fields in the [Palantir](../installation/Admin-Dashboard.html) service wizard open a calendar to
   pick from: the expiration date, client secret expiration dates, and the start and end of a time-based access strategy, which
   take the start and the end of the picked day. Values of the access strategy types (remote, HTTP request, time-based and
@@ -1001,6 +1023,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
   packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
   should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
+- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html#build) can also be supplied as an
+  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
+  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
+  Javadoc errors fail the build unless that flag is set.
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}

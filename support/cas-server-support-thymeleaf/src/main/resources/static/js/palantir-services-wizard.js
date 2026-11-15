@@ -116,13 +116,7 @@ function handleAttributeReleasePolicyChange(select) {
             .val("");
         $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAttributeReleasePolicy");
         $("#editServiceWizardMenuItemAttributeReleasePolicy .jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();
         });
@@ -2698,7 +2692,7 @@ function generateServiceDefinition() {
                                 }
                             }
                         } else {
-                            serviceDefinition[paramName] = value;
+                            serviceDefinition[paramName] = mergeWizardPolicy(serviceDefinition[paramName], value);
                         }
                     }
                 }
@@ -2744,6 +2738,57 @@ function generateServiceDefinition() {
         editor.gotoLine(1);
         PalantirWizardValidity.refresh();
     }, 10);
+}
+
+/**
+ * Whether a switch shows as on. The switch itself is the truth: its hidden field is emptied whenever the wizard opens.
+ *
+ * @param $button the switch
+ * @returns {boolean} true when it is on
+ */
+function wizardSwitchSelected($button) {
+    return $button.attr("aria-checked") === "true" || $button.hasClass("mdc-switch--selected");
+}
+
+/**
+ * Put every switch of the wizard, or of one part of it, back the way the page first drew it, before a definition fills the wizard in, so a
+ * switch turned on or off for the previous application does not show for the next one, or for the policy chosen
+ * after another. Its hidden field stays empty,
+ * so a switch nobody touches adds nothing to the definition. The hidden field's value is its default only until the
+ * switch is first used, so the default is noted the first time the wizard opens.
+ *
+ * @param scope the part of the wizard whose switches are put back
+ */
+function resetWizardSwitches(scope = "#editServiceWizardForm") {
+    $(scope).find("input[type='hidden'][data-switch-btn]").each(function () {
+        if (this.dataset.switchDefault === undefined) {
+            this.dataset.switchDefault = String(this.getAttribute("value") === "true");
+        }
+        const $button = $(`#${this.dataset.switchBtn}`);
+        if ($button.length > 0 && wizardSwitchSelected($button) !== (this.dataset.switchDefault === "true")) {
+            $button.click();
+        }
+        this.value = "";
+    });
+}
+
+/**
+ * The value a field gives a top-level setting, keeping what other fields already put in it. A policy is chosen by
+ * a list whose value names the policy's type, while switches and fields elsewhere in the section set the policy's
+ * other settings, such as whether authentication attributes may be released. Whichever is read first, the type
+ * and the other settings end up in one policy rather than the type replacing them.
+ *
+ * @param current what the setting holds so far
+ * @param value   the value the field gives it
+ * @returns {*} the setting's value
+ */
+function mergeWizardPolicy(current, value) {
+    const isPolicy = candidate => candidate !== null && typeof candidate === "object" && !Array.isArray(candidate);
+    if (!isPolicy(current) || !isPolicy(value)) {
+        return value;
+    }
+    const settings = Object.fromEntries(Object.entries(current).filter(([key]) => key !== "@class"));
+    return {...value, ...settings};
 }
 
 /**
@@ -3644,12 +3689,11 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             return;
         }
 
-        const currentValue = $input.val() === "true" || $input.val() === true;
         const newValue = value === true || value === "true" || value === "TRUE";
-
-        if (currentValue !== newValue) {
+        if (wizardSwitchSelected($button) !== newValue) {
             $button.click();
         }
+        $input.val(String(newValue));
     }
 
     /**
@@ -4139,6 +4183,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
                 });
             });
 
+        resetWizardSwitches();
         $("#editServiceWizardForm input").val("");
         if (typeof resetRegisteredServiceClientSecrets === "function") {
             resetRegisteredServiceClientSecrets();
@@ -4282,7 +4327,7 @@ async function chooseRegisteredServiceType(serviceTypes) {
                     <span class="palantir-protocol-badge is-${protocol.key}" aria-hidden="true">${escapePalantirMarkup(protocol.short)}</span>
                     <span class="palantir-type-card-name">
                         <span>${escapePalantirMarkup(friendlyName || protocol.label)}</span>
-                        <code>${escapePalantirMarkup(serviceClass.split(".").pop())}</code>
+                        ${palantirCode(serviceClass.split(".").pop())}
                     </span>
                 </span>
                 <span class="palantir-type-card-description">${escapePalantirMarkup(descriptions[protocol.key] ?? "Applications of this registered service type.")}</span>

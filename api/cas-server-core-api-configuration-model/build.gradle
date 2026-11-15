@@ -1,10 +1,11 @@
 apply plugin: "org.apereo.cas.project-conventions"
 
+import org.apereo.cas.gradle.CasBuildSettings
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
 description = "Provides the CAS configuration property model used by documentation, metadata generation, and runtime configuration binding."
-def skipConfigurationMetadata = providers.systemProperty("skipNestedConfigMetadataGen").present
+def skipConfigurationMetadata = CasBuildSettings.isFlagEnabled(project, "skipNestedConfigMetadataGen")
 
 sourceSets.test.resources.srcDirs += sourceSets.main.resources.srcDirs
 

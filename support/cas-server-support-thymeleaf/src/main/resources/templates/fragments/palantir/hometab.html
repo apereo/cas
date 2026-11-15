@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <!--/*
+        The home page: widgets drawn by palantir-home.js from one summary request to /palantir/dashboard/overview.
+        A widget whose data the deployment does not expose is not shown; the order of the widgets is kept in the browser.
+    */-->
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-17">
+        <section class="palantir-home" aria-label="Overview">
+            <div class="palantir-home__toolbar">
+                <span class="palantir-home__updated" id="homeUpdated" aria-live="polite"></span>
+            </div>
+            <div class="palantir-progress__track is-busy palantir-home__progress" id="homeProgress" role="progressbar"
+                 aria-label="Updating the overview" hidden><span class="palantir-progress__bar"></span></div>
+            <div class="palantir-home__grid" id="homeGrid" aria-busy="true">
+                <div class="palantir-home__loading" id="homeLoading">
+                    <p>Getting the overview ready…</p>
+                    <div class="palantir-progress__track is-busy" role="progressbar" aria-label="Getting the overview ready">
+                        <span class="palantir-progress__bar"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</span>
+</body>
+</html>

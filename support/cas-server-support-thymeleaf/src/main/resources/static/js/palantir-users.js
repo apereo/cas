@@ -138,8 +138,8 @@ class PalantirUserLookup {
                     });
                     for (const [name, values] of attributes) {
                         table.row.add({
-                            0: `<code>${escapePalantirMarkup(name)}</code>`,
-                            1: `<code>${escapePalantirMarkup([].concat(values).join(", "))}</code>`
+                            0: `${palantirCode(name)}`,
+                            1: `${palantirCode([].concat(values).join(", "))}`
                         });
                     }
                     table.draw();
@@ -262,7 +262,7 @@ class PalantirUserLookup {
                             ? record.resourceOperatedUpon : JSON.stringify(record.resourceOperatedUpon ?? "");
                         table.row.add({
                             0: String(record.whenActionWasPerformed ?? ""),
-                            1: `<code>${escapePalantirMarkup(record.actionPerformed ?? "")}</code>`,
+                            1: `${palantirCode(record.actionPerformed ?? "")}`,
                             2: escapePalantirMarkup(resource),
                             3: escapePalantirMarkup(record.clientInfo?.clientIpAddress ?? "")
                         });

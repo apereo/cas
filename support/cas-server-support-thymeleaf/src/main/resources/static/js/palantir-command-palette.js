@@ -252,6 +252,16 @@ class PalantirCommandPalette {
                 run: () => PalantirTheme.toggle()
             });
         }
+        if (typeof PalantirZenMode !== "undefined") {
+            const zen = PalantirZenMode.enabled();
+            actions.push({
+                label: zen ? "Leave zen mode" : "Zen mode",
+                detail: zen ? "Show the navigation bar and footer again" : "Hide the navigation bar and footer (Shift+Z)",
+                icon: zen ? "mdi-arrow-expand-vertical" : "mdi-arrow-collapse-vertical",
+                keywords: "zen focus distraction fullscreen hide navigation header footer",
+                run: () => PalantirZenMode.toggle()
+            });
+        }
         actions.push({
             label: "Keyboard shortcuts",
             detail: "Every shortcut, also shown with ?",

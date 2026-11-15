@@ -138,6 +138,32 @@ public class CasJaversAutoConfiguration {
                 }
             }
 
+            @Pointcut("execution(* org.apereo.cas.services.ServicesManager.delete(..))")
+            private void serviceManagementDeleteOperation() {
+            }
+
+            /**
+             * Record the deletion of a service the services manager deletes, so its history ends with who deleted it
+             * and when. A deletion that removed nothing is not recorded, and neither is the deletion of a service that
+             * has no history, such as one loaded from a file and never saved through CAS.
+             *
+             * @param joinPoint the join point
+             * @return the deleted service, if any
+             * @throws Throwable the throwable
+             */
+            @Around("serviceManagementDeleteOperation()")
+            public Object serviceManagementDeleteOperation(final ProceedingJoinPoint joinPoint) throws Throwable {
+                val result = joinPoint.proceed();
+                if (result instanceof final RegisteredService deleted) {
+                    try {
+                        objectVersionRepository.delete(deleted);
+                    } catch (final Exception e) {
+                        LOGGER.debug("The deletion of [{}] is not recorded in its history: [{}]", deleted.getName(), e.getMessage());
+                    }
+                }
+                return result;
+            }
+
 
         }
     }

@@ -548,7 +548,7 @@ function createPrometheusChart(metricName, metricData) {
 
     const header = document.createElement("div");
     header.className = "mb-1";
-    header.innerHTML = `<h6 class="mb-0" title="${metricName}" style="font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${metricName}</h6>`;
+    header.innerHTML = `<h6 class="mb-0" title="${escapePalantirMarkup(metricName)}" style="font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapePalantirMarkup(metricName)}</h6>`;
 
     const canvas = document.createElement("canvas");
     canvas.id = chartId;

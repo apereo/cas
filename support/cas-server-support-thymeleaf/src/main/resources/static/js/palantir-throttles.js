@@ -56,7 +56,7 @@ async function initializeThrottlesOperations() {
     let throttlesUsername = "";
 
     function throttledValue(value) {
-        return `<code>${escapePalantirMarkup(value ?? "")}</code>`;
+        return `${palantirCode(value ?? "")}`;
     }
 
     function showThrottlesUsername(count) {

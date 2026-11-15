@@ -3,7 +3,7 @@
    activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
    PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext, fetchServices, notyf,
    PalantirSamlMetadataImport, PalantirApplicationAccess, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
-   PalantirCommandPalette, Chart, PalantirApplicationSelection */
+   PalantirCommandPalette, Chart, PalantirApplicationSelection, PalantirHome, PalantirModules */
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -29,7 +29,8 @@ const TABS = [
     {index: 13, label: "MFA", button: "#mfaTabButton", tabs: "mfa-tabs", tables: ["mfaDevicesTable"]},
     {index: 14, label: "Multitenancy", button: "#tenantsTabButton", tabs: "tenancy-tabs", tables: ["tenantsTable"]},
     {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []},
-    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []}
+    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []},
+    {index: 17, label: "Home", button: "#homeTabButton", tabs: null, tables: []}
 ];
 
 const PROTOCOL_FIELDS = {
@@ -194,6 +195,33 @@ async function verifyFeatureCatalog(page) {
  *
  * @param page the puppeteer page
  */
+async function verifyHome(page) {
+    await cas.separator();
+    await page.waitForFunction(() => currentActiveTab === Tabs.HOME.index
+        && $("#homeGrid > [data-home-widget='status']").length === 1, {timeout: 30000});
+    const home = await page.evaluate(() => ({
+        widgets: $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get(),
+        status: $("#homeGrid .palantir-home__status b").text(),
+        version: PalantirHome.summary.sections.server.version
+    }));
+    await cas.logg(`Home opens first with ${home.widgets.join(", ")}; ${home.status}; CAS ${home.version}`);
+    assert(home.widgets.includes("health"));
+    assert(home.widgets.includes("resources"));
+    await page.waitForFunction(() => Chart.getChart(document.getElementById("homeHealthChart")) !== undefined, {timeout: 10000});
+
+    await page.click("#homeGrid [data-home-for='resources'][data-home-action='earlier']");
+    await page.waitForFunction(() => {
+        const order = $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get();
+        const stored = JSON.parse(localStorage.getItem("PalantirHomeLayout")).order;
+        return order.indexOf("resources") < order.indexOf("health") && stored.indexOf("resources") < stored.indexOf("health");
+    }, {timeout: 10000});
+    await page.evaluate(() => localStorage.removeItem("PalantirHomeLayout"));
+
+    assert(await page.$("#homeGrid .palantir-home__widget-head button:not(.palantir-home__title-link):not([data-home-action])") === null);
+    await page.click("#homeGrid [data-home-widget='types'] h3 .palantir-home__title-link");
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 30000});
+}
+
 async function verifyRegisteredServices(page) {
     await cas.separator();
     await page.waitForFunction(() => $.fn.dataTable.isDataTable("#applicationsTable"), {timeout: 30000});
@@ -896,10 +924,12 @@ async function verifyServiceHistory(page) {
         latestSelected: $("#entityHistoryTable tbody tr:first-child").hasClass("is-selected"),
         compare: $("#entityHistoryCompare").val(),
         changed: $("#entityHistoryDiff td.is-added, #entityHistoryDiff td.is-removed").length,
-        summary: $("#entityHistorySummary").text()
+        summary: $("#entityHistorySummary").text(),
+        author: $("#entityHistoryTable tbody tr:first-child .palantir-history__author").text()
     }));
-    await cas.log(`History: ${history.versions} versions; ${history.summary}`);
+    await cas.log(`History: ${history.versions} versions; ${history.summary}; latest changed by ${history.author}`);
     assert(history.versions >= 2);
+    assert(history.author.length > 0);
     assert(history.latestSelected);
     assert(history.compare === "previous");
     assert(history.changed > 0);
@@ -1436,6 +1466,92 @@ async function verifyInterruptInquiry(page) {
  *
  * @param page the puppeteer page
  */
+async function verifyZenMode(page) {
+    await page.evaluate(() => {
+        document.activeElement?.blur();
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).trigger("click");
+    });
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("KeyZ");
+    await page.keyboard.up("Shift");
+    await page.waitForFunction(() => document.documentElement.hasAttribute("data-palantir-zen")
+        && !$("#app-bar").is(":visible") && localStorage.getItem("PalantirZenMode") === "true", {timeout: 10000});
+    await page.keyboard.press("s");
+    await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+    await cas.logg("Zen mode hides the header, navigation and footer, and the page shortcuts still work");
+    await page.click("#palantirZenExit");
+    await page.waitForFunction(() => !document.documentElement.hasAttribute("data-palantir-zen")
+        && $("#app-bar").is(":visible") && localStorage.getItem("PalantirZenMode") === null, {timeout: 10000});
+}
+
+/**
+ * The Modules tab under System Info lists the CAS modules the server runs. A build that does not record module
+ * details, as local builds do not, reports none, and the tab says so.
+ */
+async function verifyCasModules(page) {
+    await page.evaluate(() => {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]`).trigger("click");
+        $("#system-tabs").tabs("option", "active", $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index());
+        $("#system-info-tabs").tabs("option", "active", $("#system-info-tabs ul li a[href='#casmodules-tab']").parent().index());
+    });
+    await page.waitForFunction(() => PalantirModules.modules !== null, {timeout: 30000});
+    const modules = await page.evaluate(() => ({
+        count: PalantirModules.modules.length,
+        cards: $("#casModulesCards .palantir-modules__card").length,
+        empty: $("#casModulesCards .palantir-empty-state").text()
+    }));
+    await cas.logg(`CAS modules: ${modules.count}`);
+    if (modules.count === 0) {
+        assert(modules.empty.includes("no CAS modules"));
+        return;
+    }
+    assert(modules.cards === modules.count);
+    await page.type("#casModulesFilter", "palantir");
+    await page.waitForFunction(() => $("#casModulesCards .palantir-modules__card").toArray()
+        .every((card) => card.textContent.toLowerCase().includes("palantir")), {timeout: 10000});
+    await page.click("#casModulesCards .palantir-modules__card [data-module-action='dependency']");
+    const declaration = await page.evaluate(() => $("#casModulesCards .palantir-modules__dependency:not([hidden]) code").text());
+    await cas.log(`Declared as: ${declaration}`);
+    assert(declaration.includes("org.apereo.cas") && declaration.includes("palantir"));
+    await page.evaluate(() => $("#casModulesFilter").val("").trigger("input"));
+}
+
+async function verifySystemMetrics(page) {
+    await page.evaluate(() => {
+        localStorage.removeItem("PalantirPinnedMetrics");
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]`).trigger("click");
+    });
+    await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 30000});
+    await page.evaluate(() => {
+        const index = $("#system-tabs ul li a[href='#systemmetrics-tab']").parent().index();
+        $("#system-tabs").tabs("option", "active", index);
+    });
+    await page.waitForFunction(() => $("#metricsTiles [data-metric-tile]").length > 0
+        && $("#metricsTiles .palantir-metrics__tile-number").toArray().every((element) => element.textContent !== "…"), {timeout: 30000});
+    const tiles = await page.evaluate(() => $("#metricsTiles [data-metric-tile]").map((index, element) =>
+        `${$(element).find(".palantir-metrics__tile-name").text()}=${$(element).find(".palantir-metrics__tile-number").text()}`).get());
+    await cas.logg(`Metrics board: ${tiles.join(", ")}`);
+    assert(tiles.some((tile) => tile.startsWith("jvm.memory.used=") && tile.endsWith("%")));
+
+    await page.click("#metricsExplorerView");
+    await page.waitForFunction(() => $("#metricsList [data-metric='jvm.threads.peak']").length === 1, {timeout: 30000});
+    await page.click("#metricsList [data-metric='jvm.threads.peak']");
+    await page.waitForFunction(() => $("#metricsDetailName").text() === "jvm.threads.peak"
+        && $("#metricsDetailStats .palantir-metrics__stat").length > 0, {timeout: 30000});
+    const value = await page.evaluate(() => $("#metricsDetailStats strong").first().text());
+    await cas.logg(`Peak threads in the explorer: ${value}`);
+    assert(/^\d[\d,.]*$/.test(value));
+
+    await page.click("#metricsDetailPin");
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem("PalantirPinnedMetrics"))
+        .some((pin) => pin.name === "jvm.threads.peak"), {timeout: 10000});
+    await page.click("#metricsDetailPin");
+    await page.waitForFunction(() => !JSON.parse(localStorage.getItem("PalantirPinnedMetrics"))
+        .some((pin) => pin.name === "jvm.threads.peak"), {timeout: 10000});
+    await page.click("#metricsBoardView");
+    await page.evaluate(() => localStorage.removeItem("PalantirPinnedMetrics"));
+}
+
 async function verifyThrottlesUsername(page) {
     await cas.separator();
     if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.throttles()))) {
@@ -1499,6 +1615,7 @@ async function verifyShortcutsOverlay(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
+    await verifyHome(page);
     await verifyRegisteredServices(page);
     await verifyPlainEditorDialog(page);
     await verifyTheme(page);
@@ -1518,6 +1635,9 @@ async function verifyShortcutsOverlay(page) {
     await verifyReadOnlyEndpoint(page);
     await verifyInterruptInquiry(page);
     await verifyThrottlesUsername(page);
+    await verifyCasModules(page);
+    await verifySystemMetrics(page);
+    await verifyZenMode(page);
     await verifyShortcutsOverlay(page);
 
     if (failures.length > 0) {

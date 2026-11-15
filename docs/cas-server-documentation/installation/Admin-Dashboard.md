@@ -62,6 +62,17 @@ the choice is remembered by the browser. *Reset preferences*, in the settings di
 in the browser, such as the theme, views, filters, editor options and drafts of unsaved edits, and reloads Palantir
 with its defaults; the sign-in session is kept.
 
+Palantir opens on *Home* (<kbd>g</kbd>), a page of widgets: the server and its health, the health checks charted as on
+the system page, heap and processor use, HTTP requests (a minute, average and slowest time, errors), runtime metrics
+(garbage collection pauses, errors logged, system load), single sign-on sessions, applications by type, leaving out
+the services CAS registers for itself, and the latest changes to applications with who made them. With
+[service change history](../services/Configuring-Service-Version-History.html) installed, the changes of every CAS
+server are listed from that shared history; without it, those of the server Palantir runs on since it started. A widget's title opens the page it summarizes. Widgets can
+be dragged to another place or moved with their arrow buttons, and the browser remembers the order. The page is drawn from
+one summary that the server puts together and keeps for a few seconds per part, so it costs one request per refresh;
+a widget whose data comes from an actuator endpoint that is not exposed is left out. Reloading Palantir stays on the
+page that was showing.
+
 The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or
 section of Palantir, including the sections inside a section such as the key rotation of OpenID Connect, a registered application by its name, identifier or service id, and common actions such as
 creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
@@ -74,10 +85,20 @@ recorded for the user gets a card, which expands to show its records and its usu
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
 actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
 
+<kbd>Shift</kbd>+<kbd>Z</kbd> turns zen mode on and off: the CAS header, the navigation bar and the footer are put away so
+the page has the whole window, while the keyboard shortcuts and the search keep working. The browser remembers the
+choice, and a small button at the top right leaves zen mode.
+
 The *Throttles* page lists every throttled login attempt, or only those of one username, matched regardless of case.
 
+*System Metrics* opens on a board of pinned metrics, each with its current value in its own unit, a trend while the
+page is open and a warning when usage passes three quarters or nine tenths; the pins are kept in the browser. The
+explorer lists every metric by family, filterable by name, and shows the selected one's statistics, with the average
+where it has a count and a total, a live trend, and a breakdown by any of its tags; clicking a bar narrows the metric
+to that tag value, and the metric can be pinned to the board as narrowed.
+
 When the history of application definitions is recorded, the change history of an application lists its versions,
-latest first, and shows the selected version side by side with the current definition or with the version before it,
+latest first with who changed each one, and shows the selected version side by side with the current definition or with the version before it,
 highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition
 again, after a confirmation.
 

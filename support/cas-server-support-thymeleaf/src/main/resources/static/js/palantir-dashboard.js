@@ -24,6 +24,7 @@ class Tabs {
     static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "u");
     static CLUSTER = new PalantirDashboardTab("Cluster & High Availability Tab", 15, "v");
     static USERS = new PalantirDashboardTab("Users Tab", 16, "i");
+    static HOME = new PalantirDashboardTab("Home", 17, "g");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
     static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
@@ -212,6 +213,9 @@ function activateDashboardTab(idx) {
                     if (currentActiveTab === Tabs.USERS.index) {
                         $("#userLookupUsername").trigger("focus");
                     }
+                    if (currentActiveTab === Tabs.HOME.index && typeof PalantirHome !== "undefined") {
+                        PalantirHome.activated();
+                    }
                 });
                 break;
         }
@@ -248,6 +252,11 @@ function selectSidebarMenuButton(selectedItem) {
         item.addClass("active");
         item.find(".sidebar-navigation-button").attr("aria-current", "page");
         window.localStorage.setItem("PalantirSelectedTab", index);
+        try {
+            window.sessionStorage.setItem("PalantirSelectedTab", index);
+        } catch (error) {
+            console.debug("The current page is not kept for a reload", error);
+        }
         updatePalantirNavigationGroups();
     }
     return index;
@@ -486,14 +495,27 @@ async function navigateToApplication(serviceIdToFind) {
     }
 }
 
+/**
+ * Watch the Palantir session and reload once it has expired. An expired session answers 401 or 403, or redirects to the
+ * login page; the redirect is not followed, since the login page would answer 200. A server that cannot be reached or
+ * answers with an error, such as while it restarts, says nothing about the session, so the check simply tries again.
+ */
 async function initializePalantirSession() {
     const intervalId = setInterval(async () => {
         if (document.visibilityState !== "visible") {
             return;
         }
         const url = retrieveDashboardUrl();
-        const result = await fetch(`${url}/session`, { credentials: "include" });
-        if (result.status !== 200) {
+        let result;
+        try {
+            result = await fetch(`${url}/session`, {credentials: "include", redirect: "manual", headers: {"Accept": "application/json"}});
+        } catch (error) {
+            console.debug("The session could not be checked just now", error);
+            return;
+        }
+        const expired = result.type === "opaqueredirect" || result.status === 401 || result.status === 403
+            || (result.status >= 300 && result.status < 400);
+        if (expired) {
             clearInterval(intervalId);
             
             Swal.close();

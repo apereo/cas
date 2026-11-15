@@ -57,8 +57,8 @@ async function initializeMultitenancyOperations() {
         $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
             for (const tenant of Object.values(response)) {
                 tenantsTable.row.add({
-                    0: `<code>${tenant.id}</code>`,
-                    1: `<code>${tenant.description ?? ""}</code>`,
+                    0: `${palantirCode(tenant.id)}`,
+                    1: `${palantirCode(tenant.description ?? "")}`,
                     tenantId: tenant.id
                 });
             }

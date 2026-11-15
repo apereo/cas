@@ -15,6 +15,15 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
 - Test category discovery runs inside `TestCategoryTagsValueSource`: only its sorted tag list is a configuration input.
   Implementation edits retain the cached graph; adding/removing categories invalidates it. Do not move source reads back
   into the convention script or restore the old `.gradle/cas-test-tags` fingerprint cache.
+- Build flags (`-D<name>`) are read only through `CasBuildSettings`: `buildProperty` (system property, then the
+  upper-snake-case environment variable, e.g. `GENERATE_GIT_PROPERTIES`; a blank environment variable counts as unset),
+  `isFlagEnabled` (unset → default; empty or `true` → on; anything else → off) and `stringProperty` (blank → default). Do not call `providers.systemProperty`, `System.getProperty`
+  or `System.getenv` from build scripts, convention plugins or module build files, and do not recompute flags in the
+  root `ext {}`: `configureProjectExtensions` already exposes them as project extensions on every project, root
+  included. `settings.gradle` cannot see buildSrc and repeats the same lookup rule by hand; `PublishProjectModulesMetadataTask`
+  reads its MongoDB URI at execution time on purpose so the secret stays out of the configuration cache.
+- `buildScript` (puppeteer `script.json` → `-DbuildScript`) must name an existing file: `war-conventions` fails the build
+  otherwise, so a scenario that drops its `include.gradle` must drop its `buildScript` entry too.
 - An IDE `JetGradlePlugin` error about `setExcludedTaskNames` comes from the IDE integration, not category discovery.
   Use `--no-isolated-projects` for the affected IDE invocation until that integration supports Isolated Projects; keep
   configuration caching enabled and do not disable Isolated Projects globally to hide an IDE-only violation.

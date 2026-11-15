@@ -66,12 +66,6 @@ function protocolConfigurationPropertiesMutable() {
     return PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig();
 }
 
-function escapeProtocolHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 /**
  * Move to the configuration tab, waiting for it to initialize.
  *
@@ -522,8 +516,8 @@ async function initializeOidcProtocolOperations() {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
                         oidcConfigurationPropsTable.row.add({
-                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
-                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            0: `${palantirCode(propKey)}`,
+                            1: `${palantirCode(propValue.value)}`,
                             propertyName: propKey,
                             propertyValue: propValue.value
                         });
@@ -598,9 +592,9 @@ async function initializeOidcProtocolOperations() {
                 oidcClientJwksTable.clear();
                 for (const entry of response) {
                     oidcClientJwksTable.row.add({
-                        0: `<code>${entry.jkt}</code>`,
-                        1: `<code>${entry.createdAt}</code>`,
-                        2: `<code>${entry.jwk}</code>`,
+                        0: `${palantirCode(entry.jkt)}`,
+                        1: `${palantirCode(entry.createdAt)}`,
+                        2: `${palantirCode(entry.jwk)}`,
                         jkt: entry.jkt
                     });
                 }
@@ -740,7 +734,7 @@ async function initializeSAML2ProtocolOperations() {
                     editor.setReadOnly(true);
                     for (const [entityId, entry] of Object.entries(response)) {
                         editor.setValue(entry.metadata);
-                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
+                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: ${palantirCode(entry.cachedInstant)}`);
                     }
                     editor.gotoLine(1);
                     showElements("#saml2MetadataCacheEditorContainer");
@@ -801,7 +795,7 @@ async function initializeSAML2ProtocolOperations() {
                 copyToClipboard(entityIdValue).then(() => {
                     Swal.fire({
                         title: "Copied",
-                        html: `Entity ID <code>${entityIdValue}</code> has been copied to the clipboard.`,
+                        html: `Entity ID ${palantirCode(entityIdValue)} has been copied to the clipboard.`,
                         showConfirmButton: false,
                         icon: "success",
                         timer: 2000
@@ -890,9 +884,9 @@ async function initializeSAML2ProtocolOperations() {
                     for (const entry of response) {
                         const entityId = parseEntityIdFromMetadata(entry.value);
                         saml2MetadataManagerEntriesTable.row.add({
-                            0: `<code>${entry.id}</code>`,
-                            1: `<code>${entry.name}</code>`,
-                            2: `<code>${entityId}</code>`,
+                            0: `${palantirCode(entry.id)}`,
+                            1: `${palantirCode(entry.name)}`,
+                            2: `${palantirCode(entityId)}`,
                             entryId: entry.id,
                             managerName: managerName,
                             entityId: entityId,
@@ -1082,8 +1076,8 @@ async function initializeSAML2ProtocolOperations() {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
                         saml2ConfigurationPropsTable.row.add({
-                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
-                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            0: `${palantirCode(propKey)}`,
+                            1: `${palantirCode(propValue.value)}`,
                             propertyName: propKey,
                             propertyValue: propValue.value
                         });

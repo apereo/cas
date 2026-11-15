@@ -2,9 +2,16 @@ package org.apereo.cas.palantir.controller;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.palantir.overview.PalantirOverview;
+import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -150,6 +157,69 @@ class DashboardControllerTests {
             .andExpect(status().is3xxRedirection());
     }
 
+    /**
+     * The home page summary answers the server for everyone signed in and keeps the sections about people and
+     * applications to administrators.
+     */
+    @Test
+    void verifyOverview() throws Throwable {
+        val administrator = new UsernamePasswordAuthenticationToken("casadmin", "password",
+            List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        mvc.perform(get("/palantir/dashboard/overview").with(authentication(administrator)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.generated").exists())
+            .andExpect(jsonPath("$.sections.server.version").exists())
+            .andExpect(jsonPath("$.sections.server.uptimeSeconds").isNumber());
+
+        val user = new UsernamePasswordAuthenticationToken("casuser", "password",
+            List.of(new SimpleGrantedAuthority("ROLE_USER")));
+        mvc.perform(get("/palantir/dashboard/overview").with(authentication(user)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.sections.server").exists())
+            .andExpect(jsonPath("$.sections.applications").doesNotExist())
+            .andExpect(jsonPath("$.sections.tickets").doesNotExist());
+
+        mvc.perform(get("/palantir/dashboard/overview")).andExpect(status().is3xxRedirection());
+    }
+
+    /**
+     * Saving and deleting an application are remembered for the home page with who did it; internal CAS services
+     * are left out, and a save repeated right away by another listener of the same change is counted once. A change
+     * shows at once, even when the list was read just before it.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewRemembersApplicationChanges() {
+        val overview = applicationContext.getBean("palantirOverview", PalantirOverview.class);
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        service.setName("Overview Example");
+        val internal = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        internal.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.getPropertyName(),
+            new DefaultRegisteredServiceProperty("true"));
+        overview.summarize(Set.of("registeredServices"), true);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken("casadmin", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))));
+            overview.onApplicationSaved(new CasRegisteredServiceSavedEvent(this, service, ClientInfoHolder.getClientInfo()));
+            overview.onApplicationSaved(new CasRegisteredServiceSavedEvent(this, service, ClientInfoHolder.getClientInfo()));
+            overview.onApplicationSaved(new CasRegisteredServiceSavedEvent(this, internal, ClientInfoHolder.getClientInfo()));
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+        overview.onApplicationDeleted(new CasRegisteredServiceDeletedEvent(this, service, ClientInfoHolder.getClientInfo()));
+
+        val sections = (Map<String, Object>) overview.summarize(Set.of("registeredServices"), true).get("sections");
+        val recent = (List<Map<String, Object>>) ((Map<String, Object>) sections.get("changes")).get("recent");
+        val mine = recent.stream().filter(change -> Objects.equals(change.get("id"), String.valueOf(service.getId()))).toList();
+        assertEquals(2, mine.size());
+        assertEquals("deleted", mine.getFirst().get("action"));
+        assertEquals("CAS", mine.getFirst().get("author"));
+        assertEquals("saved", mine.getLast().get("action"));
+        assertEquals("casadmin", mine.getLast().get("author"));
+        assertTrue(recent.stream().noneMatch(change -> Objects.equals(change.get("id"), String.valueOf(internal.getId()))));
+        assertEquals("node", ((Map<String, Object>) sections.get("changes")).get("scope"));
+    }
+
     @Nested
     @TestPropertySource(properties = "cas.standalone.configuration-security.psw=Q7M9w4NjYnBxb2#mW")
     class ConfigurationEncryptionTests {
@@ -233,6 +303,7 @@ class DashboardControllerTests {
         @BeforeEach
         void writeTemplates() throws Exception {
             Files.createDirectories(directory);
+            Files.deleteIfExists(directory.resolve("portal.json"));
             Files.writeString(directory.resolve("intranet.json"), """
                 {
                   "@class": "org.apereo.cas.services.CasRegisteredService",

@@ -253,6 +253,13 @@ html.palantir-page div#dashboard {
     outline-offset: 2px;
 }
 
+/* The main panel takes focus only so the skip link can land on it, and a single-key shortcut pressed after a
+   click is not keyboard navigation: neither draws a ring. Fields keep theirs while they are typed in. */
+#dashboard #palantirMainPanel:focus,
+html[data-palantir-pointer-focus] :focus-visible:not(input, textarea, select, [contenteditable="true"]) {
+    outline: none !important;
+}
+
 /* ==========================================================================
    Navigation bar
    ========================================================================== */
@@ -2812,7 +2819,19 @@ html.palantir-page[data-theme="dark"] .context-menu-separator {
     border-bottom-color: var(--palantir-border);
 }
 
-/* Notyf */
+/* Notyf: notices are rounded on every screen size; the ripple that colors them stays inside the corners. */
+html.palantir-page .notyf__toast {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+@media (max-width: 480px) {
+    html.palantir-page .notyf {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+}
+
 html.palantir-page[data-theme="dark"] .notyf__toast {
     box-shadow: var(--palantir-shadow);
 }
@@ -3490,6 +3509,22 @@ td.palantir-user-card__resource {
 .palantir-user-card__message > :last-child,
 #interruptInquiryMessageText > :last-child {
     margin-bottom: 0;
+}
+
+/* A link shown as a chip reads as a button: regular weight, underlined only while pointed at. */
+#dashboard a.passwordless-account-chip {
+    font-weight: 500;
+    text-decoration: none;
+}
+
+#dashboard a.passwordless-account-chip:hover span {
+    text-decoration: underline;
+}
+
+/* The interrupt message is prose that may carry its own emphasis, not a short value: it keeps the normal weight. */
+#dashboard #interruptInquiryMessageText {
+    font-weight: 400;
+    line-height: 1.5;
 }
 
 .palantir-user-card__links {
@@ -5152,4 +5187,1819 @@ html.palantir-page[data-theme="dark"] .palantir-magnifier__stage.is-diagram {
     .passwordless-account-search.throttles-username-search {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* ==========================================================================
+   System metrics: a board of pinned metrics and an explorer for one metric
+   ========================================================================== */
+.palantir-metrics {
+    display: grid;
+    gap: 16px;
+}
+
+.palantir-metrics__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+}
+
+.palantir-metrics__spacer {
+    flex: 1;
+}
+
+.palantir-metrics__status,
+.palantir-metrics__muted {
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-metrics__tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.palantir-metrics__tile {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.palantir-metrics__tile:hover {
+    border-color: var(--palantir-border-strong);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+#dashboard .palantir-metrics__tile-name:focus-visible,
+.palantir-metrics__tile:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-metrics__tile.is-warn {
+    border-color: var(--palantir-warn);
+    box-shadow: inset 3px 0 0 var(--palantir-warn);
+}
+
+.palantir-metrics__tile.is-critical {
+    border-color: var(--palantir-danger-line);
+    box-shadow: inset 3px 0 0 var(--palantir-danger-line);
+}
+
+.palantir-metrics__tile.is-warn .palantir-metrics__tile-note {
+    color: var(--palantir-warn);
+}
+
+.palantir-metrics__tile.is-critical .palantir-metrics__tile-note {
+    color: var(--palantir-danger);
+}
+
+.palantir-metrics__tile.is-unavailable .palantir-metrics__tile-number {
+    color: var(--palantir-text-muted);
+}
+
+#dashboard .palantir-metrics__tile--add {
+    place-content: center;
+    justify-items: center;
+    min-height: 120px;
+    border-style: dashed;
+    color: var(--palantir-text-muted);
+    font: inherit;
+    font-size: 13px;
+}
+
+.palantir-metrics__tile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+}
+
+#dashboard .palantir-metrics__tile-name {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    overflow: hidden;
+    color: var(--palantir-text-muted);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#dashboard .palantir-metrics__tile-remove {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+.palantir-metrics__tile:hover .palantir-metrics__tile-name {
+    color: var(--palantir-brand);
+    text-decoration: underline;
+}
+
+.palantir-metrics__tile:hover .palantir-metrics__tile-remove,
+.palantir-metrics__tile:focus-within .palantir-metrics__tile-remove {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    #dashboard .palantir-metrics__tile-remove {
+        opacity: 1;
+    }
+}
+
+.palantir-metrics__tile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.palantir-metrics__tile-value {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.palantir-metrics__tile-number {
+    font-size: 26px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.palantir-metrics__tile-note {
+    overflow: hidden;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-metrics__spark svg {
+    display: block;
+    max-width: 100%;
+}
+
+.palantir-metrics__spark-area {
+    fill: var(--palantir-accent-soft);
+}
+
+.palantir-metrics__spark-line {
+    fill: none;
+    stroke: var(--palantir-accent);
+    stroke-width: 1.6;
+}
+
+.palantir-metrics__spark-dot {
+    fill: var(--palantir-accent);
+}
+
+.palantir-metrics__explorer {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    min-height: 520px;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+}
+
+.palantir-metrics__explorer[hidden],
+.palantir-metrics__board[hidden] {
+    display: none;
+}
+
+.palantir-metrics__rail {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 12px;
+    max-height: 72vh;
+    padding: 14px;
+    border-right: 1px solid var(--palantir-divider);
+}
+
+.palantir-metrics__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 12px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 999px;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-metrics__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 18%, transparent);
+}
+
+.palantir-metrics__search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 13px;
+}
+
+.palantir-metrics__list {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.palantir-metrics__group {
+    display: grid;
+    gap: 1px;
+}
+
+.palantir-metrics__group-head {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+#dashboard .palantir-metrics__item {
+    overflow: hidden;
+    padding: 5px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--palantir-text);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#dashboard .palantir-metrics__item:hover {
+    background: var(--palantir-hover);
+}
+
+#dashboard .palantir-metrics__item.is-selected {
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-weight: 500;
+}
+
+#dashboard .palantir-metrics__item:focus-visible,
+#dashboard .palantir-metrics__chip:focus-visible,
+#dashboard .palantir-metrics__bar:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 1px;
+}
+
+.palantir-metrics__detail {
+    display: grid;
+    align-content: start;
+    min-width: 0;
+    padding: 18px 22px;
+}
+
+.palantir-metrics__empty {
+    max-width: 52ch;
+    margin: 48px auto;
+    color: var(--palantir-text-muted);
+    text-align: center;
+}
+
+#metricsDetailBody {
+    display: grid;
+    gap: 14px;
+}
+
+#metricsDetailBody[hidden] {
+    display: none;
+}
+
+.palantir-metrics__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+}
+
+.palantir-metrics__title h3 {
+    margin: 0;
+    overflow-wrap: anywhere;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.palantir-metrics__unit {
+    padding: 0 6px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 6px;
+    color: var(--palantir-text-muted);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+}
+
+.palantir-metrics__unit[hidden] {
+    display: none;
+}
+
+.palantir-metrics__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-metrics__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--palantir-accent);
+    box-shadow: 0 0 0 3px var(--palantir-accent-soft);
+}
+
+.palantir-metrics__description {
+    margin: 0;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-metrics__filters,
+.palantir-metrics__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+}
+
+#dashboard .palantir-metrics__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--palantir-tint);
+    color: var(--palantir-text-muted);
+    font: inherit;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+#dashboard button.palantir-metrics__chip {
+    cursor: pointer;
+}
+
+#dashboard .palantir-metrics__chip.is-active {
+    border-color: var(--palantir-brand);
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-weight: 500;
+}
+
+.palantir-metrics__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.palantir-metrics__stat {
+    display: grid;
+    gap: 2px;
+    padding: 12px 14px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+}
+
+.palantir-metrics__stat.is-derived {
+    border-style: dashed;
+    background: var(--palantir-tint);
+}
+
+.palantir-metrics__stat small {
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+}
+
+.palantir-metrics__stat strong {
+    font-size: 22px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.palantir-metrics__stat em {
+    min-height: 1em;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-style: normal;
+}
+
+.palantir-metrics__panels {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 14px;
+}
+
+.palantir-metrics__panel {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+}
+
+.palantir-metrics__panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.palantir-metrics__chart {
+    position: relative;
+    height: 200px;
+}
+
+.palantir-metrics__bars {
+    display: grid;
+    gap: 4px;
+}
+
+#dashboard .palantir-metrics__bar {
+    display: grid;
+    grid-template-columns: minmax(0, 9rem) minmax(0, 1fr) 4.5rem;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#dashboard .palantir-metrics__bar:hover {
+    background: var(--palantir-hover);
+}
+
+.palantir-metrics__bar-label {
+    overflow: hidden;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-metrics__bar-track i {
+    display: block;
+    height: 10px;
+    border-radius: 4px;
+    background: var(--palantir-brand);
+    opacity: .7;
+}
+
+.palantir-metrics__bar.is-failure .palantir-metrics__bar-track i {
+    background: var(--palantir-danger-line);
+}
+
+.palantir-metrics__bar-value {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+@media (max-width: 960px) {
+    .palantir-metrics__panels {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .palantir-metrics__explorer {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-metrics__rail {
+        max-height: 40vh;
+        border-right: 0;
+        border-bottom: 1px solid var(--palantir-divider);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-metrics__tile,
+    #dashboard .palantir-metrics__tile-remove {
+        transition: none;
+    }
+}
+
+#dashboard #systemmetrics-tab .palantir-metrics__item,
+#dashboard #systemmetrics-tab .palantir-metrics__tile-name,
+#dashboard #systemmetrics-tab .palantir-metrics__bar-label {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+}
+
+#dashboard #systemmetrics-tab .palantir-metrics__search input {
+    height: auto;
+    padding: 0;
+    font-size: 13px;
+}
+
+/* ==========================================================================
+   Zen mode: the CAS header, the navigation bar and the footer put away
+   ========================================================================== */
+/* The navigation is moved out of view, not removed: the page shortcuts and the search find their
+   destinations through its items, which must keep their boxes to count as visible. */
+html.palantir-page[data-palantir-zen] #app-bar,
+html.palantir-page[data-palantir-zen] footer {
+    display: none !important;
+}
+
+html.palantir-page[data-palantir-zen] .mdc-top-app-bar--fixed-adjust {
+    padding-top: 0 !important;
+}
+
+html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavigation {
+    position: absolute !important;
+    top: 0;
+    left: -10000px;
+    visibility: hidden;
+}
+
+.palantir-zen-exit {
+    position: fixed;
+    top: calc(10px + env(safe-area-inset-top, 0px));
+    right: calc(12px + env(safe-area-inset-right, 0px));
+    z-index: 96;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+    color: var(--palantir-text-muted);
+    font: 500 12px/1.4 var(--mdc-typography-font-family, inherit);
+    opacity: .55;
+    cursor: pointer;
+    transition: opacity .15s ease;
+}
+
+.palantir-zen-exit:hover,
+.palantir-zen-exit:focus-visible {
+    opacity: 1;
+    color: var(--palantir-brand);
+}
+
+.palantir-zen-exit:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-zen-exit[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-zen-exit {
+        transition: none;
+    }
+}
+
+.palantir-history__author {
+    font-weight: 500;
+}
+
+.palantir-history__author.is-system {
+    color: var(--palantir-text-muted);
+    font-weight: 400;
+}
+
+/* ==========================================================================
+   Home: widgets in a four-column grid, drawn from one summary
+   ========================================================================== */
+.palantir-home {
+    display: grid;
+    gap: 14px;
+}
+
+.palantir-home__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+}
+
+.palantir-home__updated,
+.palantir-home__muted {
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+/* Home is being fetched again after it was shown: a thin bar under the toolbar, the widgets stay in place. */
+.palantir-home__progress {
+    height: 3px;
+    margin: 6px 0 -9px;
+}
+
+.palantir-home__progress[hidden] {
+    display: block;
+    visibility: hidden;
+}
+
+/* Nothing to show yet: a message and a bar where the widgets will be. */
+.palantir-home__loading {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 12px;
+    justify-items: center;
+    padding: 48px 24px;
+    border: 1px dashed var(--palantir-border-strong);
+    border-radius: 18px;
+    color: var(--palantir-text-muted);
+    font-size: 14px;
+}
+
+.palantir-home__loading p {
+    margin: 0;
+}
+
+.palantir-home__loading .palantir-progress__track {
+    width: min(360px, 100%);
+}
+
+.palantir-home__grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+    gap: 14px;
+    align-items: stretch;
+}
+
+.palantir-home__widget {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-content: start;
+    gap: 10px;
+    min-width: 0;
+    padding: 14px 16px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+.palantir-home__widget--span-1 { grid-column: span 1; }
+.palantir-home__widget--span-2 { grid-column: span 2; }
+.palantir-home__widget--span-4 { grid-column: 1 / -1; }
+
+.palantir-home__widget.is-dragging {
+    opacity: .5;
+}
+
+.palantir-home__widget.is-drop-target {
+    border-color: var(--palantir-brand);
+    box-shadow: 0 0 0 3px var(--palantir-selected);
+}
+
+.palantir-home__widget-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.palantir-home__widget-head h3 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-home__grip {
+    color: var(--palantir-text-muted);
+    cursor: grab;
+}
+
+.palantir-home__widget-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+#dashboard .palantir-home__action {
+    width: 26px;
+    height: 26px;
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+.palantir-home__widget:hover .palantir-home__action,
+.palantir-home__widget:focus-within .palantir-home__action {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    #dashboard .palantir-home__action {
+        opacity: 1;
+    }
+}
+
+#dashboard .palantir-home__title-link {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#dashboard .palantir-home__title-link:hover {
+    color: var(--palantir-brand);
+    text-decoration: underline;
+}
+
+#dashboard .palantir-home__title-link:focus-visible,
+#dashboard .palantir-home__action:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 1px;
+}
+
+.palantir-home__widget-body {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    min-width: 0;
+}
+
+.palantir-home__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: var(--palantir-tint);
+    color: var(--palantir-text);
+}
+
+.palantir-home__status b {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.palantir-home__status.is-up {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-home__status.is-down {
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-home__pulse {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 22%, transparent);
+}
+
+.palantir-home__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-home__kpi {
+    display: grid;
+    gap: 2px;
+}
+
+.palantir-home__kpi-row {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.palantir-home__kpi strong {
+    font-size: 28px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+}
+
+.palantir-home__kpi-note {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-home__spark svg {
+    display: block;
+    max-width: 100%;
+}
+
+.palantir-home__spark .palantir-metrics__spark-area { fill: var(--palantir-accent-soft); }
+.palantir-home__spark .palantir-metrics__spark-line { fill: none; stroke: var(--palantir-accent); stroke-width: 1.6; }
+.palantir-home__spark .palantir-metrics__spark-dot { fill: var(--palantir-accent); }
+
+.palantir-home__bars {
+    display: grid;
+    gap: 6px;
+}
+
+.palantir-home__type {
+    display: grid;
+    grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 3rem;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+}
+
+.palantir-home__type > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-home__track i {
+    display: block;
+    height: 10px;
+    border-radius: 4px;
+    background: var(--palantir-accent);
+}
+
+.palantir-home__count {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+@media (max-width: 1100px) {
+    .palantir-home__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .palantir-home__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-home__widget--span-2 {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-home__widget,
+    #dashboard .palantir-home__action {
+        transition: none;
+    }
+}
+
+.palantir-home__health {
+    position: relative;
+    min-width: 0;
+}
+
+.palantir-home__meters {
+    display: grid;
+    gap: 14px;
+}
+
+.palantir-home__meter {
+    display: grid;
+    gap: 6px;
+}
+
+.palantir-home__meter-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+}
+
+.palantir-home__meter-head strong {
+    font-size: 20px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.palantir-home__meter small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-home__meter-track {
+    display: block;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--palantir-tint);
+}
+
+.palantir-home__meter-track i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: var(--palantir-success-line);
+}
+
+.palantir-home__meter.is-warning .palantir-home__meter-track i {
+    background: #c99a06;
+}
+
+.palantir-home__meter.is-critical .palantir-home__meter-track i {
+    background: var(--palantir-danger-line);
+}
+
+.palantir-home__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.palantir-home__stat {
+    display: grid;
+    gap: 1px;
+    padding: 10px 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 10px;
+}
+
+.palantir-home__stat small {
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.palantir-home__stat strong {
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.palantir-home__stat span {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-home__stat.is-warning {
+    border-color: #c99a06;
+    box-shadow: inset 3px 0 0 #c99a06;
+}
+
+.palantir-home__stat.is-critical {
+    border-color: var(--palantir-danger-line);
+    box-shadow: inset 3px 0 0 var(--palantir-danger-line);
+}
+
+.palantir-home__changes {
+    display: grid;
+    align-content: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-home__change {
+    display: grid;
+    grid-template-columns: 26px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--palantir-divider);
+    font-size: 13px;
+}
+
+.palantir-home__change:first-child {
+    border-top: 0;
+}
+
+.palantir-home__change-icon {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 7px;
+    background: var(--palantir-tint);
+    color: var(--palantir-brand);
+}
+
+.palantir-home__change.is-created .palantir-home__change-icon {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-home__change.is-deleted .palantir-home__change-icon {
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-home__change-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.palantir-home__change-text b {
+    font-weight: 500;
+}
+
+.palantir-home__change-text small {
+    margin-left: 8px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-home__change time {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.palantir-home__health-layout {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 18px;
+}
+
+.palantir-home__ring {
+    width: 132px;
+    --palantir-ring: var(--palantir-success-line);
+}
+
+.palantir-home__ring.is-up {
+    --palantir-ring: #7fd49a;
+}
+
+.palantir-home__ring.is-slow {
+    --palantir-ring: #e0b43a;
+}
+
+.palantir-home__ring.is-down {
+    --palantir-ring: #e06a6a;
+}
+
+.palantir-home__ring svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.palantir-home__ring-track {
+    fill: none;
+    stroke: color-mix(in srgb, var(--palantir-ring) 22%, transparent);
+    stroke-width: 14;
+}
+
+.palantir-home__ring-value {
+    fill: none;
+    stroke: var(--palantir-ring);
+    stroke-width: 14;
+}
+
+.palantir-home__ring-status {
+    fill: var(--palantir-text);
+    font-size: 26px;
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.palantir-home__ring-note {
+    fill: var(--palantir-text-muted);
+    font-size: 11px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+@media (max-width: 560px) {
+    .palantir-home__health-layout {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+    }
+
+    .palantir-home__health-layout .palantir-home__health {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Record cards: attribute definitions, single sign-on sessions, Spring sessions and multifactor devices show one
+   card per record.
+   The table of each stays hidden underneath and keeps the search, length and paging controls, which the cards
+   follow. Only the panel's own table is hidden, not the tables of the dialogs inside the panel.
+   ========================================================================== */
+:is(#attributedefinitions-tab, #ssosessions-tab, #springsession-tab, #mfadevices-tab) > .dt-container > .dt-layout-row.dt-layout-table {
+    display: none !important;
+}
+
+.palantir-record-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
+    margin: 8px 0 12px;
+}
+
+.palantir-record-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+    padding: 18px 18px 14px;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 18px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.palantir-record-card::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--palantir-proto-wsfed);
+    content: "";
+    opacity: .55;
+}
+
+.palantir-record-card.is-saml::before {
+    background: var(--palantir-proto-saml);
+}
+
+.palantir-record-card.is-oidc::before {
+    background: var(--palantir-proto-oidc);
+}
+
+.palantir-record-card.is-oauth::before {
+    background: var(--palantir-proto-oauth);
+}
+
+.palantir-record-card.is-sso::before {
+    background: var(--palantir-brand);
+}
+
+.palantir-record-card.is-spring::before {
+    background: var(--palantir-success-fill);
+}
+
+.palantir-record-card:hover {
+    border-color: var(--palantir-border-strong);
+    box-shadow: 0 8px 24px rgba(17, 67, 119, .08);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .palantir-record-card:hover {
+        transform: translateY(-1px);
+    }
+}
+
+.palantir-record-card__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.palantir-record-card__head .palantir-protocol-badge {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.palantir-record-card__head .palantir-protocol-badge .mdi::before {
+    font-size: 20px;
+}
+
+.palantir-record-card__title {
+    flex: 1;
+    min-width: 0;
+}
+
+.palantir-record-card__title h4 {
+    margin: 0;
+    overflow: hidden;
+    color: var(--palantir-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 15px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-record-card__title p {
+    margin: 2px 0 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-record-card__flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-record-card__flags li {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px 3px 7px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-record-card__flags li .mdi::before {
+    font-size: 14px;
+    opacity: .7;
+}
+
+.palantir-record-card__flags li.is-on {
+    border-color: color-mix(in srgb, var(--palantir-accent) 35%, transparent);
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-weight: 500;
+}
+
+.palantir-record-card__flags li.is-on .mdi::before {
+    opacity: 1;
+}
+
+.palantir-record-card__details {
+    display: grid;
+    grid-template-columns: minmax(64px, max-content) minmax(0, 1fr);
+    gap: 0;
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 12px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-record-card__details > div {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 12px;
+}
+
+.palantir-record-card__details > div + div {
+    border-top: 1px solid var(--palantir-divider);
+}
+
+.palantir-record-card__details dt {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.palantir-record-card__details dd {
+    margin: 0;
+    overflow: hidden;
+    color: var(--palantir-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-record-card__none {
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px dashed var(--palantir-border);
+    border-radius: 12px;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-record-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--palantir-divider);
+}
+
+#dashboard .palantir-record-card__actions .palantir-button {
+    min-height: 34px;
+    padding: 0 14px;
+    font-size: 13px;
+}
+
+#dashboard .palantir-record-card__delete {
+    width: 34px;
+    height: 34px;
+    margin-left: auto;
+    background: transparent;
+    color: var(--palantir-text-muted);
+}
+
+#dashboard .palantir-record-card__delete:hover:not(:disabled) {
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+
+.palantir-protocol-badge.is-sso {
+    background: var(--palantir-proto-cas-bg);
+    color: var(--palantir-proto-cas);
+}
+
+.palantir-protocol-badge.is-spring {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-record-card__apps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-record-card__label {
+    margin: 0 0 -6px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.palantir-record-card__apps li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    color: var(--palantir-text-2);
+    font-size: 13px;
+}
+
+.palantir-record-card__apps li .mdi {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-record-card__apps li span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-record-card__apps li.is-more {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-record-card__meter {
+    display: grid;
+    gap: 6px;
+}
+
+.palantir-record-card__meter-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-record-card__meter-label strong {
+    color: var(--palantir-text);
+    font-weight: 600;
+}
+
+.palantir-record-card__meter-track {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--palantir-divider);
+}
+
+.palantir-record-card__meter-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--palantir-success-fill);
+}
+
+.palantir-record-card__meter.is-low .palantir-record-card__meter-fill {
+    background: #d68a00;
+}
+
+.palantir-record-card__meter.is-expired .palantir-record-card__meter-fill {
+    background: var(--palantir-danger-line);
+}
+
+.palantir-record-card:is(.is-sso, .is-mfa) .palantir-record-card__title h4 {
+    font-family: inherit;
+    font-size: 16px;
+}
+
+.palantir-record-card__details dd.is-text {
+    font-family: inherit;
+    white-space: normal;
+}
+
+#ssoSessionsCards {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr));
+}
+
+.palantir-record-card__details dd.is-wrap {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.palantir-record-card.is-mfa::before {
+    background: var(--palantir-accent);
+}
+
+.palantir-protocol-badge.is-mfa {
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+}
+
+.palantir-record-card.is-expired {
+    border-style: dashed;
+}
+
+.palantir-record-card.is-expired::before {
+    background: var(--palantir-danger-line);
+}
+
+.palantir-record-card__flags li.is-alert {
+    border-color: var(--palantir-danger-line);
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+    font-weight: 500;
+}
+
+/* CAS modules under System Info: a filter, the kinds of module with their counts, and one compact card per module. */
+.palantir-modules__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin: 4px 0 12px;
+}
+
+.palantir-modules__search {
+    display: flex;
+    flex: 1 1 280px;
+    align-items: center;
+    gap: 8px;
+    max-width: 420px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-modules__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 18%, transparent);
+}
+
+.palantir-modules__search input {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 14px;
+}
+
+.palantir-modules__kinds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+#dashboard .palantir-modules__kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-modules__kind span {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+#dashboard .palantir-modules__kind[aria-pressed="true"] {
+    border-color: var(--palantir-brand-fill);
+    background: var(--palantir-brand-fill);
+    color: var(--palantir-on-brand);
+}
+
+#dashboard .palantir-modules__kind[aria-pressed="true"] span {
+    color: inherit;
+    opacity: .8;
+}
+
+.palantir-modules__count {
+    margin-left: auto;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-modules__cards {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+    gap: 12px;
+}
+
+.palantir-modules__card {
+    gap: 10px;
+    padding: 14px 16px;
+}
+
+.palantir-modules__card .palantir-record-card__head .palantir-protocol-badge {
+    flex-basis: 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+}
+
+.palantir-modules__card .palantir-record-card__title h4 {
+    font-size: 14px;
+}
+
+.palantir-modules__card .palantir-record-card__title p {
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-modules__version {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+}
+
+.palantir-modules__description {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    color: var(--palantir-text-2);
+    font-size: 13px;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.palantir-protocol-badge.is-module-support {
+    background: var(--palantir-proto-oidc-bg);
+    color: var(--palantir-proto-oidc);
+}
+
+.palantir-protocol-badge.is-module-core {
+    background: var(--palantir-proto-cas-bg);
+    color: var(--palantir-proto-cas);
+}
+
+.palantir-protocol-badge.is-module-api {
+    background: var(--palantir-proto-saml-bg);
+    color: var(--palantir-proto-saml);
+}
+
+.palantir-protocol-badge.is-module-webapp {
+    background: var(--palantir-proto-oauth-bg);
+    color: var(--palantir-proto-oauth);
+}
+
+.palantir-record-card.is-support::before {
+    background: var(--palantir-proto-oidc);
+}
+
+.palantir-record-card.is-core::before {
+    background: var(--palantir-proto-cas);
+}
+
+.palantir-record-card.is-api::before {
+    background: var(--palantir-proto-saml);
+}
+
+.palantir-record-card.is-webapp::before {
+    background: var(--palantir-proto-oauth);
+}
+
+.palantir-modules__note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text-2);
+    font-size: 13px;
+}
+
+.palantir-modules__note > .mdi {
+    color: var(--palantir-brand);
+}
+
+.palantir-modules__note > span {
+    flex: 1 1 320px;
+}
+
+#dashboard .palantir-modules__catalog {
+    padding: 4px 12px;
+    border: 1px solid var(--palantir-brand);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-brand);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#dashboard .palantir-modules__catalog:hover {
+    background: var(--palantir-hover);
+}
+
+.palantir-modules__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+}
+
+#dashboard .palantir-modules__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--palantir-brand);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-modules__toggle:hover,
+#dashboard .palantir-modules__toggle[aria-expanded="true"] {
+    border-color: var(--palantir-brand);
+    background: var(--palantir-hover);
+}
+
+.palantir-modules__dependency {
+    display: grid;
+    gap: 6px;
+}
+
+.palantir-modules__dependency[hidden] {
+    display: none;
+}
+
+.palantir-modules__formats {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#dashboard .palantir-modules__formats button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-modules__formats button[aria-pressed="true"] {
+    border-color: var(--palantir-brand-fill);
+    background: var(--palantir-brand-fill);
+    color: var(--palantir-on-brand);
+}
+
+#dashboard .palantir-modules__formats .palantir-modules__copy {
+    margin-left: auto;
+    color: var(--palantir-brand);
+}
+
+/* A card showing its dependency takes the whole row, so the declaration reads in full. */
+.palantir-modules__card.is-expanded {
+    grid-column: 1 / -1;
+    border-color: var(--palantir-brand);
+}
+
+#dashboard .palantir-modules__dependency pre {
+    margin: 0;
+    padding: 12px 14px;
+    overflow-x: auto;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 10px;
+    background: var(--palantir-code-bg);
+    color: var(--palantir-code-text);
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#dashboard .palantir-modules__dependency pre code {
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
 }

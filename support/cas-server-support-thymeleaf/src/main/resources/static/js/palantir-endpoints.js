@@ -115,6 +115,10 @@ class CasActuatorEndpoints {
         return this.endpoints().casfeatures || this.endpoints().casFeatures;
     }
 
+    static casModules() {
+        return this.endpoints().casmodules || this.endpoints().casModules;
+    }
+
     static loggers() {
         return this.endpoints().loggers;
     }

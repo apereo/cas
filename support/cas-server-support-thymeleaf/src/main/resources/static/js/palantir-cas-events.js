@@ -27,16 +27,16 @@ async function initializeCasEventsOperations() {
                         for (const entry of jsonEvents) {
                             const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
                             casEventsTable.row.add({
-                                0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
-                                1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
-                                2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
-                                3: `<code>${entry?.principalId ?? "N/A"}</code>`,
-                                4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
-                                5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
-                                6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
-                                7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
-                                8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
-                                9: `<code>${geoLocation.length === 0 ? "N/A" : geoLocation}</code>`
+                                0: `${palantirCode(entry?.creationTime ?? "N/A")}`,
+                                1: `${palantirCode(getLastWord(entry?.type) ?? "N/A")}`,
+                                2: `${palantirCode(entry?.properties?.eventId ?? "N/A")}`,
+                                3: `${palantirCode(entry?.principalId ?? "N/A")}`,
+                                4: `${palantirCode(entry?.properties?.clientip ?? "N/A")}`,
+                                5: `${palantirCode(entry?.properties?.serverip ?? "N/A")}`,
+                                6: `${palantirCode(entry?.properties?.agent ?? "N/A")}`,
+                                7: `${palantirCode(entry?.properties?.tenant ?? "N/A")}`,
+                                8: `${palantirCode(entry?.properties?.deviceFingerprint ?? "N/A")}`,
+                                9: `${palantirCode(geoLocation.length === 0 ? "N/A" : geoLocation)}`
                             });
                         }
                     }
@@ -391,7 +391,7 @@ async function initializeAuditEventsOperations() {
                     render: (data, type) => type === "display" ? `
                         <span class="audit-principal-value">
                             <i class="mdi mdi-account" aria-hidden="true"></i>
-                            <code>${escapeHtml(data)}</code>
+                            ${palantirCode(data)}
                         </span>` : data
                 },
                 {
@@ -407,12 +407,12 @@ async function initializeAuditEventsOperations() {
                 {
                     data: "date",
                     width: "10rem",
-                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                    render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
                 },
                 {
                     data: "clientIpAddress",
                     width: "6.5rem",
-                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                    render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
                 },
                 {
                     data: "userAgent",

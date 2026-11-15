@@ -118,6 +118,29 @@ General view, theme and template rules are in the `cas-ui` skill.
   moved to `<body>` on initialization, since an ancestor would otherwise turn fixed into scrolling with the page, so
   style it outside `#dashboard` (its own selectors), hide it when the Applications page is not shown, and lift it
   above the CAS footer (`--palantir-selection-bar-offset`). Palantir scrolls an inner container, not the window.
+- Home (tab 17, `PalantirHome`, palantir-home.js; `PalantirOverview` + `PalantirOverviewController` in the palantir
+  module, `GET /palantir/dashboard/overview`): one summary, sections computed in parallel on virtual threads with a
+  3 s budget, cached per section (stale value or `pending` when slow), only for exposed endpoints and for
+  administrators beyond server/health/resources. Health runs each `HealthIndicator` bean with its own 2.5 s limit
+  (`SLOW`), timed on its own thread; a check still running is reused, never restarted. HTTP and runtime numbers
+  come from the `MeterRegistry`; recent application changes from the shared Javers history when installed
+  (`PalantirApplicationChanges`, adapted in `CasPalantirServiceHistoryConfiguration`, `@ConditionalOnClass`, javers is
+  `compileOnly`), otherwise from saved/deleted events kept per node in an `AtomicReference` list (no `synchronized`:
+  Misagh's preference; no audit trail reads); internal services are skipped. Misagh removed attention, activity and login widgets.
+  The MDC tab bar is positional, so Home's tab button is the 18th. A new visit lands on Home; a reload keeps
+  `sessionStorage["PalantirSelectedTab"]`. Widgets can be reordered only (no hide/add/reset, Misagh's call).
+  Widget buttons use `data-home-for`, never `data-home-widget` (that marks
+  the widget); jQuery UI hijacks `draggable` in element props, so set it with `attr`.
+- Values from the server go into markup through `palantirCode(value)` (escaped `<code>`) or
+  `escapePalantirMarkup`; never `<code>${value}</code>`. User agents, principals and attribute values are
+  attacker-controlled.
+- Zen mode (`PalantirZenMode`, palantir-settings.js; `html[data-palantir-zen]`, set before paint from
+  `localStorage["PalantirZenMode"]`): the navigation is moved off screen, never `display: none`, because the page
+  shortcuts and the search find destinations with `nav.sidebar-navigation ul li[...]:visible`.
+- System metrics (`PalantirMetrics`, palantir-metrics.js): the metrics endpoint answers current values only; trends
+  are sampled by the page at the refresh interval (rates per minute from successive COUNTs), breakdowns ask
+  `metrics/{name}?tag=k:v` once per tag value (first 15). Pins live in `localStorage["PalantirPinnedMetrics"]`. Class
+  names: the toolbar is `__toolbar`; `__bar` is a breakdown row.
 - Disabling applications (`PalantirApplicationAccess`, palantir-services-actions.js): only
   `DefaultRegisteredServiceAccessStrategy` has `enabled` (serialized only when false, `NON_DEFAULT`); any other strategy
   is combined in an AND `ChainingRegisteredServiceAccessStrategy` with a bare disabled default strategy, which enabling

@@ -297,11 +297,11 @@ function renderHeimdallAuthZenMapping(resource) {
     if (!resource.resourceType) {
         return "N/A";
     }
-    const actions = heimdallExtractArray(resource.actions).map(action => `<code>${escapeHeimdallHtml(action)}</code>`);
+    const actions = heimdallExtractArray(resource.actions).map(action => `${palantirCode(action)}`);
     const idPattern = resource.resourceIdPattern
-        ? ` <span title="Resource ID pattern">(<code>${escapeHeimdallHtml(resource.resourceIdPattern)}</code>)</span>`
+        ? ` <span title="Resource ID pattern">(${palantirCode(resource.resourceIdPattern)})</span>`
         : "";
-    return `<code>${escapeHeimdallHtml(resource.resourceType)}</code>${idPattern}: ${actions.length > 0 ? actions.join(", ") : "N/A"}`;
+    return `${palantirCode(resource.resourceType)}${idPattern}: ${actions.length > 0 ? actions.join(", ") : "N/A"}`;
 }
 
 function heimdallTextField({id, label, type = "text", title = "", required = false, value = ""}) {
@@ -1246,7 +1246,7 @@ async function initializeHeimdallOperations() {
                         heimdallResourcesTable.row.add({
                             0: key,
                             1: `${resource.id ?? "N/A"}`,
-                            2: `<code>${escapeHeimdallHtml(resource.pattern ?? "N/A")}</code>`,
+                            2: `${palantirCode(resource.pattern ?? "N/A")}`,
                             3: renderHeimdallHttpMethod(resource.method),
                             4: renderHeimdallAuthZenMapping(resource),
                             5: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
@@ -1325,8 +1325,8 @@ async function initializeAccessStrategyOperations() {
 
                     for (const [key, value] of Object.entries(response.authentication.principal.attributes)) {
                         accessStrategyAttributesTable.row.add({
-                            0: `<code>${key}</code>`,
-                            1: `<code>${value}</code>`
+                            0: `${palantirCode(key)}`,
+                            1: `${palantirCode(value)}`
                         });
                     }
                     accessStrategyAttributesTable.draw();

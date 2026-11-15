@@ -8,7 +8,8 @@
     <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
 
     <!--/*
-        Applies the stored theme before anything paints, so a dark dashboard does not flash light.
+        Applies the stored theme and zen mode before anything paints, so a dark dashboard does not flash light
+        and the navigation does not flash in zen mode.
         palantir-theme.js takes over once the scripts have loaded. It also opts the page out of the
         shared autofocus in cas.js, which would otherwise put focus in the first search box and keep
         the keyboard shortcuts from working until the operator clicked elsewhere.
@@ -26,6 +27,13 @@
             document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
             document.documentElement.setAttribute("data-theme-preference", preference);
             document.documentElement.classList.add("palantir-page");
+            try {
+                if (window.localStorage.getItem("PalantirZenMode") === "true") {
+                    document.documentElement.setAttribute("data-palantir-zen", "");
+                }
+            } catch (e) {
+                document.documentElement.removeAttribute("data-palantir-zen");
+            }
             document.documentElement.dataset.casAutofocus = "false";
         })();
     </script>
@@ -89,6 +97,8 @@
     <script type="text/javascript" th:src="@{/js/palantir-pac4j.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-webflow.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-system.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-metrics.js}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir-home.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-person-directory.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-consent.js}"></script>
     <script type="text/javascript" th:src="@{/js/palantir-multitenancy.js}"></script>
@@ -145,7 +155,8 @@
                 </button>
                 <div class="palantir-page-heading">
                     <p class="palantir-page-group" id="palantirPageGroup"></p>
-                    <h2 class="palantir-page-title" id="palantirPageTitle" aria-live="polite">Applications</h2>
+                    <h2 class="palantir-page-title" id="palantirPageTitle" aria-live="polite"
+                        th:attr="data-palantir-user=${authentication != null ? authentication.name : ''}">Applications</h2>
                 </div>
             </header>
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
@@ -166,6 +177,7 @@
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/multitenancytab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/clustertab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/userstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/hometab :: main}"/>
         </div>
 
         <div th:replace="~{fragments/palantir/settingspanel :: main}"/>

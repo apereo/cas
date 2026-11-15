@@ -17,7 +17,11 @@ to work with any type of service registry supported by CAS.
 Change tracking works by intercepting all operations to the CAS service registry that need to 
 modify service definitions, and attempts to store a snapshot of the service definition once after 
 the operation is executed. With enough history in place, one can begin to audit changes or review
-historical changes. 
+historical changes. Each change records who made it: the user signed in to the request that changed the
+service, such as an administrator using the dashboard or the services endpoint, or `CAS` for changes made while nobody
+is signed in, such as services loaded on a schedule. Deleting a service is recorded too, so its history ends with who
+deleted it and when, and the [admin dashboard](../installation/Admin-Dashboard.html) lists the latest changes to all
+services, made on any CAS server, from this history.
 
 This feature is largely backed by the [Javers](https://javers.org/) library.
 

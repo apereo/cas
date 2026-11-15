@@ -377,9 +377,9 @@ class PalantirServiceEditGuard {
             icon: "warning",
             showDenyButton: true,
             showCancelButton: true,
-            confirmButtonText: "Keep a draft and close",
-            denyButtonText: "Discard changes",
-            cancelButtonText: "Keep editing",
+            confirmButtonText: "Save as Draft",
+            denyButtonText: "Discard Changes",
+            cancelButtonText: "Keep Editing",
             focusCancel: true
         }).then(result => {
             if (result.isConfirmed) {

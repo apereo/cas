@@ -176,6 +176,16 @@ class PalantirServiceHistory {
     }
 
     /**
+     * How a version is named above its side of the comparison: its id, when it was made and who made it.
+     *
+     * @param version the version
+     * @returns {string} the label
+     */
+    static label(version) {
+        return [`Version ${version.id}`, version.date, version.author ? `by ${version.author}` : null].filter(Boolean).join(" · ");
+    }
+
+    /**
      * List the versions of a service and open the dialog on the latest version, compared with the version
      * before it.
      *
@@ -192,6 +202,7 @@ class PalantirServiceHistory {
         PalantirServiceHistory.versions = history.map(item => ({
             id: String(item.id),
             date: PalantirServiceHistory.when(item.date),
+            author: item.author ?? "",
             text: PalantirServiceHistory.canonical(item.entity)
         }));
         PalantirServiceHistory.current = current ? PalantirServiceHistory.canonical(current) : null;
@@ -207,9 +218,13 @@ class PalantirServiceHistory {
                 tags.push("<span class=\"palantir-tag is-current\">Current</span>");
             }
             table.row.add({
-                0: `<code>${escapePalantirMarkup(version.id)}</code> ${tags.join(" ")}`,
+                0: `${palantirCode(version.id)} ${tags.join(" ")}`,
                 1: escapePalantirMarkup(version.date),
-                2: index,
+                2: version.author
+                    ? `<span class="palantir-history__author${version.author === "CAS" ? " is-system" : ""}" title="${version.author === "CAS"
+                        ? "Changed by CAS itself, or before authors were recorded" : `Changed by ${escapePalantirMarkup(version.author)}`}">${escapePalantirMarkup(version.author)}</span>`
+                    : "",
+                3: index,
                 serviceId: serviceId,
                 revisionId: version.id,
                 index: index
@@ -253,10 +268,10 @@ class PalantirServiceHistory {
         }
         const againstCurrent = $("#entityHistoryCompare").val() === "current";
         const previous = PalantirServiceHistory.versions[PalantirServiceHistory.selected + 1];
-        const selected = {label: `Version ${version.id} · ${version.date}`, text: version.text};
+        const selected = {label: PalantirServiceHistory.label(version), text: version.text};
         const [left, right] = againstCurrent
             ? [selected, {label: "Current definition", text: PalantirServiceHistory.current}]
-            : [previous ? {label: `Version ${previous.id} · ${previous.date}`, text: previous.text} : null, selected];
+            : [previous ? {label: PalantirServiceHistory.label(previous), text: previous.text} : null, selected];
         const restore = $(".palantir-history-restore");
         if (restore.data("ui-button")) {
             restore.button("option", "disabled", version.text === PalantirServiceHistory.current

@@ -735,7 +735,7 @@ class PalantirServiceEditor {
             title: "The wizard does not cover every setting",
             html: `
                 <p class="palantir-json-editor__note">These settings from the JSON editor have no place in the wizard, and saving from the wizard leaves them out:</p>
-                <ul class="palantir-json-editor__dropped">${shown.map(path => `<li><code>${escapePalantirMarkup(path)}</code></li>`).join("")}</ul>
+                <ul class="palantir-json-editor__dropped">${shown.map(path => `<li>${palantirCode(path)}</li>`).join("")}</ul>
                 ${dropped.length > shown.length ? `<p class="palantir-json-editor__note">And ${dropped.length - shown.length} more.</p>` : ""}`,
             showDenyButton: true,
             confirmButtonText: "Back to the JSON editor",

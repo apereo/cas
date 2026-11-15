@@ -27,8 +27,8 @@ async function initializeConsentOperations() {
             consentAttributesTable.clear();
             for (const [key, value] of Object.entries(attributes)) {
                 consentAttributesTable.row.add({
-                    0: `<code>${key}</code>`,
-                    1: `<code>${value}</code>`
+                    0: `${palantirCode(key)}`,
+                    1: `${palantirCode(value)}`
                 });
             }
             consentAttributesTable.draw();
@@ -81,13 +81,13 @@ async function initializeConsentOperations() {
         $.get(CasActuatorEndpoints.attributeConsent(), response => {
             for (const source of response) {
                 consentTable.row.add({
-                    0: `<code>${source.decision.id}</code>`,
-                    1: `<code>${source.decision.principal}</code>`,
-                    2: `<code>${source.decision.service}</code>`,
+                    0: `${palantirCode(source.decision.id)}`,
+                    1: `${palantirCode(source.decision.principal)}`,
+                    2: `${palantirCode(source.decision.service)}`,
                     3: `<code></code>`,
-                    4: `<code>${source.decision.createdDate}</code>`,
-                    5: `<code>${source.decision.options}</code>`,
-                    6: `<code>${source.decision.reminder} ${source.decision.reminderTimeUnit}</code>`,
+                    4: `${palantirCode(source.decision.createdDate)}`,
+                    5: `${palantirCode(source.decision.options)}`,
+                    6: palantirCode(`${source.decision.reminder} ${source.decision.reminderTimeUnit}`),
                     decision: source.decision,
                     attributes: source.attributes
                 });

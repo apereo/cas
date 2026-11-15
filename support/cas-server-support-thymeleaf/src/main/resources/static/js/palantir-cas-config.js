@@ -19,8 +19,8 @@ function effectiveConfigPropertyValue(name) {
         Swal.fire({
             title: "Effective Property Value",
             html: `
-                The effective configuration value for <code>${name}</code> is:<p/>
-                <pre><code class="border-rounded language-html">${name}=${response.property.value}</code></pre>
+                The effective configuration value for ${palantirCode(name)} is:<p/>
+                <pre><code class="border-rounded language-html">${escapePalantirMarkup(name)}=${escapePalantirMarkup(response.property.value)}</code></pre>
             `,
             icon: "info",
             width: "50%",
@@ -113,9 +113,9 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
     const confirmation = await Swal.fire({
         title: encrypting ? "Encrypt this value?" : "Decrypt this value?",
         html: encrypting
-            ? `The value of <code>${escapePalantirMarkup(name)}</code> in ${escapePalantirMarkup(source)} is replaced by its encrypted form,
+            ? `The value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its encrypted form,
                which CAS decrypts when it applies its configuration.`
-            : `The encrypted value of <code>${escapePalantirMarkup(name)}</code> in ${escapePalantirMarkup(source)} is replaced by its plain text.`,
+            : `The encrypted value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its plain text.`,
         icon: "question",
         showConfirmButton: true,
         showDenyButton: true,
@@ -609,8 +609,8 @@ function reloadConfigurationTable(response) {
                 const propertyName = key.replace(".value", "");
                 configurationTable.row.add({
                     0: `${camelcaseToTitleCase(source.name)}`,
-                    1: `<code>${propertyName}</code>`,
-                    2: `<code>${value}</code>`,
+                    1: `${palantirCode(propertyName)}`,
+                    2: `${palantirCode(value)}`,
                     propertyName: propertyName,
                     propertyValue: value,
                     propertySource: source.name
@@ -619,8 +619,8 @@ function reloadConfigurationTable(response) {
                 if (PalantirDashboardConfiguration.mutablePropertySources().some(entry => source.name.endsWith(entry))) {
                     mutableConfigurationTable.row.add({
                         0: `${camelcaseToTitleCase(source.name)}`,
-                        1: `<code>${propertyName}</code>`,
-                        2: `<code>${value}</code>`,
+                        1: `${palantirCode(propertyName)}`,
+                        2: `${palantirCode(value)}`,
                         propertyName: propertyName,
                         propertyValue: value,
                         propertySource: source.name
@@ -869,13 +869,13 @@ function initializeGroovyScriptCacheManagerOperations() {
             {
                 data: "key",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeConfigHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             },
             {
                 data: "resourceName",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeConfigHtml(data || "N/A")}</code>`
+                    ? `${palantirCode(data || "N/A")}`
                     : data
             }
         ],
@@ -1271,8 +1271,8 @@ async function initializeConfigurationOperations() {
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
-                            1: `<code>${property}</code>`,
-                            2: `<code>${propValue}</code>`
+                            1: `${palantirCode(property)}`,
+                            2: `${palantirCode(propValue)}`
                         });
                     }
                 }
@@ -1284,8 +1284,8 @@ async function initializeConfigurationOperations() {
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
-                            1: `<code>${toKebabCase(property)}</code>`,
-                            2: `<code>${propValue}</code>`
+                            1: `${palantirCode(toKebabCase(property))}`,
+                            2: `${palantirCode(propValue)}`
                         });
                     }
                 }
@@ -1398,7 +1398,7 @@ async function initializeConfigurationOperations() {
                     return `
                         <span class="spring-condition-source spring-condition-source-${status}">
                             <i class="mdi ${icon}" aria-hidden="true"></i>
-                            <code>${escapeConfigHtml(data)}</code>
+                            ${palantirCode(data)}
                         </span>
                     `.trim();
                 }

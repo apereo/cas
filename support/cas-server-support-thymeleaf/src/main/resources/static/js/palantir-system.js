@@ -426,15 +426,20 @@ async function initializeSystemOperations() {
             hideElements(tabItem);
             hideElements(panel);
             if (tabs.data("ui-tabs")) {
-                if (tabs.tabs("option", "active") === tabIndex) {
-                    tabs.tabs("option", "active", 0);
-                }
                 tabs.tabs("refresh");
+                const firstShown = tabs.find("> ul > li:not(.hide):not(.d-none)").first().index();
+                if (tabs.tabs("option", "active") === tabIndex && firstShown >= 0) {
+                    tabs.tabs("option", "active", firstShown);
+                }
             }
             if (tabs.find("> ul > li:not(.hide):not(.d-none)").length === 0) {
                 hideElements(tabs);
             }
         }
+    }
+
+    if (!CasActuatorEndpoints.casModules()) {
+        setSystemJqueryTabAvailable("#casmodulestab", "#casmodules-tab", false);
     }
 
     function hideDependenciesTab() {
@@ -443,6 +448,26 @@ async function initializeSystemOperations() {
 
     function hideVulnerabilitiesTab() {
         setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", false);
+    }
+
+    /**
+     * Load what the shown tab under System Info lists: the modules, the dependencies or the vulnerabilities.
+     *
+     * @returns {Promise<void>} resolved once it is loaded
+     */
+    async function refreshActiveSystemInfoTab() {
+        const tabs = $("#system-info-tabs");
+        if (!tabs.data("ui-tabs")) {
+            return;
+        }
+        const panel = tabs.find("> ul > li").eq(tabs.tabs("option", "active")).find("a").attr("href");
+        if (panel === "#casmodules-tab") {
+            await PalantirModules.load();
+        } else if (panel === "#casdependencies-tab") {
+            await refreshDependencies();
+        } else if (panel === "#casvulnerabilities-tab") {
+            await refreshVulnerabilities();
+        }
     }
 
     async function refreshDependencies() {
@@ -991,7 +1016,7 @@ async function initializeSystemOperations() {
             return `
                 <div class="http-exchange-header-row">
                     <strong>${escapeHtml(name)}</strong>
-                    <code>${escapeHtml(renderedValue)}</code>
+                    ${palantirCode(renderedValue)}
                 </div>`;
         }).join("");
     }
@@ -1021,7 +1046,7 @@ async function initializeSystemOperations() {
                 <div class="http-exchange-metadata">
                     ${metadata.length === 0 ? `<div class="http-exchange-empty">No metadata recorded.</div>` : metadata.map(([name, value]) => `
                         <strong>${escapeHtml(name)}</strong>
-                        <code>${escapeHtml(value)}</code>
+                        ${palantirCode(value)}
                     `).join("")}
                 </div>
                 <div class="http-exchange-headers">
@@ -1224,7 +1249,7 @@ async function initializeSystemOperations() {
             .map(([name, value]) => `
                 <div class="http-trace-attribute-row">
                     <strong>${escapeHtml(name)}</strong>
-                    <code>${escapeHtml(value)}</code>
+                    ${palantirCode(value)}
                 </div>`)
             .join("");
     }
@@ -1277,13 +1302,13 @@ async function initializeSystemOperations() {
                     <tbody class="mdc-data-table__content">
                     ${spans.map(span => `
                         <tr class="mdc-data-table__row ${span.error ? "http-trace-row-error" : ""}">
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.traceId ?? "")}</code></td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.spanId ?? "")}</code></td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.parentSpanId || "")}</code></td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.traceId ?? "")}</td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.spanId ?? "")}</td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.parentSpanId || "")}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.name)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.serviceName)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.kind)}</td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.startEpochNanos)}</code></td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.startEpochNanos)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.relativeStartNanos))}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.durationNanos))}</td>
                             <td class="mdc-data-table__cell">${renderHttpTraceStatus(span.status, span.error)}</td>
@@ -1313,7 +1338,7 @@ async function initializeSystemOperations() {
                 <div class="http-trace-dialog-summary">
                     <div>
                         <span class="http-trace-dialog-label">Trace ID</span>
-                        <code>${escapeHtml(detail.traceId ?? "")}</code>
+                        ${palantirCode(detail.traceId ?? "")}
                     </div>
                     <div>
                         <span class="http-trace-dialog-label">Spans</span>
@@ -1813,7 +1838,7 @@ async function initializeSystemOperations() {
         const usageLabel = usage === null ? "N/A" : formatMemoryPercent(usage);
 
         return {
-            0: `<code>${escapeHtml(pool.name)}</code>`,
+            0: `${palantirCode(pool.name)}`,
             1: formatMemoryBytes(pool.used),
             2: formatMemoryBytes(pool.committed),
             3: formatMemoryBytes(pool.max),
@@ -1891,60 +1916,7 @@ async function initializeSystemOperations() {
     }
 
     async function configureSystemMetrics() {
-        $("#systemMetricNameFilter").selectmenu({
-            change: function () {
-                $(this).selectmenu("close");
-                const metric = $(this).val();
-                systemMetricsTagsTable.clear();
-                systemMetricsMeasurementsTable.clear();
-                $("#systemMetricNameDescriptionContainer").hide();
-
-                if (metric && metric.length > 0) {
-                    $.get(`${CasActuatorEndpoints.metrics()}/${metric}`, response => {
-                        let description = `${response.description ?? "No description is available"}. Metric is measured in ${response.baseUnit ?? "unknown units"}.`;
-                        $("#systemMetricNameDescription").text(description);
-                        $("#systemMetricNameDescriptionContainer").show();
-
-                        response.availableTags.forEach(entry => {
-                            systemMetricsTagsTable.row.add({
-                                0: `<code>${entry.tag}</code>`,
-                                1: `<code>${entry.values.join(",")}</code>`
-                            });
-                        });
-                        systemMetricsTagsTable.draw();
-                        response.measurements.forEach(entry => {
-                            systemMetricsMeasurementsTable.row.add({
-                                0: `<code>${entry.statistic}</code>`,
-                                1: `<code>${entry.value}</code>`
-                            });
-                        });
-                        systemMetricsMeasurementsTable.draw();
-                    });
-                }
-            }
-        });
-
-        $("#systemMetricNameFilter").empty();
-        $("#systemMetricNameFilter").append(
-            $("<option>", {
-                value: "",
-                text: "Select a metric to view details..."
-            })
-        );
-
-        if (CasActuatorEndpoints.metrics()) {
-            $.get(CasActuatorEndpoints.metrics(), response => {
-                for (const name of response.names) {
-                    $("#systemMetricNameFilter").append(
-                        $("<option>", {
-                            value: name,
-                            text: name
-                        })
-                    );
-                    $("#systemMetricNameFilter").selectmenu("refresh");
-                }
-            });
-        }
+        PalantirMetrics.initialize();
     }
 
     async function fetchAvailableMetricNames() {
@@ -2014,24 +1986,6 @@ async function initializeSystemOperations() {
         }
     });
 
-    const systemMetricsTagsTable = $("#systemMetricsTagsTable").DataTable({
-        pageLength: 10,
-        autoWidth: false,
-        drawCallback: settings => {
-            $("#systemMetricsTagsTable tr").addClass("mdc-data-table__row");
-            $("#systemMetricsTagsTable td").addClass("mdc-data-table__cell");
-        }
-    });
-
-    const systemMetricsMeasurementsTable = $("#systemMetricsMeasurementsTable").DataTable({
-        pageLength: 10,
-        autoWidth: false,
-        drawCallback: settings => {
-            $("#systemMetricsMeasurementsTable tr").addClass("mdc-data-table__row");
-            $("#systemMetricsMeasurementsTable td").addClass("mdc-data-table__cell");
-        }
-    });
-
     const liveMemoryPoolsTable = $("#systemLiveMemoryPoolsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -2095,7 +2049,7 @@ async function initializeSystemOperations() {
             {
                 data: "className",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             },
             {
@@ -2308,12 +2262,12 @@ async function initializeSystemOperations() {
             {
                 data: "groupId",
                 width: "28%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "artifactId",
                 width: "26%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "version",
@@ -2323,7 +2277,7 @@ async function initializeSystemOperations() {
             {
                 data: "source",
                 width: "34%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             }
         ],
         initComplete: () => applyMdcDataTableControls("#casDependenciesTable"),
@@ -2359,12 +2313,12 @@ async function initializeSystemOperations() {
             {
                 data: "dependency.groupId",
                 width: "15%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "dependency.artifactId",
                 width: "15%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "dependency.version",
@@ -2374,7 +2328,7 @@ async function initializeSystemOperations() {
             {
                 data: "dependency.source",
                 width: "22%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "modified",
@@ -2598,8 +2552,8 @@ async function initializeSystemOperations() {
 
             for (const [key, value] of Object.entries(flattened)) {
                 systemTable.row.add({
-                    0: `<code>${key}</code>`,
-                    1: `<code>${value}</code>`
+                    0: `${palantirCode(key)}`,
+                    1: `${palantirCode(value)}`
                 });
             }
             systemTable.draw();
@@ -2649,13 +2603,15 @@ async function initializeSystemOperations() {
         if (ui.newPanel.attr("id") === "systemstatus-tab") {
             configureLiveMemory();
         }
-        if (ui.newPanel.attr("id") === "systeminfo-tab"
-            && $("#system-info-tabs").data("ui-tabs") && $("#system-info-tabs").tabs("option", "active") === 0) {
-            refreshDependencies();
+        if (ui.newPanel.attr("id") === "systeminfo-tab") {
+            refreshActiveSystemInfoTab();
         }
     });
 
     $("#system-info-tabs").on("tabsactivate", function (event, ui) {
+        if (ui.newPanel.attr("id") === "casmodules-tab") {
+            PalantirModules.load();
+        }
         if (ui.newPanel.attr("id") === "casdependencies-tab") {
             refreshDependencies();
         }
@@ -2681,30 +2637,25 @@ async function initializeSystemOperations() {
                 await loadHttpRequestMappings();
             }
             const systemInfoShown = (activeTabs["system-tabs"] ?? 0) === $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index();
-            const systemInfoTabIndex = activeTabs["system-info-tabs"];
-            const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
-            if (systemInfoShown && systemInfoTabIndex === dependenciesTabIndex) {
-                refreshDependencies();
-            }
-            const vulnerabilitiesTabIndex = $("#system-info-tabs ul li a[href='#casvulnerabilities-tab']").parent().index();
-            if (systemInfoShown && systemInfoTabIndex === vulnerabilitiesTabIndex) {
-                refreshVulnerabilities();
+            if (systemInfoShown) {
+                refreshActiveSystemInfoTab();
             }
         } catch (e) { /* ignore */ }
     }
 
 
     setInterval(() => {
-        if (currentActiveTab === Tabs.SYSTEM.index && document.visibilityState === "visible") {
+        if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab, #httprequests-tab")) {
             configureSystemData();
+        }
+        if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab")) {
             configureHealthChart();
             configureStatistics();
         }
     }, palantirSettings().refreshInterval);
 
-    if ($("#systeminfo-tab").is(":visible") && $("#system-info-tabs").data("ui-tabs")
-        && $("#system-info-tabs").tabs("option", "active") === 0) {
-        await refreshDependencies();
+    if ($("#systeminfo-tab").is(":visible")) {
+        await refreshActiveSystemInfoTab();
     }
 
     await configureHeapDumpAnalysis();
@@ -2777,4 +2728,206 @@ async function initializeSystemOperations() {
                 }
             });
     });
+}
+
+/**
+ * The CAS modules this server runs, as the casModules endpoint lists them, one card each, with a filter by text and by
+ * kind of module. The list does not change while CAS runs, so it is read once.
+ */
+class PalantirModules {
+    static modules = null;
+    static loading = null;
+    static kind = "all";
+    static GROUP = "org.apereo.cas";
+    static FORMAT_KEY = "PalantirModuleDependencyFormat";
+
+    static KINDS = [
+        {key: "support", label: "Support", icon: "mdi-puzzle-outline"},
+        {key: "core", label: "Core", icon: "mdi-cube-outline"},
+        {key: "api", label: "API", icon: "mdi-api"},
+        {key: "webapp", label: "Web application", icon: "mdi-web"},
+        {key: "other", label: "Other", icon: "mdi-package-variant-closed"}
+    ];
+
+    static kindOf(name) {
+        const match = String(name ?? "").match(/^cas-server-(support|core|api|webapp)\b/);
+        return match ? match[1] : "other";
+    }
+
+    static shortName(name) {
+        return String(name ?? "").replace(/^cas-server-(support|core|api|webapp)-/, "") || String(name ?? "");
+    }
+
+    static load() {
+        if (PalantirModules.modules !== null) {
+            return Promise.resolve();
+        }
+        if (PalantirModules.loading === null) {
+            PalantirModules.bind();
+            PalantirModules.loading = new Promise(resolve => {
+                $.get(CasActuatorEndpoints.casModules(), response => {
+                    PalantirModules.modules = (Array.isArray(response) ? response : [])
+                        .filter(module => module && module.name)
+                        .filter((module, index, modules) => modules.findIndex(other => other.name === module.name
+                            && other.version === module.version) === index)
+                        .sort((first, second) => String(first.name).localeCompare(String(second.name)));
+                    PalantirModules.render();
+                    resolve();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching the CAS modules:", error);
+                    $("#casModulesCards").html("<p class=\"palantir-empty-state\">The modules could not be read just now.</p>");
+                    PalantirModules.loading = null;
+                    resolve();
+                });
+            });
+        }
+        return PalantirModules.loading;
+    }
+
+    /**
+     * How a module is declared as a dependency, so it can be looked for in a Gradle or Maven build. CAS modules share
+     * one group, and the version is the one this server runs.
+     *
+     * @param {object} module the module
+     * @param {string} format gradle or maven
+     * @returns {string} the declaration
+     */
+    static declaration(module, format) {
+        const version = module.version || "${casVersion}";
+        return format === "maven"
+            ? `<dependency>\n    <groupId>${PalantirModules.GROUP}</groupId>\n    <artifactId>${module.name}</artifactId>\n    <version>${version}</version>\n</dependency>`
+            : `implementation "${PalantirModules.GROUP}:${module.name}:${version}"`;
+    }
+
+    static format() {
+        try {
+            return localStorage.getItem(PalantirModules.FORMAT_KEY) === "maven" ? "maven" : "gradle";
+        } catch (error) {
+            return "gradle";
+        }
+    }
+
+    static showDependency(card, format) {
+        const module = (PalantirModules.modules ?? []).find(entry => entry.name === card.dataset.module);
+        if (!module) {
+            return;
+        }
+        const panel = $(card).find(".palantir-modules__dependency");
+        panel.find("[data-module-format]").each((index, button) => button.setAttribute("aria-pressed", String(button.dataset.moduleFormat === format)));
+        panel.find("code").text(PalantirModules.declaration(module, format));
+    }
+
+    static bind() {
+        $("#casModulesCatalog").off("click.palantirModules").on("click.palantirModules", () => {
+            const tabs = $("#system-tabs");
+            tabs.tabs("option", "active", tabs.find("ul li a[href='#casfeaturestab-tab']").parent().index());
+        });
+        $("#casModulesCards").off("click.palantirModules")
+            .on("click.palantirModules", "[data-module-action='dependency']", event => {
+                const button = event.currentTarget;
+                const card = button.closest("[data-module]");
+                const panel = card.querySelector(".palantir-modules__dependency");
+                const open = panel.hidden;
+                panel.hidden = !open;
+                card.classList.toggle("is-expanded", open);
+                button.setAttribute("aria-expanded", String(open));
+                if (open) {
+                    PalantirModules.showDependency(card, PalantirModules.format());
+                    card.scrollIntoView({block: "nearest", behavior: "smooth"});
+                }
+            })
+            .on("click.palantirModules", "[data-module-format]", event => {
+                const format = event.currentTarget.dataset.moduleFormat;
+                try {
+                    localStorage.setItem(PalantirModules.FORMAT_KEY, format);
+                } catch (error) {
+                    console.debug("The dependency format is not remembered:", error);
+                }
+                PalantirModules.showDependency(event.currentTarget.closest("[data-module]"), format);
+            })
+            .on("click.palantirModules", "[data-module-action='copy']", event => {
+                copyToClipboard(event.currentTarget.closest(".palantir-modules__dependency").querySelector("code").textContent);
+                const button = $(event.currentTarget);
+                button.find("span").text("Copied");
+                setTimeout(() => button.find("span").text("Copy"), 1500);
+            });
+        $("#casModulesFilter").off("input.palantirModules").on("input.palantirModules", () => PalantirModules.render());
+        $("#casModulesKinds").off("click.palantirModules").on("click.palantirModules", "[data-module-kind]", event => {
+            PalantirModules.kind = event.currentTarget.dataset.moduleKind;
+            PalantirModules.render();
+        });
+    }
+
+    static render() {
+        const modules = PalantirModules.modules ?? [];
+        const query = String($("#casModulesFilter").val() ?? "").trim().toLowerCase();
+        $("#casModulesCatalog").toggleClass("hide", !CasActuatorEndpoints.casFeatures()
+            || $("#casfeaturestab").parent().is(".hide, .d-none"));
+        const counts = {all: modules.length};
+        modules.forEach(module => {
+            const kind = PalantirModules.kindOf(module.name);
+            counts[kind] = (counts[kind] ?? 0) + 1;
+        });
+        if (PalantirModules.kind !== "all" && !counts[PalantirModules.kind]) {
+            PalantirModules.kind = "all";
+        }
+        const escape = escapePalantirMarkup;
+        $("#casModulesKinds").html([{key: "all", label: "All"}, ...PalantirModules.KINDS]
+            .filter(kind => counts[kind.key])
+            .map(kind => `
+                <button type="button" class="palantir-modules__kind" data-module-kind="${kind.key}"
+                        aria-pressed="${PalantirModules.kind === kind.key}">${escape(kind.label)} <span>${counts[kind.key]}</span></button>`)
+            .join(""));
+        const shown = modules.filter(module => (PalantirModules.kind === "all" || PalantirModules.kindOf(module.name) === PalantirModules.kind)
+            && (query === "" || [module.name, module.version, module.description]
+                .some(value => String(value ?? "").toLowerCase().includes(query))));
+        $("#casModulesCount").text(shown.length === modules.length
+            ? `${modules.length} ${modules.length === 1 ? "module" : "modules"}`
+            : `${shown.length} of ${modules.length} modules`);
+        if (modules.length === 0) {
+            $("#casModulesCards").html("<p class=\"palantir-empty-state\">This server reports no CAS modules.</p>");
+            return;
+        }
+        if (shown.length === 0) {
+            $("#casModulesCards").html("<p class=\"palantir-empty-state\">No module matches that filter.</p>");
+            return;
+        }
+        $("#casModulesCards").html(shown.map(module => PalantirModules.card(module)).join(""));
+    }
+
+    static card(module) {
+        const escape = escapePalantirMarkup;
+        const kind = PalantirModules.KINDS.find(entry => entry.key === PalantirModules.kindOf(module.name));
+        const description = String(module.description ?? "").trim();
+        return `
+            <article class="palantir-record-card palantir-modules__card is-${kind.key}" aria-label="${escape(module.name)}"
+                     data-module="${escape(module.name)}">
+                <header class="palantir-record-card__head">
+                    <span class="palantir-protocol-badge is-module-${kind.key}" title="${escape(kind.label)}"><i class="mdi ${kind.icon}" aria-hidden="true"></i></span>
+                    <div class="palantir-record-card__title">
+                        <h4 title="${escape(module.name)}">${escape(PalantirModules.shortName(module.name))}</h4>
+                        <p title="${escape(module.name)}">${escape(module.name)}</p>
+                    </div>
+                </header>
+                ${description !== "" && description !== module.name
+        ? `<p class="palantir-modules__description">${escape(description)}</p>` : ""}
+                <footer class="palantir-modules__footer">
+                    ${module.version ? `<span class="palantir-modules__version"><i class="mdi mdi-tag-outline" aria-hidden="true"></i>${escape(module.version)}</span>` : "<span></span>"}
+                    <button type="button" class="palantir-modules__toggle" data-module-action="dependency" aria-expanded="false"
+                            aria-label="Show how ${escape(module.name)} is declared in Gradle or Maven">
+                        <i class="mdi mdi-code-braces" aria-hidden="true"></i>Dependency
+                    </button>
+                </footer>
+                <div class="palantir-modules__dependency" hidden>
+                    <div class="palantir-modules__formats" role="group" aria-label="Build tool">
+                        <button type="button" data-module-format="gradle" aria-pressed="false">Gradle</button>
+                        <button type="button" data-module-format="maven" aria-pressed="false">Maven</button>
+                        <button type="button" class="palantir-modules__copy" data-module-action="copy" title="Copy">
+                            <i class="mdi mdi-content-copy" aria-hidden="true"></i><span>Copy</span>
+                        </button>
+                    </div>
+                    <pre><code></code></pre>
+                </div>
+            </article>`;
+    }
 }

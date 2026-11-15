@@ -5,12 +5,19 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.palantir.controller.DashboardController;
+import org.apereo.cas.palantir.controller.PalantirOverviewController;
+import org.apereo.cas.palantir.overview.PalantirApplicationChanges;
+import org.apereo.cas.palantir.overview.PalantirOverview;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.RestActuatorControllerEndpoint;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.val;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.endpoint.EndpointAccessResolver;
@@ -55,6 +62,31 @@ class CasPalantirWebMvcConfiguration {
         endpoints.addAll(restEndpointsSupplier.getEndpoints());
         return new DashboardController(casProperties, endpointLinksResolver, webEndpointProperties,
             applicationContext, endpoints, endpointAccessResolver);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "palantirOverview")
+    public PalantirOverview palantirOverview(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
+        @Qualifier(ServicesManager.BEAN_NAME)
+        final ObjectProvider<ServicesManager> servicesManager,
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final ObjectProvider<TicketRegistry> ticketRegistry,
+        final ObjectProvider<MeterRegistry> meterRegistry,
+        @Qualifier("palantirApplicationChanges")
+        final ObjectProvider<PalantirApplicationChanges> palantirApplicationChanges) {
+        return new PalantirOverview(casProperties, applicationContext, servicesManager, ticketRegistry,
+            meterRegistry, palantirApplicationChanges);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "palantirOverviewController")
+    public PalantirOverviewController palantirOverviewController(
+        @Qualifier("palantirOverview") final PalantirOverview palantirOverview,
+        final EndpointLinksResolver endpointLinksResolver,
+        final WebEndpointProperties webEndpointProperties) {
+        return new PalantirOverviewController(palantirOverview, endpointLinksResolver, webEndpointProperties);
     }
 
     @Bean

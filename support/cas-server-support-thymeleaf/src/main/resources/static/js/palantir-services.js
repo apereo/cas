@@ -28,10 +28,10 @@ async function initializeServicesOperations() {
     $("#entityHistoryTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        order: [[2, "asc"]],
+        order: [[3, "asc"]],
         layout: {topStart: null, topEnd: null},
         columnDefs: [
-            {visible: false, type: "num", targets: 2}
+            {visible: false, type: "num", targets: 3}
         ],
         drawCallback: settings => {
             $("#entityHistoryTable tr").addClass("mdc-data-table__row");

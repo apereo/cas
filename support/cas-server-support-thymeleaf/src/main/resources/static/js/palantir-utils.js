@@ -453,6 +453,101 @@ function allowAlertsOverModalDialogs() {
  * @param name the endpoint id
  * @returns {string} the explanation
  */
+/**
+ * Read a date as the actuator endpoints answer it: an ISO date, possibly followed by a zone id in brackets, or a
+ * number of seconds or milliseconds since the epoch.
+ *
+ * @param value the date as answered
+ * @returns {Date|null} the date, or null when it cannot be read
+ */
+function palantirRecordDate(value) {
+    if (value === undefined || value === null || value === "") {
+        return null;
+    }
+    const date = typeof value === "number"
+        ? new Date(value < 1e12 ? value * 1000 : value)
+        : new Date(Date.parse(String(value).replace(/\[[^\]]*\]$/, "")));
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function palantirRecordAgo(date) {
+    if (!date) {
+        return "at an unknown time";
+    }
+    const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+    if (seconds < 45) {
+        return "just now";
+    }
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) {
+        return `${minutes} min ago`;
+    }
+    const hours = Math.round(minutes / 60);
+    if (hours < 48) {
+        return `${hours} h ago`;
+    }
+    return `${Math.round(hours / 24)} days ago`;
+}
+
+function palantirRecordWhen(date) {
+    return date ? date.toLocaleString(undefined, {dateStyle: "medium", timeStyle: "short"}) : "Unknown";
+}
+
+/**
+ * Put a card view where a table sits, and show what to do before anything is searched.
+ *
+ * @param {string} tableId the table the cards stand in for
+ * @param {string} cardsId the element that holds the cards
+ * @param {string} prompt what to do before anything is searched
+ */
+function placePalantirRecordCards(tableId, cardsId, prompt) {
+    const tableRow = $(`#${tableId}`).closest(".dt-layout-row");
+    if (tableRow.length > 0) {
+        $(`#${cardsId}`).insertAfter(tableRow);
+    }
+    $(`#${cardsId}`).html(`<p class="palantir-empty-state">${escapePalantirMarkup(prompt)}</p>`);
+}
+
+/**
+ * Draw one card per row the table shows on its current page, once something was searched. A row carries the record
+ * its card is drawn from.
+ *
+ * @param {object} table the table the cards stand in for
+ * @param {string} cardsId the element that holds the cards
+ * @param {Function} card draws the card of one record
+ * @param {Function} emptyMessage what to say when the search found nothing, given what was searched for
+ */
+function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
+    const container = $(`#${cardsId}`);
+    if (container.length === 0 || container.data("searched") === undefined) {
+        return;
+    }
+    const cards = table.rows({page: "current", search: "applied"}).data().toArray()
+        .filter(row => row.record)
+        .map(row => card(row.record));
+    if (cards.length > 0) {
+        container.html(cards.join(""));
+        applyPalantirEndpointAccess(container[0]);
+    } else {
+        const message = table.search() === "" ? emptyMessage(container.data("searched")) : "Nothing matches that search.";
+        container.html(`<p class="palantir-empty-state">${escapePalantirMarkup(message)}</p>`);
+    }
+}
+
+/**
+ * A value shown as code in a table cell or a card: the value is escaped, so text that came from a request, such as a
+ * username, a user agent or an attribute value, is shown as written and never read as markup.
+ *
+ * @param value the value; null and undefined show as nothing
+ * @returns {string} the markup
+ */
+function palantirCode(value) {
+    const text = value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+    return `<code>${text.replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character])}</code>`;
+}
+
 function palantirReadOnlyMessage(name) {
     return `The ${name} endpoint is read-only on this CAS server, so this change cannot be made from Palantir.`;
 }

@@ -95,7 +95,7 @@ async function initializeLoggingOperations() {
                     `;
 
                 loggersTable.row.add({
-                    0: `<code>${logger.name}</code>`,
+                    0: `${palantirCode(logger.name)}`,
                     1: `${loggerLevel.trim()}`
                 });
             }
