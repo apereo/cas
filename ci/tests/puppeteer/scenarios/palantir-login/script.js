@@ -3,7 +3,7 @@
    activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
    PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext, fetchServices, notyf,
    PalantirSamlMetadataImport, PalantirApplicationAccess, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
-   PalantirCommandPalette */
+   PalantirCommandPalette, Chart, PalantirApplicationSelection */
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -211,6 +211,17 @@ async function verifyRegisteredServices(page) {
     await cas.logg(`Card view shows ${views.cards} cards for ${views.rows} rows on the table's page`);
     assert(views.cards === views.rows);
     await verifyApplicationTypeFilter(page);
+
+    if (count > 0) {
+        await page.waitForFunction(() => $("#servicesChartTitle").closest(".palantir-chart-card").is(":visible"), {timeout: 10000});
+        await page.evaluate(() => $("[data-palantir-magnify=servicesChart]").trigger("click"));
+        await page.waitForFunction(() => {
+            const canvas = document.querySelector(".palantir-magnifier canvas");
+            return canvas !== null && Chart.getChart(canvas) !== undefined && canvas.getBoundingClientRect().width > 400;
+        }, {timeout: 10000});
+        await cas.logg("The applications chart opens magnified");
+        await page.evaluate(() => $(".palantir-magnifier").dialog("close"));
+    }
 
     await cas.click(page, "#newService");
     await page.waitForFunction(() => $("#newServicePlain").is(":visible")
@@ -1239,6 +1250,21 @@ async function verifyApplicationBulkActions(page) {
     await cas.log(`The exported archive holds ${archive.size} bytes`);
     assert(archive.size > 0 && archive.signature === 0x04034b50);
 
+    for (const disable of [true, false]) {
+        const button = disable ? "disableSelectedServices" : "enableSelectedServices";
+        await page.waitForFunction((name) => !$(`button[name=${name}]`).prop("disabled"), {timeout: 10000}, button);
+        await page.click(`button[name=${button}]`);
+        await page.waitForSelector(".swal2-confirm", {visible: true});
+        await page.click(".swal2-confirm");
+        await page.waitForFunction((expected) => $(".swal2-title").text() === `2 applications ${expected ? "disabled" : "enabled"}`,
+            {timeout: 60000}, disable);
+        await page.evaluate(() => Swal.close());
+        const saved = [await strategy(ids[0]), await strategy(ids[1])];
+        await cas.logg(`${disable ? "Disabled" : "Enabled"} the selection: ${JSON.stringify(saved)}`);
+        assert(saved.every((value) => isDisabledAccessStrategy(value) === disable));
+        await page.waitForFunction((selected) => selected.every((id) => PalantirApplicationSelection.has(String(id))), {timeout: 10000}, [ids[0], ids[1]]);
+    }
+
     await page.click("button[name=deleteSelectedServices]");
     await page.waitForSelector(".swal2-confirm", {visible: true});
     await page.click(".swal2-confirm");
@@ -1405,6 +1431,33 @@ async function verifyInterruptInquiry(page) {
 }
 
 /**
+ * Look up the throttled attempts of one username on the Throttles page, check the hint and the button that shows all
+ * attempts again, then show them all. The page needs the throttles endpoint, which the throttle module provides.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyThrottlesUsername(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.throttles()))) {
+        await cas.logy("Throttles endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.THROTTLES.index}]`).trigger("click"));
+    await page.waitForFunction(() => $("#throttlesUsername").is(":visible"), {timeout: 30000});
+    await page.evaluate(() => $("#throttlesUsername").val("PalantirNobody"));
+    const [response] = await Promise.all([
+        page.waitForResponse((answer) => answer.url().includes("/throttles?username=PalantirNobody"), {timeout: 30000}),
+        page.click("#filterThrottlesButton")
+    ]);
+    await page.waitForFunction(() => $("#throttlesUsernameHint").text().startsWith("0 throttled attempts for PalantirNobody")
+        && $("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
+    await cas.logg(`Throttled attempts of one username: ${response.status()}, ${await page.evaluate(() => $("#throttlesUsernameHint").text())}`);
+    assert(response.status() === 200);
+    await page.click("#showAllThrottlesButton");
+    await page.waitForFunction(() => $("#throttlesUsername").val() === "" && !$("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
+}
+
+/**
  * Open the keyboard shortcuts overlay with ? and close it with Escape.
  *
  * @param page the puppeteer page
@@ -1464,6 +1517,7 @@ async function verifyShortcutsOverlay(page) {
     await verifySamlMetadataHealth(page);
     await verifyReadOnlyEndpoint(page);
     await verifyInterruptInquiry(page);
+    await verifyThrottlesUsername(page);
     await verifyShortcutsOverlay(page);
 
     if (failures.length > 0) {
@@ -1475,5 +1529,6 @@ async function verifyShortcutsOverlay(page) {
     assert(failures.length === 0, `Browser errors: ${failures.join(" | ")}`);
     await cas.logg("Palantir dashboard verified with no browser errors");
 
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.closeBrowser(browser);
 })();

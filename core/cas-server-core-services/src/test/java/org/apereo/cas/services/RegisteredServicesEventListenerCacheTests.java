@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -91,6 +92,12 @@ class RegisteredServicesEventListenerCacheTests {
             listener.handleRegisteredServicesLoadedEvent(
                 new CasRegisteredServicesLoadedEvent(mock(ServicesManager.class), List.of(), ClientInfoHolder.getClientInfo()));
             verify(servicesManager, never()).load();
+        }
+
+        @Test
+        void verifyRefreshScopeRefreshLoadsServices() {
+            listener.handleRefreshScopeRefreshedEvent(new RefreshScopeRefreshedEvent());
+            verify(servicesManager).load();
         }
 
         @Test

@@ -53,21 +53,38 @@ async function initializeThrottlesOperations() {
         }
     });
 
+    let throttlesUsername = "";
+
+    function throttledValue(value) {
+        return `<code>${escapePalantirMarkup(value ?? "")}</code>`;
+    }
+
+    function showThrottlesUsername(count) {
+        $("#showAllThrottlesButton").prop("hidden", throttlesUsername === "");
+        $("#throttlesUsernameHint").text(throttlesUsername === ""
+            ? "Every throttled attempt is shown; enter a username to see only that username's attempts, matched regardless of case."
+            : `${count} throttled attempt${count === 1 ? "" : "s"} for ${throttlesUsername}. Clear and Release still apply to every attempt.`);
+    }
+
     function fetchThrottledAttempts() {
         throttlesTable.clear();
-        $.get(CasActuatorEndpoints.throttles(), response => {
+        const url = throttlesUsername === ""
+            ? CasActuatorEndpoints.throttles()
+            : `${CasActuatorEndpoints.throttles()}?username=${encodeURIComponent(throttlesUsername)}`;
+        $.get(url, response => {
             for (const record of response) {
                 throttlesTable.row.add({
-                    0: `<code>${record.key}</code>`,
-                    1: `<code>${record.id}</code>`,
-                    2: `<code>${record.value}</code>`,
-                    3: `<code>${record.username}</code>`,
-                    4: `<code>${record.clientIpAddress}</code>`,
-                    5: `<code>${record.expiration}</code>`,
+                    0: throttledValue(record.key),
+                    1: throttledValue(record.id),
+                    2: throttledValue(record.value),
+                    3: throttledValue(record.username),
+                    4: throttledValue(record.clientIpAddress),
+                    5: throttledValue(record.expiration),
                     key: record.key
                 });
             }
             throttlesTable.draw();
+            showThrottlesUsername(response.length);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
@@ -76,6 +93,18 @@ async function initializeThrottlesOperations() {
 
     if (CasActuatorEndpoints.throttles()) {
         fetchThrottledAttempts();
+
+        $("#fmThrottlesUsername").off("submit").on("submit", event => {
+            event.preventDefault();
+            throttlesUsername = String($("#throttlesUsername").val() ?? "").trim();
+            fetchThrottledAttempts();
+        });
+        $("#showAllThrottlesButton").off("click").on("click", () => {
+            $("#throttlesUsername").val("").trigger("input");
+            throttlesUsername = "";
+            fetchThrottledAttempts();
+            $("#throttlesUsername").trigger("focus");
+        });
 
         $("button[name=releaseThrottlesButton]").off().on("click", () =>
             Swal.fire({

@@ -204,9 +204,27 @@ class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
             return mock(MongoDatabaseFactory.class);
         }
 
+        /**
+         * Javers backed by its in-memory repository, whose snapshot lists are not safe for concurrent use: the test
+         * methods run in parallel, and a commit made while another method reads history fails that read with a
+         * {@link ConcurrentModificationException}. Every call is therefore made one at a time, as the MongoDb
+         * repository used outside tests allows.
+         *
+         * @return the javers instance
+         */
         @Bean(name = "JaversFromStarter")
         public Javers javers() {
-            return JaversBuilder.javers().build();
+            val javers = JaversBuilder.javers().build();
+            return (Javers) Proxy.newProxyInstance(Javers.class.getClassLoader(), new Class<?>[]{Javers.class},
+                (proxy, method, args) -> {
+                    synchronized (javers) {
+                        try {
+                            return method.invoke(javers, args);
+                        } catch (final InvocationTargetException e) {
+                            throw e.getCause();
+                        }
+                    }
+                });
         }
     }
 }

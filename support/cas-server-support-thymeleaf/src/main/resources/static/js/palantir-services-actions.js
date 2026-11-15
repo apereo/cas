@@ -161,22 +161,8 @@ class PalantirApplicationAccess {
         if (!result.isConfirmed) {
             return;
         }
-        const endpoint = CasActuatorEndpoints.registeredServices();
         try {
-            const service = await $.ajax({
-                url: `${endpoint}/${encodeURIComponent(serviceId)}`,
-                dataType: "json",
-                headers: {"Accept": "application/json"}
-            });
-            service.accessStrategy = disable
-                ? PalantirApplicationAccess.disable(service.accessStrategy)
-                : PalantirApplicationAccess.enable(service.accessStrategy);
-            await $.ajax({
-                url: endpoint,
-                type: "PUT",
-                contentType: "application/json",
-                data: JSON.stringify(service)
-            });
+            await PalantirApplicationAccess.save(serviceId, disable);
             await PalantirApplicationSelection.reload();
             notyf.success(`${name} is ${disable ? "disabled" : "enabled"}.`);
         } catch (xhr) {
@@ -184,6 +170,88 @@ class PalantirApplicationAccess {
                 showUnreadableDefinition(xhr, `${name} was not ${disable ? "disabled" : "enabled"}`);
             }
         }
+    }
+
+    /**
+     * Read an application again, switch its access strategy off or on and save it.
+     *
+     * @param serviceId the numeric id of the application
+     * @param disable true to disable it, false to enable it
+     * @returns {Promise<void>} resolved once the application is saved
+     */
+    static async save(serviceId, disable) {
+        const endpoint = CasActuatorEndpoints.registeredServices();
+        const service = await $.ajax({
+            url: `${endpoint}/${encodeURIComponent(serviceId)}`,
+            dataType: "json",
+            headers: {"Accept": "application/json"}
+        });
+        service.accessStrategy = disable
+            ? PalantirApplicationAccess.disable(service.accessStrategy)
+            : PalantirApplicationAccess.enable(service.accessStrategy);
+        await $.ajax({
+            url: endpoint,
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(service)
+        });
+    }
+
+    /**
+     * Disable or enable the selected applications once the operator confirms, one by one, showing the progress.
+     * Applications that are already in that state are left alone.
+     *
+     * @param disable true to disable them, false to enable them
+     * @returns {Promise<void>} resolved once they are saved or the operator declined
+     */
+    static async changeSelected(disable) {
+        const ids = [...PalantirApplicationSelection.selected]
+            .filter(id => PalantirApplicationAccess.isServiceDisabled(id) !== disable);
+        if (ids.length === 0) {
+            return;
+        }
+        const verb = disable ? "Disable" : "Enable";
+        const names = ids.map(id => registeredServicesById.get(id)?.name ?? id);
+        const listed = names.slice(0, 8).map(name => `<li>${escapePalantirMarkup(name)}</li>`).join("");
+        const more = names.length > 8 ? `<li>and ${names.length - 8} more</li>` : "";
+        const skipped = PalantirApplicationSelection.selected.size - ids.length;
+        const note = skipped > 0
+            ? `<p>${skipped} selected application${skipped === 1 ? " is" : "s are"} already ${disable ? "disabled" : "enabled"} and ${skipped === 1 ? "is" : "are"} left as ${skipped === 1 ? "it is" : "they are"}.</p>`
+            : "";
+        const result = await Swal.fire({
+            titleText: `${verb} ${ids.length} application${ids.length === 1 ? "" : "s"}?`,
+            html: `<p>${disable
+                ? "Nobody can sign in to these applications until they are enabled again."
+                : "People can sign in to these applications again, as their access strategies allow."}</p>
+                   <ul class="palantir-selection-list">${listed}${more}</ul>${note}`,
+            icon: disable ? "warning" : "question",
+            showCancelButton: true,
+            confirmButtonText: `${verb} ${ids.length}`,
+            focusCancel: disable
+        });
+        if (!result.isConfirmed) {
+            return;
+        }
+        const failed = [];
+        const progressive = disable ? "Disabling" : "Enabling";
+        PalantirProgress.open(`${progressive} applications`, `${progressive} ${names[0]}...`, `${ids.length} selected`, 0);
+        for (let index = 0; index < ids.length; index++) {
+            PalantirProgress.update(`${progressive} ${names[index]} (${index + 1} of ${ids.length})...`, index / ids.length * 100);
+            try {
+                await PalantirApplicationAccess.save(ids[index], disable);
+            } catch (xhr) {
+                failed.push(names[index]);
+            }
+        }
+        PalantirProgress.update("Refreshing the applications...", null);
+        await PalantirApplicationSelection.reload();
+        PalantirProgress.close();
+        const changed = ids.length - failed.length;
+        Swal.fire({
+            icon: failed.length === 0 ? "success" : "warning",
+            titleText: `${changed} application${changed === 1 ? "" : "s"} ${disable ? "disabled" : "enabled"}`,
+            text: failed.length === 0 ? "" : `These were not changed: ${failed.join(", ")}.`
+        });
     }
 }
 
@@ -318,6 +386,12 @@ class PalantirApplicationSelection {
             bar[0].style.setProperty("--palantir-selection-bar-offset", `${Math.round(covered) + 16}px`);
             document.body.style.setProperty("--palantir-selection-bar-space", `${Math.round(covered) + 16 + bar.outerHeight() + 12}px`);
         }
+        const writable = CasActuatorEndpoints.writable("registeredServices");
+        const selectedIds = [...PalantirApplicationSelection.selected];
+        bar.find("button[name=disableSelectedServices]")
+            .prop("disabled", !writable || !selectedIds.some(id => !PalantirApplicationAccess.isServiceDisabled(id)));
+        bar.find("button[name=enableSelectedServices]")
+            .prop("disabled", !writable || !selectedIds.some(id => PalantirApplicationAccess.isServiceDisabled(id)));
         bar.find(".palantir-selection-bar__count").text(`${total} application${total === 1 ? "" : "s"} selected`);
     }
 
@@ -505,6 +579,8 @@ class PalantirApplicationSelection {
         $("#applicationsSelectAll").off("click.palantirSort keydown.palantirSort")
             .on("click.palantirSort keydown.palantirSort", event => event.stopPropagation());
         $("button[name=exportSelectedServices]").off("click").on("click", () => PalantirApplicationSelection.exportSelected());
+        $("button[name=disableSelectedServices]").off("click").on("click", () => PalantirApplicationAccess.changeSelected(true));
+        $("button[name=enableSelectedServices]").off("click").on("click", () => PalantirApplicationAccess.changeSelected(false));
         $("button[name=deleteSelectedServices]").off("click").on("click", () => PalantirApplicationSelection.deleteSelected());
         $("button[name=clearServiceSelection]").off("click").on("click", () => PalantirApplicationSelection.clear());
         $("button[name=deleteAllServices]").off("click").on("click", () => PalantirApplicationSelection.deleteAll());

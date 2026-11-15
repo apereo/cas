@@ -74,6 +74,8 @@ recorded for the user gets a card, which expands to show its records and its usu
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
 actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
 
+The *Throttles* page lists every throttled login attempt, or only those of one username, matched regardless of case.
+
 When the history of application definitions is recorded, the change history of an application lists its versions,
 latest first, and shows the selected version side by side with the current definition or with the version before it,
 highlighting the lines and words that differ. *Restore this version* makes the selected version the current definition
@@ -111,6 +113,9 @@ name, description, information and privacy URLs, logo, metadata location, a sing
 signing, an attribute release policy for a research and scholarship category or for the attributes the provider
 requests, and its contacts are filled in for review before saving.
 
+The applications chart and the authentication flow diagrams can be magnified to fill the window, with their
+magnify button or a click on them; a magnified diagram can be zoomed and moved.
+
 The feature catalog lists the CAS features present in the deployment and their modules. When dynamic configuration
 sources are available, the menu of a feature or module turns it off or on by storing its feature flag in the
 configuration source the operator chooses; CAS decides which features run when it starts, so the catalog marks what
@@ -136,7 +141,8 @@ marked in the table and the cards. An access strategy that has no switch of its 
 default strategy while the application is disabled, and left as it was once it is enabled again. Applications can be
 selected by clicking their card or row, and clicked again to deselect them, with Shift to select a range, or all of
 those the search and type filter show at once, and the selection exported,
-as a zip of their definitions that *Import* accepts, or deleted together; *Delete All* removes every application from the service registry after the operator confirms.
+as a zip of their definitions that *Import* accepts, disabled or enabled together (those already in that state are
+left alone), or deleted together; *Delete All* removes every application from the service registry after the operator confirms.
 
 *Duplicate Application* opens a copy of an application in the wizard as a new application, named after the original,
 with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the

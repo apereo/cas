@@ -127,7 +127,7 @@ public class DashboardController extends AbstractController {
         mav.addObject("isRoleAdmin", isRoleAdmin(authentication));
 
         val basePath = webEndpointProperties.getBasePath();
-        val resolvedLinks = endpointLinksResolver.resolveLinks(basePath);;
+        val resolvedLinks = endpointLinksResolver.resolveLinks(basePath);
         val actuatorEndpoints = resolvedLinks
             .entrySet()
             .stream()
@@ -172,7 +172,7 @@ public class DashboardController extends AbstractController {
 
     /**
      * Wrap a supplier so the delegate runs on first use and its result is reused afterwards.
-     *
+     * <p>
      * Two callers racing on a cold context may each compute the value, which is harmless here
      * because every delegate is a pure scan of a fixed classpath; the point is that the scan leaves
      * the request path once a value has been published.

@@ -12,6 +12,9 @@ description: "Review and change service registries and the services manager: loo
   once, so it saves a stream one service at a time through the manager that supports it, never by handing the stream
   to each manager. Aspects on `ServicesManager.save(..)`, such as the Javers version history, see every overload: the
   bulk ones (stream, varargs, supplier) return nothing, so record their services from the arguments, not the result.
+  Javers tests use the in-memory repository (`JaversBuilder.javers().build()`), which is not safe for concurrent use;
+  `EntityHistoryEndpointTests` serializes calls through a proxy so its methods can stay parallel. Do the same in any
+  new test that shares an in-memory Javers across methods.
 - `ServicesManager.findServiceBy(Service)` matches against the services cache only while the background
   reload is enabled and the cache size is above zero; it consults the registry on a miss only when the
   scheduler is off or the cache is disabled. A test that writes straight to a `ServiceRegistry` and then
@@ -98,3 +101,8 @@ description: "Review and change service registries and the services manager: loo
   on that event, and the async thread then fails with `Zip file closed` (4 of 5 starts of an executable Tomcat war).
   `RegisteredServicesEventListenerCacheTests` guards it. Reproduce with `java -jar` on a boot war, not with `bootRun`
   or a flat class path, which do not use nested jars.
+- A context refresh (`/actuator/refresh`) reloads services twice: `EnvironmentChangeEvent` reloads the old services
+  manager, then `RefreshScope.refreshAll()` replaces the refresh-scoped manager and registry with empty ones, and
+  `RefreshScopeRefreshedEvent` (synchronous) reaches a recreated listener holding the new manager, which it loads.
+  Without that second load, services exist only in the registry until something else loads them
+  (`service-registry-refresh-context` scenario: `init-from-json=false`, no schedule).

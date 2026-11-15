@@ -48,6 +48,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -304,7 +305,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
             if (response == null) {
                 throw new SamlException("%s did not answer".formatted(location));
             }
-            if (response.getCode() < 200 || response.getCode() >= 300) {
+            if (!HttpStatusCode.valueOf(response.getCode()).is2xxSuccessful()) {
                 throw new SamlException("%s answered HTTP %s".formatted(location, response.getCode()));
             }
             return EntityUtils.toByteArray(((HttpEntityContainer) response).getEntity());

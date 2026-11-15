@@ -4986,3 +4986,170 @@ html.palantir-page .mdc-dialog .mdc-dialog__surface {
     height: 52px;
     min-height: 52px;
 }
+
+/* Magnifier: a chart drawn again as large as the window, or a diagram that can be zoomed and moved. */
+.palantir-chart-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 12px;
+}
+
+.palantir-chart-card__header h3 {
+    margin: 0;
+}
+
+[data-palantir-magnifiable] {
+    cursor: zoom-in;
+}
+
+.palantir-webflow-magnify {
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.ui-dialog .palantir-magnifier.ui-dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 16px 16px;
+    overflow: hidden;
+}
+
+.palantir-magnifier__toolbar {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+}
+
+.palantir-magnifier__level {
+    min-width: 48px;
+    color: var(--palantir-text-2);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+}
+
+.palantir-magnifier__hint {
+    margin-left: auto;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-magnifier__stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+}
+
+.palantir-magnifier__stage.is-chart {
+    padding: 16px;
+}
+
+.palantir-magnifier__stage.is-diagram {
+    cursor: grab;
+    touch-action: none;
+}
+
+.palantir-magnifier__stage.is-dragging {
+    cursor: grabbing;
+}
+
+.palantir-magnifier__stage:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-magnifier__layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: 0 0;
+}
+
+.palantir-magnifier__layer svg {
+    display: block;
+    max-width: none;
+}
+
+html.palantir-page[data-theme="dark"] .palantir-magnifier__stage.is-diagram {
+    background: #f5f7fb;
+}
+
+.palantir-webflow-markdown__caption {
+    margin: 16px 0 8px;
+}
+
+.palantir-webflow-markdown__code {
+    position: relative;
+}
+
+.palantir-webflow-markdown__copy {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.palantir-webflow-markdown__copy:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.palantir-webflow-markdown__copy:focus-visible {
+    outline: 2px solid var(--palantir-focus, #4c9aff);
+    outline-offset: 2px;
+}
+
+.palantir-webflow-status {
+    margin: 12px 0 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-webflow-status[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Throttles: show the attempts of one username
+   ========================================================================== */
+.passwordless-account-search.throttles-username-search {
+    grid-template-columns: minmax(0, 28rem) auto auto;
+    justify-content: start;
+}
+
+.throttles-username-search .mdc-button[hidden] {
+    display: none;
+}
+
+.throttles-username-hint {
+    margin: 0 0 16px;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+@media (max-width: 767px) {
+    .passwordless-account-search.throttles-username-search {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

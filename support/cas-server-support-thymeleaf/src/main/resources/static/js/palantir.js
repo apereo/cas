@@ -153,6 +153,7 @@ async function initializePalantir() {
         allowAlertsOverModalDialogs();
         applySharedDialogStyle();
         keepPalantirPopupsInView();
+        PalantirMagnifier.initialize();
         initializeTableAndDialogAccessibility();
         initializePalantirEndpointAccess();
         await initializeCasFeatures();

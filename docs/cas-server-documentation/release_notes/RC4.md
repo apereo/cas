@@ -247,7 +247,7 @@ paragraph is saved as plain text. The applications chart, cards and search follo
 new ones, and the applications can be filtered by type, such as CAS, SAML2 or OpenID Connect, each listed with how many
 applications it has. The wizard keeps Save disabled, naming the required fields still missing, until they are filled in, and a definition without a name or service id is refused with the reason instead of failing on the server. Validating or saving an application definition that CAS cannot read is refused with the reason, rather than reported
 as valid, and the wizard keeps the principal attributes of a multifactor policy, with the policy's type, when it
-edits an application. Applications can be disabled and enabled from their context menu, selected and exported or deleted in bulk, or all deleted at
+edits an application. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
 once after a confirmation. Importing applications accepts YAML definitions and exported zip files as well as JSON, and imports each chosen file
 once. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
 closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days. A keyboard shortcut overlay opens
@@ -824,7 +824,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `gateway` parameter is honored as before.
 - {: .new data-area="authentication"} The `throttles` actuator endpoint of
   [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
-  throttled records of one username, matched regardless of case, instead of every record.
+  throttled records of one username, matched regardless of case, instead of every record. Palantir's throttles page
+  uses it to show the attempts of one username.
 
 ### SAML2
 {: .changed data-area="saml"}

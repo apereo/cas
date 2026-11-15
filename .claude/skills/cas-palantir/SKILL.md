@@ -35,6 +35,9 @@ General view, theme and template rules are in the `cas-ui` skill.
   bring it back, and only the first non-empty card opens by default; a table is the standard `mdc-data-table__table` DataTable, rendered
   empty and filled in the source's `afterRender`); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
   endpoint needs a form content type even on GET and matches its principal as a regex, so quote it).
+- Magnify any chart or SVG diagram with markup only: a button with `data-palantir-magnify="<target id>"` (optional
+  `data-palantir-magnify-title`), or `data-palantir-magnifiable="Title"` on the target for a click (legend clicks and controls inside are left alone)
+  (`PalantirMagnifier` in palantir-utils: Chart.js canvases are redrawn, SVGs zoom and pan).
 - Command palette sections are discovered, never listed: every tab of every `.jqueryui-tabs` in a page, at any depth,
   and any element with `data-palantir-search-section="Label"`. New sub-sections need nothing but markup; use
   `data-palantir-search="false"` to hide one, `data-palantir-search-label` / `-keywords` to rename it or add words.

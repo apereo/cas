@@ -73,6 +73,8 @@ async function initializeSystemOperations() {
         await refreshHttpTraces();
     }
 
+    let healthRequestPending = false;
+
     async function configureHealthChart() {
         function updateHealthChart(response) {
             if (response.components !== undefined && systemHealthChart) {
@@ -102,11 +104,11 @@ async function initializeSystemOperations() {
             }
         }
 
-        if (CasActuatorEndpoints.health()) {
+        if (CasActuatorEndpoints.health() && !healthRequestPending) {
+            healthRequestPending = true;
             $.ajax({
                 url: CasActuatorEndpoints.health(),
                 method: "GET",
-                timeout: 5000,
                 success: function (response) {
                     updateHealthChart(response);
                 },
@@ -114,10 +116,15 @@ async function initializeSystemOperations() {
                     if (xhr.status === 503) {
                         const response = xhr.responseJSON;
                         updateHealthChart(response);
+                    } else if (xhr.status === 0) {
+                        console.warn("Health data is not available at the moment:", textStatus);
                     } else {
                         console.error("Error fetching health data:", errorThrown);
                         displayBanner(xhr);
                     }
+                },
+                complete: function () {
+                    healthRequestPending = false;
                 }
             });
         }
@@ -475,14 +482,11 @@ async function initializeSystemOperations() {
             hideVulnerabilitiesTab();
             return;
         }
-        Swal.fire({
-            title: "Checking vulnerabilities",
-            text: "Scanning dependencies and collecting vulnerability data...",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        $("#casVulnerabilitiesStatus")
+            .empty()
+            .append($("<i>", {class: "mdi mdi-loading mdi-spin", "aria-hidden": "true"}))
+            .append(document.createTextNode(" Checking the dependencies for vulnerabilities..."));
+        $("#casVulnerabilitiesTable").closest(".dt-container, table").attr("aria-busy", "true");
         return new Promise(resolve => {
             $.get(endpoint, response => {
                 setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", true);
@@ -506,13 +510,14 @@ async function initializeSystemOperations() {
                 const errors = Array.isArray(response.errors) ? response.errors : [];
                 $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
                 vulnerabilitiesLoaded = true;
-                Swal.close();
+                $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 updateNavigationSidebar();
                 resolve();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching dependency vulnerability data:", error);
+                $("#casVulnerabilitiesStatus").empty();
+                $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 hideVulnerabilitiesTab();
-                Swal.close();
                 updateNavigationSidebar();
                 resolve();
             });
@@ -2675,14 +2680,15 @@ async function initializeSystemOperations() {
             if (activeTabs["system-tabs"] === mappingsTabIndex) {
                 await loadHttpRequestMappings();
             }
+            const systemInfoShown = (activeTabs["system-tabs"] ?? 0) === $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index();
             const systemInfoTabIndex = activeTabs["system-info-tabs"];
             const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
-            if (systemInfoTabIndex === dependenciesTabIndex) {
-                await refreshDependencies();
+            if (systemInfoShown && systemInfoTabIndex === dependenciesTabIndex) {
+                refreshDependencies();
             }
             const vulnerabilitiesTabIndex = $("#system-info-tabs ul li a[href='#casvulnerabilities-tab']").parent().index();
-            if (systemInfoTabIndex === vulnerabilitiesTabIndex) {
-                await refreshVulnerabilities();
+            if (systemInfoShown && systemInfoTabIndex === vulnerabilitiesTabIndex) {
+                refreshVulnerabilities();
             }
         } catch (e) { /* ignore */ }
     }

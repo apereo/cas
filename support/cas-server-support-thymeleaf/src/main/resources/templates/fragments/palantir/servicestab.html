@@ -111,6 +111,12 @@
                 <button type="button" class="palantir-button" name="exportSelectedServices">
                     <i class="mdi mdi-export" aria-hidden="true"></i>Export selected
                 </button>
+                <button type="button" data-palantir-write="registeredServices" class="palantir-button" name="enableSelectedServices">
+                    <i class="mdi mdi-check-circle-outline" aria-hidden="true"></i>Enable selected
+                </button>
+                <button type="button" data-palantir-write="registeredServices" class="palantir-button" name="disableSelectedServices">
+                    <i class="mdi mdi-cancel" aria-hidden="true"></i>Disable selected
+                </button>
                 <button type="button" data-palantir-write="registeredServices" class="palantir-button is-danger" name="deleteSelectedServices">
                     <i class="mdi mdi-delete" aria-hidden="true"></i>Delete selected
                 </button>
@@ -149,9 +155,17 @@
                 </p>
 
                 <section class="palantir-chart-card" aria-labelledby="servicesChartTitle" hidden>
-                    <h3 id="servicesChartTitle">Applications by type</h3>
+                    <header class="palantir-chart-card__header">
+                        <h3 id="servicesChartTitle">Applications by type</h3>
+                        <button type="button" class="palantir-icon-button" data-palantir-magnify="servicesChart"
+                                data-palantir-magnify-title="Applications by type"
+                                aria-label="Magnify the applications chart" title="Magnify">
+                            <i class="mdi mdi-magnify-plus-outline" aria-hidden="true"></i>
+                        </button>
+                    </header>
                     <div class="palantir-chart-frame">
-                        <canvas id="servicesChart" role="img" aria-label="Registered services by type"></canvas>
+                        <canvas id="servicesChart" role="img" aria-label="Registered services by type"
+                                data-palantir-magnifiable="Applications by type"></canvas>
                     </div>
                 </section>
 

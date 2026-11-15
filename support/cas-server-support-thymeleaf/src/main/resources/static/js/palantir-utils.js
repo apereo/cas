@@ -533,7 +533,7 @@ function restrictContextMenuItem(item) {
 }
 
 function displayBanner(error) {
-    if (error?.statusText === PALANTIR_READ_ONLY) {
+    if (error?.statusText === PALANTIR_READ_ONLY || error?.statusText === "abort") {
         return;
     }
     let message = "";
@@ -551,7 +551,9 @@ function displayBanner(error) {
             message = "Unable to process or accept the request. Check CAS server logs for details.";
             break;
         case 0:
-            message = "Unable to contact the CAS server. Are you sure the server is reachable?";
+            message = error.statusText === "timeout"
+                ? "The CAS server took too long to respond. Check CAS server logs for slow requests."
+                : "Unable to contact the CAS server. Are you sure the server is reachable?";
             break;
         default:
             message = `HTTP error: ${error.status}. `;
@@ -1537,4 +1539,275 @@ function sanitizePalantirHtml(html) {
  */
 function palantirHtmlText(html) {
     return new DOMParser().parseFromString(`<!DOCTYPE html><body>${sanitizePalantirHtml(html)}</body>`, "text/html").body.textContent.trim();
+}
+
+/**
+ * Magnify a chart or a diagram in a dialog as large as the window. A button marked
+ * <code>data-palantir-magnify="target-id"</code>, or a click on a target marked
+ * <code>data-palantir-magnifiable</code>, opens it: a Chart.js canvas
+ * is drawn again at the dialog's size, and an SVG diagram, such as a Mermaid flow, can be zoomed with the wheel, the
+ * keyboard or the toolbar and moved by dragging.
+ */
+class PalantirMagnifier {
+    static MIN_SCALE = .2;
+
+    static MAX_SCALE = 8;
+
+    static initialized = false;
+
+    /**
+     * Listen for magnify buttons and double-clicks on magnifiable targets, once.
+     */
+    static initialize() {
+        if (PalantirMagnifier.initialized) {
+            return;
+        }
+        PalantirMagnifier.initialized = true;
+        $(document)
+            .on("click.palantirMagnifier", "[data-palantir-magnify]", event => {
+                event.preventDefault();
+                const button = event.currentTarget;
+                PalantirMagnifier.magnify(document.getElementById(button.dataset.palantirMagnify),
+                    button.dataset.palantirMagnifyTitle || button.getAttribute("aria-label") || "");
+            })
+            .on("click.palantirMagnifier", "[data-palantir-magnifiable]", event => {
+                if (PalantirMagnifier.opensOnClick(event)) {
+                    PalantirMagnifier.magnify(event.currentTarget, event.currentTarget.dataset.palantirMagnifiable || "");
+                }
+            })
+            .on("keydown.palantirMagnifier", "[data-palantir-magnifiable]", event => {
+                if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) {
+                    event.preventDefault();
+                    PalantirMagnifier.magnify(event.currentTarget, event.currentTarget.dataset.palantirMagnifiable || "");
+                }
+            });
+        PalantirMagnifier.markTargets();
+    }
+
+    /**
+     * Whether a click on a magnifiable target opens it: not when it lands on a control or a link inside it, on a
+     * chart's legend, which shows and hides series, or ends a text selection.
+     *
+     * @param event the click
+     * @returns {boolean} true to magnify
+     */
+    static opensOnClick(event) {
+        if ($(event.target).closest("a, button, input, select, textarea, [onclick], .clickable").length > 0
+            || String(window.getSelection?.() ?? "").length > 0) {
+            return false;
+        }
+        const canvas = event.currentTarget.tagName === "CANVAS" ? event.currentTarget : null;
+        const legend = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas)?.legend : null;
+        if (legend) {
+            const bounds = canvas.getBoundingClientRect();
+            const x = event.clientX - bounds.left;
+            const y = event.clientY - bounds.top;
+            if (x >= legend.left && x <= legend.right && y >= legend.top && y <= legend.bottom) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Let keyboard users open magnifiable targets as they would a link.
+     */
+    static markTargets() {
+        $("[data-palantir-magnifiable]").each((index, target) => {
+            target.setAttribute("tabindex", target.getAttribute("tabindex") ?? "0");
+            if (!target.getAttribute("title")) {
+                target.setAttribute("title", "Click to magnify");
+            }
+        });
+    }
+
+    /**
+     * Magnify what a target holds: a chart on a canvas, or an SVG diagram.
+     *
+     * @param target the canvas, or an element holding an SVG
+     * @param title the dialog title
+     */
+    static magnify(target, title) {
+        if (!target) {
+            return;
+        }
+        const canvas = target.tagName === "CANVAS" ? target : target.querySelector("canvas");
+        const chart = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas) : null;
+        if (chart) {
+            PalantirMagnifier.chart(chart, title);
+            return;
+        }
+        const svg = target.tagName.toLowerCase() === "svg" ? target : target.querySelector("svg");
+        if (svg) {
+            PalantirMagnifier.svg(svg, title);
+        }
+    }
+
+    /**
+     * Open the magnifier dialog and let a builder fill its stage.
+     *
+     * @param title the dialog title
+     * @param build called with the stage and the toolbar once the dialog is open; returns a function to call on close
+     */
+    static open(title, build) {
+        const dialog = $(`
+            <div class="palantir-magnifier">
+                <div class="palantir-magnifier__toolbar" role="toolbar" aria-label="Magnifier"></div>
+                <div class="palantir-magnifier__stage"></div>
+            </div>`).attr("title", title || "Magnified view").appendTo(document.body);
+        let cleanup = null;
+        dialog.dialog({
+            modal: true,
+            width: window.innerWidth - 48,
+            height: window.innerHeight - 48,
+            draggable: false,
+            resizable: false,
+            position: {my: "center", at: "center", of: window},
+            open: () => {
+                cleanup = build(dialog.find(".palantir-magnifier__stage")[0], dialog.find(".palantir-magnifier__toolbar"));
+            },
+            close: () => {
+                cleanup?.();
+                dialog.dialog("destroy").remove();
+            }
+        });
+    }
+
+    /**
+     * Draw a chart again, as large as the dialog, with the data it shows now.
+     *
+     * @param chart the Chart.js chart
+     * @param title the dialog title
+     */
+    static chart(chart, title) {
+        PalantirMagnifier.open(title, (stage, toolbar) => {
+            toolbar.remove();
+            const canvas = document.createElement("canvas");
+            canvas.setAttribute("role", "img");
+            canvas.setAttribute("aria-label", chart.canvas.getAttribute("aria-label") ?? title);
+            stage.classList.add("is-chart");
+            stage.append(canvas);
+            const options = chart.config.options ?? {};
+            const large = new Chart(canvas.getContext("2d"), {
+                type: chart.config.type,
+                data: JSON.parse(JSON.stringify(chart.data)),
+                options: {...options, responsive: true, maintainAspectRatio: false, animation: false}
+            });
+            return () => large.destroy();
+        });
+    }
+
+    /**
+     * Show a copy of an SVG diagram that can be zoomed and moved.
+     *
+     * @param svg the diagram
+     * @param title the dialog title
+     */
+    static svg(svg, title) {
+        PalantirMagnifier.open(title, (stage, toolbar) => {
+            const copy = svg.cloneNode(true);
+            const id = `palantirMagnified${Date.now()}`;
+            if (svg.id) {
+                copy.id = id;
+                copy.querySelectorAll("style").forEach(style => {
+                    style.textContent = style.textContent.split(`#${svg.id}`).join(`#${id}`);
+                });
+            }
+            const box = svg.viewBox?.baseVal;
+            const width = box?.width || svg.getBoundingClientRect().width || 800;
+            const height = box?.height || svg.getBoundingClientRect().height || 600;
+            copy.removeAttribute("style");
+            copy.setAttribute("width", String(width));
+            copy.setAttribute("height", String(height));
+            const layer = $("<div>", {class: "palantir-magnifier__layer"}).append(copy)[0];
+            stage.classList.add("is-diagram");
+            stage.tabIndex = 0;
+            stage.append(layer);
+
+            const view = {scale: 1, x: 0, y: 0};
+            const apply = () => {
+                layer.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+                toolbar.find("[data-zoom-level]").text(`${Math.round(view.scale * 100)}%`);
+            };
+            const fit = () => {
+                const bounds = stage.getBoundingClientRect();
+                view.scale = Math.min(PalantirMagnifier.MAX_SCALE, Math.max(PalantirMagnifier.MIN_SCALE,
+                    Math.min((bounds.width - 32) / width, (bounds.height - 32) / height)));
+                view.x = (bounds.width - width * view.scale) / 2;
+                view.y = (bounds.height - height * view.scale) / 2;
+                apply();
+            };
+            const zoom = (factor, originX, originY) => {
+                const bounds = stage.getBoundingClientRect();
+                const pointX = originX ?? bounds.width / 2;
+                const pointY = originY ?? bounds.height / 2;
+                const scale = Math.min(PalantirMagnifier.MAX_SCALE, Math.max(PalantirMagnifier.MIN_SCALE, view.scale * factor));
+                view.x = pointX - (pointX - view.x) * scale / view.scale;
+                view.y = pointY - (pointY - view.y) * scale / view.scale;
+                view.scale = scale;
+                apply();
+            };
+
+            toolbar.html(`
+                <button type="button" class="palantir-icon-button" data-zoom="out" title="Zoom out" aria-label="Zoom out"><i class="mdi mdi-magnify-minus-outline" aria-hidden="true"></i></button>
+                <span class="palantir-magnifier__level" data-zoom-level aria-live="polite"></span>
+                <button type="button" class="palantir-icon-button" data-zoom="in" title="Zoom in" aria-label="Zoom in"><i class="mdi mdi-magnify-plus-outline" aria-hidden="true"></i></button>
+                <button type="button" class="palantir-icon-button" data-zoom="fit" title="Fit to the window" aria-label="Fit to the window"><i class="mdi mdi-fit-to-screen-outline" aria-hidden="true"></i></button>
+                <span class="palantir-magnifier__hint">Scroll to zoom, drag to move</span>`);
+            toolbar.on("click", "[data-zoom]", event => {
+                const action = event.currentTarget.dataset.zoom;
+                if (action === "fit") {
+                    fit();
+                } else {
+                    zoom(action === "in" ? 1.25 : .8);
+                }
+            });
+            stage.addEventListener("wheel", event => {
+                event.preventDefault();
+                const bounds = stage.getBoundingClientRect();
+                zoom(Math.exp(-event.deltaY * .0015), event.clientX - bounds.left, event.clientY - bounds.top);
+            }, {passive: false});
+            let drag = null;
+            stage.addEventListener("pointerdown", event => {
+                drag = {x: event.clientX - view.x, y: event.clientY - view.y};
+                stage.setPointerCapture(event.pointerId);
+                stage.classList.add("is-dragging");
+            });
+            stage.addEventListener("pointermove", event => {
+                if (drag) {
+                    view.x = event.clientX - drag.x;
+                    view.y = event.clientY - drag.y;
+                    apply();
+                }
+            });
+            const release = () => {
+                drag = null;
+                stage.classList.remove("is-dragging");
+            };
+            stage.addEventListener("pointerup", release);
+            stage.addEventListener("pointercancel", release);
+            stage.addEventListener("keydown", event => {
+                const moves = {ArrowLeft: [40, 0], ArrowRight: [-40, 0], ArrowUp: [0, 40], ArrowDown: [0, -40]};
+                if (event.key === "+" || event.key === "=") {
+                    zoom(1.25);
+                } else if (event.key === "-") {
+                    zoom(.8);
+                } else if (event.key === "0") {
+                    fit();
+                } else if (moves[event.key]) {
+                    view.x += moves[event.key][0];
+                    view.y += moves[event.key][1];
+                    apply();
+                } else {
+                    return;
+                }
+                event.preventDefault();
+            });
+            requestAnimationFrame(() => {
+                fit();
+                stage.focus();
+            });
+            return null;
+        });
+    }
 }

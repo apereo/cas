@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -55,6 +56,11 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         val manager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ServicesManager.class);
         manager.load();
+    }
+
+    @Override
+    public void handleRefreshScopeRefreshedEvent(final RefreshScopeRefreshedEvent event) {
+        servicesManager.load();
     }
 
     @Override

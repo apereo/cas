@@ -9,6 +9,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -52,6 +53,17 @@ public interface RegisteredServicesEventListener extends CasEventListener {
     @EventListener
     @Async
     void handleApplicationReadyEvent(ApplicationReadyEvent event);
+
+    /**
+     * Handle refresh scope refreshed event. A refresh of the application context replaces the refresh-scoped
+     * services manager and service registry with new, empty instances after the environment change above has
+     * reloaded the old ones; the listener that receives this event is itself recreated with the new services
+     * manager, which is loaded here before the refresh completes.
+     *
+     * @param event the event
+     */
+    @EventListener
+    void handleRefreshScopeRefreshedEvent(RefreshScopeRefreshedEvent event);
     
     /**
      * Handle registered service expired event.
