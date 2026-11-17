@@ -10,7 +10,7 @@ function overrideConfigPropertyValue(name, value) {
 
 function searchForConfigPropertyButton(name) {
     $("#configuration-tabs").tabs("option", "active", $("#casConfigSearch").index());
-    $("#configSearchQuery").val(`^${name}$`).focus().select();
+    $("#configSearchQuery").val(`^${String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`).focus().select();
     $("#configSearchButton").click();
 }
 
@@ -708,9 +708,19 @@ function normalizeSpringBeans(response) {
                 type: bean.type ?? "",
                 scope: bean.scope ?? "singleton",
                 classification: classifySpringBean(bean.type),
-                dependencies: bean.dependencies ?? []
+                dependencies: [...(bean.dependencies ?? [])].sort()
             });
         });
+    });
+    const dependents = new Map();
+    entries.forEach(entry => entry.dependencies.forEach(dependency => {
+        if (!dependents.has(dependency)) {
+            dependents.set(dependency, new Set());
+        }
+        dependents.get(dependency).add(entry.name);
+    }));
+    entries.forEach(entry => {
+        entry.dependents = [...(dependents.get(entry.name) ?? [])].sort();
     });
     return entries.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -723,6 +733,54 @@ function hideSpringBeansTab() {
 function setSpringBeansAvailable() {
     showElements($("#springBeansContent"));
     showElements($("#springBeansTabItem"));
+}
+
+/**
+ * What a condition checks, shown as a labelled pill with its class name underneath: a condition is named after the
+ * annotation behind it, such as OnPropertyCondition for a check on a configuration property.
+ *
+ * @param {string} condition the condition's class name
+ * @returns {string} the markup
+ */
+function springConditionLabel(condition) {
+    const name = String(condition ?? "");
+    const kinds = [
+        [/OnMissingBean|OnBean|OnSingleCandidate/, "bean", "Bean", "mdi-cube-outline"],
+        [/OnMissingClass|OnClass/, "class", "Class", "mdi-language-java"],
+        [/OnProperty/, "property", "Property", "mdi-tune-variant"],
+        [/Feature/, "feature", "CAS feature", "mdi-flag-outline"],
+        [/OnWebApplication|OnNotWebApplication|OnWarDeployment/, "web", "Web application", "mdi-web"],
+        [/OnResource/, "resource", "Resource", "mdi-file-outline"],
+        [/OnExpression/, "expression", "Expression", "mdi-code-braces"],
+        [/OnJava|OnJndi|OnCloudPlatform|OnThreading/, "runtime", "Runtime", "mdi-server-outline"],
+        [/OnEndpoint|OnAvailableEndpoint|OnEnabledHealthIndicator|OnEnabledInfoContributor|OnManagementPort/, "endpoint", "Endpoint", "mdi-api"]
+    ];
+    const kind = kinds.find(([pattern]) => pattern.test(name));
+    const label = kind ? kind[2] : name.replace(/^On/, "").replace(/Condition$/, "").replace(/([a-z0-9])([A-Z])/g, "$1 $2") || "Condition";
+    return `
+        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapeConfigHtml(name)}">
+            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapeConfigHtml(label)}
+        </span>
+        <code class="spring-condition-class">${escapeConfigHtml(name)}</code>`.trim();
+}
+
+/**
+ * A condition's message, easier to scan: the annotation it reports on stands out, the details in parentheses are
+ * set apart, and quoted names such as classes and beans read as code.
+ *
+ * @param {string} message the message
+ * @returns {string} the markup
+ */
+function springConditionMessage(message) {
+    const text = String(message ?? "").trim();
+    if (text === "") {
+        return "<span class=\"spring-condition-message is-empty\">No condition message provided.</span>";
+    }
+    const formatted = escapeConfigHtml(text)
+        .replace(/@(Conditional\w*|Profile)\b/g, "<span class=\"spring-condition-annotation\">@$1</span>")
+        .replace(/\(([^()]+)\)/g, "<span class=\"spring-condition-details\">$1</span>")
+        .replace(/(?:&#39;|&#x27;|')([^&']+?)(?:&#39;|&#x27;|')/g, "<code>$1</code>");
+    return `<span class="spring-condition-message">${formatted}</span>`;
 }
 
 function collectSpringConditionMatches(source, matches, matchType, contextName) {
@@ -1259,6 +1317,29 @@ async function initializeConfigurationOperations() {
         }
     });
     configPropsTable.clear();
+    initializeDataTableContextMenu({
+        table: configPropsTable,
+        selector: "#configPropsTable tbody tr:not(.palantir-table-group-row)",
+        items: {
+            help: {
+                name: "Configuration Property Help",
+                icon: contextMenuIcon("mdi-help"),
+                visible: () => CasActuatorEndpoints.configurationMetadata()
+            },
+            copy: {name: "Copy Property Name", icon: contextMenuIcon("mdi-content-copy")}
+        },
+        callback: (key, context) => {
+            const propertyName = context.rowData?.propertyName;
+            if (!propertyName) {
+                return;
+            }
+            if (key === "help") {
+                searchForConfigPropertyButton(propertyName);
+            } else if (key === "copy") {
+                copyToClipboard(propertyName);
+            }
+        }
+    });
 
     if (CasActuatorEndpoints.configProps()) {
         $.get(CasActuatorEndpoints.configProps(), response => {
@@ -1272,7 +1353,8 @@ async function initializeConfigurationOperations() {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
                             1: `${palantirCode(property)}`,
-                            2: `${palantirCode(propValue)}`
+                            2: `${palantirCode(propValue)}`,
+                            propertyName: toKebabCase(property)
                         });
                     }
                 }
@@ -1285,7 +1367,8 @@ async function initializeConfigurationOperations() {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
                             1: `${palantirCode(toKebabCase(property))}`,
-                            2: `${palantirCode(propValue)}`
+                            2: `${palantirCode(propValue)}`,
+                            propertyName: toKebabCase(property)
                         });
                     }
                 }
@@ -1302,45 +1385,64 @@ async function initializeConfigurationOperations() {
         deferRender: true,
         pageLength: 10,
         autoWidth: false,
-        order: [[0, "asc"]],
+        order: [[1, "asc"]],
         columns: [
             {
+                data: null,
+                orderable: false,
+                searchable: false,
+                width: "44px",
+                className: "spring-bean-toggle-cell",
+                render: (data, type, row) => type === "display" && (row.dependencies.length > 0 || row.dependents.length > 0)
+                    ? `<button type="button" class="spring-bean-toggle" aria-expanded="false"
+                               aria-label="Show what ${escapeConfigHtml(row.name)} depends on and what uses it">
+                           <i class="mdi mdi-chevron-right" aria-hidden="true"></i>
+                       </button>`
+                    : ""
+            },
+            {
                 data: "name",
-                width: "22%",
-                render: (data, type) => type === "display"
-                    ? `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>`
-                    : data
+                width: "31%",
+                render: (data, type, row) => {
+                    if (type !== "display") {
+                        return data;
+                    }
+                    const counts = [];
+                    if (row.dependencies.length > 0) {
+                        counts.push(`${row.dependencies.length} ${row.dependencies.length === 1 ? "dependency" : "dependencies"}`);
+                    }
+                    if (row.dependents.length > 0) {
+                        counts.push(`used by ${row.dependents.length}`);
+                    }
+                    return `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>${counts.length > 0
+                        ? `<span class="spring-bean-counts">${counts.join(" · ")}</span>` : ""}`;
+                }
             },
             {
                 data: "type",
-                width: "34%",
+                width: "42%",
                 render: (data, type) => type === "display"
                     ? `<code class="spring-bean-type">${escapeConfigHtml(data)}</code>`
                     : data
             },
             {
                 data: "scope",
-                width: "10%",
-                render: data => escapeConfigHtml(data)
+                width: "12%",
+                render: (data, type) => type === "display"
+                    ? `<span class="spring-bean-scope scope-${escapeConfigHtml(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapeConfigHtml(data || "singleton")}</span>`
+                    : data
             },
             {
                 data: "classification",
-                width: "12%",
+                width: "15%",
                 render: (data, type) => type === "display"
                     ? `<span class="spring-bean-classification classification-${escapeConfigHtml(String(data).toLowerCase())}">${escapeConfigHtml(data)}</span>`
                     : data
             },
             {
                 data: "dependencies",
-                render: (data, type) => {
-                    if (type !== "display") {
-                        return Array.isArray(data) ? data.join(", ") : data;
-                    }
-                    const dependencies = Array.isArray(data) ? data : [];
-                    return dependencies.length > 0
-                        ? `<span class="spring-bean-dependencies">${dependencies.map(escapeConfigHtml).join(", ")}</span>`
-                        : `<span class="text-muted">&mdash;</span>`;
-                }
+                visible: false,
+                render: data => Array.isArray(data) ? data.join(" ") : ""
             }
         ],
         drawCallback: settings => {
@@ -1348,6 +1450,49 @@ async function initializeConfigurationOperations() {
             $("#springBeansTable td").addClass("mdc-data-table__cell");
         }
     });
+
+    /**
+     * The details of a bean shown under its row: the beans it depends on and the beans that depend on it, each a
+     * button that looks that bean up in the table.
+     *
+     * @param {object} bean the bean
+     * @returns {string} the markup
+     */
+    function springBeanDetails(bean) {
+        const list = (title, names, empty) => `
+            <div class="spring-bean-relations">
+                <h5>${title} <span>${names.length}</span></h5>
+                ${names.length > 0
+        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapeConfigHtml(name)}"
+                        title="Find ${escapeConfigHtml(name)}">${escapeConfigHtml(name)}</button>`).join("")}</div>`
+        : `<p class="spring-bean-none">${empty}</p>`}
+            </div>`;
+        return `<div class="spring-bean-details">
+            ${list("Depends on", bean.dependencies, "This bean depends on no other bean.")}
+            ${list("Used by", bean.dependents, "No other bean depends on this one.")}
+        </div>`;
+    }
+
+    $("#springBeansTable tbody")
+        .off("click.palantirBeans")
+        .on("click.palantirBeans", "button.spring-bean-toggle", event => {
+            const tr = $(event.currentTarget).closest("tr");
+            const row = springBeansTable.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass("is-expanded");
+                event.currentTarget.setAttribute("aria-expanded", "false");
+            } else {
+                row.child(springBeanDetails(row.data()), "spring-bean-details-row").show();
+                tr.addClass("is-expanded");
+                event.currentTarget.setAttribute("aria-expanded", "true");
+            }
+        })
+        .on("click.palantirBeans", "button.spring-bean-chip", event => {
+            const name = event.currentTarget.dataset.springBean;
+            springBeansTable.search(name).draw();
+            $("#springBeansTable").closest(".dt-container").find("input[type=search]").val(name);
+        });
 
     function renderSpringBeans() {
         springBeansTable.clear();
@@ -1406,15 +1551,11 @@ async function initializeConfigurationOperations() {
             {
                 data: "condition",
                 width: "26%",
-                render: (data, type) => type === "display"
-                    ? `<code class="spring-condition-name">${escapeConfigHtml(data)}</code>`
-                    : data
+                render: (data, type) => type === "display" ? springConditionLabel(data) : data
             },
             {
                 data: "message",
-                render: (data, type) => type === "display"
-                    ? `<span class="spring-condition-message">${escapeConfigHtml(data || "No condition message provided.")}</span>`
-                    : data
+                render: (data, type) => type === "display" ? springConditionMessage(data) : data
             }
         ],
         drawCallback: settings => {

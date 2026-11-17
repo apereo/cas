@@ -397,6 +397,30 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         }
     }
 
+    /**
+     * Count the tickets of each type with one scan of the ticket keys, grouped by the prefix every key carries, without
+     * reading any ticket.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        try (val keys = fetchKeysForTickets()) {
+            return keys
+                .map(RedisTicketRegistry::ticketPrefixOf)
+                .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
+        }
+    }
+
+    private static String ticketPrefixOf(final String key) {
+        try {
+            return StringUtils.defaultIfBlank(RedisKeyGenerator.parse(key).getPrefix(), "UNKNOWN");
+        } catch (final IllegalArgumentException e) {
+            LOGGER.trace("Ticket key [{}] has no prefix: [{}]", key, e.getMessage());
+            return "UNKNOWN";
+        }
+    }
+
     @Override
     public long serviceTicketCount() {
         val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(ServiceTicket.PREFIX)

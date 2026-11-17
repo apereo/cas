@@ -5,6 +5,44 @@
  * @param {number} columns the number of columns the row spans
  * @returns {jQuery} the row
  */
+/**
+ * The color of a health check by its status: green when up; amber when it reports a warning, is still running
+ * (SLOW, as Palantir's overview reports a check that has not answered in time) or is unknown; red only when it is
+ * down or out of service.
+ *
+ * @param {string} status the status of the check
+ * @returns {string} the color
+ */
+function palantirHealthColor(status) {
+    const value = String(status ?? "").toUpperCase();
+    if (value === "UP") {
+        return "rgb(5, 166, 31)";
+    }
+    if (value === "DOWN" || value === "OUT_OF_SERVICE") {
+        return "rgba(166, 45, 15)";
+    }
+    return value === "UNKNOWN" ? "rgb(128, 140, 152)" : "rgb(201, 154, 6)";
+}
+
+/**
+ * How a health check's status reads in a tooltip.
+ *
+ * @param {string} status the status of the check
+ * @param {number|undefined} millis how long the check took, when known
+ * @returns {string} the description
+ */
+function palantirHealthDescription(status, millis) {
+    const value = String(status ?? "").toUpperCase();
+    const took = Number.isFinite(Number(millis)) ? ` · ${Number(millis).toLocaleString()} ms` : "";
+    if (value === "SLOW") {
+        return `still running, no answer yet${took}`;
+    }
+    if (value === "WARN") {
+        return `warning${took}`;
+    }
+    return `${value.toLowerCase().replace(/_/g, " ")}${took}`;
+}
+
 function palantirTableGroupRow(label, columns) {
     return $("<tr>", {class: "palantir-table-group-row"})
         .append($("<td>", {colspan: columns}).text(label));
@@ -1785,10 +1823,19 @@ class PalantirMagnifier {
             const options = chart.config.options ?? {};
             const large = new Chart(canvas.getContext("2d"), {
                 type: chart.config.type,
-                data: JSON.parse(JSON.stringify(chart.data)),
-                options: {...options, responsive: true, maintainAspectRatio: false, animation: false}
+                data: typeof cloneChartValue === "function" ? cloneChartValue(chart.data) : JSON.parse(JSON.stringify(chart.data)),
+                options: {...options, responsive: true, maintainAspectRatio: false, animation: false},
+                plugins: chart.config.plugins ?? []
             });
-            return () => large.destroy();
+            if (typeof followPalantirChart === "function") {
+                followPalantirChart(chart, large);
+            }
+            return () => {
+                if (typeof unfollowPalantirChart === "function") {
+                    unfollowPalantirChart(chart, large);
+                }
+                large.destroy();
+            };
         });
     }
 

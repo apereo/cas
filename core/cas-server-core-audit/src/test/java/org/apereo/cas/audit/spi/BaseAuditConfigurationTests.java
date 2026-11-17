@@ -20,6 +20,8 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +85,18 @@ public abstract class BaseAuditConfigurationTests {
         assertFalse(results.isEmpty());
     }
 
+    @RetryingTest(value = 3, suspendForMs = 3000)
+    void verifyAuditByRecentDate() {
+        val time = auditActionContext.getWhenActionWasPerformed().minusMinutes(1);
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
+            AuditTrailManager.WhereClauseFields.DATE, time,
+            AuditTrailManager.WhereClauseFields.COUNT, 100L,
+            AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
+        val results = getAuditTrailManager().getAuditRecords(criteria);
+        assertFalse(results.isEmpty());
+        assertTrue(results.stream().noneMatch(result -> result.getWhenActionWasPerformed().isBefore(time)));
+    }
+
     @Test
     void verifyAuditByPrincipal() {
         val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
@@ -94,4 +108,17 @@ public abstract class BaseAuditConfigurationTests {
         assertFalse(results.isEmpty());
     }
 
+    @RetryingTest(value = 3, suspendForMs = 3000)
+    void verifyAuditSummary() {
+        val action = "SUMMARY_" + RandomUtils.randomAlphanumeric(8).toUpperCase(Locale.ENGLISH);
+        val now = LocalDateTime.now(Clock.systemUTC());
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London");
+        getAuditTrailManager().record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo));
+        getAuditTrailManager().record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo));
+        val query = new AuditSummaryQuery(now.minusHours(2), AuditSummaryQuery.hourOf(now).plusHours(1), Set.of(action, "UNKNOWN"));
+        val counts = getAuditTrailManager().summarize(query).orElseThrow();
+        assertEquals(2, counts.stream().filter(count -> action.equals(count.action())).mapToLong(AuditActionCount::count).sum());
+        assertTrue(counts.stream().allMatch(count -> count.hour().equals(AuditSummaryQuery.hourOf(now))));
+        assertTrue(counts.stream().noneMatch(count -> "UNKNOWN".equals(count.action())));
+    }
 }

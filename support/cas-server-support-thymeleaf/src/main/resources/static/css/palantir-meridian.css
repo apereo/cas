@@ -40,6 +40,12 @@ html.palantir-page {
     --palantir-shadow-soft: 0 1px 2px rgba(17, 67, 119, .06);
     --palantir-scrim: rgba(13, 52, 93, .55);
     --palantir-chart-grid: rgba(17, 39, 64, .1);
+    --palantir-chart-1: #2a9d8f;
+    --palantir-chart-2: #3a86d8;
+    --palantir-chart-3: #8a63d2;
+    --palantir-chart-4: #e08a2c;
+    --palantir-chart-5: #d1495b;
+    --palantir-chart-6: #6c7a89;
     --palantir-step-off: #dfe5ec;
     --palantir-num-off: #eef2f7;
     --palantir-switch-off: #b7c2ce;
@@ -109,6 +115,12 @@ html.palantir-page[data-theme="dark"] {
     --palantir-shadow-soft: 0 1px 2px rgba(0, 0, 0, .3);
     --palantir-scrim: rgba(3, 8, 14, .7);
     --palantir-chart-grid: rgba(196, 210, 224, .14);
+    --palantir-chart-1: #4fc3b4;
+    --palantir-chart-2: #6aaef0;
+    --palantir-chart-3: #ad8cf0;
+    --palantir-chart-4: #f2a95a;
+    --palantir-chart-5: #f07a8a;
+    --palantir-chart-6: #9fb0c1;
     --palantir-step-off: #243b54;
     --palantir-num-off: #1c3047;
     --palantir-switch-off: #3a5674;
@@ -5829,6 +5841,105 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
     gap: 10px 12px;
 }
 
+.palantir-home__customize {
+    position: relative;
+    margin-left: auto;
+}
+
+.palantir-home__customize-menu {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    right: 0;
+    display: grid;
+    min-width: 240px;
+    padding: 6px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 10px;
+    background: var(--palantir-surface-raised);
+    box-shadow: var(--palantir-shadow);
+}
+
+.palantir-home__customize-menu[hidden] {
+    display: none;
+}
+
+.palantir-home__customize-heading {
+    margin: 4px 8px 6px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+#dashboard .palantir-home__customize-item {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#dashboard .palantir-home__customize-item:hover,
+#dashboard .palantir-home__customize-item:focus-visible {
+    background: var(--palantir-tint);
+}
+
+#dashboard .palantir-home__customize-item.is-reset {
+    margin-top: 4px;
+    border-top: 1px solid var(--palantir-divider);
+    border-radius: 0 0 7px 7px;
+}
+
+.palantir-home__empty {
+    grid-column: 1 / -1;
+    padding: 24px 0;
+    text-align: center;
+}
+
+.palantir-home__endpoints {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.palantir-home__endpoints th {
+    padding: 0 8px 6px 0;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .06em;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+.palantir-home__endpoints td {
+    padding: 6px 8px 6px 0;
+    border-top: 1px solid var(--palantir-divider);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.palantir-home__endpoints th:first-child,
+.palantir-home__endpoints td:first-child {
+    max-width: 0;
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+}
+
+.palantir-home__endpoints tr.is-failing td:last-child {
+    color: var(--palantir-danger-line);
+    font-weight: 500;
+}
+
 .palantir-home__updated,
 .palantir-home__muted {
     margin: 0;
@@ -5938,8 +6049,13 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
     transition: opacity .15s ease;
 }
 
-.palantir-home__widget:hover .palantir-home__action,
-.palantir-home__widget:focus-within .palantir-home__action {
+/* Hiding a card is always offered, faintly, so it can be found without hovering; moving appears on hover. */
+#dashboard .palantir-home__action[data-home-action="hide"] {
+    opacity: .55;
+}
+
+#dashboard .palantir-home__widget:hover .palantir-home__action,
+#dashboard .palantir-home__widget:focus-within .palantir-home__action {
     opacity: 1;
 }
 
@@ -7002,4 +7118,247 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
     background: transparent;
     color: inherit;
     font-size: inherit;
+}
+
+/* Spring beans: the scope as a pill, a count of relations under the name, and a row that opens to list what the
+   bean depends on and what uses it. */
+#dashboard #springBeansTable thead th:first-child,
+#dashboard .spring-bean-toggle-cell {
+    width: 52px !important;
+    padding-right: 0;
+    text-align: center;
+}
+
+#dashboard .spring-bean-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--palantir-border);
+    border-radius: 50%;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    cursor: pointer;
+}
+
+#dashboard .spring-bean-toggle:hover {
+    border-color: var(--palantir-brand);
+    color: var(--palantir-brand);
+}
+
+#dashboard .spring-bean-toggle .mdi::before {
+    transition: transform .15s ease;
+}
+
+#dashboard .spring-bean-toggle[aria-expanded="true"] .mdi::before {
+    transform: rotate(90deg);
+}
+
+#dashboard .spring-bean-counts {
+    display: block;
+    margin-top: 2px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+#dashboard .spring-bean-scope {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+#dashboard .spring-bean-scope:not(.scope-singleton) {
+    border-color: color-mix(in srgb, var(--palantir-accent) 35%, transparent);
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+}
+
+#dashboard #springBeansTable tr.is-expanded > td {
+    border-bottom-color: transparent;
+}
+
+#dashboard #springBeansTable tr.spring-bean-details-row > td {
+    padding: 0 12px 14px 56px;
+    background: var(--palantir-surface);
+}
+
+#dashboard .spring-bean-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 12px;
+    background: var(--palantir-surface-2);
+}
+
+#dashboard .spring-bean-relations h5 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    color: var(--palantir-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+#dashboard .spring-bean-relations h5 span {
+    padding: 0 8px;
+    border-radius: 999px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-brand);
+    font-size: 12px;
+}
+
+#dashboard .spring-bean-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+#dashboard .spring-bean-chip {
+    max-width: 100%;
+    padding: 3px 10px;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-brand);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+#dashboard .spring-bean-chip:hover {
+    border-color: var(--palantir-brand);
+    background: var(--palantir-hover);
+}
+
+#dashboard .spring-bean-none {
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+/* Spring conditions: what a condition checks as a coloured pill, with its class name underneath. */
+#dashboard .spring-condition-kind {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 10px 2px 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+#dashboard .spring-condition-kind .mdi::before {
+    font-size: 14px;
+}
+
+#dashboard .spring-condition-kind.kind-bean {
+    border-color: transparent;
+    background: var(--palantir-proto-cas-bg);
+    color: var(--palantir-proto-cas);
+}
+
+#dashboard .spring-condition-kind.kind-class {
+    border-color: transparent;
+    background: var(--palantir-proto-saml-bg);
+    color: var(--palantir-proto-saml);
+}
+
+#dashboard .spring-condition-kind.kind-property {
+    border-color: transparent;
+    background: var(--palantir-proto-oidc-bg);
+    color: var(--palantir-proto-oidc);
+}
+
+#dashboard .spring-condition-kind.kind-feature {
+    border-color: transparent;
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+#dashboard .spring-condition-kind:is(.kind-web, .kind-endpoint) {
+    border-color: transparent;
+    background: var(--palantir-proto-oauth-bg);
+    color: var(--palantir-proto-oauth);
+}
+
+#dashboard code.spring-condition-class {
+    display: block;
+    margin-top: 4px;
+    padding: 0;
+    background: transparent;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+#dashboard .spring-condition-message {
+    color: var(--palantir-text-2);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+#dashboard .spring-condition-message.is-empty {
+    color: var(--palantir-text-muted);
+    font-style: italic;
+}
+
+#dashboard .spring-condition-annotation {
+    margin-right: 2px;
+    color: var(--palantir-brand);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#dashboard .spring-condition-details {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 0 8px;
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+#dashboard .spring-condition-message code {
+    padding: 0 4px;
+    border-radius: 4px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+/* A chart's own status line: what it is waiting for, or when its numbers were read. */
+.palantir-sign-ins-chart {
+    position: relative;
+    height: 260px;
+}
+
+.palantir-chart-status {
+    margin: 0 0 4px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    text-align: center;
 }

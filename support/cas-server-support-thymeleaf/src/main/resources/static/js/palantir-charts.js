@@ -5,6 +5,8 @@ let servicesChart = null;
 let memoryChart = null;
 let statisticsChart = null;
 let systemHealthChart = null;
+let signInsChart = null;
+let slowestEndpointsChart = null;
 let jvmThreadsChart = null;
 let httpRequestResponsesChart = null;
 let httpRequestsByUrlChart = null;
@@ -47,13 +49,13 @@ function jvmThreadsChartConfiguration() {
                     beginAtZero: true,
                     stacked: true,
                     ticks: {
-                        stepSize: 1
+                        precision: 0
                     }
                 },
                 x: {
                     stacked: true,
                     grid: {
-                        offset: true
+                        display: false
                     }
                 }
             }
@@ -61,21 +63,80 @@ function jvmThreadsChartConfiguration() {
     };
 }
 
-function cloneChartValue(value) {
-    const seen = new WeakSet();
-    return JSON.parse(JSON.stringify(value, (key, entry) => {
-        if (typeof entry === "function") {
-            return undefined;
-        }
-        if (entry && typeof entry === "object" && !Array.isArray(entry)) {
-            if (seen.has(entry)) {
-                return undefined;
+function cloneChartValue(value, seen = new WeakSet()) {
+    if (typeof value === "function" || value === null || typeof value !== "object") {
+        return value;
+    }
+    if (seen.has(value)) {
+        return undefined;
+    }
+    seen.add(value);
+    let copy;
+    if (Array.isArray(value)) {
+        copy = value.map(entry => cloneChartValue(entry, seen));
+    } else {
+        copy = {};
+        for (const [key, entry] of Object.entries(value)) {
+            const cloned = cloneChartValue(entry, seen);
+            if (cloned !== undefined) {
+                copy[key] = cloned;
             }
-            seen.add(entry);
         }
-        return entry;
-    }));
+    }
+    seen.delete(value);
+    return copy;
 }
+
+/**
+ * Keeps an enlarged copy of a chart current: each time the chart is updated, the copy takes its data, until the copy
+ * is let go. A full copy also takes the colors and scales; a data-only copy keeps its own look and takes the labels and
+ * values.
+ *
+ * @param source the chart on the page
+ * @param copy the enlarged copy
+ * @param dataOnly whether the copy keeps its own look
+ */
+function followPalantirChart(source, copy, dataOnly = false) {
+    if (!source || !copy) {
+        return;
+    }
+    source.$palantirCopies = source.$palantirCopies ?? new Map();
+    source.$palantirCopies.set(copy, dataOnly);
+}
+
+function unfollowPalantirChart(source, copy) {
+    source?.$palantirCopies?.delete(copy);
+}
+
+function updatePalantirChartCopy(source, copy, dataOnly) {
+    if (dataOnly) {
+        copy.data.labels = cloneChartValue(source.data.labels ?? []);
+        source.data.datasets.forEach((dataset, index) => {
+            if (copy.data.datasets[index]) {
+                copy.data.datasets[index].data = cloneChartValue(dataset.data);
+                copy.data.datasets[index].label = dataset.label;
+            }
+        });
+    } else {
+        copy.data = cloneChartValue(source.data);
+        copy.config.options.scales = cloneChartValue(source.config.options?.scales ?? {});
+    }
+    copy.update("none");
+}
+
+const palantirChartCopyPlugin = {
+    id: "palantirChartCopy",
+    afterUpdate(chart) {
+        chart.$palantirCopies?.forEach((dataOnly, copy) => {
+            try {
+                updatePalantirChartCopy(chart, copy, dataOnly);
+            } catch (error) {
+                console.debug("Palantir could not update an enlarged chart", error);
+                chart.$palantirCopies.delete(copy);
+            }
+        });
+    }
+};
 
 function showSystemStatusChartDialog(chart, title) {
     if (!chart) {
@@ -96,6 +157,7 @@ function showSystemStatusChartDialog(chart, title) {
         resizable: true,
         close: function () {
             if (window.systemStatusDialogChart) {
+                unfollowPalantirChart(chart, window.systemStatusDialogChart);
                 window.systemStatusDialogChart.destroy();
                 window.systemStatusDialogChart = null;
             }
@@ -106,21 +168,23 @@ function showSystemStatusChartDialog(chart, title) {
             if (!canvas) {
                 return;
             }
-            const options = cloneChartValue(chart.options ?? {});
+            const options = cloneChartValue(chart.config.options ?? chart.options ?? {});
             options.responsive = true;
             options.maintainAspectRatio = false;
             options.plugins = options.plugins ?? {};
             options.plugins.title = {
                 ...(options.plugins.title ?? {}),
                 display: true,
-                text: title,
+                text: options.plugins.title?.text || title,
                 font: {size: 18}
             };
             window.systemStatusDialogChart = new Chart(canvas.getContext("2d"), {
                 type: chart.config.type,
                 data: cloneChartValue(chart.data),
-                options
+                options,
+                plugins: chart.config.plugins ?? []
             });
+            followPalantirChart(chart, window.systemStatusDialogChart);
         }
     });
 }
@@ -157,11 +221,77 @@ function makeSystemStatusChartClickable(canvasId, chartAccessor, title) {
  * @param configuration the Chart.js configuration
  * @returns {Chart|null} the chart, or null when the canvas is absent
  */
+/**
+ * A color of the chart palette, taken from the theme so charts match Palantir in light and dark mode. Meant to be
+ * used as a scriptable color, so a chart picks up the theme in force each time it is drawn.
+ *
+ * @param {number} index the position in the palette; it wraps around
+ * @param {number} alpha the opacity, from 0 to 1
+ * @returns {string} the color
+ */
+function palantirChartColor(index, alpha = 1) {
+    const fallbacks = ["#2a9d8f", "#3a86d8", "#8a63d2", "#e08a2c", "#d1495b", "#6c7a89"];
+    const step = Number.isInteger(index) ? index : 0;
+    const position = ((step % fallbacks.length) + fallbacks.length) % fallbacks.length;
+    const color = typeof PalantirTheme !== "undefined"
+        ? PalantirTheme.color(`--palantir-chart-${position + 1}`, fallbacks[position])
+        : fallbacks[position];
+    if (alpha >= 1) {
+        return color;
+    }
+    const hex = color.match(/^#([0-9a-f]{6})$/i);
+    if (hex) {
+        const value = parseInt(hex[1], 16);
+        return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
+    }
+    const rgb = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    return rgb ? `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})` : color;
+}
+
+/**
+ * A health color, translucent when asked, for charts whose bars mean success or failure.
+ *
+ * @param {string} status the health status the color stands for
+ * @param {number} alpha the opacity, from 0 to 1
+ * @returns {string} the color
+ */
+function palantirStatusColor(status, alpha = 1) {
+    const color = palantirHealthColor(status);
+    if (alpha >= 1) {
+        return color;
+    }
+    const rgb = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+    return rgb ? `rgba(${rgb[1]}, ${rgb[2]}, ${rgb[3]}, ${alpha})` : color;
+}
+
+/**
+ * A chart that shows one series names it in a title rather than in a legend with a single entry; a chart with several
+ * series keeps its legend. Charts that set their own legend or title are left as they are.
+ */
+const palantirSingleSeriesPlugin = {
+    id: "palantirSingleSeries",
+    beforeUpdate(chart) {
+        if (chart.$palantirSingleSeries === undefined) {
+            const configured = chart.config.options?.plugins ?? {};
+            chart.$palantirSingleSeries = configured.legend?.display === undefined && configured.title?.display === undefined;
+        }
+        if (!chart.$palantirSingleSeries) {
+            return;
+        }
+        const datasets = chart.data.datasets ?? [];
+        const single = datasets.length === 1 && Boolean(datasets[0].label);
+        chart.options.plugins.legend.display = !single;
+        chart.options.plugins.title.display = single;
+        chart.options.plugins.title.text = single ? datasets[0].label : "";
+    }
+};
+
 function createPalantirChart(canvasId, configuration) {
     const canvas = document.getElementById(canvasId);
     if (!canvas) {
         return null;
     }
+    configuration.plugins = [...(configuration.plugins ?? []), palantirSingleSeriesPlugin];
     const chart = new Chart(canvas.getContext("2d"), configuration);
     chart.update();
     return chart;
@@ -176,14 +306,17 @@ async function initializeTasksCharts() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            fill: true,
-            borderWidth: 2,
-            plugins: {
-                legend: {
-                    position: "top"
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
                 },
-                title: {
-                    display: true
+                x: {
+                    grid: {
+                        display: false
+                    }
                 }
             }
         }
@@ -208,22 +341,7 @@ async function initializeApplicationsCharts() {
             ],
             datasets: [{
                 label: "Registered Services",
-                data: [0, 0, 0, 0, 0],
-                backgroundColor: [
-                    "deepskyblue",
-                    "indianred",
-                    "mediumpurple",
-                    "limegreen",
-                    "slategrey"
-                ],
-                borderColor: [
-                    "deepskyblue",
-                    "indianred",
-                    "mediumpurple",
-                    "limegreen",
-                    "slategrey"
-                ],
-                borderWidth: 1
+                data: [0, 0, 0, 0, 0]
             }]
         },
         options: {
@@ -240,14 +358,6 @@ async function initializeApplicationsCharts() {
                         display: false
                     }
                 }
-            },
-            plugins: {
-                legend: {
-                    position: "top"
-                },
-                title: {
-                    display: true
-                }
             }
         }
     });
@@ -260,26 +370,35 @@ async function initializeSystemCharts() {
     memoryChart = createPalantirChart("memoryChart", {
         type: "bar",
         data: {
-            labels: ["Total Memory", "Free Memory", "Used Memory"],
+            labels: ["Used", "Allocated", "Maximum"],
             datasets: [{
-                label: "Memory (GB)",
+                label: "Heap Memory",
                 data: [0, 0, 0],
-                fill: true,
-                backgroundColor: ["rgba(54, 162, 235, 0.5)", "rgba(75, 192, 192, 0.5)", "rgba(255, 99, 132, 0.5)"],
-                borderColor: ["rgba(54, 162, 235, 1)", "rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
-                borderWidth: 2
+                backgroundColor: context => palantirChartColor([0, 1, 5][context.dataIndex] ?? context.dataIndex, .45),
+                borderColor: context => palantirChartColor([0, 1, 5][context.dataIndex] ?? context.dataIndex),
+                borderWidth: 2,
+                borderRadius: 4
             }]
         },
         options: {
+            indexAxis: "y",
             scales: {
-                y: {
-                    beginAtZero: true,
-                    stacked: true
-                },
                 x: {
-                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => `${Number(value).toLocaleString()} GB`
+                    }
+                },
+                y: {
                     grid: {
-                        offset: true
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: context => `${Number(context.parsed.x).toFixed(2)} GB`
                     }
                 }
             }
@@ -289,29 +408,35 @@ async function initializeSystemCharts() {
     statisticsChart = createPalantirChart("statisticsChart", {
         type: "bar",
         data: {
-            labels: ["Current Tickets", "Expired (Removed) Tickets"],
+            labels: ["All Tickets"],
             datasets: [{
                 label: "Ticket Registry",
-                data: [0, 0],
-                fill: true,
-                backgroundColor: ["rgba(75, 192, 192, 0.5)", "rgba(255, 99, 132, 0.5)"],
-                borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
-                borderWidth: 2
+                data: [0],
+                backgroundColor: context => palantirChartColor(context.dataIndex, .45),
+                borderColor: context => palantirChartColor(context.dataIndex),
+                borderWidth: 2,
+                borderRadius: 4
             }]
         },
         options: {
+            indexAxis: "y",
             scales: {
-                y: {
+                x: {
                     beginAtZero: true,
-                    stacked: true,
                     ticks: {
-                        stepSize: 1
+                        precision: 0
                     }
                 },
-                x: {
-                    stacked: true,
+                y: {
                     grid: {
-                        offset: true
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: items => items[0]?.chart.data.ticketTypes?.[items[0].dataIndex] ?? items[0]?.label
                     }
                 }
             }
@@ -320,6 +445,10 @@ async function initializeSystemCharts() {
     auditEventsChart = createPalantirChart("auditEventsChart", {
         type: "bar",
         options: {
+            scales: {
+                x: {grid: {display: false}},
+                y: {beginAtZero: true, ticks: {precision: 0}}
+            },
             plugins: {
                 title: {
                     display: true,
@@ -336,16 +465,22 @@ async function initializeSystemCharts() {
                 {
                     data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
                     label: "Success",
-                    borderWidth: 2
+                    backgroundColor: () => palantirStatusColor("UP", .45),
+                    borderColor: () => palantirStatusColor("UP")
                 },
                 {
                     data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
                     label: "Failure",
-                    borderWidth: 2
+                    backgroundColor: () => palantirStatusColor("DOWN", .45),
+                    borderColor: () => palantirStatusColor("DOWN")
                 }
             ]
         },
         options: {
+            scales: {
+                x: {grid: {display: false}},
+                y: {beginAtZero: true, ticks: {precision: 0}}
+            },
             plugins: {
                 title: {
                     display: true,
@@ -362,16 +497,22 @@ async function initializeSystemCharts() {
                 {
                     data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
                     label: "Success",
-                    borderWidth: 2
+                    backgroundColor: () => palantirStatusColor("UP", .45),
+                    borderColor: () => palantirStatusColor("UP")
                 },
                 {
                     data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
                     label: "Failure",
-                    borderWidth: 2
+                    backgroundColor: () => palantirStatusColor("DOWN", .45),
+                    borderColor: () => palantirStatusColor("DOWN")
                 }
             ]
         },
         options: {
+            scales: {
+                x: {grid: {display: false}},
+                y: {beginAtZero: true, ticks: {precision: 0}}
+            },
             plugins: {
                 title: {
                     display: true,
@@ -386,16 +527,166 @@ async function initializeSystemCharts() {
         data: {
             datasets: [{
                 label: "System Health",
-                fill: true,
-                borderWidth: 2
+                borderWidth: 2,
+                borderRadius: 4
             }]
         },
         options: {
             indexAxis: "y",
+            scales: palantirHealthScales(false),
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: "System Health · time each check took"
+                }
+            }
+        }
+    });
+
+    signInsChart = createPalantirChart("signInsChart", {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: "Succeeded",
+                    data: [],
+                    stack: "sign-ins",
+                    backgroundColor: () => palantirStatusColor("UP", .45),
+                    borderColor: () => palantirStatusColor("UP")
+                },
+                {
+                    label: "Failed",
+                    data: [],
+                    stack: "sign-ins",
+                    backgroundColor: () => palantirStatusColor("DOWN", .45),
+                    borderColor: () => palantirStatusColor("DOWN")
+                },
+                {
+                    label: "Throttled",
+                    data: [],
+                    stack: "sign-ins",
+                    backgroundColor: () => palantirStatusColor("WARN", .45),
+                    borderColor: () => palantirStatusColor("WARN")
+                },
+                {
+                    type: "line",
+                    label: "Multifactor Triggered",
+                    data: [],
+                    stack: "multifactor",
+                    order: -1,
+                    tension: .3,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    backgroundColor: () => palantirChartColor(2, .15),
+                    borderColor: () => palantirChartColor(2)
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+                mode: "index",
+                intersect: false
+            },
             scales: {
                 x: {
-                    ticks: {
+                    stacked: true,
+                    grid: {
                         display: false
+                    },
+                    ticks: {
+                        maxRotation: 0,
+                        autoSkip: true
+                    }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Sign-ins · last 8 hours"
+                },
+                legend: {
+                    labels: {
+                        sort: (first, second) => first.datasetIndex - second.datasetIndex
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: items => items[0]?.chart.data.hours?.[items[0].dataIndex] ?? items[0]?.label
+                    }
+                }
+            }
+        }
+    });
+
+    slowestEndpointsChart = createPalantirChart("slowestEndpointsChart", {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    label: "Average",
+                    data: [],
+                    backgroundColor: () => palantirChartColor(1, .45),
+                    borderColor: () => palantirChartColor(1)
+                },
+                {
+                    label: "Longest Recently",
+                    data: [],
+                    backgroundColor: () => palantirChartColor(3, .45),
+                    borderColor: () => palantirChartColor(3)
+                }
+            ]
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => `${Number(value).toLocaleString()} ms`
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        callback(value) {
+                            const label = String(this.getLabelForValue(value));
+                            return label.length > 40 ? `${label.slice(0, 39)}…` : label;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Slowest Endpoints"
+                },
+                tooltip: {
+                    callbacks: {
+                        footer: items => {
+                            const endpoint = items[0]?.chart.data.endpoints?.[items[0].dataIndex];
+                            return endpoint
+                                ? `${Number(endpoint.count).toLocaleString()} requests · ${Number(endpoint.errors).toLocaleString()} server errors`
+                                : "";
+                        },
+                        label: context => `${context.dataset.label}: ${Number(context.parsed.x).toLocaleString(undefined, {maximumFractionDigits: 1})} ms`
                     }
                 }
             }
@@ -405,6 +696,8 @@ async function initializeSystemCharts() {
     makeSystemStatusChartClickable("memoryChart", () => memoryChart, "Memory");
     makeSystemStatusChartClickable("statisticsChart", () => statisticsChart, "Ticket Registry");
     makeSystemStatusChartClickable("systemHealthChart", () => systemHealthChart, "System Health");
+    makeSystemStatusChartClickable("slowestEndpointsChart", () => $("#slowestEndpointsChart").is(":visible") ? slowestEndpointsChart : null, "Slowest Endpoints");
+    makeSystemStatusChartClickable("signInsChart", () => $("#signInsChart").is(":visible") ? signInsChart : null, "Sign-ins");
     makeSystemStatusChartClickable("httpRequestResponsesChart", () => httpRequestResponsesChart, "HTTP Requests/Responses (Date)");
     makeSystemStatusChartClickable("httpRequestsByUrlChart", () => httpRequestsByUrlChart, "HTTP Requests/Responses (URL)");
     makeSystemStatusChartClickable("auditEventsChart", () => auditEventsChart, "Audit Events");
@@ -578,8 +871,8 @@ function createPrometheusChart(metricName, metricData) {
             datasets: [{
                 label: metricName,
                 data: values,
-                backgroundColor: colors.map(c => c.replace("1)", "0.5)")),
-                borderColor: colors[0],
+                backgroundColor: metricData.map((item, index) => palantirChartColor(index, chartType === "line" ? .15 : .45)),
+                borderColor: chartType === "line" ? colors[0] : colors,
                 borderWidth: 2,
                 fill: true,
                 tension: 0.3,
@@ -640,8 +933,8 @@ function showMaximizedChart(chartConfig) {
         height: Math.min($(window).height() * 0.8, 700),
         resizable: true,
         close: function() {
-            // Destroy chart and remove dialog on close
             if (window.prometheusDialogChart) {
+                unfollowPalantirChart(prometheusCharts[chartConfig.metricName], window.prometheusDialogChart);
                 window.prometheusDialogChart.destroy();
                 window.prometheusDialogChart = null;
             }
@@ -657,8 +950,8 @@ function showMaximizedChart(chartConfig) {
                         datasets: [{
                             label: chartConfig.metricName,
                             data: chartConfig.values,
-                            backgroundColor: chartConfig.colors.map(c => c.replace("1)", "0.5)")),
-                            borderColor: chartConfig.colors[0],
+                            backgroundColor: chartConfig.colors.map((color, index) => palantirChartColor(index, chartConfig.chartType === "line" ? .15 : .45)),
+                            borderColor: chartConfig.chartType === "line" ? chartConfig.colors[0] : chartConfig.colors,
                             borderWidth: 2,
                             fill: true,
                             tension: 0.3,
@@ -697,6 +990,7 @@ function showMaximizedChart(chartConfig) {
                         }
                     }
                 });
+                followPalantirChart(prometheusCharts[chartConfig.metricName], window.prometheusDialogChart, true);
             }
         }
     });
@@ -734,24 +1028,40 @@ function formatSeriesLabel(labelsString) {
 }
 
 function generateColors(count) {
-    const baseColors = [
-        "rgba(54, 162, 235, 1)",
-        "rgba(255, 99, 132, 1)",
-        "rgba(75, 192, 192, 1)",
-        "rgba(255, 206, 86, 1)",
-        "rgba(153, 102, 255, 1)",
-        "rgba(255, 159, 64, 1)",
-        "rgba(199, 199, 199, 1)",
-        "rgba(83, 102, 255, 1)",
-        "rgba(255, 99, 255, 1)",
-        "rgba(99, 255, 132, 1)"
-    ];
+    return Array.from({length: count}, (value, index) => palantirChartColor(index));
+}
 
-    const colors = [];
-    for (let i = 0; i < count; i++) {
-        colors.push(baseColors[i % baseColors.length]);
-    }
-    return colors;
+/**
+ * The value axis of a health chart. With timings, bars are as long as each check took, on a logarithmic scale that
+ * starts below a millisecond so a check of a millisecond still shows beside one of seconds; without them every bar is full length and only its
+ * color tells the status.
+ *
+ * @param {boolean} timed whether the checks come with how long they took
+ * @returns {object} the scales of the chart
+ */
+const PALANTIR_HEALTH_MARKS = [1, 10, 100, 1000, 10000, 100000];
+
+function palantirHealthScales(timed) {
+    return timed
+        ? {
+            x: {
+                type: "logarithmic",
+                min: 0.5,
+                grid: {
+                    color: context => PALANTIR_HEALTH_MARKS.includes(Number(context.tick?.value)) ? Chart.defaults.scale.grid.color : "transparent"
+                },
+                ticks: {
+                    maxRotation: 0,
+                    autoSkip: false,
+                    callback: value => PALANTIR_HEALTH_MARKS.includes(Number(value)) ? `${Number(value).toLocaleString()} ms` : ""
+                }
+            },
+            y: {grid: {display: false}}
+        }
+        : {
+            x: {min: 0, max: 1, ticks: {display: false}},
+            y: {grid: {display: false}}
+        };
 }
 
 /**
@@ -838,10 +1148,38 @@ function applyChartAccessibleDescription(chart) {
     }
 }
 
+/**
+ * Gives every chart the look of the System Status charts: a series without its own colors takes the theme's chart
+ * palette, translucent with a solid border, one color per bar when the chart shows a single series of bars and one per
+ * series otherwise. Charts that pick their colors, such as health or success and failure, keep them.
+ */
+const palantirChartStylePlugin = {
+    id: "palantirChartStyle",
+    beforeUpdate(chart) {
+        const datasets = chart.data.datasets ?? [];
+        const line = chart.config.type === "line";
+        const perItem = datasets.length === 1 && !line;
+        datasets.forEach((dataset, position) => {
+            if (dataset.backgroundColor !== undefined || dataset.borderColor !== undefined) {
+                return;
+            }
+            const alpha = line ? .15 : .45;
+            dataset.backgroundColor = perItem
+                ? context => palantirChartColor(context.dataIndex, alpha)
+                : () => palantirChartColor(position, alpha);
+            dataset.borderColor = perItem
+                ? context => palantirChartColor(context.dataIndex)
+                : () => palantirChartColor(position);
+        });
+    }
+};
+
 if (typeof Chart !== "undefined" && typeof Chart.register === "function") {
+    Chart.defaults.elements.bar.borderWidth = 2;
+    Chart.defaults.elements.bar.borderRadius = 4;
     Chart.register({
         id: "palantirChartAccessibility",
         afterUpdate: applyChartAccessibleDescription,
         afterRender: applyChartAccessibleDescription
-    });
+    }, palantirChartStylePlugin, palantirChartCopyPlugin);
 }

@@ -140,6 +140,17 @@ public interface AuditTrailManager extends Cleanable {
     }
 
     /**
+     * Count records per action and per hour, the way the storage can do it without reading every record. A storage that
+     * cannot answers with nothing, so callers can say the summary is not available instead of showing zeroes.
+     *
+     * @param query the period and actions to count
+     * @return the counts, hours and actions without records left out; empty when this storage cannot summarize
+     */
+    default Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        return Optional.empty();
+    }
+
+    /**
      * Remove all.
      */
     default void removeAll() {

@@ -207,7 +207,19 @@ async function verifyHome(page) {
     await cas.logg(`Home opens first with ${home.widgets.join(", ")}; ${home.status}; CAS ${home.version}`);
     assert(home.widgets.includes("health"));
     assert(home.widgets.includes("resources"));
+    assert(home.widgets.includes("endpoints"));
     await page.waitForFunction(() => Chart.getChart(document.getElementById("homeHealthChart")) !== undefined, {timeout: 10000});
+    const slowest = await page.evaluate(() => $("#homeGrid [data-home-widget='endpoints'] tbody tr").length);
+    await cas.logg(`Slowest endpoints listed on Home: ${slowest}`);
+
+    await page.click("#homeGrid [data-home-for='resources'][data-home-action='hide']");
+    await page.waitForFunction(() => $("#homeGrid > [data-home-widget='resources']").length === 0
+        && JSON.parse(localStorage.getItem("PalantirHomeLayout")).hidden.includes("resources"), {timeout: 10000});
+    await page.click("#homeCustomize");
+    await page.waitForSelector("#homeCustomizeMenu [data-home-action='show'][data-home-for='resources']", {visible: true, timeout: 10000});
+    await page.click("#homeCustomizeMenu [data-home-action='show'][data-home-for='resources']");
+    await page.waitForFunction(() => $("#homeGrid > [data-home-widget='resources']").length === 1, {timeout: 10000});
+    await cas.logg("A Home card can be hidden and shown again");
 
     await page.click("#homeGrid [data-home-for='resources'][data-home-action='earlier']");
     await page.waitForFunction(() => {
@@ -215,7 +227,10 @@ async function verifyHome(page) {
         const stored = JSON.parse(localStorage.getItem("PalantirHomeLayout")).order;
         return order.indexOf("resources") < order.indexOf("health") && stored.indexOf("resources") < stored.indexOf("health");
     }, {timeout: 10000});
-    await page.evaluate(() => localStorage.removeItem("PalantirHomeLayout"));
+    await page.click("#homeCustomize");
+    await page.click("#homeCustomizeMenu [data-home-action='reset']");
+    await page.waitForFunction(() => localStorage.getItem("PalantirHomeLayout") === null
+        && $("#homeGrid > [data-home-widget]").first().data("homeWidget") === "status", {timeout: 10000});
 
     assert(await page.$("#homeGrid .palantir-home__widget-head button:not(.palantir-home__title-link):not([data-home-action])") === null);
     await page.click("#homeGrid [data-home-widget='types'] h3 .palantir-home__title-link");
@@ -1552,6 +1567,18 @@ async function verifySystemMetrics(page) {
     await page.evaluate(() => localStorage.removeItem("PalantirPinnedMetrics"));
 }
 
+async function verifySignIns(page) {
+    await page.evaluate(() => {
+        const index = $("#system-tabs ul li a[href='#systemstatus-tab']").parent().index();
+        $("#system-tabs").tabs("option", "active", index);
+    });
+    await page.waitForFunction(() => /sign-ins · counted at/.test($("#signInsChartStatus").text()), {timeout: 30000});
+    const status = await page.evaluate(() => $("#signInsChartStatus").text());
+    const counted = await page.evaluate(() => signInsChart.data.datasets.map((dataset) => dataset.data.length));
+    await cas.logg(`Sign-ins chart: ${status}; hours per series ${counted.join(", ")}`);
+    assert(counted.every((hours) => hours === 8));
+}
+
 async function verifyThrottlesUsername(page) {
     await cas.separator();
     if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.throttles()))) {
@@ -1637,6 +1664,7 @@ async function verifyShortcutsOverlay(page) {
     await verifyThrottlesUsername(page);
     await verifyCasModules(page);
     await verifySystemMetrics(page);
+    await verifySignIns(page);
     await verifyZenMode(page);
     await verifyShortcutsOverlay(page);
 

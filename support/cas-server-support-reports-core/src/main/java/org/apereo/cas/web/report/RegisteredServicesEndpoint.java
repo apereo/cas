@@ -498,12 +498,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             return ResponseEntity.badRequest().build();
         }
 
-        return registeredServiceSerializers
-            .getObject()
-            .stream()
-            .map(serializer -> serializer.from(requestBody))
-            .filter(Objects::nonNull)
-            .findFirst()
+        return readRegisteredService(requestBody)
             .map(service -> {
                 LOGGER.trace("Storing registered service:\n[{}]", service);
                 return servicesManager.getObject().save(service);
@@ -516,24 +511,47 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    /**
+     * Read the definitions of an archive, each once, and save them. A definition is read by the serializer that
+     * recognizes it, so it is neither parsed nor saved twice when more than one serializer could read it.
+     *
+     * @param request the request carrying the archive
+     * @return the response
+     * @throws IOException if the archive cannot be read
+     */
     private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
-        var servicesToImport = Stream.<RegisteredService>empty();
+        val servicesToImport = new ArrayList<RegisteredService>();
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();
             while (entry != null) {
                 if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
                     val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
-                    servicesToImport = Stream.concat(servicesToImport, registeredServiceSerializers.getObject()
-                        .stream()
-                        .map(serializer -> serializer.from(requestBody))
-                        .filter(Objects::nonNull));
+                    readRegisteredService(requestBody).ifPresent(servicesToImport::add);
                 }
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
         }
-        servicesManager.getObject().save(servicesToImport);
+        LOGGER.debug("Importing [{}] registered services from the archive", servicesToImport.size());
+        servicesManager.getObject().save(servicesToImport.stream());
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Read one definition with the first serializer that recognizes its content, and only when none does, with the
+     * others in turn. Serializers that recognize nothing do not get to log a failed parse for every definition.
+     *
+     * @param content the definition
+     * @return the registered service, if a serializer could read it
+     */
+    private Optional<RegisteredService> readRegisteredService(final String content) {
+        val serializers = List.<StringSerializer<RegisteredService>>copyOf(registeredServiceSerializers.getObject());
+        return Stream.concat(
+                serializers.stream().filter(serializer -> serializer.supports(content)),
+                serializers.stream().filter(serializer -> !serializer.supports(content)))
+            .map(serializer -> serializer.from(content))
+            .filter(Objects::nonNull)
+            .findFirst();
     }
 }

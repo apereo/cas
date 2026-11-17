@@ -397,6 +397,33 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
 
+- {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in
+  all and for every kind of ticket, such as sessions, service tickets or OAuth tokens, named after their definitions
+  and counted in one pass, instead of reading every ticket and removing the expired ones on each call; expired tickets
+  are left to the registry cleaner. Its answer and the counts of the session
+  health indicator are kept for a few seconds, so callers in quick succession share one count. Ticket registries count
+  tickets per kind the cheapest way their store allows, without reading the tickets: the in-memory registry and those
+  built on it by type, JPA with one grouped query (unless tickets are encrypted), MongoDB by the estimated size of each
+  collection, Redis with one scan of the ticket keys, Hazelcast by map size, Ignite and Geode with a count per table or
+  region, DynamoDB through its prefix index and Firestore with a count query per collection. Other registries read their
+  tickets to count them. Palantir's ticket registry chart shows all tickets and a bar for every kind of ticket, refreshed
+  once a minute, and its health chart reads the same timed health checks as the *Home* page.
+- {: .new data-area="ui"} The [audit log endpoint](../audits/Audits.html) can count audit records per action and per hour
+  over a period of up to a week, as the audit storage counts them for the whole cluster: databases with one grouped query,
+  MongoDB with one aggregation, and Redis and DynamoDB from hourly counters kept as records are written. A
+  [REST audit service](../audits/Audits-REST.html) is asked for its own counts. Other audit storages, such as files, logs
+  or Amazon Firehose, report that they cannot count. Palantir's *System Status* page uses it for a sign-in chart:
+  succeeded, failed and throttled sign-ins per hour over the last eight hours, and multifactor authentication
+  triggered, refreshed once a minute. Database audit tables gain an index on the audit date. Every Palantir chart now
+  shares one look and color palette in light and dark themes, and an enlarged chart keeps its labels, colors and
+  tooltips and keeps updating while it is open.
+- {: .new data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) lists the URLs that answer slowest on
+  average, with their longest time, requests and server errors, on *Home* and as a chart on *System Status*, from the
+  request metrics the server already keeps. *Home* cards can be hidden, brought back or reset to the original layout,
+  and the browser remembers the choice; Home asks the server only for what the shown cards need, so a card that is slow
+  to fill can be hidden to take its work off the server.
+- {: .fixed data-area="services"} Importing an archive of application definitions reads and saves each definition once;
+  each one was read by every available format and could be saved twice, which doubled the time an import took.
 - {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
   each proxy of a chain once; a ticket obtained through several proxies listed each of them as many times as there were proxies.
 - {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a

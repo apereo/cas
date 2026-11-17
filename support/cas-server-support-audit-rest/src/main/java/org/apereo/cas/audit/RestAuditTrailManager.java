@@ -17,6 +17,8 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -121,6 +123,62 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             ? serializer.from(node.toString())
             : MAPPER.readValue(node.toString(), AuditActionContext.class)));
         return records;
+    }
+
+    /**
+     * Asks the audit service for its counts with a {@code GET} to the audit URL, passing {@code summary=hourly},
+     * {@code from} and {@code to} as ISO dates and {@code actions} as a comma-separated list. The service answers with a
+     * list of {@code hour}, {@code action} and {@code count}; a service that answers anything else does not support
+     * summaries.
+     *
+     * @param query the period and actions to count
+     * @return the counts, or empty when the service does not summarize
+     */
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        HttpResponse response = null;
+        try {
+            val parameters = CollectionUtils.<String, String>wrap(
+                "summary", "hourly",
+                "from", query.from().toString(),
+                "to", query.to().toString(),
+                "actions", query.actions().stream().sorted().collect(Collectors.joining(",")));
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(properties.getBasicAuthPassword())
+                .basicAuthUsername(properties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(properties.getUrl())
+                .parameters(parameters)
+                .headers(properties.getHeaders())
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null && response.getCode() == HttpStatus.SC_OK) {
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    return readAuditSummary(IOUtils.toString(content, StandardCharsets.UTF_8));
+                }
+            }
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return Optional.empty();
+    }
+
+    protected Optional<List<AuditActionCount>> readAuditSummary(final String json) {
+        val root = MAPPER.readTree(JsonValue.readHjson(json).toString());
+        if (!root.isArray()) {
+            return Optional.empty();
+        }
+        val counts = new ArrayList<AuditActionCount>();
+        for (val node : root.values()) {
+            if (!node.hasNonNull("hour") || !node.hasNonNull("action") || !node.hasNonNull("count")) {
+                return Optional.empty();
+            }
+            counts.add(new AuditActionCount(LocalDateTime.parse(node.path("hour").asString()),
+                node.path("action").asString(), node.path("count").asLong()));
+        }
+        return Optional.of(counts);
     }
 
     @Override

@@ -265,21 +265,16 @@ async function initializeAuditEventsOperations() {
 
         function auditActionChartColors(action) {
             const type = auditActionType(action);
-            if (type === "success") {
+            if (type === "success" || type === "failure") {
+                const status = type === "success" ? "UP" : "DOWN";
                 return {
-                    background: "rgba(22, 138, 85, .72)",
-                    border: "#168a55"
-                };
-            }
-            if (type === "failure") {
-                return {
-                    background: "rgba(198, 40, 40, .72)",
-                    border: "#c62828"
+                    background: palantirStatusColor(status, .45),
+                    border: palantirStatusColor(status)
                 };
             }
             return {
-                background: "rgba(79, 143, 217, .72)",
-                border: "#4f8fd9"
+                background: palantirChartColor(1, .45),
+                border: palantirChartColor(1)
             };
         }
 
@@ -298,8 +293,6 @@ async function initializeAuditEventsOperations() {
                     datasets: [{
                         label: "Audit Events",
                         data: [],
-                        borderWidth: 2,
-                        borderRadius: 5,
                         borderSkipped: false,
                         maxBarThickness: 54
                     }]
@@ -337,8 +330,7 @@ async function initializeAuditEventsOperations() {
                                 text: "Event count"
                             },
                             ticks: {
-                                precision: 0,
-                                stepSize: 1
+                                precision: 0
                             }
                         }
                     }

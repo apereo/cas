@@ -10,6 +10,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ScanOptions;
 
 /**
  * This is {@link RedisAuditTrailManager}.
@@ -25,6 +30,11 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
      * Redis key prefix.
      */
     public static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
+
+    /**
+     * Prefix of the keys that count records per hour, one field per action.
+     */
+    public static final String CAS_AUDIT_SUMMARY_PREFIX = "CasAuditSummary:";
 
     private static final int FETCH_BATCH_SIZE = 100;
 
@@ -103,6 +113,52 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         try (val keys = getAuditRedisKeys()) {
             keys.forEach(redisTemplate::delete);
         }
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            try (val cursor = connection.keyCommands().scan(ScanOptions.scanOptions().match(CAS_AUDIT_SUMMARY_PREFIX + '*').build())) {
+                cursor.forEachRemaining(key -> connection.keyCommands().del(key));
+            }
+            return null;
+        });
+    }
+
+    /**
+     * Reads the counters kept for each hour of the period as records were written.
+     *
+     * @param query the period and actions to count
+     * @return the counts
+     */
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        val counts = new ArrayList<AuditActionCount>();
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            query.hours().forEach(hour -> {
+                val fields = connection.hashCommands().hGetAll(getSummaryKey(hour));
+                if (fields != null) {
+                    fields.forEach((field, value) -> {
+                        val action = new String(field, StandardCharsets.UTF_8);
+                        val count = NumberUtils.toLong(new String(value, StandardCharsets.UTF_8));
+                        if (query.actions().contains(action) && count > 0) {
+                            counts.add(new AuditActionCount(hour, action, count));
+                        }
+                    });
+                }
+            });
+            return null;
+        });
+        return Optional.of(counts);
+    }
+
+    private static byte[] getSummaryKey(final LocalDateTime time) {
+        val hour = AuditSummaryQuery.hourOf(time).toEpochSecond(ZoneOffset.UTC);
+        return (CAS_AUDIT_SUMMARY_PREFIX + hour).getBytes(StandardCharsets.UTF_8);
+    }
+
+    private void countAuditRecord(final RedisConnection connection, final AuditActionContext audit) {
+        val key = getSummaryKey(audit.getWhenActionWasPerformed());
+        connection.hashCommands().hIncrBy(key, audit.getActionPerformed().getBytes(StandardCharsets.UTF_8), 1);
+        if (maxAge != null && maxAge.isPositive()) {
+            connection.keyCommands().expire(key, maxAge.plus(AuditSummaryQuery.BUCKET).toSeconds());
+        }
     }
 
     @Override
@@ -115,6 +171,10 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         } else {
             operations.set(audit);
         }
+        redisTemplate.execute((RedisCallback<Object>) connection -> {
+            countAuditRecord(connection, audit);
+            return null;
+        });
     }
 
     private Stream<String> getAuditRedisKeys() {

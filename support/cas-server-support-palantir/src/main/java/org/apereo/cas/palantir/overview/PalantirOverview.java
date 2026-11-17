@@ -64,6 +64,11 @@ public class PalantirOverview implements DisposableBean {
 
     private static final String SYSTEM_AUTHOR = "CAS";
 
+    private static final int SLOWEST_ENDPOINTS = 10;
+
+    private static final List<String> ENDPOINTS_LEFT_OUT = List.of("/actuator", "/palantir", "/webjars", "/js/", "/css/",
+        "/images/", "/favicon", "/themes/");
+
     private final CasConfigurationProperties casProperties;
 
     private final ConfigurableApplicationContext applicationContext;
@@ -108,21 +113,36 @@ public class PalantirOverview implements DisposableBean {
             new Section("resources", Set.of("metrics"), false, Duration.ZERO, PalantirOverview::resources),
             new Section("tickets", Set.of("ticketRegistry", "statistics", "ssoSessions"), true, Duration.ofSeconds(DEFAULT_LIFETIME), this::tickets),
             new Section("traffic", Set.of("metrics"), true, Duration.ZERO, this::traffic),
+            new Section("endpoints", Set.of("metrics"), true, Duration.ZERO, this::endpoints),
             new Section("applications", Set.of("registeredServices"), true, Duration.ofSeconds(DEFAULT_LIFETIME), this::applications),
             new Section("changes", Set.of("registeredServices"), true, Duration.ofSeconds(DEFAULT_LIFETIME), this::changes)
         );
     }
 
     /**
-     * Summarize the server for the home page.
+     * Summarize the server for the home page, every section that applies.
      *
      * @param exposedEndpoints the ids of the actuator endpoints this deployment exposes
      * @param administrator    whether the person asking is an administrator; others see the server, its health and resources only
      * @return the sections that apply and the moment they were put together
      */
     public Map<String, Object> summarize(final Set<String> exposedEndpoints, final boolean administrator) {
+        return summarize(exposedEndpoints, administrator, Set.of());
+    }
+
+    /**
+     * Summarize the server for the home page, only the sections asked for, so a section nobody looks at, such as one
+     * that is slow to compute, is not computed for them.
+     *
+     * @param exposedEndpoints the ids of the actuator endpoints this deployment exposes
+     * @param administrator    whether the person asking is an administrator; others see the server, its health and resources only
+     * @param wanted           the sections asked for; empty for every section
+     * @return the sections that apply and the moment they were put together
+     */
+    public Map<String, Object> summarize(final Set<String> exposedEndpoints, final boolean administrator, final Set<String> wanted) {
         val exposed = exposedEndpoints.stream().map(id -> id.toLowerCase(Locale.ENGLISH)).collect(Collectors.toSet());
         val applicable = sections.stream()
+            .filter(section -> wanted.isEmpty() || wanted.contains(section.name()))
             .filter(section -> administrator || !section.administratorsOnly())
             .filter(section -> section.endpoints().isEmpty()
                 || section.endpoints().stream().anyMatch(id -> exposed.contains(id.toLowerCase(Locale.ENGLISH))))
@@ -511,7 +531,7 @@ public class PalantirOverview implements DisposableBean {
             .map(name -> registry.find(name).tag("level", "error").counters())
             .filter(Predicate.not(Collection::isEmpty))
             .findFirst()
-            .ifPresent(counters -> traffic.put("errorsLogged", (long) counters.stream().mapToDouble(Counter::count).sum()));
+            .ifPresent(counters -> traffic.put("errorsLogged", counters.stream().mapToDouble(Counter::count).sum()));
         Optional.ofNullable(registry.find("system.load.average.1m").gauge())
             .map(Gauge::value)
             .filter(value -> value >= 0)
@@ -519,11 +539,61 @@ public class PalantirOverview implements DisposableBean {
         return traffic;
     }
 
+    /**
+     * The URLs of this server that answer slowest, from the HTTP request timers it already keeps: requests, average and
+     * longest time per URL, the slowest by average first. Palantir's own requests, actuator endpoints and static files,
+     * including those only matched by a wildcard pattern, are left out, so the list shows what users and applications
+     * wait for.
+     *
+     * @return the slowest URLs
+     */
+    private Map<String, Object> endpoints() {
+        val registry = meterRegistry.getIfAvailable();
+        if (registry == null) {
+            return Map.of("unavailable", true);
+        }
+        val byUri = registry.find("http.server.requests").timers()
+            .stream()
+            .filter(timer -> timer.count() > 0)
+            .filter(timer -> {
+                val uri = timer.getId().getTag("uri");
+                return uri != null && uri.startsWith("/") && !uri.contains("**")
+                    && ENDPOINTS_LEFT_OUT.stream().noneMatch(uri::startsWith);
+            })
+            .collect(Collectors.groupingBy(timer -> Objects.requireNonNull(timer.getId().getTag("uri"))));
+        val slowest = byUri.entrySet()
+            .stream()
+            .map(entry -> {
+                val timers = entry.getValue();
+                val count = timers.stream().mapToLong(Timer::count).sum();
+                val totalSeconds = timers.stream().mapToDouble(timer -> timer.totalTime(TimeUnit.SECONDS)).sum();
+                val maxSeconds = timers.stream().mapToDouble(timer -> timer.max(TimeUnit.SECONDS)).max().orElse(0);
+                return new SlowEndpoint(entry.getKey(), count, totalSeconds / count, maxSeconds,
+                    countWhere(timers, "outcome", "SERVER_ERROR"));
+            })
+            .sorted(Comparator.comparingDouble(SlowEndpoint::meanSeconds).reversed())
+            .limit(SLOWEST_ENDPOINTS)
+            .toList();
+        return Map.of("slowest", slowest, "measured", byUri.size());
+    }
+
     private static long countWhere(final Collection<Timer> timers, final String tag, final String value) {
         return timers.stream()
             .filter(timer -> value.equals(timer.getId().getTag(tag)))
             .mapToLong(Timer::count)
             .sum();
+    }
+
+    /**
+     * How one URL of this server answers.
+     *
+     * @param uri         the URL, as the request metrics name it
+     * @param count       how many requests it answered
+     * @param meanSeconds the average time it took
+     * @param maxSeconds  the longest time it took recently
+     * @param errors      how many requests ended with a server error
+     */
+    public record SlowEndpoint(String uri, long count, double meanSeconds, double maxSeconds, long errors) {
     }
 
     private record Section(String name, Set<String> endpoints, boolean administratorsOnly, Duration lifetime,

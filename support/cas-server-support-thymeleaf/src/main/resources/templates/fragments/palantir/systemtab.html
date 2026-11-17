@@ -248,9 +248,23 @@
 
                 <div class="mdc-layout-grid">
                   <div class="mdc-layout-grid__inner">
-                    <div class="mdc-layout-grid__cell"><canvas id="memoryChart" role="img" aria-label="JVM memory usage"></canvas></div>
-                    <div class="mdc-layout-grid__cell"><canvas id="statisticsChart" role="img" aria-label="Ticket registry statistics"></canvas></div>
+                    <div class="mdc-layout-grid__cell">
+                        <p class="palantir-chart-status" id="memoryChartStatus" aria-live="polite">Waiting for memory data…</p>
+                        <canvas id="memoryChart" role="img" aria-label="JVM memory usage"></canvas>
+                    </div>
+                    <div class="mdc-layout-grid__cell">
+                        <p class="palantir-chart-status" id="statisticsChartStatus" aria-live="polite">Counting tickets…</p>
+                        <canvas id="statisticsChart" role="img" aria-label="Ticket registry statistics"></canvas>
+                    </div>
                     <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart" role="img" aria-label="System health indicators"></canvas></div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="signInsChartCell">
+                        <p class="palantir-chart-status" id="signInsChartStatus" aria-live="polite">Counting sign-ins…</p>
+                        <div class="palantir-sign-ins-chart"><canvas id="signInsChart" role="img" aria-label="Sign-ins per hour over the last eight hours"></canvas></div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="slowestEndpointsChartCell">
+                        <p class="palantir-chart-status" id="slowestEndpointsChartStatus" aria-live="polite">Measuring the slowest endpoints…</p>
+                        <div class="palantir-sign-ins-chart"><canvas id="slowestEndpointsChart" role="img" aria-label="The slowest URLs of this server by average time"></canvas></div>
+                    </div>
                   </div>
 
                     <div id="systemLiveMemoryContainer" class="live-memory-panel hide">
@@ -346,7 +360,7 @@
                             <div class="palantir-metrics__panels">
                                 <div class="palantir-metrics__panel">
                                     <div class="palantir-metrics__panel-head"><span id="metricsTrendTitle">Trend</span><span id="metricsTrendSpan" class="palantir-metrics__muted"></span></div>
-                                    <div class="palantir-metrics__chart"><canvas id="metricsTrendChart" aria-label="Trend of the selected metric while this page is open" role="img"></canvas></div>
+                                    <div class="palantir-metrics__chart"><canvas id="metricsTrendChart" aria-label="Trend of the selected metric while this page is open" role="img" data-palantir-magnifiable="Metric trend"></canvas></div>
                                 </div>
                                 <div class="palantir-metrics__panel">
                                     <div class="palantir-metrics__panel-head"><span>Break down by</span></div>

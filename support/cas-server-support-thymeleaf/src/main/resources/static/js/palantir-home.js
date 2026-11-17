@@ -1,7 +1,9 @@
 /**
  * The home page: widgets drawn from one summary of the server, asked for at the refresh interval while the page is
  * shown. The server computes and keeps each part of the summary, so the page costs one request per refresh however
- * many widgets it shows. People can change the order of the widgets; that order is kept in the browser.
+ * many widgets it shows. People can change the order of the widgets, hide the ones they do not want, bring them back
+ * or reset the page; that choice is kept in the browser. The summary is asked only for what the shown widgets need, so
+ * a hidden widget whose data is slow to compute costs nothing.
  */
 class PalantirHome {
     static STORAGE_KEY = "PalantirHomeLayout";
@@ -18,7 +20,8 @@ class PalantirHome {
         {id: "health", title: "System Health", span: 2, needs: ["health"], page: "system", render: summary => PalantirHome.renderHealth(summary)},
         {id: "resources", title: "Resources", span: 2, needs: ["resources"], page: "system", render: summary => PalantirHome.renderResources(summary)},
         {id: "http", title: "HTTP Requests", span: 2, needs: ["traffic"], page: "system", available: summary => Boolean(summary.sections.traffic?.http), render: summary => PalantirHome.renderHttp(summary)},
-        {id: "runtime", title: "Runtime", span: 2, needs: ["traffic"], page: "system", render: summary => PalantirHome.renderRuntime(summary)},
+        {id: "endpoints", title: "Slowest Endpoints", span: 4, needs: ["endpoints"], page: "system", render: summary => PalantirHome.renderEndpoints(summary)},
+        {id: "runtime", title: "Runtime", span: 2, needs: ["traffic"], uses: ["resources"], page: "system", render: summary => PalantirHome.renderRuntime(summary)},
         {id: "sessions", title: "SSO Sessions", span: 2, needs: ["tickets"], page: "sessions", render: summary => PalantirHome.renderSessions(summary)},
         {id: "types", title: "Applications", span: 2, needs: ["applications"], page: "applications", render: summary => PalantirHome.renderTypes(summary)},
         {id: "changes", title: "Recent Application Changes", span: 4, needs: ["changes"], page: "applications", render: summary => PalantirHome.renderChanges(summary)}
@@ -29,6 +32,7 @@ class PalantirHome {
     static requests = [];
     static lastRequests = null;
     static pending = false;
+    static again = false;
     static fetched = 0;
     static FRESH_FOR = 5000;
     static PROGRESS_DELAY = 200;
@@ -46,7 +50,22 @@ class PalantirHome {
         }
         const order = Array.isArray(stored?.order) ? stored.order.filter(id => ids.includes(id)) : [];
         ids.filter(id => !order.includes(id)).forEach(id => order.push(id));
-        return {order};
+        const hidden = Array.isArray(stored?.hidden) ? stored.hidden.filter(id => ids.includes(id)) : [];
+        return {order, hidden};
+    }
+
+    /**
+     * The sections of the summary the widgets on the page read, those they need and those they show when present;
+     * hidden widgets are left out.
+     *
+     * @returns {string[]} the section names
+     */
+    static wantedSections() {
+        const layout = PalantirHome.layout();
+        return [...new Set(layout.order
+            .filter(id => !layout.hidden.includes(id))
+            .map(id => PalantirHome.widget(id))
+            .flatMap(widget => [...widget.needs, ...(widget.uses ?? [])]))];
     }
 
     static saveLayout(layout) {
@@ -102,6 +121,26 @@ class PalantirHome {
     }
 
     static bind() {
+        $("#homeCustomize").off("click").on("click", () => PalantirHome.toggleMenu());
+        $("#homeCustomizeMenu").off("click keydown")
+            .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
+            .on("keydown", event => {
+                if (event.key === "Escape") {
+                    PalantirHome.toggleMenu(false);
+                    $("#homeCustomize").trigger("focus");
+                } else if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    const items = $("#homeCustomizeMenu button").get();
+                    const position = items.indexOf(document.activeElement);
+                    const step = event.key === "ArrowDown" ? 1 : -1;
+                    items[(position + step + items.length) % items.length]?.focus();
+                }
+            });
+        $(document).off("click.palantirHomeMenu").on("click.palantirHomeMenu", event => {
+            if (!$(event.target).closest(".palantir-home__customize").length) {
+                PalantirHome.toggleMenu(false);
+            }
+        });
         $("#homeGrid").off("click dragstart dragover dragleave drop dragend")
             .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
             .on("click", "[data-home-page]", event => {
@@ -141,10 +180,51 @@ class PalantirHome {
             });
     }
 
+    /**
+     * Open or close the Customize menu, which lists the hidden widgets to show again and resets the page.
+     *
+     * @param {boolean} open whether to open it; toggles when not given
+     */
+    static toggleMenu(open) {
+        const menu = $("#homeCustomizeMenu");
+        const show = open ?? menu.prop("hidden");
+        if (show) {
+            PalantirHome.renderMenu();
+        }
+        menu.prop("hidden", !show);
+        $("#homeCustomize").attr("aria-expanded", String(show));
+        if (show) {
+            menu.find("button").first().trigger("focus");
+        }
+    }
+
+    static renderMenu() {
+        const layout = PalantirHome.layout();
+        const menu = $("#homeCustomizeMenu").empty();
+        const hidden = layout.order.filter(id => layout.hidden.includes(id));
+        menu.append($("<p>", {class: "palantir-home__customize-heading",
+            text: hidden.length > 0 ? "Hidden cards" : "No cards are hidden."}));
+        hidden.forEach(id => menu.append($("<button>", {
+            type: "button",
+            role: "menuitem",
+            class: "palantir-home__customize-item",
+            "data-home-action": "show",
+            "data-home-for": id
+        }).append($("<i>", {class: "mdi mdi-eye-outline", "aria-hidden": "true"}))
+            .append($("<span>", {text: `Show ${PalantirHome.widget(id).title}`}))));
+        menu.append($("<button>", {
+            type: "button",
+            role: "menuitem",
+            class: "palantir-home__customize-item is-reset",
+            "data-home-action": "reset"
+        }).append($("<i>", {class: "mdi mdi-restore", "aria-hidden": "true"}))
+            .append($("<span>", {text: "Reset the layout"})));
+    }
+
     static act(button) {
         const id = button.dataset.homeFor;
         const layout = PalantirHome.layout();
-        const shown = layout.order.filter(entry => PalantirHome.available(PalantirHome.widget(entry)));
+        const shown = layout.order.filter(entry => !layout.hidden.includes(entry) && PalantirHome.available(PalantirHome.widget(entry)));
         const position = shown.indexOf(id);
         switch (button.dataset.homeAction) {
         case "earlier":
@@ -157,11 +237,56 @@ class PalantirHome {
             layout.order.splice(layout.order.indexOf(neighbor) + (button.dataset.homeAction === "later" ? 1 : 0), 0, id);
             break;
         }
+        case "hide":
+            layout.hidden = [...new Set([...layout.hidden, id])];
+            PalantirHome.saveLayout(layout);
+            PalantirHome.announce(`${PalantirHome.widget(id).title} is hidden; bring it back from Customize.`);
+            $("#homeCustomize").trigger("focus");
+            return;
+        case "show":
+            layout.hidden = layout.hidden.filter(entry => entry !== id);
+            PalantirHome.toggleMenu(false);
+            PalantirHome.saveLayout(layout);
+            PalantirHome.refreshIfMissing();
+            if (!$(`#homeGrid [data-home-widget="${id}"]`).find("button").first().trigger("focus").length) {
+                $("#homeCustomize").trigger("focus");
+            }
+            return;
+        case "reset":
+            PalantirHome.toggleMenu(false);
+            try {
+                localStorage.removeItem(PalantirHome.STORAGE_KEY);
+            } catch (error) {
+                console.debug("The home layout could not be reset in the browser", error);
+            }
+            PalantirHome.render();
+            PalantirHome.refreshIfMissing();
+            PalantirHome.announce("The home page is back to its original layout.");
+            $("#homeCustomize").trigger("focus");
+            return;
         default:
             return;
         }
         PalantirHome.saveLayout(layout);
         $(`#homeGrid [data-home-for="${id}"][data-home-action="${button.dataset.homeAction}"]`).trigger("focus");
+    }
+
+    /**
+     * Ask for the summary again when a widget brought back reads a section the last summary did not include.
+     */
+    static refreshIfMissing() {
+        const sections = PalantirHome.summary?.sections ?? {};
+        if (PalantirHome.wantedSections().some(name => !(name in sections))) {
+            if (PalantirHome.pending) {
+                PalantirHome.again = true;
+            } else {
+                PalantirHome.refresh({visible: true});
+            }
+        }
+    }
+
+    static announce(message) {
+        $("#homeUpdated").text(message);
     }
 
     /**
@@ -174,12 +299,19 @@ class PalantirHome {
         if (PalantirHome.pending) {
             return;
         }
+        const wanted = PalantirHome.wantedSections();
+        if (wanted.length === 0) {
+            PalantirHome.summary = PalantirHome.summary ?? {sections: {}};
+            PalantirHome.render();
+            return;
+        }
         PalantirHome.pending = true;
         const progress = visible
             ? setTimeout(() => $("#homeProgress").prop("hidden", PalantirHome.summary === null), PalantirHome.PROGRESS_DELAY)
             : null;
         try {
-            const response = await fetch(`${retrieveDashboardUrl()}/overview`, {credentials: "include", headers: {"Accept": "application/json"}});
+            const query = new URLSearchParams({sections: wanted.join(",")});
+            const response = await fetch(`${retrieveDashboardUrl()}/overview?${query}`, {credentials: "include", headers: {"Accept": "application/json"}});
             if (!response.ok) {
                 throw new Error(`${response.status}`);
             }
@@ -204,6 +336,10 @@ class PalantirHome {
             $("#homeProgress").prop("hidden", true);
             PalantirHome.pending = false;
         }
+        if (PalantirHome.again) {
+            PalantirHome.again = false;
+            PalantirHome.refreshIfMissing();
+        }
     }
 
     static render() {
@@ -223,10 +359,18 @@ class PalantirHome {
                 : active.dataset.homePage ? `[data-home-widget="${active.closest("[data-home-widget]")?.dataset.homeWidget}"] [data-home-page]` : null)
             : null;
         grid.empty();
-        layout.order
+        const shown = layout.order
+            .filter(id => !layout.hidden.includes(id))
             .map(id => PalantirHome.widget(id))
-            .filter(widget => PalantirHome.available(widget))
-            .forEach((widget, index, shown) => grid.append(PalantirHome.frame(widget, index, shown.length)));
+            .filter(widget => PalantirHome.available(widget));
+        shown.forEach((widget, index) => grid.append(PalantirHome.frame(widget, index, shown.length)));
+        if (layout.order.every(id => layout.hidden.includes(id))) {
+            grid.append($("<p>", {class: "palantir-home__muted palantir-home__empty",
+                text: "Every card is hidden. Bring them back from Customize."}));
+        }
+        if (!$("#homeCustomizeMenu").prop("hidden")) {
+            PalantirHome.renderMenu();
+        }
         PalantirHome.drawHealthChart();
         if (restore) {
             grid.find(restore).first().trigger("focus");
@@ -246,7 +390,8 @@ class PalantirHome {
                 : document.createTextNode(widget.title)));
         const actions = $("<span>", {class: "palantir-home__widget-actions"});
         [["earlier", "mdi-arrow-left", "Move earlier", index === 0],
-            ["later", "mdi-arrow-right", "Move later", index === count - 1]].forEach(([action, icon, label, disabled]) => {
+            ["later", "mdi-arrow-right", "Move later", index === count - 1],
+            ["hide", "mdi-eye-off-outline", "Hide", false]].forEach(([action, icon, label, disabled]) => {
             actions.append($("<button>", {
                 type: "button",
                 class: "palantir-icon-button palantir-home__action",
@@ -259,7 +404,13 @@ class PalantirHome {
         });
         head.append(actions);
         const body = $("<div>", {class: "palantir-home__widget-body"});
+        const sections = PalantirHome.summary?.sections ?? {};
         try {
+            if (widget.needs.some(name => sections[name]?.pending)) {
+                body.append(PalantirHome.muted("Still being worked out on the server. If this card is often slow, "
+                    + "hide it from its header and it will no longer be asked for."));
+                return card.append(head).append(body);
+            }
             body.append(widget.render(PalantirHome.summary));
         } catch (error) {
             console.warn(`The ${widget.id} widget could not be drawn`, error);
@@ -311,7 +462,7 @@ class PalantirHome {
         const server = summary.sections.server;
         const health = summary.sections.health;
         const state = !health || health.unavailable ? "neutral" : health.pending ? "pending" : health.status === "UP" ? "up" : "down";
-        const label = {neutral: "CAS is running", pending: "Checking health...", up: "All systems up", down: "Something is down"}[state];
+        const label = {neutral: "CAS is running", pending: "Checking health...", up: "All systems up!", down: "Something is down"}[state];
         const band = $("<div>", {class: `palantir-home__status is-${state}`, role: "status"})
             .append($("<span>", {class: "palantir-home__pulse", "aria-hidden": "true"}))
             .append($("<b>", {text: label}));
@@ -351,7 +502,8 @@ class PalantirHome {
             return [PalantirHome.muted("No health checks are registered.")];
         }
         const box = $("<div>", {class: "palantir-home__health", style: `height: ${Math.max(150, components.length * 24 + 60)}px`})
-            .append($("<canvas>", {id: "homeHealthChart", role: "img",
+            .append($("<canvas>", {id: "homeHealthChart", role: "img", tabindex: 0, title: "Click to magnify",
+                "data-palantir-magnifiable": "System Health",
                 "aria-label": components.map(component => `${camelcaseToTitleCase(component.name)} ${component.status.toLowerCase()}`).join("; ")}));
         const layout = $("<div>", {class: "palantir-home__health-layout"})
             .append(PalantirHome.healthRing(health.status, components))
@@ -361,15 +513,15 @@ class PalantirHome {
 
     /**
      * The overall health as a ring with its status inside: green when CAS is up, red when it is down, amber when it is
-     * up but a check was too slow to answer.
+     * up but a check reports a warning, is unknown or was too slow to answer.
      *
      * @param status the overall status
      * @param components the health checks
      * @returns {jQuery} the ring
      */
     static healthRing(status, components) {
-        const slow = components.some(component => component.status === "SLOW");
-        const tone = status === "UP" ? (slow ? "slow" : "up") : "down";
+        const attention = components.some(component => component.status !== "UP");
+        const tone = status === "UP" ? (attention ? "slow" : "up") : "down";
         const up = components.filter(component => component.status === "UP").length;
         const label = `Overall health ${status}; ${up} of ${components.length} checks up`;
         return $("<div>", {class: `palantir-home__ring is-${tone}`, role: "img", "aria-label": label, title: label})
@@ -382,6 +534,7 @@ class PalantirHome {
     }
 
     static drawHealthChart() {
+        const copies = PalantirHome.healthChart?.$palantirCopies;
         if (PalantirHome.healthChart) {
             PalantirHome.healthChart.destroy();
             PalantirHome.healthChart = null;
@@ -392,19 +545,16 @@ class PalantirHome {
         if (!canvas || !Array.isArray(components) || typeof Chart === "undefined") {
             return;
         }
-        const up = "rgb(5, 166, 31)";
-        const down = "rgba(166, 45, 15)";
-        const slow = "rgb(201, 154, 6)";
-        const colors = components.map(component => component.status === "UP" ? up : component.status === "SLOW" ? slow : down);
+        const colors = components.map(component => palantirHealthColor(component.status));
         PalantirHome.healthChart = new Chart(canvas, {
             type: "bar",
             data: {
                 labels: components.map(component => camelcaseToTitleCase(component.name)),
                 datasets: [{
                     label: "System Health",
-                    data: components.map(() => 1),
-                    fill: true,
+                    data: components.map(component => Math.max(1, Number(component.millis) || 1)),
                     borderWidth: 2,
+                    borderRadius: 4,
                     backgroundColor: colors,
                     borderColor: colors
                 }]
@@ -416,28 +566,24 @@ class PalantirHome {
                 animation: false,
                 plugins: {
                     legend: {
-                        labels: {
-                            generateLabels: chart => Chart.defaults.plugins.legend.labels.generateLabels(chart).map(label => ({
-                                ...label,
-                                fillStyle: health.status === "UP" ? up : down,
-                                lineWidth: 0
-                            }))
-                        }
+                        display: false
                     },
                     tooltip: {
                         callbacks: {
                             label: context => {
                                 const component = components[context.dataIndex];
-                                return `${component.status.toLowerCase().replace(/_/g, " ")} · ${component.millis} ms`;
+                                return palantirHealthDescription(component.status, component.millis);
                             }
                         }
                     }
                 },
-                scales: {
-                    x: {ticks: {display: false}, max: 1}
-                }
+                scales: palantirHealthScales(true)
             }
         });
+        if (copies?.size > 0) {
+            PalantirHome.healthChart.$palantirCopies = copies;
+            PalantirHome.healthChart.update("none");
+        }
     }
 
     /**
@@ -530,6 +676,29 @@ class PalantirHome {
                 `${share(http.serverErrors)} · ${PalantirHome.number(http.clientErrors)} client errors`, http.serverErrors > 0 ? "critical" : ""));
         return [PalantirHome.kpi(Number.isFinite(rate) ? `${PalantirHome.number(Math.round(rate))}/min` : "—",
             Number.isFinite(rate) ? "requests a minute, while this page is open" : "requests a minute; measured from the next refresh", spark), stats];
+    }
+
+    static renderEndpoints(summary) {
+        const slowest = summary.sections.endpoints.slowest ?? [];
+        if (slowest.length === 0) {
+            return PalantirHome.muted("No requests to measure yet, apart from Palantir's own, actuator endpoints and static files.");
+        }
+        const table = $("<table>", {class: "palantir-home__endpoints"})
+            .append($("<thead>").append($("<tr>")
+                .append($("<th>", {scope: "col", text: "URL"}))
+                .append($("<th>", {scope: "col", text: "Average"}))
+                .append($("<th>", {scope: "col", text: "Longest"}))
+                .append($("<th>", {scope: "col", text: "Requests"}))
+                .append($("<th>", {scope: "col", text: "Errors", title: "Requests that ended with a server error"}))));
+        const rows = $("<tbody>");
+        slowest.forEach(endpoint => rows.append($("<tr>", {class: endpoint.errors > 0 ? "is-failing" : ""})
+            .append($("<td>").append($("<code>", {text: endpoint.uri, title: endpoint.uri})))
+            .append($("<td>", {text: PalantirHome.seconds(endpoint.meanSeconds)}))
+            .append($("<td>", {text: PalantirHome.seconds(endpoint.maxSeconds)}))
+            .append($("<td>", {text: PalantirHome.number(endpoint.count)}))
+            .append($("<td>", {text: PalantirHome.number(endpoint.errors)}))));
+        return [table.append(rows), PalantirHome.muted("Since CAS started, slowest by average; the longest time is recent. "
+            + "Palantir's own requests, actuator endpoints and static files are left out.")];
     }
 
     static renderRuntime(summary) {

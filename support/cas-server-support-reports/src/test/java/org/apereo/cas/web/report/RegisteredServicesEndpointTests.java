@@ -5,11 +5,14 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationListener;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.hamcrest.Matchers.greaterThan;
@@ -226,6 +229,37 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
                 )
                 .andExpect(status().isOk());
         }
+    }
+
+    @Test
+    void verifyBulkImportSavesEachServiceOnce() throws Throwable {
+        val prefix = "Import-" + UUID.randomUUID();
+        val saved = new ConcurrentHashMap<String, Integer>();
+        applicationContext.addApplicationListener((ApplicationListener<CasRegisteredServiceSavedEvent>) event -> {
+            val name = event.getRegisteredService().getName();
+            if (name != null && name.startsWith(prefix)) {
+                saved.merge(name, 1, Integer::sum);
+            }
+        });
+        try (val out = new ByteArrayOutputStream(4096);
+             val zipStream = new ZipOutputStream(out)) {
+            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+            for (var index = 0; index < 3; index++) {
+                val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+                registeredService.setId(RandomUtils.nextLong());
+                registeredService.setName(prefix + '-' + index);
+                zipStream.putNextEntry(new ZipEntry(registeredService.getName() + ".json"));
+                zipStream.write(serializer.toString(registeredService).getBytes(StandardCharsets.UTF_8));
+                zipStream.closeEntry();
+            }
+            zipStream.finish();
+            mockMvc.perform(post("/actuator/registeredServices/import")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(out.toByteArray()))
+                .andExpect(status().isOk());
+        }
+        assertEquals(Map.of(prefix + "-0", 1, prefix + "-1", 1, prefix + "-2", 1), saved);
     }
 
     /*

@@ -9,12 +9,21 @@
 <span th:fragment="main">
     <!--/*
         The home page: widgets drawn by palantir-home.js from one summary request to /palantir/dashboard/overview.
-        A widget whose data the deployment does not expose is not shown; the order of the widgets is kept in the browser.
+        A widget whose data the deployment does not expose is not shown; the order of the widgets, and the ones a person
+        hid, are kept in the browser, and the summary is asked only for what the widgets on the page need.
     */-->
     <div class="attribute-tab w-100 d-none" id="attribute-tab-17">
         <section class="palantir-home" aria-label="Overview">
             <div class="palantir-home__toolbar">
                 <span class="palantir-home__updated" id="homeUpdated" aria-live="polite"></span>
+                <div class="palantir-home__customize">
+                    <button type="button" class="mdc-button mdc-button--outlined" id="homeCustomize"
+                            aria-haspopup="true" aria-expanded="false" aria-controls="homeCustomizeMenu">
+                        <i class="mdi mdi-view-dashboard-edit-outline" aria-hidden="true"></i>
+                        <span class="mdc-button__label">Customize</span>
+                    </button>
+                    <div class="palantir-home__customize-menu" id="homeCustomizeMenu" role="menu" aria-label="Customize the home page" hidden></div>
+                </div>
             </div>
             <div class="palantir-progress__track is-busy palantir-home__progress" id="homeProgress" role="progressbar"
                  aria-label="Updating the overview" hidden><span class="palantir-progress__bar"></span></div>

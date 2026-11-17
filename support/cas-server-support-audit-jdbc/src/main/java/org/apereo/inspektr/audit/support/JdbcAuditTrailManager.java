@@ -1,6 +1,8 @@
 package org.apereo.inspektr.audit.support;
 
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import module java.base;
 import module java.sql;
+import java.sql.Timestamp;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.jpa.JpaEntityFactory;
@@ -244,6 +247,49 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
             : DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH;
 
         return getAuditRecordsSince(builder, args.toArray(), count);
+    }
+
+    /**
+     * Counts records with one query that any database runs: the rows of the period and actions are grouped by action,
+     * and each hour is a column that adds up the rows falling in it.
+     *
+     * @param query the period and actions to count
+     * @return the counts
+     */
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        val hours = query.hours();
+        if (hours.isEmpty() || query.actions().isEmpty()) {
+            return Optional.of(List.of());
+        }
+        val date = AuditTableColumns.DATE.getColumnName();
+        val action = AuditTableColumns.ACTION.getColumnName();
+        val columns = IntStream.range(0, hours.size())
+            .mapToObj(index -> "SUM(CASE WHEN %s>=? AND %s<? THEN 1 ELSE 0 END) AS H%d".formatted(date, date, index))
+            .collect(Collectors.joining(", "));
+        val actions = List.copyOf(query.actions());
+        val sql = "SELECT %s, %s FROM %s WHERE %s>=? AND %s<? AND %s IN (%s) GROUP BY %s".formatted(action, columns, tableName,
+            date, date, action, actions.stream().map(_ -> "?").collect(Collectors.joining(",")), action);
+        val args = new ArrayList<>();
+        hours.forEach(hour -> {
+            args.add(Timestamp.valueOf(hour));
+            args.add(Timestamp.valueOf(hour.plus(AuditSummaryQuery.BUCKET)));
+        });
+        args.add(Timestamp.valueOf(query.from()));
+        args.add(Timestamp.valueOf(query.to()));
+        args.addAll(actions);
+        LOGGER.debug("Summarizing audit records with query [{}]", sql);
+        val counts = new ArrayList<AuditActionCount>();
+        jdbcTemplate.query(sql, resultSet -> {
+            val actionPerformed = resultSet.getString(1);
+            for (var index = 0; index < hours.size(); index++) {
+                val count = resultSet.getLong(index + 2);
+                if (count > 0) {
+                    counts.add(new AuditActionCount(hours.get(index), actionPerformed, count));
+                }
+            }
+        }, args.toArray());
+        return Optional.of(counts);
     }
 
     private List<? extends AuditActionContext> getAuditRecordsSince(final StringBuilder where, final Object[] args,

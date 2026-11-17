@@ -2,14 +2,20 @@ package org.apereo.cas.palantir.controller;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.palantir.overview.PalantirApplicationChanges;
 import org.apereo.cas.palantir.overview.PalantirOverview;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -180,6 +187,38 @@ class DashboardControllerTests {
             .andExpect(jsonPath("$.sections.tickets").doesNotExist());
 
         mvc.perform(get("/palantir/dashboard/overview")).andExpect(status().is3xxRedirection());
+    }
+
+    /**
+     * The home page can ask for some sections only, and the slowest URLs leave out Palantir's own, actuator and static
+     * requests, slowest by average first.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewSlowestEndpointsAndChosenSections() {
+        val registry = new SimpleMeterRegistry();
+        Map.of("/login", 400L, "/oidc/token", 50L, "/actuator/health", 900L, "/palantir/dashboard/overview", 2000L, "/js/cas.js", 3000L, "/**", 2500L)
+            .forEach((uri, millis) -> Timer.builder("http.server.requests").tag("uri", uri).tag("outcome", "SUCCESS")
+                .register(registry).record(Duration.ofMillis(millis)));
+        Timer.builder("http.server.requests").tag("uri", "/login").tag("outcome", "SERVER_ERROR")
+            .register(registry).record(Duration.ofMillis(800));
+        val overview = new PalantirOverview(applicationContext.getBean(CasConfigurationProperties.class), applicationContext,
+            applicationContext.getBeanProvider(ServicesManager.class), applicationContext.getBeanProvider(TicketRegistry.class),
+            new StaticListableBeanFactory(Map.of("meterRegistry", registry)).getBeanProvider(MeterRegistry.class),
+            applicationContext.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            val sections = (Map<String, Object>) overview.summarize(Set.of("metrics"), true, Set.of("endpoints")).get("sections");
+            assertEquals(Set.of("endpoints"), sections.keySet());
+            val slowest = (List<PalantirOverview.SlowEndpoint>) ((Map<String, Object>) sections.get("endpoints")).get("slowest");
+            assertEquals(List.of("/login", "/oidc/token"), slowest.stream().map(PalantirOverview.SlowEndpoint::uri).toList());
+            assertEquals(2, slowest.getFirst().count());
+            assertEquals(.6, slowest.getFirst().meanSeconds(), .01);
+            assertEquals(1, slowest.getFirst().errors());
+            val user = (Map<String, Object>) overview.summarize(Set.of("metrics"), false, Set.of("endpoints")).get("sections");
+            assertTrue(user.isEmpty());
+        } finally {
+            overview.destroy();
+        }
     }
 
     /**

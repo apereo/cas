@@ -14,16 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeDefinition;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ComparisonOperator;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.KeyType;
+import software.amazon.awssdk.services.dynamodb.model.KeysAndAttributes;
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
+import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
 /**
  * This is {@link DynamoDbAuditTrailManagerFacilitator}.
@@ -34,6 +39,17 @@ import software.amazon.awssdk.services.dynamodb.model.ScalarAttributeType;
 @Slf4j
 @RequiredArgsConstructor
 public class DynamoDbAuditTrailManagerFacilitator {
+    /**
+     * Prefix of the items that count records per hour, one attribute per action.
+     */
+    public static final String SUMMARY_ID_PREFIX = "CasAuditSummary:";
+
+    /**
+     * How many items share the counts of one hour, so a busy hour does not write to a single item.
+     */
+    public static final int SUMMARY_SHARDS = 8;
+
+    private static final int BATCH_GET_LIMIT = 100;
 
     private final AuditDynamoDbProperties dynamoDbProperties;
     private final DynamoDbClient amazonDynamoDBClient;
@@ -95,6 +111,70 @@ public class DynamoDbAuditTrailManagerFacilitator {
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, record);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
+    }
+
+    /**
+     * Count the record in the item kept for its hour; the item is picked among a few for that hour, at random.
+     *
+     * @param record the record
+     */
+    public void count(final AuditActionContext record) {
+        val shard = ThreadLocalRandom.current().nextInt(SUMMARY_SHARDS);
+        val request = UpdateItemRequest.builder()
+            .tableName(dynamoDbProperties.getTableName())
+            .key(Map.of(ColumnNames.ID.getColumnName(), summaryId(record.getWhenActionWasPerformed(), shard)))
+            .updateExpression("ADD #action :one")
+            .expressionAttributeNames(Map.of("#action", record.getActionPerformed()))
+            .expressionAttributeValues(Map.of(":one", AttributeValue.builder().n("1").build()))
+            .build();
+        amazonDynamoDBClient.updateItem(request);
+    }
+
+    /**
+     * Read the counts kept for each hour of the period.
+     *
+     * @param query the period and actions to count
+     * @return the counts
+     */
+    public List<AuditActionCount> summarize(final AuditSummaryQuery query) {
+        val hourOfId = new HashMap<String, LocalDateTime>();
+        query.hours().forEach(hour -> IntStream.range(0, SUMMARY_SHARDS)
+            .forEach(shard -> hourOfId.put(summaryId(hour, shard).s(), hour)));
+        val totals = new LinkedHashMap<LocalDateTime, Map<String, Long>>();
+        val ids = List.copyOf(hourOfId.keySet());
+        for (var start = 0; start < ids.size(); start += BATCH_GET_LIMIT) {
+            var keys = ids.subList(start, Math.min(ids.size(), start + BATCH_GET_LIMIT))
+                .stream()
+                .map(id -> Map.of(ColumnNames.ID.getColumnName(), AttributeValue.builder().s(id).build()))
+                .toList();
+            while (!keys.isEmpty()) {
+                val request = BatchGetItemRequest.builder()
+                    .requestItems(Map.of(dynamoDbProperties.getTableName(), KeysAndAttributes.builder().keys(keys).build()))
+                    .build();
+                val response = amazonDynamoDBClient.batchGetItem(request);
+                response.responses().getOrDefault(dynamoDbProperties.getTableName(), List.of()).forEach(item -> {
+                    val hour = Objects.requireNonNull(hourOfId.get(Objects.requireNonNull(item.get(ColumnNames.ID.getColumnName())).s()));
+                    item.forEach((attribute, value) -> {
+                        if (query.actions().contains(attribute) && value.n() != null) {
+                            totals.computeIfAbsent(hour, _ -> new HashMap<>()).merge(attribute, Long.parseLong(value.n()), Long::sum);
+                        }
+                    });
+                });
+                val unprocessed = response.unprocessedKeys().get(dynamoDbProperties.getTableName());
+                keys = unprocessed != null && unprocessed.hasKeys() ? unprocessed.keys() : List.of();
+            }
+        }
+        return totals.entrySet()
+            .stream()
+            .flatMap(entry -> entry.getValue().entrySet().stream()
+                .map(count -> new AuditActionCount(entry.getKey(), count.getKey(), count.getValue())))
+            .sorted(Comparator.comparing(AuditActionCount::hour))
+            .toList();
+    }
+
+    private static AttributeValue summaryId(final LocalDateTime time, final int shard) {
+        val hour = AuditSummaryQuery.hourOf(time).toEpochSecond(ZoneOffset.UTC);
+        return AttributeValue.builder().s(SUMMARY_ID_PREFIX + hour + ':' + shard).build();
     }
 
     /**

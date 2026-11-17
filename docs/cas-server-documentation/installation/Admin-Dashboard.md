@@ -63,13 +63,17 @@ in the browser, such as the theme, views, filters, editor options and drafts of 
 with its defaults; the sign-in session is kept.
 
 Palantir opens on *Home* (<kbd>g</kbd>), a page of widgets: the server and its health, the health checks charted as on
-the system page, heap and processor use, HTTP requests (a minute, average and slowest time, errors), runtime metrics
+the system page, heap and processor use, HTTP requests (a minute, average and slowest time, errors), the URLs that
+answer slowest on average, leaving out Palantir's own, actuator and static requests, runtime metrics
 (garbage collection pauses, errors logged, system load), single sign-on sessions, applications by type, leaving out
 the services CAS registers for itself, and the latest changes to applications with who made them. With
 [service change history](../services/Configuring-Service-Version-History.html) installed, the changes of every CAS
 server are listed from that shared history; without it, those of the server Palantir runs on since it started. A widget's title opens the page it summarizes. Widgets can
-be dragged to another place or moved with their arrow buttons, and the browser remembers the order. The page is drawn from
-one summary that the server puts together and keeps for a few seconds per part, so it costs one request per refresh;
+be dragged to another place, moved with their arrow buttons or hidden; *Customize* brings hidden widgets back or resets
+the page, and the browser remembers the order and the hidden widgets. The page is drawn from one summary that the server
+puts together and keeps for a few seconds per part, so it costs one request per refresh, and only the parts the shown
+widgets need are put together: hiding a widget that is slow to fill takes its work off the server for that person, and
+the server widget then says only that CAS is running when the health widget is hidden;
 a widget whose data comes from an actuator endpoint that is not exposed is left out. Reloading Palantir stays on the
 page that was showing.
 

@@ -75,19 +75,54 @@ async function initializeSystemOperations() {
 
     let healthRequestPending = false;
 
+    /**
+     * Read the health checks from the summary behind Palantir's home page, which runs each check on its own, waits a
+     * bounded time for it, shows a check still running as slow, and keeps the answer for a while. The answer is
+     * shaped like the health endpoint's, with a check still running reported as SLOW. Older servers without the
+     * summary answer null, and the health endpoint is read instead.
+     *
+     * @returns {Promise<object|null>} the health, or null when the summary cannot be read
+     */
+    async function fetchHealthFromOverview() {
+        try {
+            const response = await fetch(`${retrieveDashboardUrl()}/overview?sections=health`, {credentials: "include", headers: {"Accept": "application/json"}});
+            if (!response.ok) {
+                return null;
+            }
+            const health = (await response.json()).sections?.health;
+            if (!health || !Array.isArray(health.components)) {
+                return null;
+            }
+            return {
+                status: health.status,
+                components: Object.fromEntries(health.components.map(component => [component.name,
+                    {status: component.status, millis: component.millis}]))
+            };
+        } catch (error) {
+            console.debug("The health checks are read from the health endpoint:", error);
+            return null;
+        }
+    }
+
     async function configureHealthChart() {
         function updateHealthChart(response) {
             if (response.components !== undefined && systemHealthChart) {
                 const payload = {
                     labels: [],
                     data: [],
-                    colors: []
+                    colors: [],
+                    descriptions: []
                 };
+                const timed = Object.values(response.components).some(component => Number.isFinite(Number(component.millis)));
                 Object.keys(response.components).forEach(key => {
+                    const component = response.components[key];
                     payload.labels.push(camelcaseToTitleCase(key));
-                    payload.data.push(1);
-                    payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
+                    payload.data.push(timed ? Math.max(1, Number(component.millis) || 1) : 1);
+                    payload.colors.push(palantirHealthColor(component.status));
+                    payload.descriptions.push(palantirHealthDescription(component.status, component.millis));
                 });
+                systemHealthChart.options.scales = palantirHealthScales(timed);
+                systemHealthChart.options.plugins.title.text = timed ? "System Health · time each check took" : "System Health";
                 systemHealthChart.data.labels = payload.labels;
                 systemHealthChart.data.datasets[0].data = payload.data;
                 systemHealthChart.data.datasets[0].backgroundColor = [...payload.colors];
@@ -95,17 +130,29 @@ async function initializeSystemOperations() {
                 systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
                     const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                     originalLabels.forEach(label => {
-                        label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                        label.fillStyle = palantirHealthColor(response.status);
                         label.lineWidth = 0;
                     });
                     return originalLabels;
                 });
+                systemHealthChart.options.plugins.tooltip = {
+                    ...systemHealthChart.options.plugins.tooltip,
+                    callbacks: {label: context => payload.descriptions[context.dataIndex]}
+                };
                 systemHealthChart.update();
             }
         }
 
-        if (CasActuatorEndpoints.health() && !healthRequestPending) {
-            healthRequestPending = true;
+        if (!CasActuatorEndpoints.health() || healthRequestPending) {
+            return;
+        }
+        healthRequestPending = true;
+        return fetchHealthFromOverview().then(overview => {
+            if (overview !== null) {
+                updateHealthChart(overview);
+                healthRequestPending = false;
+                return;
+            }
             $.ajax({
                 url: CasActuatorEndpoints.health(),
                 method: "GET",
@@ -127,22 +174,157 @@ async function initializeSystemOperations() {
                     healthRequestPending = false;
                 }
             });
-        }
+        });
     }
 
-    async function configureStatistics() {
-        if (CasActuatorEndpoints.statistics()) {
-            $.get(CasActuatorEndpoints.statistics(), response => {
+    let statisticsRequestPending = false;
+    let statisticsCounted = 0;
+    const STATISTICS_REFRESH = 60000;
 
-                if (!statisticsChart) {
-                    return;
-                }
-                const expired = response.expiredTickets;
-                const valid = response.validTickets;
-                statisticsChart.data.datasets[0].data = [valid, expired];
-                statisticsChart.update();
-            }).fail((xhr, status, error) => console.error("Error fetching data:", error));
+    /**
+     * Read the ticket counts for the Ticket Registry chart: all tickets, then a bar for every kind of ticket the
+     * registry holds, largest first, named the way CAS names it. Counting can take a moment in a registry that holds
+     * many tickets, so the chart says so until the first answer, refreshes once a minute, and a refresh waits for the
+     * one before it.
+     */
+    async function configureStatistics() {
+        if (!CasActuatorEndpoints.statistics()) {
+            $("#statisticsChartStatus").addClass("hide");
+            return;
         }
+        if (statisticsRequestPending) {
+            return;
+        }
+        statisticsRequestPending = true;
+        $.get(CasActuatorEndpoints.statistics(), response => {
+            statisticsCounted = Date.now();
+            const total = Number(response.tickets);
+            const types = (Array.isArray(response.ticketsByType) ? response.ticketsByType : [])
+                .filter(type => Number(type.count) > 0);
+            const unknown = !Number.isFinite(total) || total < 0;
+            $("#statisticsChartStatus").text(unknown
+                ? "This ticket registry could not count its tickets just now."
+                : `Counted at ${new Date(response.counted ?? Date.now()).toLocaleTimeString()} · every minute`);
+            if (statisticsChart) {
+                statisticsChart.data.labels = ["All Tickets", ...types.map(type => type.name)];
+                statisticsChart.data.ticketTypes = ["All Tickets", ...types.map(type => `${type.name} (${type.prefix})`)];
+                statisticsChart.data.datasets[0].data = [unknown ? 0 : total, ...types.map(type => Number(type.count))];
+                statisticsChart.update();
+            }
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            $("#statisticsChartStatus").text("The ticket counts could not be read just now; trying again in a minute.");
+        }).always(() => statisticsRequestPending = false);
+    }
+
+    let slowestRequestPending = false;
+    let slowestMeasured = 0;
+
+    /**
+     * Read the slowest URLs for the Slowest Endpoints chart from the summary behind Palantir's home page, which the
+     * server builds from the HTTP request timers it already keeps: one request, refreshed once a minute. The chart is
+     * hidden on servers whose summary has no such section.
+     */
+    async function configureSlowestEndpoints() {
+        if (!slowestEndpointsChart || slowestRequestPending) {
+            return;
+        }
+        slowestRequestPending = true;
+        $.get(`${retrieveDashboardUrl()}/overview`, {sections: "endpoints"}, response => {
+            slowestMeasured = Date.now();
+            const endpoints = response?.sections?.endpoints;
+            if (!endpoints || endpoints.unavailable) {
+                $("#slowestEndpointsChartCell").addClass("hide");
+                return;
+            }
+            $("#slowestEndpointsChartCell").removeClass("hide");
+            if (endpoints.pending) {
+                $("#slowestEndpointsChartStatus").text("Measuring the slowest endpoints…");
+                return;
+            }
+            const slowest = endpoints.slowest ?? [];
+            $("#slowestEndpointsChartStatus").text(slowest.length === 0
+                ? "No requests to measure yet, apart from Palantir's own, actuator endpoints and static files."
+                : `Slowest ${slowest.length} of ${endpoints.measured} URLs by average, since CAS started · every minute`);
+            slowestEndpointsChart.data.labels = slowest.map(endpoint => endpoint.uri);
+            slowestEndpointsChart.data.endpoints = slowest;
+            slowestEndpointsChart.data.datasets[0].data = slowest.map(endpoint => endpoint.meanSeconds * 1000);
+            slowestEndpointsChart.data.datasets[1].data = slowest.map(endpoint => endpoint.maxSeconds * 1000);
+            slowestEndpointsChart.update();
+        }).fail(() => {
+            slowestMeasured = Date.now();
+            $("#slowestEndpointsChartStatus").text("The slowest endpoints could not be read just now; trying again in a minute.");
+        }).always(() => slowestRequestPending = false);
+    }
+
+    let signInsRequestPending = false;
+    let signInsCounted = 0;
+    const SIGN_IN_SERIES = ["AUTHENTICATION_SUCCESS", "AUTHENTICATION_FAILED", "THROTTLED_LOGIN_ATTEMPT", "AUTHENTICATION_EVENT_TRIGGERED"];
+    const HOUR = 3600000;
+
+    function auditHourOf(value) {
+        if (Array.isArray(value)) {
+            return Date.UTC(value[0], value[1] - 1, value[2], value[3] ?? 0, value[4] ?? 0);
+        }
+        return Date.parse(`${String(value).replace(/Z$/, "")}Z`);
+    }
+
+    function generatedTime(value) {
+        if (typeof value === "number") {
+            return value < 1e11 ? value * 1000 : value;
+        }
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : Date.now();
+    }
+
+    /**
+     * Read sign-ins per hour over the last eight hours for the Sign-ins chart, as the audit storage counts them across the
+     * cluster: succeeded, failed and throttled sign-ins stacked, and multifactor authentication triggered as a line.
+     * Refreshed once a minute, which is as long as the server keeps a count. An audit storage that cannot count its
+     * records says so in place of the chart.
+     */
+    async function configureSignIns() {
+        if (!CasActuatorEndpoints.auditLog() || !signInsChart) {
+            $("#signInsChartCell").addClass("hide");
+            return;
+        }
+        if (signInsRequestPending) {
+            return;
+        }
+        signInsRequestPending = true;
+        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {interval: "PT8H", actions: SIGN_IN_SERIES.join(",")}, response => {
+            signInsCounted = Date.now();
+            const chartArea = $("#signInsChart").closest(".palantir-sign-ins-chart");
+            if (!response?.supported) {
+                chartArea.addClass("hide");
+                $("#signInsChartStatus").text("The audit storage of this server cannot count sign-ins per hour. "
+                    + "Audit records kept in a database, MongoDB, Redis, DynamoDB or a REST service can be counted.");
+                return;
+            }
+            chartArea.removeClass("hide");
+            const first = auditHourOf(response.query.from);
+            const hours = Array.from({length: Math.max(0, Math.round((auditHourOf(response.query.to) - first) / HOUR))},
+                (value, index) => first + index * HOUR);
+            const series = SIGN_IN_SERIES.map(() => hours.map(() => 0));
+            (response.counts ?? []).forEach(count => {
+                const index = Math.round((auditHourOf(count.hour) - first) / HOUR);
+                const position = SIGN_IN_SERIES.indexOf(count.action);
+                if (position >= 0 && index >= 0 && index < hours.length) {
+                    series[position][index] += Number(count.count) || 0;
+                }
+            });
+            const signIns = series.slice(0, 3).flat().reduce((total, value) => total + value, 0);
+            $("#signInsChartStatus").text(`${signIns.toLocaleString()} sign-ins · counted at `
+                + `${new Date(generatedTime(response.generated)).toLocaleTimeString()} · every minute`);
+            signInsChart.data.labels = hours.map(hour => new Date(hour).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}));
+            signInsChart.data.hours = hours.map(hour => new Date(hour).toLocaleString([], {
+                weekday: "short", hour: "2-digit", minute: "2-digit"
+            }));
+            series.forEach((values, position) => signInsChart.data.datasets[position].data = values);
+            signInsChart.update();
+        }).fail(() => {
+            $("#signInsChartStatus").text("Sign-ins could not be counted just now; trying again in a minute.");
+        }).always(() => signInsRequestPending = false);
     }
 
     let systemDataRequest = null;
@@ -1939,10 +2121,14 @@ async function initializeSystemOperations() {
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
 
+            const used = Math.max(0, total - free);
+            $("#memoryChartStatus").text(Number.isFinite(maximum) && maximum > 0
+                ? `${used.toFixed(1)} GB in use of ${maximum.toFixed(1)} GB · ${Math.round(used / maximum * 100)}%`
+                : `${used.toFixed(1)} GB in use`);
             if (!memoryChart) {
                 return;
             }
-            memoryChart.data.datasets[0].data = [maximum, total, free];
+            memoryChart.data.datasets[0].data = [used, total, maximum];
             memoryChart.update();
         });
 
@@ -2175,51 +2361,52 @@ async function initializeSystemOperations() {
         columns: [
             {
                 data: "startedAtMs",
-                width: "12rem",
+                width: "13%",
+                className: "dt-left",
                 render: (data, type, row) => type === "display" ? escapeHtml(row.startedAtLabel) : data
             },
             {
                 data: "traceId",
-                width: "18rem",
+                width: "19%",
                 render: (data, type) => type === "display"
                     ? `<code class="http-trace-id">${escapeHtml(data)}</code>`
                     : data
             },
             {
                 data: "rootSpan",
-                width: "18rem",
+                width: "18%",
                 render: (data, type) => type === "display"
                     ? renderHttpTraceRootSpan(data)
                     : data
             },
             {
                 data: "method",
-                width: "6.5rem",
+                width: "7%",
                 render: (data, type) => type === "display"
                     ? renderHttpTraceMethod(data)
                     : data
             },
             {
                 data: "url",
-                width: "24rem",
+                width: "21%",
                 render: (data, type) => type === "display"
                     ? `<code class="http-trace-url">${escapeHtml(data || "N/A")}</code>`
                     : data
             },
             {
                 data: "spanCount",
-                width: "5rem",
+                width: "5%",
                 className: "text-end"
             },
             {
                 data: "durationNanos",
-                width: "8rem",
+                width: "8%",
                 className: "text-end",
                 render: (data, type) => type === "display" ? escapeHtml(formatNanosDuration(data)) : data
             },
             {
                 data: "status",
-                width: "6.5rem",
+                width: "9%",
                 render: (data, type, row) => type === "display" ? renderHttpTraceStatus(data, row.error) : data
             }
         ],
@@ -2547,7 +2734,11 @@ async function initializeSystemOperations() {
 
     async function configureSystemInfo() {
         await fetchSystemData(response => {
-            const flattened = flattenJSON(response);
+            const shown = {...response};
+            if (CasActuatorEndpoints.casModules()) {
+                delete shown.casModules;
+            }
+            const flattened = flattenJSON(shown);
             systemTable.clear();
 
             for (const [key, value] of Object.entries(flattened)) {
@@ -2650,7 +2841,15 @@ async function initializeSystemOperations() {
         }
         if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab")) {
             configureHealthChart();
-            configureStatistics();
+            if (Date.now() - statisticsCounted >= STATISTICS_REFRESH) {
+                configureStatistics();
+            }
+            if (Date.now() - signInsCounted >= STATISTICS_REFRESH) {
+                configureSignIns();
+            }
+            if (Date.now() - slowestMeasured >= STATISTICS_REFRESH) {
+                configureSlowestEndpoints();
+            }
         }
     }, palantirSettings().refreshInterval);
 
@@ -2662,6 +2861,8 @@ async function initializeSystemOperations() {
     await Promise.all([
         configureSystemData(),
         configureStatistics(),
+        configureSignIns(),
+        configureSlowestEndpoints(),
         configureHealthChart(),
         configureSystemInfo(),
         configureSystemMetrics()
