@@ -1,9 +1,8 @@
 {
   "@class": "org.apereo.cas.services.CasRegisteredService",
-  "id": 2,
-  "serviceId": "^https://.*",
-  "name": "CAS",
-  "description": "A CAS service definition that requires certain original attributes to be renamed and remapped prior to release.",
+  "serviceId": "^https://app\\.example\\.org/.*",
+  "name": "Rename attributes on release",
+  "description": "Releases attributes under the names the application expects, for example eduPersonAffiliation as affiliation.",
   "attributeReleasePolicy": {
     "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes": {

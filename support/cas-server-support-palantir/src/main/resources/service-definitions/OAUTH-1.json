@@ -1,0 +1,22 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://app\\.example\\.org/callback",
+  "name": "Authorization code",
+  "description": "The OAuth2 authorization code flow with refresh tokens.",
+  "generateRefreshToken": true,
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code",
+      "refresh_token"
+    ]
+  ]
+}

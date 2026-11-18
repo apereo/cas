@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://api\\.example\\.org/.*",
+  "name": "Machine to machine",
+  "description": "The client credentials flow for back-end services, with JWT access tokens and no user involved.",
+  "jwtAccessToken": true,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "client_credentials"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid"
+    ]
+  ]
+}

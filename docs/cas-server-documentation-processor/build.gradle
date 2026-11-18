@@ -32,6 +32,8 @@ if (tasks.findByName("install") != null) {
 }
 
 dependencies {
+    implementation libs.commons.cli
+
     libraries.each {
         implementation it.value
     }

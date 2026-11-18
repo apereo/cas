@@ -1,10 +1,10 @@
-FROM node:24
+FROM node:26
 RUN apt-get update > /dev/null \
     && apt-get install git patch iproute2 iputils-ping -y > /dev/null \
     && rm -rf /var/lib/apt/lists/*
 
 ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-RUN corepack enable
+RUN npm install -g corepack@0.36.0 && corepack enable
 
 RUN mkdir /srv/app && chown 1000:1000 -R /srv/app
 WORKDIR /srv/app
@@ -12,7 +12,7 @@ ENV NODE_ENV=development
 
 RUN npm i -g patch-package
 
-RUN npx create-strapi@5.43.0 . \
+RUN npx create-strapi@5.61.1 . \
             --no-run \
             --use-yarn \
             --javascript \

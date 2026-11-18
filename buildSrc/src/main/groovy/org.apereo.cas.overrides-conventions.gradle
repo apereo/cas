@@ -1,3 +1,5 @@
+import org.apereo.cas.gradle.CasBuildSettings
+
 configurations.configureEach {
     resolutionStrategy {
         dependencySubstitution {
@@ -20,12 +22,12 @@ configurations.configureEach {
             }
         }
 
-        if (!providers.systemProperty('skipVersionConflict').present) {
+        if (!CasBuildSettings.isFlagEnabled(project, 'skipVersionConflict')) {
             failOnVersionConflict()
         }
         preferProjectModules()
 
-        def dependencyCacheDays = Integer.valueOf(providers.systemProperty('dependencyCacheDays').getOrElse('1'))
+        def dependencyCacheDays = Integer.valueOf(CasBuildSettings.stringProperty(project, 'dependencyCacheDays', '1'))
         cacheDynamicVersionsFor dependencyCacheDays, 'days'
         cacheChangingModulesFor dependencyCacheDays, 'days'
 
@@ -88,7 +90,7 @@ configurations.configureEach {
                     details.useVersion(libs.classgraph.get().version)
                 }
                 if (requested.group == 'org.eclipse.angus' && requested.name.contains('mail')) {
-                    details.useVersion(libs.jakarta.mail.get().version)
+                    details.useVersion(libs.angus.mail.get().version)
                 }
                 if (requested.group == 'org.springframework.session') {
                     details.useVersion(libs.spring.session.core.get().version)

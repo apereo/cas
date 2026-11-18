@@ -57,6 +57,36 @@ class DefaultLockRepositoryTests {
         assertEquals(10, container.values.get(lockKey).size());
     }
 
+    @Test
+    void verifyStripedLocksForKeys() {
+        val registry = new StripedLockRegistry(LockRepository.DEFAULT_MASK_ARRAY_LENGTH);
+        val lockKey = UUID.randomUUID().toString();
+        assertSame(registry.apply(lockKey), registry.apply(String.valueOf(lockKey.toCharArray())));
+        assertSame(registry.apply(0), registry.apply(LockRepository.DEFAULT_MASK_ARRAY_LENGTH + 1));
+        assertNotSame(registry.apply(0), registry.apply(1));
+    }
+
+    @Test
+    void verifyStripedLockMask() {
+        assertThrows(IllegalArgumentException.class, () -> new StripedLockRegistry(1000));
+        assertThrows(IllegalArgumentException.class, () -> new StripedLockRegistry(-1));
+        val singleLock = new StripedLockRegistry(0);
+        assertSame(singleLock.apply("first"), singleLock.apply("second"));
+    }
+
+    @Test
+    void verifyPassThroughLock() throws Exception {
+        val lock = PassThroughLock.INSTANCE;
+        lock.lock();
+        try {
+            assertTrue(lock.tryLock());
+            assertTrue(lock.tryLock(1, TimeUnit.SECONDS));
+        } finally {
+            lock.unlock();
+        }
+        assertThrows(UnsupportedOperationException.class, lock::newCondition);
+    }
+
     private static final class Container {
         private final Map<String, List<String>> values = new HashMap<>();
     }

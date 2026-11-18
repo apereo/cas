@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://pilot\\.example\\.org/.*",
+  "name": "Expires on a date",
+  "description": "Stops working after a date and is removed from the registry, for pilots and temporary access.",
+  "expirationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy",
+    "expirationDate": "2026-12-31",
+    "deleteWhenExpired": true
+  }
+}

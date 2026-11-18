@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerBuilder;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +36,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 import tools.jackson.databind.ObjectMapper;
@@ -72,6 +74,20 @@ class CasCoreUtilConfiguration {
     @Lazy(false)
     public Executor bootstrapExecutor() {
         return Executors.newVirtualThreadPerTaskExecutor();
+    }
+
+    /**
+     * The task scheduler that CAS components inject by name. Spring Boot creates one only when no other task
+     * scheduler exists, and modules such as the WebSocket message broker define their own, so CAS defines it
+     * whenever no bean carries the name, built the way Spring Boot builds it.
+     *
+     * @param taskSchedulerBuilder the task scheduler builder
+     * @return the task scheduler
+     */
+    @Bean
+    @ConditionalOnMissingBean(name = "taskScheduler")
+    public TaskScheduler taskScheduler(final ObjectProvider<ThreadPoolTaskSchedulerBuilder> taskSchedulerBuilder) {
+        return taskSchedulerBuilder.getIfAvailable(ThreadPoolTaskSchedulerBuilder::new).build();
     }
 
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)

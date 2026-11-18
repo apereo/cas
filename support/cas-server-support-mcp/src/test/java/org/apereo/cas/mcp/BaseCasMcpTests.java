@@ -64,6 +64,7 @@ import org.apereo.cas.throttle.DefaultAuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionHandlerInterceptor;
 import org.apereo.cas.web.support.ThrottledSubmission;
@@ -95,7 +96,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -387,7 +387,7 @@ public abstract class BaseCasMcpTests {
 
         @Bean(name = CasEventRepository.TRANSACTION_MANAGER_EVENTS)
         public PlatformTransactionManager transactionManagerEvents() {
-            return new PseudoTransactionManager();
+            return new PseudoPlatformTransactionManager();
         }
 
         @Bean(name = "authenticationRiskEvaluator")

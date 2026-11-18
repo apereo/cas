@@ -37,6 +37,11 @@ must happen at runtime so CAS gets a chance to initialize the right set of compo
 
 Encryption and decryption support may also be used inside the [CAS Command-line Shell](../installation/Configuring-Commandline-Shell.html).
 
+Encrypted settings may also be kept in dynamic configuration sources that accept updates at runtime, such as MongoDb, JDBC
+or REST. CAS decrypts them when it applies its configuration, at startup and again whenever its configuration is refreshed,
+unless a source of higher precedence defines the same setting. Like settings decrypted from configuration files, the decrypted
+values are visible through the `env` actuator endpoint when it is allowed to show values.
+
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:

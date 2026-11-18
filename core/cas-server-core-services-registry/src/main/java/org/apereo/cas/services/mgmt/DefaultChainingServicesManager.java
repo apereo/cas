@@ -33,9 +33,15 @@ public class DefaultChainingServicesManager implements ChainingServicesManager, 
         AnnotationAwareOrderComparator.sortIfNecessary(serviceManagers);
     }
 
+    /**
+     * Save each service through the manager that supports it. A stream can be read once, so it is not handed to every
+     * manager: the second one would find it consumed.
+     *
+     * @param toSave the services to save
+     */
     @Override
     public void save(final Stream<? extends RegisteredService> toSave) {
-        serviceManagers.forEach(mgr -> mgr.save(toSave));
+        toSave.forEach(this::save);
     }
 
     @Audit(action = AuditableActions.SAVE_SERVICE,

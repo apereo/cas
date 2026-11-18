@@ -32,7 +32,8 @@ report on ticket statistics, you are at the mercy of the underlying ticket regis
 the behavior in a performant manner which means that the infrastructure and network capabilities 
 and latencies must be considered and carefully tuned. This might have become specially relevant 
 in clustered deployments as depending on the ticket registry of choice, CAS may need 
-to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage.</p></div>
+to <i>interrogate</i> the entire cluster by running distributed queries to calculate ticket usage. The session health
+indicator keeps its counts for a few seconds, so health checks in quick succession share one count.</p></div>
 
 {% include_cached actuators.html endpoints="health" 
 healthIndicators="ping,diskSpaceHealthIndicator,memoryHealthIndicator,systemHealthIndicator,sessionHealthIndicator" %}

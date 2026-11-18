@@ -24,6 +24,7 @@ class Tabs {
     static MULTITENANCY = new PalantirDashboardTab("Multitenancy Tab", 14, "u");
     static CLUSTER = new PalantirDashboardTab("Cluster & High Availability Tab", 15, "v");
     static USERS = new PalantirDashboardTab("Users Tab", 16, "i");
+    static HOME = new PalantirDashboardTab("Home", 17, "g");
     static SETTINGS = new PalantirDashboardTab("Settings Dialog", 100, ",");
     static LOGOUT = new PalantirDashboardTab("Logout", 200, "x");
 
@@ -98,6 +99,7 @@ function initializeDashboardTab(dashboardTab) {
     const initializers = palantirTabInitializers.get(tabIndex) ?? [];
     const initialization = (async () => {
         initializePalantirWidgets(document.getElementById(`attribute-tab-${tabIndex}`));
+        const shownEarly = showStoredTabs();
         for (const initializer of initializers) {
             try {
                 await initializer();
@@ -105,7 +107,7 @@ function initializeDashboardTab(dashboardTab) {
                 console.error(`Unable to initialize tab ${tabIndex}:`, e);
             }
         }
-        await restoreActiveTabs();
+        await restoreActiveTabs(shownEarly);
         await updateNavigationSidebar();
     })();
     palantirTabInitialization.set(tabIndex, initialization);
@@ -212,6 +214,9 @@ function activateDashboardTab(idx) {
                     if (currentActiveTab === Tabs.USERS.index) {
                         $("#userLookupUsername").trigger("focus");
                     }
+                    if (currentActiveTab === Tabs.HOME.index && typeof PalantirHome !== "undefined") {
+                        PalantirHome.activated();
+                    }
                 });
                 break;
         }
@@ -248,6 +253,11 @@ function selectSidebarMenuButton(selectedItem) {
         item.addClass("active");
         item.find(".sidebar-navigation-button").attr("aria-current", "page");
         window.localStorage.setItem("PalantirSelectedTab", index);
+        try {
+            window.sessionStorage.setItem("PalantirSelectedTab", index);
+        } catch (error) {
+            console.debug("The current page is not kept for a reload", error);
+        }
         updatePalantirNavigationGroups();
     }
     return index;
@@ -413,6 +423,44 @@ function processNavigationTabs() {
 }
 
 /**
+ * Show the inner jQuery UI tab selections the operator last used as soon as their containers exist, before the page
+ * is initialized, so a reload does not show the first entry while the page's data is read. Only entries already on
+ * screen are selected, and nothing is reset or written back; restoreActiveTabs finishes the job once the page is
+ * initialized.
+ *
+ * @returns {Set<string>} the ids of the containers whose selection was changed
+ */
+function showStoredTabs() {
+    const shown = new Set();
+    let storedTabs;
+    try {
+        storedTabs = JSON.parse(localStorage.getItem("ActiveTabs") ?? "{}") ?? {};
+    } catch (error) {
+        console.debug("The last inner pages cannot be read from the browser", error);
+        return shown;
+    }
+    const pending = new Map(Object.entries(storedTabs));
+    let progressed = true;
+    while (progressed && pending.size > 0) {
+        progressed = false;
+        for (const [key, value] of [...pending]) {
+            const tabs = $(`#${key}`);
+            if (tabs.length === 0 || !tabs.data("ui-tabs") || !tabs.is(":visible")) {
+                continue;
+            }
+            pending.delete(key);
+            const index = Number(value);
+            if (tabs.tabs("option", "active") !== index && tabs.find("> ul > li").eq(index).is(":visible")) {
+                tabs.tabs("option", "active", index);
+                shown.add(key);
+                progressed = true;
+            }
+        }
+    }
+    return shown;
+}
+
+/**
  * Restore the inner jQuery UI tab selections the operator last used.
  *
  * Runs after each dashboard tab is initialized. Only containers on screen are restored: one that is
@@ -421,9 +469,13 @@ function processNavigationTabs() {
  * storage. Restoring an outer container can reveal a nested one, so the sweep repeats while it keeps
  * making progress instead of depending on the order the selections were stored in.
  *
+ * A container that showStoredTabs already switched, before the page's own handlers were bound, is told again that its
+ * entry was activated, so the page loads what that entry shows just as when the selection is restored here.
+ *
+ * @param {Set<string>} shownEarly the ids of the containers switched before the page was initialized
  * @returns {Promise<void>} resolved once the stored selections have been applied
  */
-async function restoreActiveTabs() {
+async function restoreActiveTabs(shownEarly = new Set()) {
     const storedTabs = localStorage.getItem("ActiveTabs");
     const pending = new Map(Object.entries(storedTabs ? JSON.parse(storedTabs) : {}));
 
@@ -440,7 +492,11 @@ async function restoreActiveTabs() {
                 continue;
             }
             pending.delete(key);
-            if (tabs.find("> ul > li").eq(Number(value)).is(":visible")) {
+            const entry = tabs.find("> ul > li").eq(Number(value));
+            if (shownEarly.has(key) && entry.is(":visible") && tabs.tabs("option", "active") === Number(value)) {
+                const panel = $(`#${entry.attr("aria-controls")}`);
+                tabs.trigger("tabsactivate", [{newTab: entry, newPanel: panel, oldTab: $(), oldPanel: $()}]);
+            } else if (entry.is(":visible")) {
                 tabs.tabs("option", "active", Number(value));
             } else {
                 tabs.tabs("option", "active", 0);
@@ -486,14 +542,27 @@ async function navigateToApplication(serviceIdToFind) {
     }
 }
 
+/**
+ * Watch the Palantir session and reload once it has expired. An expired session answers 401 or 403, or redirects to the
+ * login page; the redirect is not followed, since the login page would answer 200. A server that cannot be reached or
+ * answers with an error, such as while it restarts, says nothing about the session, so the check simply tries again.
+ */
 async function initializePalantirSession() {
     const intervalId = setInterval(async () => {
         if (document.visibilityState !== "visible") {
             return;
         }
         const url = retrieveDashboardUrl();
-        const result = await fetch(`${url}/session`, { credentials: "include" });
-        if (result.status !== 200) {
+        let result;
+        try {
+            result = await fetch(`${url}/session`, {credentials: "include", redirect: "manual", headers: {"Accept": "application/json"}});
+        } catch (error) {
+            console.debug("The session could not be checked just now", error);
+            return;
+        }
+        const expired = result.type === "opaqueredirect" || result.status === 401 || result.status === 403
+            || (result.status >= 300 && result.status < 400);
+        if (expired) {
             clearInterval(intervalId);
             
             Swal.close();
