@@ -35,6 +35,11 @@ public class OidcVerifiableCredentialProofException extends IllegalArgumentExcep
         this.error = error;
     }
 
+    public OidcVerifiableCredentialProofException(final String error, final String message, final Throwable cause) {
+        super(message, cause);
+        this.error = error;
+    }
+
     /**
      * The proof itself cannot be accepted.
      *
@@ -43,6 +48,17 @@ public class OidcVerifiableCredentialProofException extends IllegalArgumentExcep
      */
     public static OidcVerifiableCredentialProofException invalidProof(final String message) {
         return new OidcVerifiableCredentialProofException(OidcConstants.VC_ERROR_INVALID_PROOF, message);
+    }
+
+    /**
+     * The proof itself cannot be accepted.
+     *
+     * @param message the message
+     * @param cause   the failure that rejected it
+     * @return the exception
+     */
+    public static OidcVerifiableCredentialProofException invalidProof(final String message, final Throwable cause) {
+        return new OidcVerifiableCredentialProofException(OidcConstants.VC_ERROR_INVALID_PROOF, message, cause);
     }
 
     /**

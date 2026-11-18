@@ -96,7 +96,7 @@ public class OidcVerifiableCredentialKeyAttestationValidator {
         } catch (final OidcVerifiableCredentialProofException e) {
             throw e;
         } catch (final Exception e) {
-            throw OidcVerifiableCredentialProofException.invalidProof("Key attestation could not be validated: " + e.getMessage());
+            throw OidcVerifiableCredentialProofException.invalidProof("Key attestation could not be validated: " + e.getMessage(), e);
         }
     }
 

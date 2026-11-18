@@ -85,7 +85,8 @@ class LdaptiveResourceCRLFetcherTests {
         void verifyResourceFromResourceUrl() {
             val resource = mock(Resource.class);
             when(resource.toString()).thenReturn("ldap://localhost:10389");
-            assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
+            val exception = assertThrows(CertificateException.class, () -> fetcher.fetch(resource));
+            assertNotNull(exception.getCause());
         }
     }
 

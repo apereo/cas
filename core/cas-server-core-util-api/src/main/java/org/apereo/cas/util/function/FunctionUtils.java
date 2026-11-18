@@ -132,7 +132,7 @@ public class FunctionUtils {
                 try {
                     return falseFunction.apply(t);
                 } catch (final Throwable ex) {
-                    throw new IllegalArgumentException(ex.getMessage());
+                    throw new IllegalArgumentException(ex.getMessage(), ex);
                 }
             }
         };
@@ -353,7 +353,7 @@ public class FunctionUtils {
                     LoggingUtils.warn(LOGGER, e);
                     return errorHandler.apply(e);
                 } catch (final Throwable ex) {
-                    throw new IllegalArgumentException(ex.getMessage());
+                    throw new IllegalArgumentException(ex.getMessage(), ex);
                 }
             }
         };

@@ -86,7 +86,7 @@ public class ExtensionMatcher implements DeviceMatcher {
             matchBytes = ByteArray.fromHex(matchValueString);
         } catch (final HexException e) {
             throw new IllegalArgumentException(
-                String.format("Bad hex value in extension %s: %s", matchKey, matchValueString));
+                String.format("Bad hex value in extension %s: %s", matchKey, matchValueString), e);
         }
 
         final ASN1Primitive innerValue;

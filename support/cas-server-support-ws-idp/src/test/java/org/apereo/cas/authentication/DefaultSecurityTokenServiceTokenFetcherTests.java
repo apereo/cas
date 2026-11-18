@@ -51,6 +51,7 @@ class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIde
             + WSFederationConstants.WTREALM + '=' + realm);
         service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
 
-        assertThrows(AuthenticationException.class, () -> securityTokenServiceTokenFetcher.fetch(service, "test"));
+        val exception = assertThrows(AuthenticationException.class, () -> securityTokenServiceTokenFetcher.fetch(service, "test"));
+        assertNotNull(exception.getCause());
     }
 }

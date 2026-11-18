@@ -489,7 +489,7 @@ public class OidcFederationDefaultTrustChainResolver implements OidcFederationTr
             return null;
         } catch (final IOException e) {
             LOGGER.warn("Sector identifier URI [{}] of relying party [{}] cannot be read now: [{}]", sectorUri, entityId, e.getMessage());
-            throw new OidcFederationResolutionUnavailableException("Sector identifier URI %s cannot be read now".formatted(sectorUri));
+            throw new OidcFederationResolutionUnavailableException("Sector identifier URI %s cannot be read now".formatted(sectorUri), e);
         }
     }
 
