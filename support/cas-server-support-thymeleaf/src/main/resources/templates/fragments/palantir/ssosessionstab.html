@@ -40,7 +40,7 @@
                                 class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
                         </button>
-                        <button type="button" name="removeSsoSessionButton" id="removeSsoSessionButton"
+                        <button data-palantir-write="ssoSessions" type="button" name="removeSsoSessionButton" id="removeSsoSessionButton"
                                 title="Remove Selected User Sessions"
                                 class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Remove User Sessions</span>
@@ -64,6 +64,11 @@
                     <tbody class="mdc-data-table__content">
                     </tbody>
                  </table>
+                <!--/*
+                    The card view of the table above, drawn by palantir-sso.js from the rows the table shows,
+                    so its search and paging apply to the cards.
+                */-->
+                <div id="ssoSessionsCards" class="palantir-record-cards" aria-live="polite"></div>
                 <div class="mdc-dialog modal" id="ssoSession-dialog" role="alertdialog"
                          aria-modal="true" aria-labelledby="ssoSession-dialog-title"
                          aria-describedby="ssoSession-dialog-content">
@@ -126,7 +131,7 @@
 
 
                  <div class="d-flex">
-                    <button type="button" name="removeAllSsoSessionsButton" id="removeAllSsoSessionsButton"
+                    <button data-palantir-write="ssoSessions" type="button" name="removeAllSsoSessionsButton" id="removeAllSsoSessionsButton"
                             title="Remove All Sessions"
                             class="mdc-button mdc-button--raised">
                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Remove All Sessions</span>
@@ -180,6 +185,11 @@
                     <tbody class="mdc-data-table__content">
                     </tbody>
                  </table>
+                <!--/*
+                    The card view of the table above, drawn by palantir-sso.js from the rows the table shows,
+                    so its search and paging apply to the cards.
+                */-->
+                <div id="springSessionsCards" class="palantir-record-cards" aria-live="polite"></div>
 
                  <div class="mdc-dialog modal" id="springSession-dialog" role="alertdialog"
                       aria-modal="true" aria-labelledby="springSession-dialog-title"

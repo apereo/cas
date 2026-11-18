@@ -16,6 +16,14 @@ apply plugin: "org.apereo.cas.spring-boot-conventions"
 
 description = "Builds the CAS Spring Cloud Config Server web application for serving externalized configuration."
 
+configurations {
+    named("runtimeClasspath") {
+        exclude(group: "jakarta.servlet", module: "jakarta.servlet-api")
+        exclude(group: "jakarta.el", module: "jakarta.el-api")
+        exclude(group: "org.glassfish.expressly", module: "expressly")
+    }
+}
+
 dependencies {
     implementation libraries.springboottomcat
     implementation libraries.springcloudbootstrap

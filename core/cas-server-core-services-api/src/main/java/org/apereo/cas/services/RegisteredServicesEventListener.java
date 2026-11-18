@@ -7,8 +7,9 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
@@ -39,17 +40,30 @@ public interface RegisteredServicesEventListener extends CasEventListener {
     void handleEnvironmentChangeEvent(EnvironmentChangeEvent event);
 
     /**
-     * Handle context refreshed event. This is the single general lifecycle trigger for the
+     * Handle application ready event. This is the single general lifecycle trigger for the
      * initial load of the services registry; the JSON-import initializer and the refresh
-     * events above own their own reloads, and no second load is scheduled at application-ready
-     * time. The load is asynchronous and therefore not a readiness guarantee: it blocks
-     * neither the context refresh nor the point at which the server accepts requests.
+     * events above own their own reloads. The load is asynchronous and therefore not a readiness
+     * guarantee: it blocks neither startup nor the point at which the server accepts requests.
+     * It must not start on the context refreshed event: Spring Boot clears the class loader caches
+     * on that event, which closes the nested jars of an executable web application while the
+     * asynchronous load may still be loading classes from them ({@code Zip file closed}).
      *
      * @param event the event
      */
     @EventListener
     @Async
-    void handleContextRefreshedEvent(ContextRefreshedEvent event);
+    void handleApplicationReadyEvent(ApplicationReadyEvent event);
+
+    /**
+     * Handle refresh scope refreshed event. A refresh of the application context replaces the refresh-scoped
+     * services manager and service registry with new, empty instances after the environment change above has
+     * reloaded the old ones; the listener that receives this event is itself recreated with the new services
+     * manager, which is loaded here before the refresh completes.
+     *
+     * @param event the event
+     */
+    @EventListener
+    void handleRefreshScopeRefreshedEvent(RefreshScopeRefreshedEvent event);
     
     /**
      * Handle registered service expired event.

@@ -386,14 +386,39 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .orElse(0L);
     }
 
+    /**
+     * Count the session keys in large batches, without reading any ticket.
+     *
+     * @return the number of sessions
+     */
     @Override
     public long sessionCount() {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(TicketGrantingTicket.PREFIX).orElseThrow();
-        val redisTicketsKey = redisKeyGenerator.forPrefixAndId(redisKeyGenerator.getPrefix(), "*");
+        return casRedisTemplates.getTicketsRedisTemplate().count(redisKeyGenerator.forPrefixAndId(redisKeyGenerator.getPrefix(), "*"));
+    }
 
-        val options = ScanOptions.scanOptions().match(redisTicketsKey).build();
-        try (val result = casRedisTemplates.getTicketsRedisTemplate().scan(options)) {
-            return result.stream().parallel().count();
+    /**
+     * Count the tickets of each type with one scan of the ticket keys in large batches, grouped by the prefix every key
+     * carries, without reading any ticket.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
+        try (val keys = casRedisTemplates.getTicketsRedisTemplate().scanAll(redisKeyGenerator.forEverything())) {
+            return keys
+                .map(RedisTicketRegistry::ticketPrefixOf)
+                .collect(Collectors.groupingBy(Function.identity(), TreeMap::new, Collectors.counting()));
+        }
+    }
+
+    private static String ticketPrefixOf(final String key) {
+        try {
+            return StringUtils.defaultIfBlank(RedisKeyGenerator.parse(key).getPrefix(), "UNKNOWN");
+        } catch (final IllegalArgumentException e) {
+            LOGGER.trace("Ticket key [{}] has no prefix: [{}]", key, e.getMessage());
+            return "UNKNOWN";
         }
     }
 
@@ -401,10 +426,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public long serviceTicketCount() {
         val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(ServiceTicket.PREFIX)
             .orElseThrow().forPrefixAndId(ServiceTicket.PREFIX, "*");
-        val options = ScanOptions.scanOptions().match(redisTicketsKey).build();
-        try (val result = casRedisTemplates.getTicketsRedisTemplate().scan(options)) {
-            return result.stream().parallel().count();
-        }
+        return casRedisTemplates.getTicketsRedisTemplate().count(redisTicketsKey);
     }
 
     @Override

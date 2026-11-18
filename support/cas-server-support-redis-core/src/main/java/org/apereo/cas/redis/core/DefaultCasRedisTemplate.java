@@ -13,6 +13,8 @@ import org.springframework.data.redis.core.ScanOptions;
  * @since 6.5.0
  */
 public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implements CasRedisTemplate<K, V> {
+    private static final long SCAN_BATCH_SIZE = 10_000;
+
     /**
      * Find the keys that match the pattern with {@code SCAN}. The scan stream is closed when done, which closes the
      * cursor and returns its connection; with a connection pool, a connection that is never returned is lost to the pool.
@@ -50,22 +52,44 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
     }
 
     /**
-     * Count the keys that match the pattern with {@code SCAN}, closing the cursor and returning its connection when done.
+     * Count the keys that match the pattern with {@code SCAN}, in large batches, closing the cursor and returning its
+     * connection when done.
      *
      * @param pattern the pattern
      * @return the number of keys
      */
     @Override
     public long count(final String pattern) {
-        val scanOptions = ScanOptions.scanOptions().match(pattern);
-        val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
-        val cursor = connection.keyCommands().scan(scanOptions.build());
-        try (val keys = StreamSupport.stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
-            .onClose(() -> {
-                IOUtils.closeQuietly(cursor);
-                connection.close();
-            })) {
+        try (val keys = scanRawKeys(pattern)) {
             return keys.count();
+        }
+    }
+
+    @Override
+    public Stream<K> scanAll(final String pattern) {
+        return scanRawKeys(pattern).map(key -> (K) getKeySerializer().deserialize(key));
+    }
+
+    /**
+     * Matching keys as Redis returns them, asked for in batches of {@value #SCAN_BATCH_SIZE}: with the default of ten,
+     * going over millions of keys takes hundreds of thousands of round trips.
+     *
+     * @param pattern the pattern
+     * @return the keys, to be closed once read
+     */
+    private Stream<byte[]> scanRawKeys(final String pattern) {
+        val scanOptions = ScanOptions.scanOptions().match(pattern).count(SCAN_BATCH_SIZE).build();
+        val connection = Objects.requireNonNull(getConnectionFactory()).getConnection();
+        try {
+            val cursor = connection.keyCommands().scan(scanOptions);
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(cursor, Spliterator.ORDERED), false)
+                .onClose(() -> {
+                    IOUtils.closeQuietly(cursor);
+                    connection.close();
+                });
+        } catch (final RuntimeException e) {
+            connection.close();
+            throw e;
         }
     }
     

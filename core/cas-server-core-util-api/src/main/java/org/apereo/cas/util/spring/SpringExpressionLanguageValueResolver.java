@@ -29,7 +29,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.DataBindingPropertyAccessor;
 import org.springframework.expression.spel.support.ReflectiveMethodResolver;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.integration.util.FixedMethodFilter;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -40,9 +39,11 @@ import org.springframework.util.ReflectionUtils;
  */
 @Slf4j
 public class SpringExpressionLanguageValueResolver implements Function {
+    private static final Method LOCALE_GET_LANGUAGE = Objects.requireNonNull(ReflectionUtils.findMethod(Locale.class, "getLanguage"));
+
     private static final List<AllowedTypes> ALLOWED_TYPES = List.of(
         new AllowedTypes(Locale.class.getName(), Locale.class,
-            new FixedMethodFilter(Objects.requireNonNull(ReflectionUtils.findMethod(Locale.class, "getLanguage"))))
+            methods -> methods.stream().filter(LOCALE_GET_LANGUAGE::equals).collect(Collectors.toCollection(ArrayList::new)))
     );
 
     private static final int STARTING_PORT_RANGE = 3000;

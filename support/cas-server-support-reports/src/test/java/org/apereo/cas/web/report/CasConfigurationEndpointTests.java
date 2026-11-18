@@ -79,6 +79,11 @@ class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
             .getResponse()
             .getContentAsString();
         assertEquals(decrypted, value);
+
+        mockMvc.perform(post("/actuator/casConfig/decrypt")
+                .content("{cas-cipher}" + value)
+                .contentType(MediaType.TEXT_PLAIN_VALUE))
+            .andExpect(status().isBadRequest());
     }
 
     

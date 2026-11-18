@@ -56,6 +56,9 @@ public class AuditTrailEntity {
     @Column(name = "APPLIC_CD")
     private String applicationCode;
 
+    @Column(name = "AUD_TARGET", length = 512)
+    private String target;
+
     @Column(name = "AUD_USERAGENT", length = 512)
     private String userAgent;
     

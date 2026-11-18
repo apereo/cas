@@ -39,52 +39,54 @@ async function createRegisteredServiceOidcFields() {
 
     const features = await fetchCasFeatures();
     if (features.includes("OpenIDConnect")) {
-        await fetchOidcDiscoveryDocument().then(response => {
-            const supportedScopes = response.scopes_supported.map(scope => ({value: scope, text: scope.toUpperCase()}));
-            const supportedGrantTypes = response.grant_types_supported.map(scope => ({
-                value: scope,
-                text: scope.toUpperCase()
-            }));
-            const supportedResponseTypes = response.response_types_supported.map(scope => ({
-                value: scope,
-                text: scope.toUpperCase()
-            }));
+        let discovery = {};
+        try {
+            discovery = await fetchOidcDiscoveryDocument() ?? {};
+        } catch (error) {
+            console.warn("The OpenID Connect discovery document is not available; its choices are not offered", error);
+        }
+        const choices = values => (Array.isArray(values) ? values : []).map(value => ({value: value, text: value.toUpperCase()}));
+        const supportedScopes = choices(discovery.scopes_supported);
+        const supportedGrantTypes = choices(discovery.grant_types_supported);
+        const supportedResponseTypes = choices(discovery.response_types_supported);
 
-            createMultiSelectField({
-                containerId: "editServiceWizardOAuthOidcContainer",
-                labelTitle: "Scope(s):",
-                paramName: "scopes",
-                title: "Define the scope(s) for this OAuth/OpenID Connect relying party.",
-                options: supportedScopes
-            })
-                .data("renderer", function (value) {
-                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
-                });
+        createMultiSelectField({
+            containerId: "editServiceWizardOAuthOidcContainer",
+            labelTitle: "Scope(s):",
+            paramName: "scopes",
+            title: "Define the scope(s) for this OAuth/OpenID Connect relying party.",
+            options: supportedScopes,
+            allowCreateOption: supportedScopes.length === 0
+        })
+            .data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
 
-            createMultiSelectField({
-                cssClasses: "advanced-option",
-                containerId: "editServiceWizardOAuthOidcContainer",
-                labelTitle: "Grant Type(s):",
-                paramName: "supportedGrantTypes",
-                title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>).",
-                options: supportedGrantTypes
-            })
-                .data("renderer", function (value) {
-                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
-                });
+        createMultiSelectField({
+            cssClasses: "advanced-option",
+            containerId: "editServiceWizardOAuthOidcContainer",
+            labelTitle: "Grant Type(s):",
+            paramName: "supportedGrantTypes",
+            title: "Define the supported grant type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>authorization_code,refresh_token,client_credentials</code>).",
+            options: supportedGrantTypes,
+            allowCreateOption: supportedGrantTypes.length === 0
+        })
+            .data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
 
-            createMultiSelectField({
-                cssClasses: "advanced-option",
-                containerId: "editServiceWizardOAuthOidcContainer",
-                labelTitle: "Response Type(s):",
-                paramName: "supportedResponseTypes",
-                title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>).",
-                options: supportedResponseTypes
-            })
-                .data("renderer", function (value) {
-                    return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
-                });
-        });
+        createMultiSelectField({
+            cssClasses: "advanced-option",
+            containerId: "editServiceWizardOAuthOidcContainer",
+            labelTitle: "Response Type(s):",
+            paramName: "supportedResponseTypes",
+            title: "Define the supported response type(s) for this OAuth/OpenID Connect relying party, separated by comma (e.g., <code>code,id_token,token</code>).",
+            options: supportedResponseTypes,
+            allowCreateOption: supportedResponseTypes.length === 0
+        })
+            .data("renderer", function (value) {
+                return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
+            });
     }
 
 

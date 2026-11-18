@@ -2,6 +2,8 @@ package org.apereo.cas.audit;
 
 import module java.base;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 
 /**
@@ -44,4 +46,19 @@ public interface AuditTrailExecutionPlan {
      * @return the audit records since
      */
     List<AuditActionContext> getAuditRecords(Map<AuditTrailManager.WhereClauseFields, Object> criteria);
+
+    /**
+     * Count records per action and per hour with the first audit storage that can, so storages that keep the same
+     * records are never added together.
+     *
+     * @param query the period and actions to count
+     * @return the counts; empty when no audit storage can summarize
+     */
+    default Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        return getAuditTrailManagers()
+            .stream()
+            .map(manager -> manager.summarize(query))
+            .flatMap(Optional::stream)
+            .findFirst();
+    }
 }

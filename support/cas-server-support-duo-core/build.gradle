@@ -4,6 +4,7 @@ description = "Adds Duo Security multifactor authentication for CAS login flows.
 dependencies {
     implementation libraries.duojava
     implementation libraries.squareup
+    implementation libraries.commonscollections4
 
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")

@@ -39,10 +39,10 @@
     font-size: 11pt !important;
 }
 
-.ui-selectmenu-menu {
-    overflow-y: "auto";
+.ui-selectmenu-menu .ui-menu {
+    max-height: min(400px, calc(50vh - 24px));
     overflow-x: hidden;
-    max-height: 400px;
+    overflow-y: auto;
 }
 
 .ui-widget-overlay {
@@ -854,28 +854,6 @@ select + span[role="combobox"] {
     }
 }
 
-.palantir-service-editor-layout {
-    display: flex;
-    direction: ltr;
-    flex-flow: row nowrap;
-    gap: .5rem;
-    min-width: 0;
-}
-
-.palantir-service-template-sidebar {
-    order: 0;
-    flex: 0 0 25%;
-    min-width: 0;
-    overflow-y: auto;
-}
-
-.palantir-service-definition-editor {
-    order: 1;
-    flex: 1 1 auto;
-    width: auto;
-    min-width: 0;
-}
-
 .registered-service-client-secret-row {
     gap: .5rem;
     flex-wrap: wrap;
@@ -1295,6 +1273,56 @@ select + span[role="combobox"] {
 .http-exchanges-filters select {
     width: 100% !important;
     max-width: 100%;
+}
+
+.cas-vulnerabilities-loading {
+    display: none;
+    gap: .75rem;
+    max-width: 32rem;
+    margin: 2.5rem auto;
+    text-align: center;
+}
+
+.cas-vulnerabilities-loading p {
+    margin: 0;
+    color: var(--palantir-text-muted, #65717d);
+}
+
+#casvulnerabilities-tab.is-loading .cas-vulnerabilities-loading {
+    display: grid;
+}
+
+#casvulnerabilities-tab.is-loading .cas-vulnerabilities-table-wrap,
+#casvulnerabilities-tab.is-loading #casVulnerabilitiesSeverityBreakdown {
+    display: none !important;
+}
+
+.audit-events-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.audit-events-filters label {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.cas-ui .audit-events-filters .ui-selectmenu-button.ui-button {
+    margin: 0 !important;
+}
+
+.cas-ui .audit-events-filters .mdc-button {
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
 }
 
 .http-exchanges-table-wrap {
@@ -2557,19 +2585,17 @@ select + span[role="combobox"] {
 
 
 .audit-action-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.55rem;
-    padding: .12rem .55rem;
-    border-radius: 999px;
+    display: inline-block;
+    max-width: 100%;
+    padding: .2rem .55rem;
+    border-radius: .65rem;
     color: #fff;
-    font-size: .82rem;
-    font-weight: 800;
-    line-height: 1;
+    font-size: .76rem;
+    font-weight: 700;
+    line-height: 1.3;
     text-transform: uppercase;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 .audit-action-success {
@@ -2591,22 +2617,20 @@ select + span[role="combobox"] {
 
 .audit-events-table {
     width: 100% !important;
-    min-width: 76rem;
+    min-width: 89rem;
     table-layout: fixed;
 }
 
 .audit-events-table th,
 .audit-events-table td {
     vertical-align: middle;
+    white-space: normal;
 }
 
-.audit-events-table th:first-child,
-.audit-events-table td:first-child,
-.audit-events-table th:nth-child(5),
-.audit-events-table td:nth-child(5),
 .audit-events-table th:nth-child(6),
-.audit-events-table td:nth-child(6) {
-    white-space: normal;
+.audit-events-table td:nth-child(6),
+.audit-events-table th:nth-child(7),
+.audit-events-table td:nth-child(7) {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -2625,8 +2649,48 @@ select + span[role="combobox"] {
 }
 
 .audit-principal-value code {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.audit-target-application {
+    display: inline-flex;
+    gap: .35rem;
+    align-items: center;
+    max-width: 100%;
+    padding: .2rem .55rem;
+    border: 1px solid var(--palantir-border, #d7e3eb);
+    border-radius: .65rem;
+    background: transparent;
+    color: var(--palantir-brand, #176fa5);
+    font: inherit;
+    font-size: .85rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.audit-target-application span {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.audit-target-application:hover,
+.audit-target-application:focus-visible {
+    background: var(--palantir-tint, #eef5fa);
+    text-decoration: underline;
+}
+
+.audit-target-application.is-gone {
+    color: var(--palantir-text-muted, #65717d);
+    text-decoration: line-through;
+}
+
+.audit-target-value {
     overflow-wrap: anywhere;
-    word-break: break-word;
+}
+
+.audit-target-none {
+    color: var(--palantir-text-muted, #65717d);
 }
 
 .audit-resource-value,
@@ -3383,10 +3447,6 @@ select + span[role="combobox"] {
     font-size: 1.4rem;
 }
 
-.cluster-members-loading-dialog .mdc-linear-progress {
-    margin: 1.25rem 0 .5rem;
-}
-
 .cluster-topology-owners {
     display: grid;
     gap: 1rem;
@@ -3773,7 +3833,7 @@ select + span[role="combobox"] {
 }
 
 /* The plain definition editor is the same kind of dialog as the wizard above and needs the same
-   unbroken flex chain: dialog -> content -> editor pane, every box min-height:0, so the Ace pane
+   unbroken flex chain: dialog -> view -> editor pane, every box min-height:0, so the Ace pane
    takes its height from the window rather than the dialog growing a scrollbar of its own.
 
    Qualified with .ui-dialog-content for the same reason as the wizard: until jQuery UI creates the
@@ -3783,28 +3843,7 @@ select + span[role="combobox"] {
     display: flex;
     flex-direction: column;
     min-height: 0;
-}
-
-.ui-dialog-content #edit-service-dialog-content {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    padding: 12px 16px 0;
-}
-
-.ui-dialog-content #serviceEditorContainer {
-    flex: 1 1 auto;
-    min-height: 0;
-    height: auto;
-}
-
-/* Beats the h-100 utility the markup carries, which would otherwise pin the editor to the height
-   of a parent that is itself sizing to content. The width split is left to
-   .palantir-service-definition-editor, which already states its own flex. */
-.ui-dialog-content #serviceEditorContainer > pre.ace-editor {
-    min-height: 0;
-    height: auto;
+    padding: 0;
 }
 
 .registered-service-wizard__actions {

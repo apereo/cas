@@ -166,7 +166,8 @@ or override log42.component.properties to turn off async
 
         <Logger name="org.apache" level="error"/>
         <Logger name="com.netflix" level="warn"/>
-        <Logger name="org.quartz" level="warn"/>
+        <!-- Javers compares the Object values of untyped maps, such as attribute release mappings, by equality, as intended; it warns about each one. -->
+        <Logger name="org.javers.core.diff.appenders.CorePropertyChangeAppender" level="error"/>
 
         <Logger name="org.thymeleaf" level="${sys:thymeleaf.log.level}" />
 

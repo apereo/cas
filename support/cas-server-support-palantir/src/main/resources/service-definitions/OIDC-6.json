@@ -1,0 +1,28 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "serviceId": "^https://app\\.example\\.org/callback",
+  "name": "Client authenticates with a signed JWT",
+  "description": "The client proves itself with a JWT signed by a key from its published JWKS instead of a shared secret.",
+  "tokenEndpointAuthenticationMethod": "private_key_jwt",
+  "jwks": "https://app.example.org/.well-known/jwks.json",
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile"
+    ]
+  ]
+}

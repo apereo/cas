@@ -11,6 +11,7 @@ import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreEntity;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.generator.jpa.OidcJpaJsonWebKeystoreGeneratorService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -28,7 +29,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -65,7 +65,7 @@ public class CasOidcJwksJpaAutoConfiguration {
                 mgmr.setEntityManagerFactory(emf.getObject());
                 return mgmr;
             })
-            .otherwise(PseudoTransactionManager::new)
+            .otherwise(PseudoPlatformTransactionManager::new)
             .get();
     }
 

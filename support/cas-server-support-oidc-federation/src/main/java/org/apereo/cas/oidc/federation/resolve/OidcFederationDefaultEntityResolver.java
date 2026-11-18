@@ -192,7 +192,7 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
         } catch (final OidcFederationResolutionUnavailableException e) {
             LOGGER.warn("[{}] is not resolved now: [{}]", subject, e.getMessage());
             throw new OidcFederationResolveException(HttpStatus.SERVICE_UNAVAILABLE, TEMPORARILY_UNAVAILABLE,
-                "The entity cannot be resolved now; try again later");
+                "The entity cannot be resolved now; try again later", e);
         }
     }
 
@@ -293,7 +293,7 @@ public class OidcFederationDefaultEntityResolver implements OidcFederationEntity
                 } catch (final Exception e) {
                     LOGGER.warn("Metadata of type [{}] of [{}] cannot be resolved: [{}]", entityType, chain.getLeafConfiguration().getEntityID(), e.getMessage());
                     throw new OidcFederationResolveException(HttpStatus.BAD_REQUEST, INVALID_METADATA,
-                        "Metadata of type " + entityType + " cannot be resolved with the policies of the trust chain");
+                        "Metadata of type " + entityType + " cannot be resolved with the policies of the trust chain", e);
                 }
             }
         }

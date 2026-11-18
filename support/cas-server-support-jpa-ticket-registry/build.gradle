@@ -11,6 +11,7 @@ ext {
 }
 dependencies {
     implementation libraries.springintegrationjdbc
+    implementation libraries.springintegration
     
     api project(":api:cas-server-core-api")
 

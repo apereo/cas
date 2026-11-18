@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
@@ -104,6 +105,38 @@ class RestAuditTrailManagerTests {
         assertEquals(1, wrapped.size());
         val plain = manager.readAuditRecords(MAPPER.writeValueAsString(List.of(audit)));
         assertEquals("resource", plain.getFirst().getResourceOperatedUpon());
+    }
+
+    @Test
+    void verifySummary() {
+        val hour = AuditSummaryQuery.hourOf(LocalDateTime.now(Clock.systemUTC()));
+        val query = new AuditSummaryQuery(hour.minusHours(23), hour.plusHours(1), Set.of("AUTHENTICATION_SUCCESS"));
+        val answer = "[{\"hour\":\"%s\",\"action\":\"AUTHENTICATION_SUCCESS\",\"count\":42}]".formatted(hour);
+        try (val webServer = new MockWebServer(new ByteArrayResource(answer.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
+            webServer.start();
+            val counts = managerFor(webServer).summarize(query).orElseThrow();
+            assertEquals(1, counts.size());
+            assertEquals(42, counts.getFirst().count());
+            assertEquals(hour, counts.getFirst().hour());
+        }
+        val byTarget = new AuditSummaryQuery(query.from(), query.to(), query.actions(), true);
+        val targets = "[{\"hour\":\"%s\",\"action\":\"AUTHENTICATION_SUCCESS\",\"count\":7,\"target\":\"1001\"}]".formatted(hour);
+        try (val webServer = new MockWebServer(new ByteArrayResource(targets.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
+            webServer.start();
+            val counts = managerFor(webServer).summarize(byTarget).orElseThrow();
+            assertEquals("1001", counts.getFirst().target());
+            assertEquals(7, counts.getFirst().count());
+        }
+        val records = MAPPER.writeValueAsString(List.of(new AuditActionContext("casuser", "resource", "AUTHENTICATION_SUCCESS",
+            "CAS", hour, new ClientInfo("1.2.3.4", "1.2.3.4", "GoogleChrome", "London"))));
+        try (val webServer = new MockWebServer(new ByteArrayResource(records.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
+            webServer.start();
+            assertTrue(managerFor(webServer).summarize(query).isEmpty());
+        }
+        try (val webServer = new MockWebServer(new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY), HttpStatus.NOT_FOUND)) {
+            webServer.start();
+            assertTrue(managerFor(webServer).summarize(query).isEmpty());
+        }
     }
 
     private AuditTrailManager managerFor(final MockWebServer webServer) {

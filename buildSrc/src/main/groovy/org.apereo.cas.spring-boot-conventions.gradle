@@ -118,7 +118,7 @@ if (project.ext.forceBootifulArtifact || (!publishFlag && !skipBootifulArtifact)
         }
 
         sourceResources sourceSets.bootRun
-        systemProperties = System.properties
+        systemProperties = System.properties.findAll { key, value -> key != 'java.home' }
 
         def list = []
         list.add('-Djava.net.preferIPv4Stack=true ')

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
 import org.apereo.cas.configuration.StandaloneConfigurationFilePropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.CasConfigurationDecryptionInitializer;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -16,6 +17,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -59,6 +62,14 @@ class CasCoreBaseEnvironmentConfiguration {
         public static CipherExecutor<String, String> casConfigurationCipherExecutor(
             final Environment environment) {
             return new CasConfigurationJasyptCipherExecutor(environment);
+        }
+
+        @ConditionalOnMissingBean(name = "casConfigurationDecryptionInitializer")
+        @Bean
+        public static ApplicationContextInitializer<ConfigurableApplicationContext> casConfigurationDecryptionInitializer(
+            @Qualifier(CipherExecutor.BEAN_NAME_CAS_CONFIGURATION_CIPHER_EXECUTOR)
+            final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+            return new CasConfigurationDecryptionInitializer(casConfigurationCipherExecutor);
         }
     }
 

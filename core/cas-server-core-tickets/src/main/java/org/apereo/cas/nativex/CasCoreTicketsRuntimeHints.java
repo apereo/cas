@@ -21,7 +21,6 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.support.locks.LockRegistry;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -51,8 +50,6 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         val expirationPolicyClasses = findSubclassesInPackage(ExpirationPolicy.class, CentralAuthenticationService.NAMESPACE);
         registerSerializationHints(hints, expirationPolicyClasses);
         registerReflectionHints(hints, expirationPolicyClasses);
-        
-        registerProxyHints(hints, LockRegistry.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
         registerReflectionHints(hints, findSubclassesInPackage(QueueableTicketRegistryMessageReceiver.class, CentralAuthenticationService.NAMESPACE));

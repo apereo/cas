@@ -148,6 +148,9 @@ description: "Backend-specific rules for MongoDB (connection factory, client lif
 
 - JPA with `@GeneratedValue` ids (Hibernate 7): `merge()` of an entity whose id is set but not in the table throws `OptimisticLockException`; reset the id to `0` to insert. The JPA GAuth repository does this when `update()` inserts a missing device.
 - `DynamoDbTableUtils.createTable(..., globalSecondaryIndexes)` creates GSIs with a new table and adds missing ones to an existing table with `UpdateTable`; pass every GSI key attribute in the attribute definitions.
+  An added GSI is created and backfilled while the table stays ACTIVE, so `createTable` waits for the index itself
+  (`waitUntilIndexActive`: ACTIVE and not backfilling) before returning; never write to or query an index right after
+  `UpdateTable` on table status alone. DynamoDB Local answers a write in that window with a 500 "unknown error".
 - MongoDB: a query with a collation uses only indexes with the same collation. Give such an index an explicit name, so it does not clash with a plain index on the same field. Avoid `MongoDbConnectionFactory.createOrUpdateIndexes` for collated indexes: the server returns the collation expanded, the options never compare equal, and the index is dropped and rebuilt at every startup.
 - Spring Data Redis with Lettuce: `executePipelined` opens a dedicated connection for the pipeline (a new TCP connection when there is no pool), so a pipeline is slower than a few plain commands on the shared connection. Pipeline only bulk work such as batched deletes, never a per-login write.
 - `CasRedisTemplate.scan(pattern, count)` treats `count` as a cap on the results, not as the `SCAN COUNT` hint; for a hint, use `RedisTemplate.scan(ScanOptions)` and close the cursor.

@@ -74,17 +74,17 @@
 
                     </section>
                     <div class="d-flex">
-                        <button type="button" name="casProtocolV1Button" id="casProtocolV1Button"
+                        <button data-palantir-write="casValidate" type="button" name="casProtocolV1Button" id="casProtocolV1Button"
                                 class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V1 Protocol</span>
                         </button>
-                        <button type="button" name="casProtocolV2Button" id="casProtocolV2Button"
+                        <button data-palantir-write="casValidate" type="button" name="casProtocolV2Button" id="casProtocolV2Button"
                                 class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V2 Protocol</span>
                         </button>
-                        <button type="submit" name="casProtocolV3Button" id="casProtocolV3Button"
+                        <button data-palantir-write="casValidate" type="submit" name="casProtocolV3Button" id="casProtocolV3Button"
                                 class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V3 Protocol</span>
@@ -122,7 +122,7 @@
                         <ul>
                             <li><a id="saml2requests" href="#saml2requests-tab">SAML2 Requests/Responses</a></li>
                             <li><a id="saml2metadata" href="#saml2metadata-tab">Service Provider Metadata Cache</a></li>
-                            <li class="d-none" id="saml2metadatamgmt-li"><a id="saml2metadatamgmt" href="#saml2metadatamgmt-tab">Service Provider Metadata Management</a></li>
+                            <li class="d-none" id="saml2metadatamgmt-li" data-palantir-requires="samlIdpRegisteredServiceMetadata"><a id="saml2metadatamgmt" href="#saml2metadatamgmt-tab">Service Provider Metadata Management</a></li>
                             <li><a id="saml2configprops" href="#saml2configprops-tab">Configuration</a></li>
                         </ul>
 
@@ -182,14 +182,14 @@
 
                                 </section>
                                 <div class="d-flex">
-                                    <button type="submit" name="saml2ProtocolPostButton"
+                                    <button data-palantir-write="samlPostProfileResponse" type="submit" name="saml2ProtocolPostButton"
                                             title="Simulate a SAML2 POST Response"
                                             id="saml2ProtocolPostButton"
                                             class="mdc-button mdc-button--raised">
                                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                            aria-hidden="true"></i>POST Response</span>
                                     </button>
-                                    <button type="button" name="saml2ProtocolLogoutButton"
+                                    <button data-palantir-write="samlPostProfileResponse" type="button" name="saml2ProtocolLogoutButton"
                                             title="Simulate a SAML2 Logout Request"
                                             id="saml2ProtocolLogoutButton"
                                             class="mdc-button mdc-button--raised">
@@ -251,7 +251,7 @@
                                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download"
                                                                            aria-hidden="true"></i>Fetch</span>
                                     </button>
-                                    <button type="button" name="saml2MetadataCacheInvalidateButton"
+                                    <button data-palantir-write="samlIdPRegisteredServiceMetadataCache" type="button" name="saml2MetadataCacheInvalidateButton"
                                             title="Invalidate SAML2 Metadata Cache Entry"
                                             id="saml2MetadataCacheInvalidateButton"
                                             class="mdc-button mdc-button--raised">
@@ -267,14 +267,12 @@
 
                         <div id="saml2metadatamgmt-tab">
                             <p>Manage SAML2 service provider metadata sources registered with CAS.</p>
-                            <div class="d-flex align-items-end">
-                                <label for="saml2MetadataManagersSelect">
-                                    Metadata Manager:
-                                    <select id="saml2MetadataManagersSelect" class="jqueryui-selectmenu">
-                                    </select>
-                                </label>
-                                <button type="button" name="saml2MetadataUploadButton" id="saml2MetadataUploadButton"
-                                        class="mdc-button mdc-button--raised ml-2">
+                            <div class="palantir-control-row">
+                                <label for="saml2MetadataManagersSelect">Metadata Manager:</label>
+                                <select id="saml2MetadataManagersSelect" class="jqueryui-selectmenu">
+                                </select>
+                                <button data-palantir-write="samlIdPRegisteredServiceMetadata" type="button" name="saml2MetadataUploadButton" id="saml2MetadataUploadButton"
+                                        class="mdc-button mdc-button--raised">
                                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-upload"
                                                                        aria-hidden="true"></i>Upload Metadata</span>
                                 </button>
@@ -383,17 +381,8 @@
                     </div>
                 </section>
 
-                <div class="mdc-dialog modal" id="saml2MetadataDialog" role="alertdialog"
-                                     aria-modal="true" aria-label="SAML2 Identity Provider Metadata"
-                                     aria-describedby="saml2MetadataDialog-content">
-                    <div class="mdc-dialog__container w-100 modal-dialog">
-                        <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
-                            <div class="mdc-dialog__content modal-body" id="saml2MetadataDialog-content">
-                                <div class="ace-editor ace-absolute" id="saml2MetadataDialogEditor"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mdc-dialog__scrim"></div>
+                <div id="saml2MetadataDialog" class="palantir-code-dialog__body" title="SAML2 Identity Provider Metadata" style="display: none;">
+                    <div class="ace-editor palantir-code-dialog__editor" id="saml2MetadataDialogEditor"></div>
                 </div>
             </div>
 
@@ -459,7 +448,7 @@
 
                         </section>
                         <div class="d-flex">
-                            <button type="submit" name="saml1ProtocolButton" id="saml1ProtocolButton"
+                            <button data-palantir-write="samlValidate" type="submit" name="saml1ProtocolButton" id="saml1ProtocolButton"
                                     class="mdc-button mdc-button--raised">
                                 <span class="mdc-button__label">
                                     <i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Submit</span>
@@ -486,8 +475,8 @@
                         <ul>
                             <li><a id="oidctokenexchange" href="#oidctokenexchange-tab">Token Exchange</a></li>
                             <li><a id="oidckeyrotation" href="#oidckeyrotation-tab">Key Rotation</a></li>
-                            <li class="d-none" id="oidcclientsecretrotation-li"><a id="oidcclientsecretrotation" href="#oidcclientsecretrotation-tab">Client Secret Rotation</a></li>
-                            <li class="d-none" id="oidcclientjwks-li"><a id="oidcclientjwks" href="#oidcclientjwks-tab">Relying Party JWKS Management</a></li>
+                            <li class="d-none" id="oidcclientsecretrotation-li" data-palantir-requires="oauthClientSecrets"><a id="oidcclientsecretrotation" href="#oidcclientsecretrotation-tab">Client Secret Rotation</a></li>
+                            <li class="d-none" id="oidcclientjwks-li" data-palantir-requires="oidcJwks feature:OpenIDConnect.client-jwks-registration"><a id="oidcclientjwks" href="#oidcclientjwks-tab">Relying Party JWKS Management</a></li>
                             <li><a id="oidcdiscovery" href="#oidcdiscovery-tab">Discovery Profile</a></li>
                             <li><a id="oidcconfigprops" href="#oidcconfigprops-tab">Configuration</a></li>
                         </ul>
@@ -542,7 +531,7 @@
                                     </div>
                                 </section>
                                 <div class="d-flex">
-                                    <button type="submit" name="oidcClientSecretRotationButton"
+                                    <button data-palantir-write="oauthClientSecrets" type="submit" name="oidcClientSecretRotationButton"
                                             id="oidcClientSecretRotationButton"
                                             class="mdc-button mdc-button--raised">
                                         <span class="mdc-button__label">
@@ -682,17 +671,8 @@
                                 </button>
                             </div>
 
-                            <div class="mdc-dialog modal" id="oidcOpConfigurationDialog" role="alertdialog"
-                                 aria-modal="true" aria-label="OpenID Connect Configuration"
-                                 aria-describedby="oidcOpConfigurationDialog-content">
-                                <div class="mdc-dialog__container w-100 modal-dialog">
-                                    <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
-                                        <div class="mdc-dialog__content modal-body" id="oidcOpConfigurationDialog-content">
-                                            <div class="ace-editor ace-absolute" id="oidcOpConfigurationDialogEditor"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mdc-dialog__scrim"></div>
+                            <div id="oidcOpConfigurationDialog" class="palantir-code-dialog__body" title="OpenID Connect Configuration" style="display: none;">
+                                <div class="ace-editor palantir-code-dialog__editor" id="oidcOpConfigurationDialogEditor"></div>
                             </div>
                         </div>
 

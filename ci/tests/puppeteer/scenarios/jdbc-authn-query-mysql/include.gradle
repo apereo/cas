@@ -1,4 +1,6 @@
-def scenario = System.getenv("SCENARIO")
+import org.apereo.cas.gradle.CasBuildSettings
+
+def scenario = CasBuildSettings.stringProperty(project, "SCENARIO")
 def config = "${project.rootDir}/ci/tests/puppeteer/scenarios/${scenario}/classpath"
 println "Including source set directory ${config}"
 sourceSets.main.resources.srcDirs += config
