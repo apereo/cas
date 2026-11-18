@@ -61,108 +61,110 @@
                                 </label>
 
                                 <script type="text/javascript">
-                                    const sources = PalantirDashboardConfiguration.mutablePropertySources().map(src => ({
-                                        value: src,
-                                        text: src
-                                    }));
-                                    if (sources.length === 1) {
-                                        sources[0].selected = true;
-                                    }
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        const sources = PalantirDashboardConfiguration.mutablePropertySources().map(src => ({
+                                            value: src,
+                                            text: src
+                                        }));
+                                        if (sources.length === 1) {
+                                            sources[0].selected = true;
+                                        }
 
-                                    const section = $("<section>", {
-                                        id: `propertySourcesSection`,
-                                    });
+                                        const section = $("<section>", {
+                                            id: `propertySourcesSection`,
+                                        });
                                     
-                                    const container = $("<span>", {
-                                        id: `propertySourcesSelectContainer`,
-                                        class: `d-flex mb-2 mt-2`
-                                    });
+                                        const container = $("<span>", {
+                                            id: `propertySourcesSelectContainer`,
+                                            class: `d-flex mb-2 mt-2`
+                                        });
 
-                                    const select = $("<select multiple>")
-                                        .attr("id", "propertySourcesSelect")
-                                        .addClass("jqueryui-multiselectmenu");
+                                        const select = $("<select multiple>")
+                                            .attr("id", "propertySourcesSelect")
+                                            .addClass("jqueryui-multiselectmenu");
 
-                                    sources.forEach(o => {
-                                        select.append(
-                                            $("<option>").val(o.value).text(o.text).attr("selected", o.selected)
-                                        );
-                                    });
+                                        sources.forEach(o => {
+                                            select.append(
+                                                $("<option>").val(o.value).text(o.text).attr("selected", o.selected)
+                                            );
+                                        });
 
-                                    const label = $("<label>")
-                                        .addClass("pt-2")
-                                        .addClass("pr-2")
-                                        .addClass("mb-2")
-                                        .attr("id", "mylabel")
-                                        .css("display", "block")
-                                        .css("min-width", "max-content")
-                                        .attr("for", "propertySourcesSelect").text("Property Source(s):");
-                                    container.append(label, select);
-                                    section.append(container);
+                                        const label = $("<label>")
+                                            .addClass("pt-2")
+                                            .addClass("pr-2")
+                                            .addClass("mb-2")
+                                            .attr("id", "mylabel")
+                                            .css("display", "block")
+                                            .css("min-width", "max-content")
+                                            .attr("for", "propertySourcesSelect").text("Property Source(s):");
+                                        container.append(label, select);
+                                        section.append(container);
                                     
-                                    $(`#newConfigurationMainPanel`).append(section);
+                                        $(`#newConfigurationMainPanel`).append(section);
                                     
-                                    let settings = {
-                                        plugins: ['remove_button']
-                                    };
-                                    new TomSelect("#propertySourcesSelect", settings);
+                                        let settings = {
+                                            plugins: ['remove_button']
+                                        };
+                                        new TomSelect("#propertySourcesSelect", settings);
 
 
-                                    const propertyNameSection = $("<section>", {
-                                        id: `propertyNameSection`,
-                                    });
+                                        const propertyNameSection = $("<section>", {
+                                            id: `propertyNameSection`,
+                                        });
                                     
-                                    const nameContainer = $("<span>", {
-                                        id: `propertyNameSelectContainer`,
-                                        class: `d-flex mb-2 mt-2`
-                                    });
+                                        const nameContainer = $("<span>", {
+                                            id: `propertyNameSelectContainer`,
+                                            class: `d-flex mb-2 mt-2`
+                                        });
 
-                                    const selectName = $("<select>")
-                                        .attr("id", "newConfigPropertyName")
-                                        .addClass("jqueryui-multiselectmenu");
+                                        const selectName = $("<select>")
+                                            .attr("id", "newConfigPropertyName")
+                                            .addClass("jqueryui-multiselectmenu");
 
-                                    const labelName = $("<label>")
-                                        .addClass("pt-2")
-                                        .addClass("pr-2")
-                                        .addClass("mb-2")
-                                        .attr("id", "propertyNameLabel")
-                                        .css("display", "block")
-                                        .css("min-width", "max-content")
-                                        .attr("for", "newConfigPropertyName").text("Property Name:");
-                                    nameContainer.append(labelName, selectName);
-                                    propertyNameSection.append(nameContainer);
-                                    $(`#newConfigurationMainPanel`).prepend(propertyNameSection);
+                                        const labelName = $("<label>")
+                                            .addClass("pt-2")
+                                            .addClass("pr-2")
+                                            .addClass("mb-2")
+                                            .attr("id", "propertyNameLabel")
+                                            .css("display", "block")
+                                            .css("min-width", "max-content")
+                                            .attr("for", "newConfigPropertyName").text("Property Name:");
+                                        nameContainer.append(labelName, selectName);
+                                        propertyNameSection.append(nameContainer);
+                                        $(`#newConfigurationMainPanel`).prepend(propertyNameSection);
                                     
-                                    let nameSettings = {
-                                        create: true,
-                                        persist: false,
-                                        dropdownParent: 'body',
-                                        plugins: ['remove_button'],
-                                        valueField: "id",
-                                        labelField: "name",
-                                        searchField: ["id", "name", "description"],
-                                        onChange: function(value) {
-                                            hideElements("#configurationPropertyInfo");
+                                        let nameSettings = {
+                                            create: true,
+                                            persist: false,
+                                            dropdownParent: 'body',
+                                            plugins: ['remove_button'],
+                                            valueField: "id",
+                                            labelField: "name",
+                                            searchField: ["id", "name", "description"],
+                                            onChange: function(value) {
+                                                hideElements("#configurationPropertyInfo");
                                             
-                                            const selectedOption = this.options[value];
-                                            if (selectedOption) {
-                                                showElements("#configurationPropertyInfo");
-                                                $("#configurationPropertyInfo").empty();
-                                                if (selectedOption.description) {
-                                                    let description = selectedOption.description ?? "";
-                                                    description = description.replace(/\{@code\s+([^}]+)}/g, "<code>$1</code>");
-                                                    $("#configurationPropertyInfo").append(`Description: ${description} `);
-                                                }
-                                                $("#configurationPropertyInfo").append(`<p>Type: <code>${selectedOption.type ?? ""}</code> `);
-                                                if (selectedOption.defaultValue) {
-                                                    $("#configurationPropertyInfo").append(`Default: <code>${selectedOption.defaultValue ?? "false"}</code> `);
-                                                }
-                                                if (selectedOption.deprecated) {
-                                                    $("#configurationPropertyInfo").append(`Deprecated: <code>${selectedOption.deprecated ?? "false"}</code> `);
+                                                const selectedOption = this.options[value];
+                                                if (selectedOption) {
+                                                    showElements("#configurationPropertyInfo");
+                                                    $("#configurationPropertyInfo").empty();
+                                                    if (selectedOption.description) {
+                                                        let description = selectedOption.description ?? "";
+                                                        description = description.replace(/\{@code\s+([^}]+)}/g, "<code>$1</code>");
+                                                        $("#configurationPropertyInfo").append(`Description: ${description} `);
+                                                    }
+                                                    $("#configurationPropertyInfo").append(`<p>Type: <code>${selectedOption.type ?? ""}</code> `);
+                                                    if (selectedOption.defaultValue) {
+                                                        $("#configurationPropertyInfo").append(`Default: <code>${selectedOption.defaultValue ?? "false"}</code> `);
+                                                    }
+                                                    if (selectedOption.deprecated) {
+                                                        $("#configurationPropertyInfo").append(`Deprecated: <code>${selectedOption.deprecated ?? "false"}</code> `);
+                                                    }
                                                 }
                                             }
-                                        }
-                                    };
-                                    new TomSelect("#newConfigPropertyName", nameSettings);
+                                        };
+                                        new TomSelect("#newConfigPropertyName", nameSettings);
+                                    });
                                 </script>
                             </div>
                         </section>

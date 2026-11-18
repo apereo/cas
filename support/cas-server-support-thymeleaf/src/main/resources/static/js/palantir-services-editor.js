@@ -509,7 +509,7 @@ class PalantirServiceEditor {
                 PalantirServiceEditor.clearProblem();
             }
         } catch (error) {
-            const position = PalantirServiceEditor.positionOf(error, text);
+            const position = PalantirServiceEditor.toPosition(error, text);
             const message = String(error.message).replace(/\s*\(line \d+ column \d+\)\s*$/, "").replace(/ in JSON at position \d+$/, "");
             status.text(`Line ${position.row + 1}: ${message}`).attr("data-state", "error");
             PalantirServiceEditor.showProblem("Not valid JSON", `${message} on line ${position.row + 1}.`, position.row, "syntax");
@@ -523,7 +523,7 @@ class PalantirServiceEditor {
      * @param text the text that was parsed
      * @returns {{row: number, column: number}} the zero-based position
      */
-    static positionOf(error, text) {
+    static toPosition(error, text) {
         const message = String(error?.message ?? "");
         const lineColumn = message.match(/line (\d+) column (\d+)/);
         if (lineColumn) {

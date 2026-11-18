@@ -293,7 +293,7 @@
 
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
-                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService advanced-option', dataAttrs='param-skip-true=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-true=true')}"/>
                                                  </div>
                                              </div>
 
@@ -577,7 +577,7 @@
 
                                                    <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptUsername',
                                                         title='Encrypting the username requires a public key to be defined for the registered service',
-                                                        label='#Encrypt Username', cssClass='pt-2,DefaultRegisteredServiceUsernameProvider',
+                                                        label='#Encrypt Username', cssClass='pt-2 DefaultRegisteredServiceUsernameProvider',
                                                         dataAttrs='param-skip-false=true,param-name=usernameAttributeProvider.encryptUsername')}"/>
                                               </div>
 
@@ -631,7 +631,7 @@
 
                                                       <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterCompleteMatch',
                                                             title='When enabled, a complete match is required for attribute values to be released',
-                                                            label='#Complete Match', cssClass='hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
+                                                            label='#Complete Match', cssClass='pt-2 hide RegisteredServiceMappedRegexAttributeFilter RegisteredServiceReverseMappedRegexAttributeFilter RegisteredServiceMutantRegexAttributeFilter',
                                                             dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.attributeFilter.completeMatch')}"/>
 
                                                       <div th:replace="~{fragments/switchbutton :: switchbutton (id='registeredServiceAttrReleasePolicyAttributeValueFilterCaseInsensitive',
@@ -651,7 +651,7 @@
                                                   </div>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseCredentialPassword',
                                                         title='When enabled, the credential password is authorized to be released as an attribute',
-                                                        label='#Release Credential Password', cssClass='always-show advanced-option',
+                                                        label='#Release Credential Password', cssClass='pt-2 always-show advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseCredentialPassword')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseProxyGrantingTicket',
                                                         title='When enabled, the proxy granting ticket is authorized to be released as an attribute',
@@ -659,7 +659,7 @@
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseExcludeDefaultAttributes',
                                                         title='When enabled, default attributes are excluded from being released',
-                                                        label='#Exclude Default Attributes', cssClass='always-show advanced-option',
+                                                        label='#Exclude Default Attributes', cssClass='pt-2 always-show advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=attributeReleasePolicy.excludeDefaultAttributes')}"/>
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='attributeReleaseAuthorizedToReleaseAuthenticationAttributes',
                                                         title='When enabled, authentication attributes are authorized to be released as attributes',
@@ -688,7 +688,7 @@
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassTrustedDeviceEnabled',
                                                         title='When enabled, trusted devices are allowed to bypass multifactor authentication',
-                                                        label='#Bypass Trusted Devices', cssClass='advanced-option',
+                                                        label='#Bypass Trusted Devices', cssClass='pt-2 advanced-option',
                                                         dataAttrs='param-skip-false=true,param-name=multifactorPolicy.bypassTrustedDeviceEnabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy')}"/>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='bypassIfMissingPrincipalAttribute',

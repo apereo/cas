@@ -8,22 +8,13 @@ let editServiceWizardDialog = undefined;
  * load that DOM, the MDC components attached to it, a dozen select widgets, and the discovery
  * profile request its attribute pickers make.
  *
- * The markup therefore registers each section's builder here instead of calling it, and the queue
- * is drained the first time the dialog is opened. Registration order is document order, which is
- * what decides where each field lands, so the queue is drained in order and awaited: one builder
- * fetches the OpenID Connect discovery document before it can fill its dropdowns.
+ * The markup therefore registers each section's builder with palantirWizardField instead of calling it, and the
+ * queue, palantirWizardFieldBuilders, is drained the first time the dialog is opened. Both are defined inline in the
+ * dashboard page, since the markup registers its builders while the page is parsed, before the deferred scripts run.
+ * Registration order is document order, which is what decides where each field lands, so the queue is drained in
+ * order and awaited: one builder fetches the OpenID Connect discovery document before it can fill its dropdowns.
  */
-const palantirWizardFieldBuilders = [];
 let palantirWizardFieldsBuilt = null;
-
-/**
- * Register a wizard field builder to run when the wizard is first opened.
- *
- * @param builder a function that builds one section's fields; may return a promise
- */
-function palantirWizardField(builder) {
-    palantirWizardFieldBuilders.push(builder);
-}
 
 /**
  * Build the wizard in the background once the browser is idle, so that opening the first application does not
@@ -95,29 +86,29 @@ function validatePattern(button, targetFieldId = "#registeredServiceId") {
     });
 }
 
+/**
+ * Show the fields of the chosen attribute release policy and hide the others. The activation criteria, principal
+ * attribute repository, value filter and consent sections nested in the attribute release section have types of their
+ * own, so their fields are left to their own handlers.
+ *
+ * @param select the policy type select
+ */
 function handleAttributeReleasePolicyChange(select) {
-    let type = getLastWord($(select).val());
-    showElements($(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer']")
-        .not(`.${type}`)
-        .not(".always-show"));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='SelectContainer']")
-        .not(`.${type}`)
-        .not(".always-show"));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer']")
-        .not(`.${type}`));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel']")
-        .not(`.${type}`)
-        .not(".always-show"));
+    const type = getLastWord($(select).val());
+    const section = "editServiceWizardMenuItemAttributeReleasePolicy";
+    const own = selector => $(`#${section} ${selector}`)
+        .filter((index, element) => $(element).parent().closest("[id^='editServiceWizardMenuItemAttributeRelease']").attr("id") === section);
+    showElements(own(`.${type}`));
+    hideElements(own("[id$='FieldContainer']").not(`.${type}`).not(".always-show"));
+    hideElements(own("[id$='SelectContainer']").not(`.${type}`).not(".always-show"));
+    hideElements(own("[id$='MapContainer']").not(`.${type}`));
+    hideElements(own("[id$='ButtonPanel']").not(`.${type}`).not(".always-show"));
 
-    // Only clear values when not populating from an existing service
     if (!isPopulatingWizard) {
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
-            .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
-            .val("");
-        resetWizardSwitches("#editServiceWizardMenuItemAttributeReleasePolicy");
-        $("#editServiceWizardMenuItemAttributeReleasePolicy .jqueryui-multiselectmenu").each(function () {
+        own("[id$='FieldContainer']").find("input").val("");
+        own("[id$='MapContainer']").find("input").val("");
+        resetWizardSwitches(own("input[type='hidden'][data-switch-btn]").parent());
+        own(".jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();
         });
     }
@@ -638,7 +629,7 @@ function createRegisteredServiceAttributeReleaseConsentPolicy() {
         labelTitle: "Status:",
         paramName: "attributeReleasePolicy.consentPolicy.status",
         options: [
-            {value: "", text: "UNDEFINED", selected: true},
+            {value: "UNDEFINED", text: "UNDEFINED", selected: true},
             {value: "TRUE", text: "TRUE"},
             {value: "FALSE", text: "FALSE"}
         ],
@@ -664,10 +655,12 @@ function handleAttributeReleaseConsentPolicyChange(select) {
         .not(`.${type}`)
         .not(".always-show")
         .hide();
-    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer'] input")
-        .val("");
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer'] input")
+            .val("");
+    }
 }
 
 function handleAttributeReleasePolicyActivationCriteriaChange(select) {
@@ -1737,15 +1730,17 @@ function handleAuthenticationPolicyChange(select) {
     $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemAuthenticationPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAuthenticationPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAuthenticationPolicy() {
@@ -2141,8 +2136,10 @@ function handleUsernameAttributeProviderChange(select) {
         .not(".always-show")
         .not(".DefaultRegisteredServiceUsernameProvider"));
 
-    $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
-        .val("");
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
+            .val("");
+    }
 
     const hideDefaults = $(select).find(":selected").data("hideDefaults");
     if (hideDefaults) {
@@ -2679,7 +2676,7 @@ function generateServiceDefinition() {
                                 if (isLastPart) {
                                     // Always set the value at the last part of the path
                                     if (typeof value === "object" && Object.keys(value).length > 0) {
-                                        current[part] = value;
+                                        current[part] = mergeWizardPolicy(current[part], value);
                                     } else if (typeof value !== "object") {
                                         current[part] = value;
                                     }
@@ -2759,6 +2756,31 @@ function wizardSwitchSelected($button) {
  *
  * @param scope the part of the wizard whose switches are put back
  */
+/**
+ * Put every dropdown of the wizard back to the option it starts with and empty every multi-select, then let each
+ * dropdown's handlers show and hide the fields that depend on it, so a definition opened after another one starts
+ * from the same wizard a new one does.
+ */
+function resetWizardSelects() {
+    $("#editServiceWizardForm select[data-param-name]").each(function () {
+        if (this.tomselect) {
+            this.tomselect.clear(true);
+            return;
+        }
+        const options = [...this.options];
+        const initial = options.find(option => option.defaultSelected) ?? options[0];
+        if (initial) {
+            this.value = initial.value;
+        }
+    });
+    $("#editServiceWizardForm select.jqueryui-selectmenu[data-param-name]").each(function () {
+        const $select = $(this);
+        String($select.data("change-handler") ?? "").split(",")
+            .filter(name => name.length > 0 && name !== "generateServiceDefinition" && typeof window[name] === "function")
+            .forEach(name => window[name]($select));
+    });
+}
+
 function resetWizardSwitches(scope = "#editServiceWizardForm") {
     $(scope).find("input[type='hidden'][data-switch-btn]").each(function () {
         if (this.dataset.switchDefault === undefined) {
@@ -3630,6 +3652,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         if ($option.length === 0) {
             $option = $select.find(`option[value="${stringValue.toString().toLowerCase()}"]`);
         }
+        if ($option.length === 0) {
+            $option = $select.find("option").filter((index, option) => option.text === String(stringValue));
+        }
 
         if ($option.length > 0) {
             $select.val($option.val());
@@ -4192,6 +4217,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             const clazz = $(this).data("serviceClass");
             return clazz !== undefined && clazz !== null;
         }).remove();
+        resetWizardSelects();
 
         const dropdown = $("#editServiceWizardForm select.jqueryui-selectmenu");
         try {

@@ -230,7 +230,7 @@ async function initializeAuditEventsOperations() {
          */
         function renderAuditTarget(target) {
             if (!target) {
-                return `<span class="audit-target-none" aria-label="None">—</span>`;
+                return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
             }
             if (/^\d+$/.test(target) && CasActuatorEndpoints.registeredServices()) {
                 const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(target)?.name : null;

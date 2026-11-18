@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import module java.base;
 import module java.sql;
-import java.sql.Timestamp;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.jpa.JpaEntityFactory;
@@ -25,6 +24,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.sql.Timestamp;
 
 /**
  * <p>Implementation of {@link AuditTrailManager} to persist the
@@ -281,7 +281,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val grouping = query.byTarget() ? action + ", " + target : action;
         val sql = "SELECT %s, %s FROM %s WHERE %s>=? AND %s<? AND %s IN (%s)%s GROUP BY %s".formatted(grouping, columns, tableName,
             date, date, action, actions.stream().map(_ -> "?").collect(Collectors.joining(",")),
-            query.byTarget() ? " AND " + target + " IS NOT NULL" : "", grouping);
+            query.byTarget() ? " AND " + target + " IS NOT NULL" : StringUtils.EMPTY, grouping);
         val args = new ArrayList<>();
         hours.forEach(hour -> {
             args.add(Timestamp.valueOf(hour));

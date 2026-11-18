@@ -432,7 +432,7 @@ function processNavigationTabs() {
  */
 function showStoredTabs() {
     const shown = new Set();
-    let storedTabs = {};
+    let storedTabs;
     try {
         storedTabs = JSON.parse(localStorage.getItem("ActiveTabs") ?? "{}") ?? {};
     } catch (error) {
