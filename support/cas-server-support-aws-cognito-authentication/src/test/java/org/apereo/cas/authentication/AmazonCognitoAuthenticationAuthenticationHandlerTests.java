@@ -214,6 +214,7 @@ class AmazonCognitoAuthenticationAuthenticationHandlerTests {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser-exp-password", "Hell063!!");
         val handler = new AmazonCognitoAuthenticationAuthenticationHandler(
             PrincipalFactoryUtils.newPrincipalFactory(), provider, casProperties.getAuthn().getCognito(), jwtProcessor);
-        assertThrows(expected, () -> handler.authenticate(creds, mock(Service.class)));
+        val exception = assertThrows(expected, () -> handler.authenticate(creds, mock(Service.class)));
+        assertSame(ex, exception.getCause());
     }
 }

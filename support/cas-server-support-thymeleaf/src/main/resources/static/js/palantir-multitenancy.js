@@ -3,7 +3,7 @@ let reloadTenantsTable = null;
 async function initializeMultitenancyOperations() {
     const tenantsToolbar = document.createElement("div");
     tenantsToolbar.innerHTML = `
-        <button type="button" id="newTenantButton"
+        <button type="button" data-palantir-write="multitenancy" id="newTenantButton"
                 onclick="newTenant()"
                 title="Create New Tenant"
                 class="mdc-button mdc-button--raised">
@@ -36,7 +36,7 @@ async function initializeMultitenancyOperations() {
             view: {name: "View Tenant Definition", icon: contextMenuIcon("mdi-eye")},
             edit: {name: "Edit Tenant", icon: contextMenuIcon("mdi-pencil")},
             duplicate: {name: "Duplicate Tenant", icon: contextMenuIcon("mdi-content-copy")},
-            delete: {name: "Delete Tenant", icon: contextMenuIcon("mdi-delete")}
+            delete: {name: "Delete Tenant", write: "multitenancy", icon: contextMenuIcon("mdi-delete")}
         },
         callback: (key, context) => {
             const tenantId = context.rowData.tenantId;
@@ -57,8 +57,8 @@ async function initializeMultitenancyOperations() {
         $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
             for (const tenant of Object.values(response)) {
                 tenantsTable.row.add({
-                    0: `<code>${tenant.id}</code>`,
-                    1: `<code>${tenant.description ?? ""}</code>`,
+                    0: `${palantirCode(tenant.id)}`,
+                    1: `${palantirCode(tenant.description ?? "")}`,
                     tenantId: tenant.id
                 });
             }

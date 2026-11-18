@@ -5,14 +5,18 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
+import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationListener;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,6 +53,32 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
             .andExpect(status().isOk());
     }
     
+    @Test
+    void verifyUnreadableServiceIsRefused() throws Throwable {
+        val content = """
+            {
+              "@class": "org.apereo.cas.services.CasRegisteredService",
+              "serviceId": "^https://mfa.example.org/.*",
+              "name": "UnreadableService",
+              "id": 9191,
+              "multifactorPolicy": {
+                "principalAttributeNameTrigger": "gender",
+                "bypassPrincipalAttributeName": "gender"
+              }
+            }
+            """;
+        for (val request : List.of(
+            post("/actuator/registeredServices/validate"),
+            post("/actuator/registeredServices"),
+            put("/actuator/registeredServices"))) {
+            val body = mockMvc.perform(request.contentType(MediaType.APPLICATION_JSON).content(content))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
+            assertTrue(body.contains("multifactorPolicy"), body);
+        }
+        assertNull(servicesManager.findServiceBy(9191));
+    }
+
     @Test
     void verifyImportOperationAsJson() throws Throwable {
         val content = new RegisteredServiceJsonSerializer(applicationContext)
@@ -100,6 +130,64 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
+    void verifyExportSelectedServices() throws Throwable {
+        val first = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(first);
+        val second = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(second);
+        val others = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(others);
+
+        val content = mockMvc.perform(get("/actuator/registeredServices/export")
+                .param("ids", String.valueOf(first.getId()), String.valueOf(second.getId()), String.valueOf(Long.MAX_VALUE))
+                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(status().isOk())
+            .andExpect(header().string("Filename", "services.zip"))
+            .andReturn()
+            .getResponse()
+            .getContentAsByteArray();
+        val names = new ArrayList<String>();
+        try (val zip = new ZipInputStream(new ByteArrayInputStream(content))) {
+            for (var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                names.add(entry.getName());
+            }
+        }
+        assertEquals(2, names.size(), names::toString);
+        assertTrue(names.stream().anyMatch(name -> name.contains(first.getName())));
+        assertTrue(names.stream().anyMatch(name -> name.contains(second.getName())));
+        assertTrue(names.stream().noneMatch(name -> name.contains(others.getName())));
+
+        mockMvc.perform(get("/actuator/registeredServices/export")
+                .param("ids", String.valueOf(Long.MAX_VALUE))
+                .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void verifyIncompleteServiceIsRefused() throws Throwable {
+        val incomplete = """
+            {
+              "@class": "org.apereo.cas.services.CasRegisteredService",
+              "description": "No name and no service id"
+            }
+            """;
+        mockMvc.perform(post("/actuator/registeredServices")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(incomplete))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("The definition has no name and no serviceId"));
+        mockMvc.perform(put("/actuator/registeredServices")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(incomplete))
+            .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/actuator/registeredServices/validate")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(incomplete.replace("\"description\"", "\"name\": \"Named\", \"description\"")))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("The definition has no serviceId"));
+    }
+
+    @Test
     void verifyExportUnknownService() throws Throwable {
         mockMvc.perform(get("/actuator/registeredServices/export/{id}", Long.MAX_VALUE)
                 .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE))
@@ -141,6 +229,37 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
                 )
                 .andExpect(status().isOk());
         }
+    }
+
+    @Test
+    void verifyBulkImportSavesEachServiceOnce() throws Throwable {
+        val prefix = "Import-" + UUID.randomUUID();
+        val saved = new ConcurrentHashMap<String, Integer>();
+        applicationContext.addApplicationListener((ApplicationListener<CasRegisteredServiceSavedEvent>) event -> {
+            val name = event.getRegisteredService().getName();
+            if (name != null && name.startsWith(prefix)) {
+                saved.merge(name, 1, Integer::sum);
+            }
+        });
+        try (val out = new ByteArrayOutputStream(4096);
+             val zipStream = new ZipOutputStream(out)) {
+            val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+            for (var index = 0; index < 3; index++) {
+                val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+                registeredService.setId(RandomUtils.nextLong());
+                registeredService.setName(prefix + '-' + index);
+                zipStream.putNextEntry(new ZipEntry(registeredService.getName() + ".json"));
+                zipStream.write(serializer.toString(registeredService).getBytes(StandardCharsets.UTF_8));
+                zipStream.closeEntry();
+            }
+            zipStream.finish();
+            mockMvc.perform(post("/actuator/registeredServices/import")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(out.toByteArray()))
+                .andExpect(status().isOk());
+        }
+        assertEquals(Map.of(prefix + "-0", 1, prefix + "-1", 1, prefix + "-2", 1), saved);
     }
 
     /*

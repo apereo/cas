@@ -332,16 +332,33 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     }
 
     protected long countTicketsByTicketType(final Class<? extends Ticket> ticketType) {
-        val ticketDefinitions = ticketCatalog.findTicketImplementations(ticketType);
-        return ticketDefinitions
+        return ticketCatalog.findTicketImplementations(ticketType)
             .stream()
-            .mapToLong(defn -> FunctionUtils.doUnchecked(() -> {
-                val collection = getTicketCollectionInstanceByMetadata(defn);
-                return firestore.collection(collection)
-                    .whereEqualTo("prefix", digestIdentifier(defn.getPrefix()))
-                    .count().get().get().getCount();
-            }))
+            .mapToLong(this::countTicketsOf)
             .sum();
+    }
+
+    /**
+     * Count the tickets of each type with a count query on its collection, by prefix, without reading any ticket.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        ticketCatalog.findAll().forEach(definition -> {
+            val count = countTicketsOf(definition);
+            if (count > 0) {
+                counts.put(definition.getPrefix(), count);
+            }
+        });
+        return counts;
+    }
+
+    private long countTicketsOf(final TicketDefinition definition) {
+        return FunctionUtils.doUnchecked(() -> firestore.collection(getTicketCollectionInstanceByMetadata(definition))
+            .whereEqualTo("prefix", digestIdentifier(definition.getPrefix()))
+            .count().get().get().getCount());
     }
 
     protected String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {

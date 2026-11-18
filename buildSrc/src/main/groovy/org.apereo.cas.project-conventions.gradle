@@ -38,44 +38,21 @@ if (CasProjectConventions.shouldBePublished(project)) {
     
     publishing {
         publications {
-            if (project.hasProperty('skipPublication') && project.skipPublication) {
-                logger.info "Skipping artifact publication for project ${project.name}"
-            } else {
-                logger.info "Project ${project.name} should be published as a JAR"
+            logger.info "Project ${project.name} should be published as a JAR"
 
-                create('mavenJava', MavenPublication) {
-                    logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
+            create('mavenJava', MavenPublication) {
+                logger.info "Project ${project.name} does not have a bootJar task, using default JAR"
 
-                    from components.java
+                from components.java
 
-                    if (publishMinimalArtifacts) {
-                        logger.info "Publishing minimal artifacts for project ${project.name}"
-                    } else {
-                        artifact tasks.named('sourcesJar')
-                        artifact tasks.named('resourcesJar')
-                        artifact tasks.named('javadocJar')
-                        artifact tasks.named('testJar')
-                    }
-
-                    pom {
-                        CasPomConfiguration.createPom(it, project)
-                    }
-                    pom.withXml {
-                        CasPomConfiguration.createPomRepositories(asNode())
-                    }
+                if (publishMinimalArtifacts) {
+                    logger.info "Publishing minimal artifacts for project ${project.name}"
+                } else {
+                    artifact tasks.named('sourcesJar')
+                    artifact tasks.named('resourcesJar')
+                    artifact tasks.named('javadocJar')
+                    artifact tasks.named('testJar')
                 }
-
-            }
-        }
-    }
-
-    plugins.withId('war') {
-        if (!project.hasProperty('skipPublication') || !project.skipPublication) {
-            logger.info "Project ${project.name} should be published as a WAR"
-
-            publishing.publications.remove(publishing.publications.findByName('mavenJava'))
-            publishing.publications.create('mavenWeb', MavenPublication) {
-                from components.web
 
                 pom {
                     CasPomConfiguration.createPom(it, project)
@@ -87,17 +64,24 @@ if (CasProjectConventions.shouldBePublished(project)) {
         }
     }
 
-    plugins.withId('maven-publish') {
-        signing {
-            required = project.publishReleases && !project.skipArtifactSigning
+    plugins.withId('war') {
+        logger.info "Project ${project.name} should be published as a WAR"
 
-            if (System.getenv('PGP_PRIVATE_KEY') && System.getenv('PGP_PASSPHRASE')) {
-                useInMemoryPgpKeys(
-                        System.getenv('PGP_PRIVATE_KEY'),
-                        System.getenv('PGP_PASSPHRASE')
-                )
+        publishing.publications.remove(publishing.publications.findByName('mavenJava'))
+        publishing.publications.create('mavenWeb', MavenPublication) {
+            from components.web
+
+            pom {
+                CasPomConfiguration.createPom(it, project)
+            }
+            pom.withXml {
+                CasPomConfiguration.createPomRepositories(asNode())
             }
         }
+    }
+
+    plugins.withId('maven-publish') {
+        CasBuildSettings.configureSigning(project, signing)
 
         publishing.publications.withType(MavenPublication).configureEach { publication ->
             signing.sign(publication)
@@ -230,7 +214,7 @@ tasks.named('jar') {
     }
 }
 
-if (!providers.systemProperty('skipCheckstyle').present && CasProjectConventions.shouldBePublished(project)) {
+if (!CasBuildSettings.isFlagEnabled(project, 'skipCheckstyle') && CasProjectConventions.shouldBePublished(project)) {
     project.pluginManager.apply('checkstyle')
     checkstyle {
         configProperties = [
@@ -261,12 +245,10 @@ dependencies {
     api libraries.spring
     api libraries.jackson
     api libraries.httpclient
-    api libraries.quartz
     api libraries.caffein
     api libraries.springcloud
     api libraries.springboot
     api libraries.springsecurity
-    api libraries.springintegration
     api libraries.springwebflow
     api libraries.jakarta
     api libraries.jspecify
@@ -276,7 +258,7 @@ dependencies {
 
     annotationProcessor libraries.springindexer
 
-    if (!providers.systemProperty('skipErrorProneCompiler').present) {
+    if (!skipErrorProneCompiler) {
         errorprone libs.errorprone
         errorprone libs.nullaway
     }
@@ -287,8 +269,6 @@ dependencies {
     testImplementation libraries.jakartapersistence
     testImplementation libraries.thymeleaf
     testImplementation libraries.springboottomcat
-
-    runtimeOnly libraries.httpclient4
 
     jvmAgents(libs.mockito.core) {
         transitive = false

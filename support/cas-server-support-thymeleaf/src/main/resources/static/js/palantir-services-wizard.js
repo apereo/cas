@@ -8,21 +8,25 @@ let editServiceWizardDialog = undefined;
  * load that DOM, the MDC components attached to it, a dozen select widgets, and the discovery
  * profile request its attribute pickers make.
  *
- * The markup therefore registers each section's builder here instead of calling it, and the queue
- * is drained the first time the dialog is opened. Registration order is document order, which is
- * what decides where each field lands, so the queue is drained in order and awaited: one builder
- * fetches the OpenID Connect discovery document before it can fill its dropdowns.
+ * The markup therefore registers each section's builder with palantirWizardField instead of calling it, and the
+ * queue, palantirWizardFieldBuilders, is drained the first time the dialog is opened. Both are defined inline in the
+ * dashboard page, since the markup registers its builders while the page is parsed, before the deferred scripts run.
+ * Registration order is document order, which is what decides where each field lands, so the queue is drained in
+ * order and awaited: one builder fetches the OpenID Connect discovery document before it can fill its dropdowns.
  */
-const palantirWizardFieldBuilders = [];
 let palantirWizardFieldsBuilt = null;
 
 /**
- * Register a wizard field builder to run when the wizard is first opened.
- *
- * @param builder a function that builds one section's fields; may return a promise
+ * Build the wizard in the background once the browser is idle, so that opening the first application does not
+ * wait for it. Startup does not: this is asked for after the Applications page is set up.
  */
-function palantirWizardField(builder) {
-    palantirWizardFieldBuilders.push(builder);
+function prepareRegisteredServiceWizardWhenIdle() {
+    const prepare = () => buildRegisteredServiceWizardFields();
+    if ("requestIdleCallback" in window) {
+        requestIdleCallback(prepare, {timeout: 5000});
+    } else {
+        setTimeout(prepare, 2000);
+    }
 }
 
 /**
@@ -39,6 +43,7 @@ function palantirWizardField(builder) {
 function buildRegisteredServiceWizardFields() {
     if (!palantirWizardFieldsBuilt) {
         palantirWizardFieldsBuilt = (async () => {
+            await new Promise(resolve => CasDiscoveryProfile.fetchIfNeeded().always(resolve));
             for (const builder of palantirWizardFieldBuilders) {
                 try {
                     await builder();
@@ -47,6 +52,10 @@ function buildRegisteredServiceWizardFields() {
                 }
             }
             initializePalantirWidgets(document.getElementById("editServiceWizardForm"));
+            for (let attempt = 0; attempt < 20 && !$("#registeredServiceDescriptionEditor").data("trumbowyg"); attempt++) {
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+            performance.mark("palantir-wizard-built");
         })();
     }
     return palantirWizardFieldsBuilt;
@@ -77,35 +86,29 @@ function validatePattern(button, targetFieldId = "#registeredServiceId") {
     });
 }
 
+/**
+ * Show the fields of the chosen attribute release policy and hide the others. The activation criteria, principal
+ * attribute repository, value filter and consent sections nested in the attribute release section have types of their
+ * own, so their fields are left to their own handlers.
+ *
+ * @param select the policy type select
+ */
 function handleAttributeReleasePolicyChange(select) {
-    let type = getLastWord($(select).val());
-    showElements($(`#editServiceWizardMenuItemAttributeReleasePolicy .${type}`));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer']")
-        .not(`.${type}`)
-        .not(".always-show"));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='SelectContainer']")
-        .not(`.${type}`)
-        .not(".always-show"));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer']")
-        .not(`.${type}`));
-    hideElements($("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel']")
-        .not(`.${type}`)
-        .not(".always-show"));
+    const type = getLastWord($(select).val());
+    const section = "editServiceWizardMenuItemAttributeReleasePolicy";
+    const own = selector => $(`#${section} ${selector}`)
+        .filter((index, element) => $(element).parent().closest("[id^='editServiceWizardMenuItemAttributeRelease']").attr("id") === section);
+    showElements(own(`.${type}`));
+    hideElements(own("[id$='FieldContainer']").not(`.${type}`).not(".always-show"));
+    hideElements(own("[id$='SelectContainer']").not(`.${type}`).not(".always-show"));
+    hideElements(own("[id$='MapContainer']").not(`.${type}`));
+    hideElements(own("[id$='ButtonPanel']").not(`.${type}`).not(".always-show"));
 
-    // Only clear values when not populating from an existing service
     if (!isPopulatingWizard) {
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='FieldContainer'] input")
-            .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='MapContainer'] input")
-            .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePolicy [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
-        $("#editServiceWizardMenuItemAttributeReleasePolicy .jqueryui-multiselectmenu").each(function () {
+        own("[id$='FieldContainer']").find("input").val("");
+        own("[id$='MapContainer']").find("input").val("");
+        resetWizardSwitches(own("input[type='hidden'][data-switch-btn]").parent());
+        own(".jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();
         });
     }
@@ -201,7 +204,7 @@ function createRegisteredServiceAttributeReleasePolicy() {
     });
 
     CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
+        .always(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
@@ -626,7 +629,7 @@ function createRegisteredServiceAttributeReleaseConsentPolicy() {
         labelTitle: "Status:",
         paramName: "attributeReleasePolicy.consentPolicy.status",
         options: [
-            {value: "", text: "UNDEFINED", selected: true},
+            {value: "UNDEFINED", text: "UNDEFINED", selected: true},
             {value: "TRUE", text: "TRUE"},
             {value: "FALSE", text: "FALSE"}
         ],
@@ -652,10 +655,12 @@ function handleAttributeReleaseConsentPolicyChange(select) {
         .not(`.${type}`)
         .not(".always-show")
         .hide();
-    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer'] input")
-        .val("");
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAttributeReleaseValueConsentPolicy [id$='SelectContainer'] input")
+            .val("");
+    }
 }
 
 function handleAttributeReleasePolicyActivationCriteriaChange(select) {
@@ -1038,7 +1043,7 @@ function createRegisteredServiceMultifactorPolicy() {
             });
     } else {
         CasDiscoveryProfile.fetchIfNeeded()
-            .done(async () => {
+            .always(async () => {
                 const options = Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders()).map(([key, _value]) => ({
                     value: key,
                     text: _value
@@ -1050,7 +1055,7 @@ function createRegisteredServiceMultifactorPolicy() {
                     paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                     title: "Define the multifactor authentication providers to be used, separated by comma.",
                     options: options,
-                    allowCreateOption: false,
+                    allowCreateOption: options.length === 0,
                     inclusion: "before"
                 }).data("renderer", function (value) {
                     return ["java.util.HashSet", value.split(",").filter(v => v != null && v !== "")];
@@ -1091,7 +1096,7 @@ function createRegisteredServiceMultifactorPolicy() {
     });
 
     CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
+        .always(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
@@ -1103,6 +1108,7 @@ function createRegisteredServiceMultifactorPolicy() {
                 containerId: "registeredServiceMultifactorPolicyfailureModeSelectContainer",
                 labelTitle: "Principal Attribute Name Trigger:",
                 paramName: "multifactorPolicy.principalAttributeNameTrigger",
+                paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                 title: "Specifies the principal attribute name that triggers multifactor authentication.",
                 options: options,
                 allowCreateOption: true,
@@ -1147,7 +1153,7 @@ function createRegisteredServiceMultifactorPolicy() {
     });
 
     CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
+        .always(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
@@ -1159,6 +1165,7 @@ function createRegisteredServiceMultifactorPolicy() {
                 containerId: "registeredServiceMfaBypassPrincipalAttributeValueFieldContainer",
                 labelTitle: "Principal Attribute Name Bypass:",
                 paramName: "multifactorPolicy.bypassPrincipalAttributeName",
+                paramType: "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
                 title: "Specifies the principal attribute name that bypasses multifactor authentication.",
                 options: options,
                 allowCreateOption: true,
@@ -1472,7 +1479,7 @@ function createRegisteredServiceAccessStrategy() {
     });
 
     CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
+        .always(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
@@ -1723,15 +1730,17 @@ function handleAuthenticationPolicyChange(select) {
     $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemAuthenticationPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemAuthenticationPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel'] button")
+            .each(function () {
+                const selected = $(this).data("param-selected");
+                if (selected) {
+                    $(this).click();
+                }
+            });
+    }
 }
 
 function createRegisteredServiceAuthenticationPolicy() {
@@ -1847,6 +1856,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         labelTitle: "Required Authentication Handler(s)",
         name: "registeredServiceAuthenticationPolicyRequiredHandlers",
         paramName: "authenticationPolicy.requiredAuthenticationHandlers",
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
         required: false,
         containerId: "editServiceWizardMenuItemAuthenticationPolicy",
         title: "Required Authentication Handler(s)"
@@ -1860,6 +1870,7 @@ function createRegisteredServiceAuthenticationPolicy() {
         labelTitle: "Excluded Authentication Handler(s)",
         name: "registeredServiceAuthenticationPolicyExcludedHandlers",
         paramName: "authenticationPolicy.excludedAuthenticationHandlers",
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
         required: false,
         containerId: "editServiceWizardMenuItemAuthenticationPolicy",
         title: "Excluded Authentication Handler(s)"
@@ -2125,8 +2136,10 @@ function handleUsernameAttributeProviderChange(select) {
         .not(".always-show")
         .not(".DefaultRegisteredServiceUsernameProvider"));
 
-    $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
-        .val("");
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
+            .val("");
+    }
 
     const hideDefaults = $(select).find(":selected").data("hideDefaults");
     if (hideDefaults) {
@@ -2221,7 +2234,7 @@ function createRegisteredServiceUsernameAttributeProvider() {
     });
 
     CasDiscoveryProfile.fetchIfNeeded()
-        .done(async () => {
+        .always(async () => {
             const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
                 value: attr,
                 text: attr
@@ -2519,12 +2532,19 @@ function isWizardContainerSwitchedOff(element) {
     return display === "none" || (element.classList.contains("hide") && display === "");
 }
 
+let generateServiceDefinitionTimer = null;
+
+/**
+ * Generate the definition from the wizard's fields, shortly after the fields change. Calls made before it runs are
+ * served by that one run, which reads the fields as they are then.
+ */
 function generateServiceDefinition() {
-    if (isPopulatingWizard) {
+    if (isPopulatingWizard || generateServiceDefinitionTimer !== null) {
         return;
     }
 
-    setTimeout(function () {
+    generateServiceDefinitionTimer = setTimeout(function () {
+        generateServiceDefinitionTimer = null;
         if (!document.getElementById("wizardServiceEditor")) {
             return;
         }
@@ -2656,7 +2676,7 @@ function generateServiceDefinition() {
                                 if (isLastPart) {
                                     // Always set the value at the last part of the path
                                     if (typeof value === "object" && Object.keys(value).length > 0) {
-                                        current[part] = value;
+                                        current[part] = mergeWizardPolicy(current[part], value);
                                     } else if (typeof value !== "object") {
                                         current[part] = value;
                                     }
@@ -2669,7 +2689,7 @@ function generateServiceDefinition() {
                                 }
                             }
                         } else {
-                            serviceDefinition[paramName] = value;
+                            serviceDefinition[paramName] = mergeWizardPolicy(serviceDefinition[paramName], value);
                         }
                     }
                 }
@@ -2713,7 +2733,174 @@ function generateServiceDefinition() {
             editor.setValue("");
         }
         editor.gotoLine(1);
+        PalantirWizardValidity.refresh();
     }, 10);
+}
+
+/**
+ * Whether a switch shows as on. The switch itself is the truth: its hidden field is emptied whenever the wizard opens.
+ *
+ * @param $button the switch
+ * @returns {boolean} true when it is on
+ */
+function wizardSwitchSelected($button) {
+    return $button.attr("aria-checked") === "true" || $button.hasClass("mdc-switch--selected");
+}
+
+/**
+ * Put every switch of the wizard, or of one part of it, back the way the page first drew it, before a definition fills the wizard in, so a
+ * switch turned on or off for the previous application does not show for the next one, or for the policy chosen
+ * after another. Its hidden field stays empty,
+ * so a switch nobody touches adds nothing to the definition. The hidden field's value is its default only until the
+ * switch is first used, so the default is noted the first time the wizard opens.
+ *
+ * @param scope the part of the wizard whose switches are put back
+ */
+/**
+ * Put every dropdown of the wizard back to the option it starts with and empty every multi-select, then let each
+ * dropdown's handlers show and hide the fields that depend on it, so a definition opened after another one starts
+ * from the same wizard a new one does.
+ */
+function resetWizardSelects() {
+    $("#editServiceWizardForm select[data-param-name]").each(function () {
+        if (this.tomselect) {
+            this.tomselect.clear(true);
+            return;
+        }
+        const options = [...this.options];
+        const initial = options.find(option => option.defaultSelected) ?? options[0];
+        if (initial) {
+            this.value = initial.value;
+        }
+    });
+    $("#editServiceWizardForm select.jqueryui-selectmenu[data-param-name]").each(function () {
+        const $select = $(this);
+        String($select.data("change-handler") ?? "").split(",")
+            .filter(name => name.length > 0 && name !== "generateServiceDefinition" && typeof window[name] === "function")
+            .forEach(name => window[name]($select));
+    });
+}
+
+function resetWizardSwitches(scope = "#editServiceWizardForm") {
+    $(scope).find("input[type='hidden'][data-switch-btn]").each(function () {
+        if (this.dataset.switchDefault === undefined) {
+            this.dataset.switchDefault = String(this.getAttribute("value") === "true");
+        }
+        const $button = $(`#${this.dataset.switchBtn}`);
+        if ($button.length > 0 && wizardSwitchSelected($button) !== (this.dataset.switchDefault === "true")) {
+            $button.click();
+        }
+        this.value = "";
+    });
+}
+
+/**
+ * The value a field gives a top-level setting, keeping what other fields already put in it. A policy is chosen by
+ * a list whose value names the policy's type, while switches and fields elsewhere in the section set the policy's
+ * other settings, such as whether authentication attributes may be released. Whichever is read first, the type
+ * and the other settings end up in one policy rather than the type replacing them.
+ *
+ * @param current what the setting holds so far
+ * @param value   the value the field gives it
+ * @returns {*} the setting's value
+ */
+function mergeWizardPolicy(current, value) {
+    const isPolicy = candidate => candidate !== null && typeof candidate === "object" && !Array.isArray(candidate);
+    if (!isPolicy(current) || !isPolicy(value)) {
+        return value;
+    }
+    const settings = Object.fromEntries(Object.entries(current).filter(([key]) => key !== "@class"));
+    return {...value, ...settings};
+}
+
+/**
+ * The required and otherwise constrained fields of the wizard, as they apply to the application type being edited:
+ * Save stays disabled, with the missing fields named beside it, until every one of them holds a valid value, so an
+ * incomplete definition never reaches the server.
+ */
+class PalantirWizardValidity {
+    /**
+     * The fields that apply: those in the sections this type offers, outside parts hidden because they belong to
+     * other types or choices. Fields of the other sections count even though only one section shows at a time.
+     *
+     * @returns {HTMLElement[]} the fields
+     */
+    static fields() {
+        return RegisteredServiceSections.sections()
+            .filter(RegisteredServiceSections.isAvailable)
+            .flatMap(section => $(section.panel).find("input, select, textarea").toArray()
+                .filter(field => field.willValidate && !PalantirWizardValidity.hiddenWithin(field, section.panel))
+                .map(field => ({field, section})));
+    }
+
+    static hiddenWithin(field, panel) {
+        return [field, ...$(field).parentsUntil(panel).toArray()]
+            .some(node => node.classList.contains("hide") || node.classList.contains("d-none") || node.style.display === "none");
+    }
+
+    /**
+     * The fields that hold no valid value yet, with the section each is in.
+     *
+     * @returns {Array<{field: HTMLElement, section: object}>} the invalid fields
+     */
+    static invalid() {
+        return PalantirWizardValidity.fields().filter(entry => !entry.field.validity.valid);
+    }
+
+    /**
+     * How a field is named on screen: its label, or failing that its placeholder or name.
+     *
+     * @param field the field
+     * @returns {string} the name
+     */
+    static labelOf(field) {
+        const label = field.id ? document.querySelector(`label[for="${CSS.escape(field.id)}"]`) : null;
+        const text = (label?.querySelector(".mdc-floating-label")?.textContent ?? label?.textContent ?? field.getAttribute("placeholder") ?? field.name ?? "")
+            .replace(/\*/g, "").replace(/\s+/g, " ").trim();
+        return text || "A field";
+    }
+
+    /**
+     * Enable Save only when every field that applies is valid, and name the fields still missing.
+     */
+    static refresh() {
+        const dialog = $("#editServiceWizardDialog");
+        if (!dialog.hasClass("ui-dialog-content") || !dialog.dialog("isOpen")) {
+            return;
+        }
+        const invalid = PalantirWizardValidity.invalid();
+        const names = [...new Set(invalid.map(entry => PalantirWizardValidity.labelOf(entry.field)))];
+        const writable = typeof CasActuatorEndpoints.writable !== "function" || CasActuatorEndpoints.writable("registeredServices");
+        $("#saveServiceWizard").prop("disabled", invalid.length > 0 || !writable);
+        const hint = $("#saveServiceWizardHint");
+        if (names.length === 0) {
+            hint.prop("hidden", true).empty();
+        } else {
+            const shown = names.slice(0, 3).join(", ");
+            hint.prop("hidden", false)
+                .attr("title", names.join(", "))
+                .html(`<i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i><span>Required: ${escapePalantirMarkup(shown)}${names.length > 3 ? ` and ${names.length - 3} more` : ""}</span>`);
+        }
+    }
+
+    /**
+     * Open the section of the first invalid field and show what is wrong with it.
+     *
+     * @returns {boolean} true when every field is valid
+     */
+    static report() {
+        const first = PalantirWizardValidity.invalid()[0];
+        if (!first) {
+            return true;
+        }
+        RegisteredServiceSections.activate(first.section.key);
+        RegisteredServiceSections.render?.();
+        setTimeout(() => {
+            first.field.scrollIntoView({block: "center", behavior: "smooth"});
+            first.field.reportValidity();
+        }, 0);
+        return false;
+    }
 }
 
 function generateMappedFieldValue(sectionId, config) {
@@ -2767,6 +2954,18 @@ function generateMappedFieldValue(sectionId, config) {
         }
     });
     return {"@class": mapType, ...definition};
+}
+
+/**
+ * Attach the Material text fields under an element, such as a row just added to a mapped field. Attaching every text
+ * field of the page instead costs more as the wizard grows and adds another set of listeners to each field every time.
+ *
+ * @param scope the element to look under
+ */
+function attachPalantirTextFields(scope) {
+    $(scope).find(".mdc-text-field").addBack(".mdc-text-field").each((index, field) => {
+        mdc.textField.MDCTextField.attachTo(field);
+    });
 }
 
 function createMappedInputField(config) {
@@ -2956,7 +3155,7 @@ function createMappedInputField(config) {
         $(`#${sectionContainerId}ToAppend`).append(elementsToAdd);
         configureGroovyEditors(elementsToAdd);
         configureRemoveMapRowEventHandler();
-        cas.attachFields();
+        attachPalantirTextFields(elementsToAdd);
         configureInputEventHandler();
         configureInputRenderer();
     });
@@ -2964,7 +3163,6 @@ function createMappedInputField(config) {
         $(`#${sectionContainerId}ToAppend`).empty();
         $(`#${sectionContainerId} input`).val("");
         configureRemoveMapRowEventHandler();
-        cas.attachFields();
         configureInputEventHandler();
         configureInputRenderer();
         changeCallback();
@@ -2980,11 +3178,11 @@ function createMappedInputField(config) {
            delay: 0,
            source: autoComplete,
            open: function( event, ui ) {
-                cas.attachFields();
+                attachPalantirTextFields($(this).closest(".mdc-text-field"));
            },
            select: function (event, ui) {
                 $(this).val(ui.item.value);
-                cas.attachFields();
+                attachPalantirTextFields($(this).closest(".mdc-text-field"));
                 return false;
            }
        });
@@ -3187,18 +3385,56 @@ function initializeDescriptionEditor(containerId) {
         }).on("tbwchange tbwblur", function () {
             generateServiceDefinition();
         });
-        $("#registeredServiceDescriptionEditor").attr("aria-label", "Description");
+        $("#registeredServiceDescriptionEditor").attr("aria-label", "Description").data("renderer", unwrapDescriptionParagraph);
         $("#registeredServiceDescriptionEditorContainer .trumbowyg-editor")
             .attr({"role": "textbox", "aria-multiline": "true", "aria-label": "Description"});
     }, 150);
 }
 
+/**
+ * The editor keeps every line in a paragraph; a description that is a single paragraph is kept without that wrapper,
+ * so a plain description stays plain text, while several paragraphs keep their markup.
+ *
+ * @param value the HTML of the editor
+ * @returns {string} the description
+ */
+function unwrapDescriptionParagraph(value) {
+    const body = new DOMParser().parseFromString(String(value ?? ""), "text/html").body;
+    const nodes = [...body.childNodes].filter(node => node.nodeType !== Node.TEXT_NODE || node.textContent.trim().length > 0);
+    if (nodes.length === 1 && nodes[0].nodeName === "P" && nodes[0].attributes.length === 0) {
+        const inner = nodes[0].innerHTML.trim();
+        return inner.length > 0 && inner !== "<br>" ? inner : String(value);
+    }
+    return String(value);
+}
+
+let descriptionEditorValue = "";
+
+let descriptionEditorTimer = null;
+
+/**
+ * Put a description in the description editor. Until the editor is ready, only the latest description is kept and
+ * applied once it is, and the definition is generated again then, since it was generated without it.
+ *
+ * @param value the description
+ */
 function setDescriptionEditorValue(value) {
+    descriptionEditorValue = value || "";
     const $editor = $("#registeredServiceDescriptionEditor");
     if ($editor.length > 0 && $editor.data("trumbowyg")) {
-        $editor.trumbowyg("html", value || "");
-    } else {
-        setTimeout(() => setDescriptionEditorValue(value), 150);
+        clearTimeout(descriptionEditorTimer);
+        descriptionEditorTimer = null;
+        $editor.trumbowyg("html", descriptionEditorValue);
+        return;
+    }
+    if (descriptionEditorTimer === null) {
+        descriptionEditorTimer = setTimeout(() => {
+            descriptionEditorTimer = null;
+            setDescriptionEditorValue(descriptionEditorValue);
+            if (!isPopulatingWizard) {
+                generateServiceDefinition();
+            }
+        }, 150);
     }
 }
 
@@ -3312,21 +3548,8 @@ let isPopulatingWizard = false;
  * @param {Object} serviceDefinition - The service definition JSON object
  */
 function populateWizardFromServiceDefinition(serviceDefinition) {
-    // Show loading indicator while populating and generating
-    // Use scrollbarPadding: false and heightAuto: false to prevent page jumping
-    Swal.fire({
-        title: "Loading Service Definition",
-        text: "Preparing wizard fields and generating JSON...",
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        scrollbarPadding: false,
-        heightAuto: false,
-        returnFocus: false,
-        didOpen: () => {
-            Swal.showLoading();
-        }
-    });
+    const $wizardDialog = $("#editServiceWizardDialog").closest(".ui-dialog");
+    $wizardDialog.addClass("is-populating").attr("aria-busy", "true");
 
     // Set flag to prevent generateServiceDefinition from running during population
     isPopulatingWizard = true;
@@ -3429,6 +3652,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         if ($option.length === 0) {
             $option = $select.find(`option[value="${stringValue.toString().toLowerCase()}"]`);
         }
+        if ($option.length === 0) {
+            $option = $select.find("option").filter((index, option) => option.text === String(stringValue));
+        }
 
         if ($option.length > 0) {
             $select.val($option.val());
@@ -3488,12 +3714,11 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             return;
         }
 
-        const currentValue = $input.val() === "true" || $input.val() === true;
         const newValue = value === true || value === "true" || value === "TRUE";
-
-        if (currentValue !== newValue) {
+        if (wizardSwitchSelected($button) !== newValue) {
             $button.click();
         }
+        $input.val(String(newValue));
     }
 
     /**
@@ -3579,11 +3804,8 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                 $addButton.click();
             }
 
-            setTimeout(() => {
-                const $row = $container.find("[data-mapped-input-row='true']").eq(index);
-                if ($row.length === 0) {
-                    return;
-                }
+            const $row = $container.find("[data-mapped-input-row='true']").eq(index);
+            if ($row.length > 0) {
 
                 const $keyInput = $row.find(`input[data-param-name="${containerFieldName}"][data-mapped-field-role='key']`).first();
                 if ($keyInput.length > 0) {
@@ -3600,7 +3822,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                         $input.val(valueStr).trigger("input");
                         floatMdcTextFieldLabel($input);
                     });
-            }, index * 20);
+            }
         });
     }
 
@@ -3613,6 +3835,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             return;
         }
         if (paramName === "clientSecrets" && $input.attr("id") === "registeredServiceClientSecrets") {
+            return;
+        }
+        if (paramName === "contacts") {
             return;
         }
 
@@ -3638,6 +3863,8 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             }
         }
     });
+
+    populateRegisteredServiceContacts(serviceDefinition, floatMdcTextFieldLabel);
 
     // Populate select fields
     $("form#editServiceWizardForm select[data-param-name]").each(function () {
@@ -3694,8 +3921,6 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         }
     });
 
-    // Populate mapped fields (key-value pair containers)
-    // Use a delay to ensure select field change handlers have executed and shown/hidden the correct containers
     setTimeout(() => {
         const mappedFieldContainers = new Set();
 
@@ -3751,7 +3976,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                 }
             }
         });
-    }, 50);
+    }, 0);
 
     // Handle special cases for different service types
     const serviceClass = serviceDefinition["@class"];
@@ -3789,11 +4014,6 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         }
     }
 
-    // Reset the population flag and generate the service definition after all fields are populated
-    // Use a timeout to account for:
-    // - 50ms delay for mapped fields to start populating
-    // - Additional delay for each entry (index * 20ms)
-    // - Some buffer time for DOM updates
     setTimeout(() => {
         isPopulatingWizard = false;
 
@@ -3810,7 +4030,7 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
         });
 
         generateServiceDefinition();
-        Swal.close();
+        $wizardDialog.removeClass("is-populating").removeAttr("aria-busy");
 
         // Focus on the first visible input field after dialog is fully ready
         // Use a longer timeout to ensure MDC dialog animation is complete
@@ -3820,7 +4040,32 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                 $firstInput.trigger("focus");
             }
         }, 300);
-    }, 600);
+    }, 0);
+}
+
+/**
+ * Fill the contact fields of the wizard from the contacts of a definition, which are a Java list of contact objects:
+ * the first three, one per contact tab.
+ *
+ * @param serviceDefinition the definition
+ * @param floatLabel floats the label of a filled text field
+ */
+function populateRegisteredServiceContacts(serviceDefinition, floatLabel) {
+    const contacts = serviceDefinition?.contacts;
+    let list = [];
+    if (Array.isArray(contacts)) {
+        list = contacts.length === 2 && typeof contacts[0] === "string" && Array.isArray(contacts[1]) ? contacts[1] : contacts;
+    }
+    list.slice(0, 3).forEach((contact, position) => {
+        ["name", "email", "phone", "department", "type"].forEach(detail => {
+            const $input = $(`#registeredServiceContact${capitalize(detail)}${position + 1}`);
+            const value = contact?.[detail];
+            if ($input.length > 0 && value !== undefined && value !== null && value !== "") {
+                $input.val(String(value));
+                floatLabel($input);
+            }
+        });
+    });
 }
 
 /**
@@ -3895,8 +4140,11 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
     await buildRegisteredServiceWizardFields();
 
     async function openWizardDialog(serviceClass, serviceData = null) {
-        const isNewService = serviceData === null || options.duplicate === true;
+        const isNewService = serviceData === null || options.duplicate === true || options.asNew === true;
         const draftKey = PalantirServiceEditGuard.key("wizard", isNewService ? null : serviceData.id, serviceClass);
+        if (!isNewService) {
+            PalantirServiceEditGuard.remember(draftKey, serviceData);
+        }
         const draft = await PalantirServiceEditGuard.offerDraft(draftKey,
             serviceData === null || isNewService ? null : JSON.stringify(serviceData));
         let draftDefinition = null;
@@ -3955,11 +4203,12 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
                         $(`input#${id}`).data(key, value);
                     });
                 }
-                $(`button#${id}Button`).on("click", function (e) {
+                $(`button#${id}Button`).off("click.wizardGenerate").on("click.wizardGenerate", function (e) {
                     setTimeout(() => generateServiceDefinition(), 0);
                 });
             });
 
+        resetWizardSwitches();
         $("#editServiceWizardForm input").val("");
         if (typeof resetRegisteredServiceClientSecrets === "function") {
             resetRegisteredServiceClientSecrets();
@@ -3968,6 +4217,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             const clazz = $(this).data("serviceClass");
             return clazz !== undefined && clazz !== null;
         }).remove();
+        resetWizardSelects();
 
         const dropdown = $("#editServiceWizardForm select.jqueryui-selectmenu");
         try {
@@ -3982,7 +4232,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             isPopulatingWizard = true;
             setTimeout(() => {
                 populateWizardFromServiceDefinition(definition);
-            }, 300);
+            }, 0);
         } else {
             generateServiceDefinition();
         }
@@ -4037,6 +4287,11 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             break;
         }
         RegisteredServiceSections.start();
+        if (className === "SamlRegisteredService") {
+            showElements($("#fillServiceWizardFromMetadata"));
+        } else {
+            hideElements($("#fillServiceWizardFromMetadata"));
+        }
         const protocol = applicationProtocolOf(serviceClass);
         let title = isNewService ? `New ${protocol.label}` : `Edit ${serviceData.name ?? protocol.label}`;
         if (options.duplicate === true) {
@@ -4098,7 +4353,7 @@ async function chooseRegisteredServiceType(serviceTypes) {
                     <span class="palantir-protocol-badge is-${protocol.key}" aria-hidden="true">${escapePalantirMarkup(protocol.short)}</span>
                     <span class="palantir-type-card-name">
                         <span>${escapePalantirMarkup(friendlyName || protocol.label)}</span>
-                        <code>${escapePalantirMarkup(serviceClass.split(".").pop())}</code>
+                        ${palantirCode(serviceClass.split(".").pop())}
                     </span>
                 </span>
                 <span class="palantir-type-card-description">${escapePalantirMarkup(descriptions[protocol.key] ?? "Applications of this registered service type.")}</span>

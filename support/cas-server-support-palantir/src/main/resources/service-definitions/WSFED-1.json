@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId": "https://app\\.example\\.org/wsfed.*",
+  "name": "Relying party with claims",
+  "description": "A WS-Federation relying party identified by its realm, receiving email, given name and UPN claims.",
+  "realm": "urn:app:example",
+  "appliesTo": "urn:app:example",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.TreeMap",
+      "EMAIL_ADDRESS_2005": "mail",
+      "GIVEN_NAME": "givenName",
+      "USER_PRINCIPAL_NAME_2005": "eduPersonPrincipalName"
+    }
+  }
+}

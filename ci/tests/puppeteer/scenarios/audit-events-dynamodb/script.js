@@ -61,6 +61,15 @@ async function auditLog(query) {
     const history = await auditLog("principal=casuser&count=100");
     assert(history.length >= recent.length);
 
+    await cas.logg("Hourly counts are kept in a table of their own and answer the audit summary");
+    const summary = JSON.parse(await cas.doRequest(`${AUDIT_LOG}/summary?interval=PT2H&actions=AUTHENTICATION_FAILED,AUTHENTICATION_SUCCESS`,
+        "GET", JSON_HEADERS, 200));
+    assert(summary.supported === true);
+    const failed = summary.counts.filter((count) => count.action === "AUTHENTICATION_FAILED")
+        .reduce((total, count) => total + count.count, 0);
+    assert(failed >= 2, `Expected at least two failed sign-ins counted, found ${failed}`);
+    assert((await cas.dynamoDbScan("DynamoDbCasAuditRecordsSummary")).length > 0);
+
     await cas.logg("Authentication events are kept in DynamoDb and exposed through the events endpoint");
     const events = JSON.parse(await cas.doRequest(EVENTS, "GET", JSON_HEADERS, 200));
     assert(events.length >= 3, `Expected at least three events, found ${events.length}`);

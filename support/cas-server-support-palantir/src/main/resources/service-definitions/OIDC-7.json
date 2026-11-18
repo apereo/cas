@@ -1,0 +1,32 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://app\\.example\\.org/callback",
+  "name": "Encrypted ID tokens",
+  "description": "Signs ID tokens with RS256 and encrypts them with a key from the client's JWKS.",
+  "encryptIdToken": true,
+  "jwks": "https://app.example.org/.well-known/jwks.json",
+  "idTokenSigningAlg": "RS256",
+  "idTokenEncryptionAlg": "RSA-OAEP-256",
+  "idTokenEncryptionEncoding": "A256GCM",
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile"
+    ]
+  ]
+}

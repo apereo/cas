@@ -64,7 +64,7 @@ public class RegisteredServiceTestUtils {
             val service = (CasModelRegisteredService) RegisteredServiceTestUtils.getRegisteredService(url);
             return new HttpBasedServiceCredential(new URI(url).toURL(), service);
         } catch (final Exception e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(e);
         }
     }
 

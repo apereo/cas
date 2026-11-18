@@ -49,6 +49,24 @@ class ServiceAccessEnforcementAuditResourceResolverTests {
             val outcome = serviceAccessEnforcementAuditResourceResolver.resolveFrom(mock(JoinPoint.class), result);
             assertTrue(outcome.length > 0);
         }
+
+        @Test
+        void verifyTarget() {
+            val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+            val denied = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(CoreAuthenticationTestUtils.getService())
+                .exception(new IllegalArgumentException("denied"))
+                .build();
+            assertEquals(String.valueOf(registeredService.getId()),
+                serviceAccessEnforcementAuditResourceResolver.resolveTarget(mock(JoinPoint.class), denied));
+            val unregistered = AuditableExecutionResult.builder()
+                .service(CoreAuthenticationTestUtils.getService())
+                .exception(new IllegalArgumentException("denied"))
+                .build();
+            assertNull(serviceAccessEnforcementAuditResourceResolver.resolveTarget(mock(JoinPoint.class), unregistered));
+            assertNull(serviceAccessEnforcementAuditResourceResolver.resolveTarget(mock(JoinPoint.class), (Object) null));
+        }
     }
     
     @Nested

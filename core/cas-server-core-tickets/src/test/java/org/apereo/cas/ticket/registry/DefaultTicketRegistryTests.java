@@ -13,6 +13,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEven
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -22,6 +23,7 @@ import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
@@ -58,11 +60,32 @@ class DefaultTicketRegistryTests {
         @RepeatedTest(1)
         void verifyCountsUnknown() {
             val registry = mock(DefaultTicketRegistry.class);
-            when(registry.stream()).thenThrow(IllegalArgumentException.class);
+            when(registry.getMapInstance()).thenThrow(IllegalArgumentException.class);
             when(registry.sessionCount()).thenCallRealMethod();
             when(registry.serviceTicketCount()).thenCallRealMethod();
+            when(registry.countTicketsOfType(any())).thenCallRealMethod();
             assertEquals(Long.MIN_VALUE, registry.sessionCount());
             assertEquals(Long.MIN_VALUE, registry.serviceTicketCount());
+        }
+
+        /**
+         * Tickets, sessions, service tickets and tickets per type are counted without reading the tickets, whether they
+         * are kept as is or encoded.
+         */
+        @RepeatedTest(2)
+        void verifyCountsWithoutReadingTickets() throws Throwable {
+            val registry = new DefaultTicketRegistry(useEncryption ? setupCipherExecutor() : CipherExecutor.noOp(),
+                ticketSerializationManager, ticketCatalog, mock(ConfigurableApplicationContext.class));
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+                CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+            val serviceTicket = ticketGrantingTicket.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+                RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            registry.addTicket(ticketGrantingTicket);
+            registry.addTicket(serviceTicket);
+            assertEquals(2, registry.countTickets());
+            assertEquals(1, registry.sessionCount());
+            assertEquals(1, registry.serviceTicketCount());
+            assertEquals(Map.of(TicketGrantingTicket.PREFIX, 1L, ServiceTicket.PREFIX, 1L), registry.countTicketsByType());
         }
 
         @RepeatedTest(1)

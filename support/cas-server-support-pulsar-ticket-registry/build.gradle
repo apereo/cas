@@ -12,6 +12,7 @@ ext {
 }
 dependencies {
     implementation libraries.springbootpulsar
+    implementation libraries.springmessaging
 
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-ha")

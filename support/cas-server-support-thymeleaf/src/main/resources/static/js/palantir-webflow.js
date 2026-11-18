@@ -39,14 +39,9 @@ async function initializeCasSpringWebflowOperations() {
         hideBanner();
         const flowId = $("#webflowFilter").val();
 
-        Swal.fire({
-            icon: "info",
-            title: `Fetching Webflow Definitions`,
-            text: `Please wait while webflow definitions for ${flowId} is processed...`,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        $("#webflowStatus").prop("hidden", false).empty()
+            .append($("<i>", {class: "mdi mdi-loading mdi-spin", "aria-hidden": "true"}))
+            .append(document.createTextNode(` Drawing the ${flowId} flow...`));
 
         const selectedState = $("#webflowStateFilter").val();
         let url = `${CasActuatorEndpoints.springWebflow()}?flowId=${flowId}`;
@@ -204,13 +199,14 @@ async function initializeCasSpringWebflowOperations() {
                 const container = document.getElementById("webflowContainer");
                 container.innerHTML = svg;
                 $("#webflowDiagram").removeClass("hide");
-                Swal.close();
+                $("#webflowMagnifyButton").removeClass("hide");
+                $("#webflowStatus").prop("hidden", true).empty();
                 bindFunctions?.(container);
                 updateNavigationSidebar();
             },
             error: (xhr, textStatus, errorThrown) => {
                 console.error("Error fetching data:", errorThrown);
-                Swal.close();
+                $("#webflowStatus").prop("hidden", true).empty();
             }
         });
     }

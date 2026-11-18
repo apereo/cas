@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app\\.example\\.org/.*",
+  "name": "Front-channel logout",
+  "description": "Logs the user out of this application through their browser when they log out of CAS, at the application's logout URL.",
+  "logoutType": "FRONT_CHANNEL",
+  "logoutUrl": "https://app.example.org/logout"
+}

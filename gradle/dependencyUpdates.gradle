@@ -1,3 +1,4 @@
+import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.CasDependencyUpdatesTask
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
@@ -32,16 +33,17 @@ def buildscriptRepositories = project.buildscript.repositories
     .withType(MavenArtifactRepository)
     .collect { it.url.toString() }
 
-def reportOutputDir = providers.systemProperty('outputDir')
-    .map { file(it) }
-    .getOrElse(layout.buildDirectory.dir('dependencyUpdates').get().asFile)
+def reportOutputDirPath = CasBuildSettings.stringProperty(project, 'outputDir')
+def reportOutputDir = reportOutputDirPath != null
+    ? file(reportOutputDirPath)
+    : layout.buildDirectory.dir('dependencyUpdates').get().asFile
 
 tasks.register('dependencyUpdates', CasDependencyUpdatesTask) {
     dependencyCoordinates.set(dependencyUpdateCoordinates)
     repositoryUrls.set(buildscriptRepositories)
-    revision.set(providers.systemProperty('revision').orElse('milestone'))
-    gradleReleaseChannel.set(providers.systemProperty('gradleReleaseChannel').orElse('release-candidate'))
-    reportfileName.set(providers.systemProperty('reportfileName').orElse('report'))
-    outputFormatter.set(providers.systemProperty('outputFormatter').orElse('plain'))
+    revision.set(CasBuildSettings.stringProperty(project, 'revision', 'milestone'))
+    gradleReleaseChannel.set(CasBuildSettings.stringProperty(project, 'gradleReleaseChannel', 'release-candidate'))
+    reportfileName.set(CasBuildSettings.stringProperty(project, 'reportfileName', 'report'))
+    outputFormatter.set(CasBuildSettings.stringProperty(project, 'outputFormatter', 'plain'))
     reportOutputDirectory.set(reportOutputDir)
 }

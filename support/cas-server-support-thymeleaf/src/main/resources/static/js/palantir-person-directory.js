@@ -12,13 +12,13 @@ async function initializePersonDirectoryOperations() {
     let attrDefToolbarEntries = "";
     if (CasActuatorEndpoints.attributeDefinitions()) {
         attrDefToolbarEntries += `
-            <button type="button" id="newAttributeDefinitionButton"
+            <button type="button" data-palantir-write="attributeDefinitions" id="newAttributeDefinitionButton"
                     onclick="newAttributeDefinition()"
                     title="Create a new attribute definition"
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus-thick" aria-hidden="true"></i>New</span>
             </button>
-            <button type="button" id="deleteAllAttributeDefinitionsButton"
+            <button type="button" data-palantir-write="attributeDefinitions" id="deleteAllAttributeDefinitionsButton"
                     onclick="deleteAllAttributeDefinitions()"
                     title="Delete all attribute definitions"
                     class="mdc-button mdc-button--raised">
@@ -30,7 +30,7 @@ async function initializePersonDirectoryOperations() {
                     class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export" aria-hidden="true"></i>Export</span>
             </button>
-            <button type="button" id="importAttributeDefinitionsButton"
+            <button type="button" data-palantir-write="attributeDefinitions" id="importAttributeDefinitionsButton"
                     onclick="document.getElementById('importAttrDefFileInput').click()"
                     title="Import attribute definitions from JSON"
                     class="mdc-button mdc-button--raised">
@@ -52,16 +52,18 @@ async function initializePersonDirectoryOperations() {
         layout: {
             topStart: attrDefToolbar
         },
-        drawCallback: () => {
+        drawCallback: function () {
             $("#attributeDefinitionsTable tr").addClass("mdc-data-table__row");
             $("#attributeDefinitionsTable td").addClass("mdc-data-table__cell");
+            renderAttributeDefinitionCards(this.api());
         }
     });
+    initializeAttributeDefinitionCards();
 
     const attributeRepositoriesToolbar = document.createElement("div");
     if (attributeRepositoryPropertiesMutable()) {
         attributeRepositoriesToolbar.innerHTML = `
-            <button type="button" id="newAttributeRepositoryButton"
+            <button type="button" data-palantir-write="casConfig" id="newAttributeRepositoryButton"
                     onclick="openNewAttributeRepositoryDialog()"
                     title="Create a new attribute repository"
                     class="mdc-button mdc-button--raised">
@@ -80,7 +82,7 @@ async function initializePersonDirectoryOperations() {
             {
                 data: "id",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapePersonDirectoryHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             }
         ],
@@ -97,14 +99,14 @@ async function initializePersonDirectoryOperations() {
             {
                 data: "property",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapePersonDirectoryHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             },
             {
                 data: "value",
                 className: "dt-left wrap",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapePersonDirectoryHtml(formatAttributeRepositoryConfigValue(data))}</code>`
+                    ? `${palantirCode(formatAttributeRepositoryConfigValue(data))}`
                     : formatAttributeRepositoryConfigValue(data)
             }
         ],
@@ -211,8 +213,8 @@ async function initializePersonDirectoryOperations() {
                 success: (response, status, xhr) => {
                     for (const [key, values] of Object.entries(response.attributes)) {
                         personDirectoryTable.row.add({
-                            0: `<code>${key}</code>`,
-                            1: `<code>${values}</code>`
+                            0: `${palantirCode(key)}`,
+                            1: `${palantirCode(values)}`
                         });
                     }
                     personDirectoryTable.draw();
@@ -226,37 +228,18 @@ async function initializePersonDirectoryOperations() {
     });
 
     attributeDefinitionsTable.clear();
-    let attributeDefinitions = 0;
     if (CasActuatorEndpoints.attributeDefinitions()) {
         $.get(CasActuatorEndpoints.attributeDefinitions(), response => {
-            const checked = `<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>`;
-            const unchecked = `<i class='mdc-tab__icon mdi mdi-checkbox-blank-circle-outline' aria-hidden='true'></i>`;
-            
             for (const definition of response) {
-                attributeDefinitionsTable.row.add({
-                    0: attrDefTypeIcon(definition),
-                    1: `<code>${definition.key ?? "N/A"}</code>`,
-                    2: `<code>${definition.name ?? "N/A"}</code>`,
-                    3: `<code>${definition.scoped ? checked : unchecked}</code>`,
-                    4: `<code>${definition.encrypted ? checked : unchecked}</code>`,
-                    5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
-                    6: `<code>${definition.attribute ?? "N/A"}</code>`,
-                    7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                        8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                        9: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                        10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                        11: `<code>${definition?.urn ?? "N/A"}</code>`,
-                        key: definition.key
-                    });
-                attributeDefinitions++;
+                attributeDefinitionsTable.row.add(attributeDefinitionRow(definition));
             }
-            if (attributeDefinitions > 0) {
-                attributeDefinitionsTable.draw();
-            }
+            $("#attributeDefinitionsCards").data("loaded", true);
+            attributeDefinitionsTable.draw();
             showElements($("#attributeDefinitionsTab").parent());
             bindAttrDefDeleteButtons();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            $("#attributeDefinitionsCards").html("<p class=\"palantir-empty-state\">Attribute definitions could not be read just now.</p>");
             displayBanner(xhr);
         });
     } else {
@@ -751,13 +734,14 @@ function renderNewAttributeRepositoryDialog() {
     dialogContainer.dialog({
         title: "New Attribute Repository",
         modal: true,
-        width: 700,
+        width: Math.min(700, $(window).width() - 32),
         autoOpen: true,
         height: "auto",
         position: {
-            my: "center top",
-            at: "center top+100",
-            of: window
+            my: "center",
+            at: "center",
+            of: window,
+            collision: "fit"
         },
         buttons: [
             {
@@ -821,8 +805,7 @@ function renderNewAttributeRepositoryDialog() {
             }
         ],
         open: function () {
-            $(this).css("overflow", "visible");
-            $(this).closest(".ui-dialog").css("overflow", "visible");
+            fitPalantirDialogToWindow(this);
             cas.init("#newAttributeRepositoryDialog");
             $("#attributeRepositoryType").selectmenu({
                 width: "330px",
@@ -843,10 +826,33 @@ function renderNewAttributeRepositoryDialog() {
     });
 }
 
-function escapePersonDirectoryHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
+/**
+ * Keep a dialog whose height follows its content inside the window: its content scrolls once it would be taller than
+ * the window leaves room for, so the buttons stay on screen on a small display, and the dialog is centered again
+ * whenever its content grows or the window is resized.
+ *
+ * @param element the dialog's content element
+ */
+function fitPalantirDialogToWindow(element) {
+    const content = $(element);
+    const widget = content.closest(".ui-dialog").css("overflow", "visible");
+    const fit = () => {
+        if (!content.dialog("instance") || !content.dialog("isOpen")) {
+            return;
+        }
+        const chrome = widget.find(".ui-dialog-titlebar").outerHeight(true) + widget.find(".ui-dialog-buttonpane").outerHeight(true) + 32;
+        content.css({"max-height": `${Math.max(240, $(window).height() - chrome - 32)}px`, "overflow-y": "auto", "overflow-x": "hidden"});
+        content.dialog("option", "position", {my: "center", at: "center", of: window, collision: "fit"});
+    };
+    fit();
+    const observer = new ResizeObserver(() => requestAnimationFrame(fit));
+    observer.observe(content[0]);
+    const namespace = `resize.palantirFit${Math.random().toString(36).slice(2)}`;
+    $(window).on(namespace, fit);
+    content.one("dialogclose", () => {
+        observer.disconnect();
+        $(window).off(namespace);
+    });
 }
 
 function formatAttributeRepositoryConfigValue(value) {
@@ -898,6 +904,156 @@ function attrDefTypeIcon(definition) {
     return `<i title="Default" class="mdi mdi-alpha-d-box-outline"></i>`;
 }
 
+/**
+ * The table row of one attribute definition. The table stays the source of the search and paging that the
+ * cards follow, and keeps the definition itself for drawing its card.
+ *
+ * @param {object} definition the attribute definition
+ * @returns {object} the row data
+ */
+function attributeDefinitionRow(definition) {
+    const checked = "<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>";
+    const unchecked = "<i class='mdc-tab__icon mdi mdi-checkbox-blank-circle-outline' aria-hidden='true'></i>";
+    return {
+        0: attrDefTypeIcon(definition),
+        1: palantirCode(definition.key ?? "N/A"),
+        2: palantirCode(definition.name ?? "N/A"),
+        3: `<code>${definition.scoped ? checked : unchecked}</code>`,
+        4: `<code>${definition.encrypted ? checked : unchecked}</code>`,
+        5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
+        6: palantirCode(definition.attribute ?? "N/A"),
+        7: palantirCode(definition.patternFormat ?? "N/A"),
+        8: palantirCode(definition.canonicalizationMode ?? "N/A"),
+        9: `<code>${definition.flattened ? checked : unchecked}</code>`,
+        10: palantirCode(definition.friendlyName ?? "N/A"),
+        11: palantirCode(definition.urn ?? "N/A"),
+        key: definition.key,
+        definition
+    };
+}
+
+/**
+ * The kind of an attribute definition, for the badge and subtitle of its card.
+ *
+ * @param {object} definition the attribute definition
+ * @returns {{key: string, short: string, label: string}} the badge style, its text and a readable name
+ */
+function attributeDefinitionKind(definition) {
+    const type = definition["@class"] || "";
+    if (type.includes("SamlIdPAttributeDefinition")) {
+        return {key: "saml", short: "SAML", label: "SAML2 attribute"};
+    }
+    if (type.includes("OidcAttributeDefinition")) {
+        return {key: "oidc", short: "OIDC", label: "OpenID Connect claim"};
+    }
+    if (type.includes("OAuthAttributeDefinition")) {
+        return {key: "oauth", short: "OAuth", label: "OAuth attribute"};
+    }
+    return {key: "default", short: "", label: "Attribute definition"};
+}
+
+/**
+ * Draw one card per attribute definition on the current page of the table.
+ *
+ * @param {object} table the attribute definitions table
+ */
+function renderAttributeDefinitionCards(table) {
+    const container = $("#attributeDefinitionsCards");
+    if (container.length === 0) {
+        return;
+    }
+    if (container.data("loaded") !== true) {
+        container.html("<p class=\"palantir-empty-state\">Loading attribute definitions…</p>");
+        return;
+    }
+    const cards = table.rows({page: "current", search: "applied"}).data().toArray()
+        .filter(row => row.definition)
+        .map(row => attributeDefinitionCard(row.definition));
+    if (cards.length > 0) {
+        container.html(cards.join(""));
+        applyPalantirEndpointAccess(container[0]);
+    } else {
+        const message = table.search() === ""
+            ? "No attribute definitions are registered yet."
+            : "No attribute definition matches that search.";
+        container.html(`<p class="palantir-empty-state">${message}</p>`);
+    }
+}
+
+/**
+ * One attribute definition as a card: its key and kind, its flags, the values it sets, and its actions.
+ *
+ * @param {object} definition the attribute definition
+ * @returns {string} the card markup
+ */
+function attributeDefinitionCard(definition) {
+    const escape = escapePalantirMarkup;
+    const kind = attributeDefinitionKind(definition);
+    const key = String(definition.key ?? "");
+    const released = definition.name && definition.name !== key ? ` · released as ${escape(definition.name)}` : "";
+    const flags = [["Scoped", definition.scoped], ["Encrypted", definition.encrypted],
+        ["Single value", definition.singleValue], ["Flattened", definition.flattened]];
+    if (kind.key === "saml") {
+        flags.push(["Persistent", definition.persistent]);
+    }
+    if (kind.key === "oidc") {
+        flags.push(["Structured", definition.structured]);
+    }
+    const details = [["Attribute", definition.attribute], ["Friendly name", definition.friendlyName],
+        ["URN", definition.urn], ["Pattern format", definition.patternFormat],
+        ["Canonicalization", definition.canonicalizationMode === "NONE" ? null : definition.canonicalizationMode]]
+        .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== "");
+    const badge = kind.short === ""
+        ? "<i class=\"mdi mdi-tag-text-outline\" aria-hidden=\"true\"></i>"
+        : escape(kind.short);
+    return `
+        <article class="palantir-record-card is-${kind.key}" data-attrdef-key="${escape(key)}" aria-label="${escape(key)}">
+            <header class="palantir-record-card__head">
+                <span class="palantir-protocol-badge is-${kind.key}" title="${escape(definition["@class"] ?? kind.label)}">${badge}</span>
+                <div class="palantir-record-card__title">
+                    <h4 title="${escape(key)}">${escape(key)}</h4>
+                    <p>${escape(kind.label)}${released}</p>
+                </div>
+            </header>
+            <ul class="palantir-record-card__flags">
+                ${flags.map(([label, on]) => `
+                    <li class="${on ? "is-on" : ""}">
+                        <i class="mdi ${on ? "mdi-check-circle" : "mdi-minus-circle-outline"}" aria-hidden="true"></i>${label}<span class="palantir-sr-only">: ${on ? "yes" : "no"}</span>
+                    </li>`).join("")}
+            </ul>
+            ${details.length > 0
+        ? `<dl class="palantir-record-card__details">${details.map(([label, value]) => `
+                <div><dt>${label}</dt><dd title="${escape(value)}">${escape(value)}</dd></div>`).join("")}</dl>`
+        : "<p class=\"palantir-record-card__none\">No mapping, URN or format is set.</p>"}
+            <footer class="palantir-record-card__actions">
+                <button type="button" class="palantir-button" data-attrdef-action="view">
+                    <i class="mdi mdi-eye-outline" aria-hidden="true"></i>View
+                </button>
+                <button type="button" class="palantir-button" data-attrdef-action="edit" data-palantir-write="attributeDefinitions">
+                    <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>Edit
+                </button>
+                <button type="button" class="palantir-icon-button palantir-record-card__delete" data-attrdef-action="delete"
+                        data-palantir-write="attributeDefinitions" aria-label="Delete ${escape(key)}" title="Delete">
+                    <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+                </button>
+            </footer>
+        </article>`;
+}
+
+/**
+ * Put the cards where the table sits, and run the card buttons.
+ */
+function initializeAttributeDefinitionCards() {
+    const tableRow = $("#attributeDefinitionsTable").closest(".dt-layout-row");
+    if (tableRow.length > 0) {
+        $("#attributeDefinitionsCards").insertAfter(tableRow);
+    }
+    $("#attributeDefinitionsCards").off("click").on("click", "[data-attrdef-action]", event => {
+        const button = event.currentTarget;
+        runAttributeDefinitionAction(button.dataset.attrdefAction, button.closest("[data-attrdef-key]").dataset.attrdefKey);
+    });
+}
+
 function reloadAttributeDefinitionsTable() {
     if (!CasActuatorEndpoints.attributeDefinitions()) {
         return;
@@ -905,25 +1061,10 @@ function reloadAttributeDefinitionsTable() {
     const table = $("#attributeDefinitionsTable").DataTable();
     table.clear();
     $.get(CasActuatorEndpoints.attributeDefinitions(), response => {
-        const checked = `<i class='mdc-tab__icon mdi mdi-check-circle' aria-hidden='true'></i>`;
-        const unchecked = `<i class='mdc-tab__icon mdi mdi-checkbox-blank-circle-outline' aria-hidden='true'></i>`;
         for (const definition of response) {
-            table.row.add({
-                0: attrDefTypeIcon(definition),
-                1: `<code>${definition.key ?? "N/A"}</code>`,
-                2: `<code>${definition.name ?? "N/A"}</code>`,
-                3: `<code>${definition.scoped ? checked : unchecked}</code>`,
-                4: `<code>${definition.encrypted ? checked : unchecked}</code>`,
-                5: `<code>${definition.singleValue ? checked : unchecked}</code>`,
-                6: `<code>${definition.attribute ?? "N/A"}</code>`,
-                7: `<code>${definition.patternFormat ?? "N/A"}</code>`,
-                    8: `<code>${definition.canonicalizationMode ?? "N/A"}</code>`,
-                    9: `<code>${definition.flattened ? checked : unchecked}</code>`,
-                    10: `<code>${definition?.friendlyName ?? "N/A"}</code>`,
-                    11: `<code>${definition?.urn ?? "N/A"}</code>`,
-                    key: definition.key
-                });
+            table.row.add(attributeDefinitionRow(definition));
         }
+        $("#attributeDefinitionsCards").data("loaded", true);
         table.draw();
         if (response.length > 0) {
             showElements($("#attributeDefinitionsTab").parent());
@@ -931,6 +1072,7 @@ function reloadAttributeDefinitionsTable() {
         bindAttrDefDeleteButtons();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        $("#attributeDefinitionsCards").html("<p class=\"palantir-empty-state\">Attribute definitions could not be read just now.</p>");
         displayBanner(xhr);
     });
 }
@@ -942,10 +1084,8 @@ function deleteAllAttributeDefinitions() {
     const table = $("#attributeDefinitionsTable").DataTable();
     const keys = [];
     table.rows().every(function () {
-        const data = this.data();
-        const keyHtml = data[1];
-        const key = $(keyHtml).text();
-        if (key && key !== "N/A") {
+        const key = this.data().key;
+        if (key) {
             keys.push(key);
         }
     });
@@ -1041,54 +1181,61 @@ function bindAttrDefDeleteButtons() {
         items: {
             view: {name: "View Attribute Definition", icon: contextMenuIcon("mdi-eye")},
             edit: {name: "Edit Attribute Definition", icon: contextMenuIcon("mdi-pencil")},
-            delete: {name: "Delete Attribute Definition", icon: contextMenuIcon("mdi-delete")}
+            delete: {name: "Delete Attribute Definition", write: "attributeDefinitions", icon: contextMenuIcon("mdi-delete")}
         },
-        callback: (key, context) => {
-            const definitionKey = context.rowData.key;
-            if (key === "delete" && CasActuatorEndpoints.attributeDefinitions()) {
-                Swal.fire({
-                    title: "Are you sure you want to delete this entry?",
-                    text: "Once deleted, you may not be able to recover this entry.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: CasActuatorEndpoints.attributeDefinitions(),
-                                type: "DELETE",
-                                contentType: "application/json",
-                                data: JSON.stringify([definitionKey]),
-                                success: () => {
-                                    reloadAttributeDefinitionsTable();
-                                },
-                                error: (xhr, status, error) => {
-                                    console.error("Error deleting resource:", error);
-                                    displayBanner(xhr);
-                                }
-                            });
+        callback: (key, context) => runAttributeDefinitionAction(key, context.rowData.key)
+    });
+}
+
+/**
+ * View, edit or delete one attribute definition, from its card or from the row menu.
+ *
+ * @param {string} action view, edit or delete
+ * @param {string} definitionKey the key of the attribute definition
+ */
+function runAttributeDefinitionAction(action, definitionKey) {
+    if (action === "delete" && CasActuatorEndpoints.attributeDefinitions()) {
+        Swal.fire({
+            title: "Are you sure you want to delete this entry?",
+            text: "Once deleted, you may not be able to recover this entry.",
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: CasActuatorEndpoints.attributeDefinitions(),
+                        type: "DELETE",
+                        contentType: "application/json",
+                        data: JSON.stringify([definitionKey]),
+                        success: () => {
+                            reloadAttributeDefinitionsTable();
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error deleting resource:", error);
+                            displayBanner(xhr);
                         }
                     });
-            } else if (key === "view" && CasActuatorEndpoints.attributeDefinitions()) {
-                $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${definitionKey}`, response => {
-                    const editor = initializeAceEditor("viewAttrDefEditor", "json");
-                    editor.setReadOnly(true);
-                    editor.setValue(JSON.stringify(response, null, 2), -1);
-                    editor.gotoLine(1);
-                    const beautify = ace.require("ace/ext/beautify");
-                    beautify.beautify(editor.session);
-                    const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewAttrDefDialog"));
-                    dialog["open"]();
-                }).fail((xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    displayBanner(xhr);
-                });
-            } else if (key === "edit") {
-                editAttributeDefinition(definitionKey);
-            }
-        }
-    });
+                }
+            });
+    } else if (action === "view" && CasActuatorEndpoints.attributeDefinitions()) {
+        $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${definitionKey}`, response => {
+            const editor = initializeAceEditor("viewAttrDefEditor", "json");
+            editor.setReadOnly(true);
+            editor.setValue(JSON.stringify(response, null, 2), -1);
+            editor.gotoLine(1);
+            const beautify = ace.require("ace/ext/beautify");
+            beautify.beautify(editor.session);
+            const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewAttrDefDialog"));
+            dialog["open"]();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    } else if (action === "edit") {
+        editAttributeDefinition(definitionKey);
+    }
 }
 
 function toggleAttrDefEditorVisibility() {
@@ -1460,9 +1607,10 @@ function openAttributeDefinitionDialog(existingDefinition) {
         autoOpen: true,
         height: Math.min($(window).height() * 0.8, 950),
         position: {
-            my: "center top",
-            at: "center top+100",
-            of: window
+            my: "center",
+            at: "center",
+            of: window,
+            collision: "fit"
         },
         buttons: {
             Save: function () {

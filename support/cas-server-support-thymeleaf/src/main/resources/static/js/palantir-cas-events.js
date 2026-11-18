@@ -27,16 +27,16 @@ async function initializeCasEventsOperations() {
                         for (const entry of jsonEvents) {
                             const geoLocation = `${entry?.properties?.geoLatitude ?? ""} ${entry?.properties?.geoLongitude ?? ""} ${entry?.properties?.geoAccuracy ?? ""}`.trim();
                             casEventsTable.row.add({
-                                0: `<code>${entry?.creationTime ?? "N/A"}</code>`,
-                                1: `<code>${getLastWord(entry?.type) ?? "N/A"}</code>`,
-                                2: `<code>${entry?.properties?.eventId ?? "N/A"}</code>`,
-                                3: `<code>${entry?.principalId ?? "N/A"}</code>`,
-                                4: `<code>${entry?.properties?.clientip ?? "N/A"}</code>`,
-                                5: `<code>${entry?.properties?.serverip ?? "N/A"}</code>`,
-                                6: `<code>${entry?.properties?.agent ?? "N/A"}</code>`,
-                                7: `<code>${entry?.properties?.tenant ?? "N/A"}</code>`,
-                                8: `<code>${entry?.properties?.deviceFingerprint ?? "N/A"}</code>`,
-                                9: `<code>${geoLocation.length === 0 ? "N/A" : geoLocation}</code>`
+                                0: `${palantirCode(entry?.creationTime ?? "N/A")}`,
+                                1: `${palantirCode(getLastWord(entry?.type) ?? "N/A")}`,
+                                2: `${palantirCode(entry?.properties?.eventId ?? "N/A")}`,
+                                3: `${palantirCode(entry?.principalId ?? "N/A")}`,
+                                4: `${palantirCode(entry?.properties?.clientip ?? "N/A")}`,
+                                5: `${palantirCode(entry?.properties?.serverip ?? "N/A")}`,
+                                6: `${palantirCode(entry?.properties?.agent ?? "N/A")}`,
+                                7: `${palantirCode(entry?.properties?.tenant ?? "N/A")}`,
+                                8: `${palantirCode(entry?.properties?.deviceFingerprint ?? "N/A")}`,
+                                9: `${palantirCode(geoLocation.length === 0 ? "N/A" : geoLocation)}`
                             });
                         }
                     }
@@ -208,7 +208,57 @@ async function initializeAuditEventsOperations() {
 
         function renderAuditAction(action) {
             const type = auditActionType(action);
-            return `<span class="audit-action-tag audit-action-${type}">${escapeHtml(action || "N/A")}</span>`;
+            const text = action || "N/A";
+            return `<span class="audit-action-tag audit-action-${type}" title="${escapeHtml(text)}">`
+                + `${escapeHtml(text).replaceAll("_", "_<wbr>")}</span>`;
+        }
+
+        function renderAuditPrincipal(principal) {
+            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapeHtml(part));
+            return `<span class="audit-principal-value" title="${escapeHtml(principal)}">
+                        <i class="mdi mdi-account" aria-hidden="true"></i>
+                        <code>${parts.join("<wbr>")}</code>
+                    </span>`;
+        }
+
+        /**
+         * What an audit record was for: an application, by name, that opens its definition, or another target, such
+         * as a multifactor provider, as it is recorded.
+         *
+         * @param {string} target the target, or nothing
+         * @returns {string} the cell
+         */
+        function renderAuditTarget(target) {
+            if (!target) {
+                return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
+            }
+            if (/^\d+$/.test(target) && CasActuatorEndpoints.registeredServices()) {
+                const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(target)?.name : null;
+                return `<button type="button" class="audit-target-application" data-audit-application="${escapeHtml(target)}"
+                            title="Open application ${escapeHtml(target)}">
+                            <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                            <span>${escapeHtml(name ?? `Application ${target}`)}</span>
+                        </button>`;
+            }
+            return `<code class="audit-target-value">${escapeHtml(target)}</code>`;
+        }
+
+        /**
+         * Name the applications of the rows shown that Palantir has not listed yet, reading each once.
+         */
+        function nameAuditTargetApplications() {
+            if (typeof palantirApplicationName !== "function") {
+                return;
+            }
+            $("#auditEventsTable [data-audit-application]").each((index, button) => {
+                const id = button.dataset.auditApplication;
+                palantirApplicationName(id).then(name => {
+                    $(button).find("span").text(name);
+                    if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
+                        $(button).addClass("is-gone").attr("title", "This application no longer exists");
+                    }
+                });
+            });
         }
 
         function renderAuditResourceSummary(data, row) {
@@ -234,6 +284,7 @@ async function initializeAuditEventsOperations() {
                 resourceDetails,
                 action,
                 actionType: auditActionType(action),
+                target: entry?.target ? String(entry.target) : "",
                 date: entry?.whenActionWasPerformed ?? "N/A",
                 clientIpAddress: entry?.clientInfo?.clientIpAddress ?? "N/A",
                 userAgent: entry?.clientInfo?.userAgent ?? "N/A"
@@ -265,21 +316,16 @@ async function initializeAuditEventsOperations() {
 
         function auditActionChartColors(action) {
             const type = auditActionType(action);
-            if (type === "success") {
+            if (type === "success" || type === "failure") {
+                const status = type === "success" ? "UP" : "DOWN";
                 return {
-                    background: "rgba(22, 138, 85, .72)",
-                    border: "#168a55"
-                };
-            }
-            if (type === "failure") {
-                return {
-                    background: "rgba(198, 40, 40, .72)",
-                    border: "#c62828"
+                    background: palantirStatusColor(status, .45),
+                    border: palantirStatusColor(status)
                 };
             }
             return {
-                background: "rgba(79, 143, 217, .72)",
-                border: "#4f8fd9"
+                background: palantirChartColor(1, .45),
+                border: palantirChartColor(1)
             };
         }
 
@@ -298,8 +344,6 @@ async function initializeAuditEventsOperations() {
                     datasets: [{
                         label: "Audit Events",
                         data: [],
-                        borderWidth: 2,
-                        borderRadius: 5,
                         borderSkipped: false,
                         maxBarThickness: 54
                     }]
@@ -337,8 +381,7 @@ async function initializeAuditEventsOperations() {
                                 text: "Event count"
                             },
                             ticks: {
-                                precision: 0,
-                                stepSize: 1
+                                precision: 0
                             }
                         }
                     }
@@ -387,12 +430,8 @@ async function initializeAuditEventsOperations() {
             columns: [
                 {
                     data: "principal",
-                    width: "8rem",
-                    render: (data, type) => type === "display" ? `
-                        <span class="audit-principal-value">
-                            <i class="mdi mdi-account" aria-hidden="true"></i>
-                            <code>${escapeHtml(data)}</code>
-                        </span>` : data
+                    width: "10rem",
+                    render: (data, type) => type === "display" ? renderAuditPrincipal(data) : data
                 },
                 {
                     data: "resource",
@@ -405,14 +444,19 @@ async function initializeAuditEventsOperations() {
                     render: (data, type) => type === "display" ? renderAuditAction(data) : data
                 },
                 {
+                    data: "target",
+                    width: "11rem",
+                    render: (data, type) => type === "display" ? renderAuditTarget(data) : data
+                },
+                {
                     data: "date",
                     width: "10rem",
-                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                    render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
                 },
                 {
                     data: "clientIpAddress",
                     width: "6.5rem",
-                    render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                    render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
                 },
                 {
                     data: "userAgent",
@@ -423,7 +467,17 @@ async function initializeAuditEventsOperations() {
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
+                nameAuditTargetApplications();
                 updateAuditActionsChart();
+            }
+        });
+        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", event => {
+            event.stopPropagation();
+            const id = event.currentTarget.dataset.auditApplication;
+            if (typeof openTopApplication === "function") {
+                openTopApplication(id);
+            } else if (typeof navigateToApplication === "function") {
+                navigateToApplication(id);
             }
         });
         updateAuditActionsChart();

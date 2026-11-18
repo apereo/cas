@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app\\.example\\.org/.*",
+  "name": "Send an attribute as the username",
+  "description": "Sends the user's mail attribute, in lower case, as the username instead of the login name.",
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute": "mail",
+    "canonicalizationMode": "LOWER"
+  }
+}

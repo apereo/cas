@@ -55,6 +55,7 @@ dependencies {
 
     api libraries.jose4j
     api libraries.nimbus
+    testImplementation libraries.nimbusoidc
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")

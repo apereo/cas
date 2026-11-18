@@ -5,6 +5,7 @@ const clusterTopologyState = {
     loadingMessage: "Loading cluster topology...",
     emptyMessage: "No cluster members were discovered.",
     members: [],
+    loaded: false,
     refreshInProgress: false
 };
 
@@ -15,11 +16,9 @@ const clusterDiscoveryState = {
     loadingMessage: "Loading cluster discovery...",
     emptyMessage: "No cluster members were found by the discovery client.",
     members: [],
+    loaded: false,
     refreshInProgress: false
 };
-
-let clusterLoadingDialogSequence = 0;
-let activeClusterLoadingDialog = null;
 
 function clusterTopologyText(value, fallback = "Not available") {
     const text = value === null || value === undefined ? "" : String(value).trim();
@@ -276,46 +275,22 @@ function clearClusterMembers(state) {
     hideElements(status);
 }
 
-function showClusterLoadingDialog(state) {
-    const dialogId = String(++clusterLoadingDialogSequence);
-    activeClusterLoadingDialog = dialogId;
-    Swal.fire({
-        title: state.loadingMessage,
-        html: `
-            <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate"
-                 aria-label="${state.loadingMessage}">
-                <div class="mdc-linear-progress__buffer">
-                    <div class="mdc-linear-progress__buffer-bar"></div>
-                    <div class="mdc-linear-progress__buffer-dots"></div>
-                </div>
-                <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
-                    <span class="mdc-linear-progress__bar-inner"></span>
-                </div>
-                <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
-                    <span class="mdc-linear-progress__bar-inner"></span>
-                </div>
-            </div>`,
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: false,
-        customClass: {popup: "cluster-members-loading-dialog"},
-        didOpen: popup => {
-            popup.dataset.clusterLoadingDialog = dialogId;
-            cas.init(".cluster-members-loading-dialog");
-        }
-    });
-    return dialogId;
-}
-
-function closeClusterLoadingDialog(dialogId) {
-    if (activeClusterLoadingDialog !== dialogId) {
+/**
+ * Show that the members are being read, in place and only until they have been read once: the periodic refreshes
+ * that follow update the page quietly.
+ *
+ * @param state the tab's state
+ */
+function showClusterMembersLoading(state) {
+    const owners = $(`#${state.prefix}Owners`).attr("aria-busy", "true");
+    if (state.loaded) {
         return;
     }
-    const popup = Swal.getPopup();
-    if (popup?.dataset.clusterLoadingDialog === dialogId) {
-        Swal.close();
-    }
-    activeClusterLoadingDialog = null;
+    const status = $(`#${state.prefix}Status`).empty();
+    status.append($("<i>", {class: "mdi mdi-loading mdi-spin", "aria-hidden": "true"}));
+    status.append(document.createTextNode(state.loadingMessage));
+    showElements(status);
+    owners.empty();
 }
 
 function refreshClusterMembers(state) {
@@ -325,11 +300,12 @@ function refreshClusterMembers(state) {
     }
     state.refreshInProgress = true;
     const endpoint = `${String(endpointBase).replace(/\/$/, "")}/${state.endpointPath}`;
-    const loadingDialogId = showClusterLoadingDialog(state);
+    showClusterMembersLoading(state);
 
     return $.get(endpoint)
         .done(response => {
             state.members = Array.isArray(response) ? response : [];
+            state.loaded = true;
             renderClusterMembers(state);
         })
         .fail((xhr, requestStatus, error) => {
@@ -339,7 +315,7 @@ function refreshClusterMembers(state) {
         })
         .always(() => {
             state.refreshInProgress = false;
-            closeClusterLoadingDialog(loadingDialogId);
+            $(`#${state.prefix}Owners`).removeAttr("aria-busy");
         });
 }
 

@@ -36,6 +36,8 @@ dependencies {
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-websockets")
 
+    implementation libraries.springbootwebsocket
+    implementation libraries.springmessaging
     implementation libraries.jose4j
     implementation libraries.nimbus
     implementation libraries.bouncycastle

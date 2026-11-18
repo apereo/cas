@@ -27,6 +27,15 @@ public class PalantirProperties implements Serializable {
      */
     private PalantirCasProperties casAuthentication = new PalantirCasProperties();
 
+    /**
+     * Directory that holds application definition templates, as JSON files, that are offered
+     * when an application definition is written by hand in the dashboard, next to the templates
+     * that ship with CAS. The directory is read every time the dashboard is shown, so templates
+     * can be added or changed without a restart. Files that cannot be read as an application
+     * definition, or whose application type is not available, are skipped.
+     */
+    private String templatesDirectory;
+
     @RequiresModule(name = "cas-server-support-palantir")
     @Getter
     @Setter

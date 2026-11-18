@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://sp.example.org/saml",
+  "name": "Require a specific authentication context",
+  "description": "Always reports the REFEDS MFA authentication context to the service provider, which CAS then has to satisfy.",
+  "requiredAuthenticationContextClass": "https://refeds.org/profile/mfa",
+  "metadataLocation": "https://sp.example.org/saml/metadata"
+}

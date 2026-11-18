@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://portal\\.example\\.org/.*",
+  "name": "Allow proxy tickets",
+  "description": "Lets the application obtain proxy tickets to call back-end services on the user's behalf, at callback URLs that match a pattern.",
+  "proxyPolicy": {
+    "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern": "^https://portal\\.example\\.org/proxy-callback.*"
+  }
+}

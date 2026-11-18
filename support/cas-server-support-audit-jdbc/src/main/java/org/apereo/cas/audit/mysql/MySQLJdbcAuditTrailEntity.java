@@ -12,6 +12,7 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 
 /**
@@ -21,7 +22,8 @@ import jakarta.persistence.Table;
  * @since 7.0.0
  */
 @Entity(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
-@Table(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME)
+@Table(name = JdbcAuditTrailEntity.AUDIT_TRAIL_TABLE_NAME,
+    indexes = @Index(name = JdbcAuditTrailEntity.AUDIT_TRAIL_DATE_INDEX_NAME, columnList = "AUD_DATE,AUD_ACTION"))
 @SuperBuilder
 @Setter
 @Getter

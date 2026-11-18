@@ -71,7 +71,7 @@ public class CasHazelcastZooKeeperAutoConfiguration {
             final LockRegistry casTicketRegistryZooKeeperLockRepository) {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultLockRepository(casTicketRegistryZooKeeperLockRepository))
+                .supply(() -> new DefaultLockRepository(casTicketRegistryZooKeeperLockRepository::obtain))
                 .otherwise(LockRepository::noOp)
                 .get();
         }

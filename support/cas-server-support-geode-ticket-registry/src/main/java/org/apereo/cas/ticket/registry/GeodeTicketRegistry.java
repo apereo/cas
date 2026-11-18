@@ -178,6 +178,27 @@ public class GeodeTicketRegistry extends AbstractTicketRegistry implements Dispo
             .filter(Objects::nonNull);
     }
 
+    /**
+     * Count the tickets of each type with a {@code COUNT} query on its region. A region two ticket types share is
+     * counted once.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        val counted = new HashSet<String>();
+        ticketCatalog.findAll().forEach(definition -> {
+            if (getCacheFromMetadata(definition) != null && counted.add(definition.getProperties().getStorageName())) {
+                val count = FunctionUtils.doUnchecked(() -> countTicketsIn(definition, "1=1", ArrayUtils.EMPTY_STRING_ARRAY));
+                if (count != null && count > 0) {
+                    counts.put(definition.getPrefix(), count.longValue());
+                }
+            }
+        });
+        return counts;
+    }
+
     @Override
     public long sessionCount() {
         return FunctionUtils.doUnchecked(() -> countTicketsFor(TicketGrantingTicket.class));
@@ -261,7 +282,10 @@ public class GeodeTicketRegistry extends AbstractTicketRegistry implements Dispo
     private Integer countTicketsFor(final Class<? extends Ticket> clazz,
                                     final String where, final Object[] parameters)
             throws Exception {
-        val metadata = ticketCatalog.findTicketDefinition(clazz).orElseThrow();
+        return countTicketsIn(ticketCatalog.findTicketDefinition(clazz).orElseThrow(), where, parameters);
+    }
+
+    private Integer countTicketsIn(final TicketDefinition metadata, final String where, final Object[] parameters) throws Exception {
         val cache = getCacheFromMetadata(metadata);
         val queryString = "SELECT COUNT(t.id) FROM /%s t WHERE %s"
             .formatted(cache.region().getName(), where);

@@ -72,7 +72,11 @@ public interface AuditTrailManager extends Cleanable {
         /**
          * Tenant information/id.
          */
-        TENANT
+        TENANT,
+        /**
+         * What the action was for, such as an application or a multifactor provider.
+         */
+        TARGET
     }
 
     /**
@@ -137,6 +141,17 @@ public interface AuditTrailManager extends Cleanable {
      */
     default List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         return List.of();
+    }
+
+    /**
+     * Count records per action and per hour, the way the storage can do it without reading every record. A storage that
+     * cannot answers with nothing, so callers can say the summary is not available instead of showing zeroes.
+     *
+     * @param query the period and actions to count
+     * @return the counts, hours and actions without records left out; empty when this storage cannot summarize
+     */
+    default Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        return Optional.empty();
     }
 
     /**

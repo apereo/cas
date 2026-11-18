@@ -1,0 +1,36 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://app\\.example\\.org/callback",
+  "name": "Pairwise subject identifiers",
+  "description": "Gives each user a different subject identifier per sector, so separate applications cannot correlate users.",
+  "subjectType": "pairwise",
+  "sectorIdentifierUri": "https://app.example.org/sector-redirect-uris.json",
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile"
+    ]
+  ],
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator": {
+      "@class": "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+      "salt": "replace-with-a-long-random-salt"
+    }
+  }
+}

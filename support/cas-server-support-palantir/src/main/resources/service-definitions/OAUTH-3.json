@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "...",
+  "serviceId": "^https://device\\.example\\.org/.*",
+  "name": "Device authorization",
+  "description": "For TVs, command-line tools and other devices without a browser: the user approves on another device with a short code.",
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "urn:ietf:params:oauth:grant-type:device_code"
+    ]
+  ],
+  "tokenEndpointAuthenticationMethod": "none",
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "device_code"
+    ]
+  ]
+}

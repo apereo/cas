@@ -4,6 +4,7 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
 ---
 
 
+
 # Verifying CAS changes from a sandbox
 
 ## Fetching specifications
@@ -93,3 +94,8 @@ description: "Compile and test CAS changes from a restricted sandbox or remote V
   Castle and `jclouds-bouncycastle` clash with `bcprov`/`bcpkix`, and Saxon takes over `TransformerFactory`. Use the
   catalog version of commons-codec and leave the others out. A group filter on `org.apereo.cas` also drops
   `org.apereo.cas.client` (`cas-client-core`), which delegation tests need.
+- Redis tests can run in the VM against `fakeredis` (`pip install --user fakeredis`; `TcpFakeServer(("127.0.0.1", 6379))`),
+  started in the same `device_bash` call as `(timeout 170 python3 fr.py &)`: a detached server keeps the call open until
+  the tool times out, and a server started in an earlier call is gone. Pass `-Djdk.net.hosts.file` mapping the VM's
+  host name to 127.0.0.1, or every local host name lookup waits 40 s, and run from class directories copied off the
+  mount, or Spring context startup crawls on class loading.

@@ -14,11 +14,11 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
 import org.springframework.boot.autoconfigure.ssl.SslAutoConfiguration;
+import org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.health.autoconfigure.actuate.endpoint.HealthEndpointAutoConfiguration;
 import org.springframework.boot.health.autoconfigure.registry.HealthContributorRegistryAutoConfiguration;
-import org.springframework.boot.integration.autoconfigure.IntegrationAutoConfiguration;
 import org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration;
 import org.springframework.boot.mail.autoconfigure.MailProperties;
 import org.springframework.boot.micrometer.metrics.autoconfigure.CompositeMeterRegistryAutoConfiguration;
@@ -65,7 +65,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     AopAutoConfiguration.class,
     CompositeMeterRegistryAutoConfiguration.class,
     DispatcherServletAutoConfiguration.class,
-    IntegrationAutoConfiguration.class,
     JacksonAutoConfiguration.class,
     MetricsAutoConfiguration.class,
     MockMvcAutoConfiguration.class,
@@ -92,6 +91,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     HealthEndpointAutoConfiguration.class,
     InfoEndpointAutoConfiguration.class,
     SslAutoConfiguration.class,
+    TaskSchedulingAutoConfiguration.class,
     ConfigurationPropertiesRebinderAutoConfiguration.class
 })
 @Import(ServletWebServerConfiguration.class)

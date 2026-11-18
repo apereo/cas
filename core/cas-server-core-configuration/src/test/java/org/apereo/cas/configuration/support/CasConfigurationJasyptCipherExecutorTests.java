@@ -1,12 +1,22 @@
 package org.apereo.cas.configuration.support;
 
 import module java.base;
+import org.apereo.cas.configuration.api.SimplePropertySource;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.crypto.DecodableCipher;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,8 +25,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.bootstrap.config.BootstrapPropertySource;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -99,6 +114,59 @@ class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
+    void verifyFailedEncryptionDoesNotLogValue() {
+        val context = LoggerContext.getContext(false);
+        val configuration = context.getConfiguration();
+        val appender = new InMemoryLogAppender("CasConfigurationJasyptCipherExecutorTestsAppender");
+        appender.start();
+        val loggerConfig = new LoggerConfig(DecodableCipher.class.getName(), Level.WARN, false);
+        loggerConfig.addAppender(appender, Level.WARN, null);
+        configuration.addLogger(loggerConfig.getName(), loggerConfig);
+        context.updateLoggers();
+        try {
+            val secret = UUID.randomUUID().toString();
+            assertNull(new CasConfigurationJasyptCipherExecutor(null, null).encryptValue(secret));
+            assertFalse(appender.getEvents().isEmpty());
+            assertTrue(appender.getEvents().stream().noneMatch(event -> event.getMessage().getFormattedMessage().contains(secret)));
+        } finally {
+            configuration.removeLogger(loggerConfig.getName());
+            appender.stop();
+            context.updateLoggers();
+        }
+    }
+
+    @Test
+    void verifyDynamicSourcesAreDecryptedWhenBound() {
+        val dynamic = new SimplePropertySource();
+        dynamic.setProperty("cas.example.enabled", jasypt.encryptValue("true"));
+        dynamic.setProperty("cas.example.name", jasypt.encryptValue("Dynamic"));
+        dynamic.setProperty("cas.example.plain", "Plain");
+        dynamic.setProperty("cas.example.broken", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "broken");
+
+        try (val applicationContext = new GenericApplicationContext()) {
+            val sources = applicationContext.getEnvironment().getPropertySources();
+            sources.addFirst(new BootstrapPropertySource<>(dynamic));
+            sources.addFirst(new MapPropertySource("overrides", Map.of("cas.example.name", "Override")));
+            new CasConfigurationDecryptionInitializer(jasypt).initialize(applicationContext);
+            applicationContext.refresh();
+
+            val binder = Binder.get(applicationContext.getEnvironment());
+            assertTrue(binder.bind("cas.example.enabled", Boolean.class).get());
+            assertEquals("Override", binder.bind("cas.example.name", String.class).get());
+            assertEquals("Plain", binder.bind("cas.example.plain", String.class).get());
+            assertEquals(dynamic.getProperty("cas.example.broken"), binder.bind("cas.example.broken", String.class).get());
+
+            dynamic.setProperty("cas.example.enabled", jasypt.encryptValue("false"));
+            applicationContext.publishEvent(new EnvironmentChangeEvent(applicationContext, Set.of("cas.example.enabled")));
+            assertFalse(Binder.get(applicationContext.getEnvironment()).bind("cas.example.enabled", Boolean.class).get());
+
+            dynamic.removeAll();
+            applicationContext.publishEvent(new EnvironmentChangeEvent(applicationContext, Set.of("cas.example.enabled")));
+            assertFalse(sources.contains(CasConfigurationDecryptionInitializer.PROPERTY_SOURCE_NAME));
+        }
+    }
+
+    @Test
     void verifyAlgorithms() {
         val algorithms = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
@@ -117,6 +185,20 @@ class CasConfigurationJasyptCipherExecutorTests {
         }
         val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         return testValue.equals(result);
+    }
+
+    @Getter
+    private static final class InMemoryLogAppender extends AbstractAppender {
+        private final List<LogEvent> events = new CopyOnWriteArrayList<>();
+
+        private InMemoryLogAppender(final String name) {
+            super(name, null, PatternLayout.createDefaultLayout(), true, Property.EMPTY_ARRAY);
+        }
+
+        @Override
+        public void append(final LogEvent event) {
+            events.add(event.toImmutable());
+        }
     }
 }
 

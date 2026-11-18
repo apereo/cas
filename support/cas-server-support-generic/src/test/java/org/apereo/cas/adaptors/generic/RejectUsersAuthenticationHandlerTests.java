@@ -45,7 +45,7 @@ class RejectUsersAuthenticationHandlerTests {
                 URI.create("http://www.rutgers.edu").toURL(),
                 CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
-            throw new AssertionError("Could not resolve URL.");
+            throw new AssertionError("Could not resolve URL.", e);
         }
     }
 
