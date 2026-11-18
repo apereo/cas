@@ -2530,7 +2530,8 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup .swal2-title {
 }
 
 .registered-service-wizard__options label,
-.registered-service-wizard__options .mdc-switch + label {
+.registered-service-wizard__options .mdc-switch + label,
+[id^="show"][id$="EditorSwitchButtonPanel"] label {
     font-size: 14px;
 }
 

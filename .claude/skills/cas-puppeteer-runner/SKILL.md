@@ -48,6 +48,10 @@ Writing the scenario scripts themselves is in the `cas-puppeteer-scenarios` skil
 - Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
 - A container answering HTTP is not a container ready for setup calls. Apache Syncope's Tomcat answers `/syncope/` several seconds before its content loader populates the empty Master domain, and admin REST calls made in that window fail with `AuthorizationDeniedException` (seen once the build overlapped the init scripts and slowed startup). `ci/tests/syncope/run-syncope-server.sh` therefore waits for `Started SyncopeCoreApplication` in the container log; readiness waits in other init scripts should likewise key off the application's own started signal, bounded, with `exit 1` on timeout.
 - `ci/tests/keycloak/run-keycloak-server.sh` polls the `cas` realm's discovery document; Keycloak answers HTTP well before the realm import finishes, and a pac4j OIDC client that fetched its metadata in that window stays broken for every later in-process attempt.
+- `ci/tests/otel/run-otel-server.sh` keeps the collector's own logger at `WARN` and still follows its logs, so only
+  problems reach the scenario output; the `debug` exporter writes through that logger and is silent at that level (set it
+  to `INFO` locally to see every batch). It publishes only the OTLP ports (4317/4318; 8888 belongs to the config server
+  scenarios) and polls `POST /v1/traces` for a 200 rather than sleeping.
 - A scenario that navigates to `https://localhost:9859/anything/...` needs `ci/tests/httpbin/run-httpbin-server.sh` among its init scripts; without it the redirect lands on `chrome-error://` and the ticket assertion fails.
 - The `oidc-login-strapi` image must install Corepack explicitly before `corepack enable` on Node 26: Node stopped
   bundling it in v25. Check the pinned Strapi creator's published `engines.node`, not only the latest documentation;

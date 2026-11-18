@@ -36,13 +36,14 @@ apply plugin: "org.apereo.cas.overrides-conventions"
 
 if (publishFlag) {
     apply plugin: "com.gradleup.nmcp.aggregation"
+    def centralPortalPublishingType = CasBuildSettings.publishingType(project)
     nmcpAggregation {
         // publishAllChecksums.set(true)
         centralPortal {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publicationType = CasBuildSettings.publishingType(project)
+            publishingType = centralPortalPublishingType
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)

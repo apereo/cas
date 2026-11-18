@@ -79,6 +79,15 @@ When you learn something new, record it in the skill that owns the area, or here
   those checks accept `1.5`, `1e3`, `0x1F` or overflowing values and the parse then throws. `tryParse` rejects null, so
   guard nullable inputs first.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
+- Compare and trim case-insensitively through commons-lang `Strings.CI` (and `Strings.CS` for case-sensitive):
+  `Strings.CI.equals`, `Strings.CI.startsWith`, `Strings.CI.removeStart`, never `String.equalsIgnoreCase` or the
+  `StringUtils.*IgnoreCase` methods.
+- Name unused lambda parameters and caught exceptions `_`; prefer method references and `Function.identity()`,
+  `Predicate.not(...)`, `BinaryOperator.maxBy(...)` over the equivalent lambdas; use `computeIfAbsent` rather than
+  `putIfAbsent` with an eagerly built value; use Lombok `@RequiredArgsConstructor` instead of hand-written constructors;
+  close executors with try-with-resources. Passed together to `Collectors.toMap`, `Function.identity()` and
+  `BinaryOperator.maxBy(Comparator.naturalOrder())` cannot be inferred: write `Function.<String>identity()` and
+  `BinaryOperator.<String>maxBy(...)`.
 - Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
   them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose
   name already exists in the class or interface, including private helpers.

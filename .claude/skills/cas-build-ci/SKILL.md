@@ -22,6 +22,11 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
   root `ext {}`: `configureProjectExtensions` already exposes them as project extensions on every project, root
   included. `settings.gradle` cannot see buildSrc and repeats the same lookup rule by hand; `PublishProjectModulesMetadataTask`
   reads its MongoDB URI at execution time on purpose so the secret stays out of the configuration cache.
+- Gradle configures extension and task closures delegate-first: a name the configured object lacks falls through to the
+  script and its `ext`, so a mistyped option in `nmcpAggregation { centralPortal { ... } }` silently writes a root
+  property instead of failing, and a right-hand side named like an option reads the option itself. nmcp 1.x calls it
+  `publishingType` (`publicationType` was the 0.0.x name); compute values into a local variable outside the closure,
+  as `build.gradle` does with `centralPortalPublishingType`.
 - `buildScript` (puppeteer `script.json` → `-DbuildScript`) must name an existing file: `war-conventions` fails the build
   otherwise, so a scenario that drops its `include.gradle` must drop its `buildScript` entry too.
 - An IDE `JetGradlePlugin` error about `setExcludedTaskNames` comes from the IDE integration, not category discovery.

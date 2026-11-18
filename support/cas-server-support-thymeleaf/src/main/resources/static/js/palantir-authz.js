@@ -144,12 +144,8 @@ function selectHeimdallAuthorizationSimulationMode(mode) {
         hideElements(authZenFields);
     }
     $("#heimdallAuthorizationHeimdallModeButton")
-        .toggleClass("mdc-button--raised", !authZen)
-        .toggleClass("mdc-button--outlined", authZen)
         .attr("aria-pressed", String(!authZen));
     $("#heimdallAuthorizationAuthZenModeButton")
-        .toggleClass("mdc-button--raised", authZen)
-        .toggleClass("mdc-button--outlined", !authZen)
         .attr("aria-pressed", String(authZen));
     $("#heimdallAuthorizationSubmitButtonLabel").text(authZen ? "Evaluate" : "Authorize");
     clearHeimdallAuthorizationSimulationResponse();

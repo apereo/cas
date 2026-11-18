@@ -32,6 +32,15 @@ Cluster topology support is available for the following features:
 - [Apache Pulsar Ticket Registry](../ticketing/Pulsar-Ticket-Registry.html)
 - [AMQP Ticket Registry](../ticketing/Messaging-AMQP-Ticket-Registry.html)
 - [Apache Geode Ticket Registry](../ticketing/Geode-Ticket-Registry.html)
+- [LDAP & Active Directory](../monitoring/Configuring-Monitoring-LDAP.html)
+
+With [LDAP monitoring](../monitoring/Configuring-Monitoring-LDAP.html) included, the LDAP members are the directory
+servers that CAS connects to for any LDAP feature, such as authentication,
+attribute resolution or a service registry. Each server is listed once, with the features that use it and how many of
+their pooled connections are on it, whether it answers and when it last failed to, and what the server reports about
+itself: its vendor and version, its naming contexts and, where the server shares it, how far its replica has come
+compared to the others. For Active Directory, the site of each domain controller is reported and the other domain
+controllers of the domain are listed as members as well. Servers found through DNS SRV records are included.
 
 ## Custom Cluster Topology
 

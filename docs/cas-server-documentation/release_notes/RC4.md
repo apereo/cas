@@ -177,6 +177,8 @@ test coverage of the CAS codebase is approximately `94%`.
   algorithms, Active Directory and OpenLDAP password policy warnings, X.509 revocation through CRLs, the ticket registry
   cleaner, concurrent ticket validation across nodes, ticket encryption at rest in MongoDb, masking of tickets in logs, and
   strict audit failure handling (`cas.audit.engine.ignore-audit-failures`{: .cas-setting}).
+- {: .changed data-area="project"} The OpenTelemetry collector used by the tracing and metrics browser tests now logs only
+  its warnings and errors instead of every batch CAS exports, and the test waits until the collector accepts data.
 
 ### JSpecify & NullAway
 {: data-area="project"}
@@ -202,6 +204,32 @@ as well as some CAS functionality.
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
 for more information on the changes and updates in this release.
 
+### Dependencies & Packaging
+{: .changed data-area="project"}
+
+- {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
+  follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
+  and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
+- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
+  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
+  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
+  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
+  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
+  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
+  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
+  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
+  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
+  Jackson 2 wherever Groovy scripting is included. CAS
+  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
+  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
+  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
+  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
+  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
+- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html) can also be supplied as an
+  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
+  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
+  Javadoc errors fail the build unless that flag is set.
+- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 ### Theme Builder
 {: .new data-area="ui"}
@@ -432,6 +460,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   an application opens it, and for multifactor authentication per provider on the *System Status* page. The audit
   events table shows the target of each record and opens the application it names. Saving or deleting an application,
   and checking access to one, record that application as well. Records written before this version have no target.
+- {: .new data-area="ui"} With [LDAP monitoring](../monitoring/Configuring-Monitoring-LDAP.html), the
+  [cluster topology](../high_availability/Cluster-Topology.html) includes the LDAP and Active Directory servers CAS connects to, each listed once however many LDAP features use it: which features use it, how many
+  of their pooled connections are on it, whether it answers and when it last did not, its vendor and version, how far
+  its replica has come, and for Active Directory its site and the other domain controllers of the domain. Servers named
+  by DNS SRV records are listed too.
 - {: .action data-area="operations"} [Database audit storage](../audits/Audits-Database.html) adds the `AUD_TARGET`
   column and an index on `AUD_DATE` and `AUD_ACTION` to the audit table. CAS adds them when it updates the schema
   itself; otherwise add them to the existing table before upgrading, or recording audit events fails.
@@ -1045,28 +1078,5 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   startup and after a refresh; they used to be applied as they were stored, still encrypted. The `casConfig` endpoint
   answers a bad request when a value cannot be encrypted or decrypted, where it used to answer with an empty value, and
   a value that cannot be encrypted is no longer written to the logs in plain text.
-- {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
-  follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
-  and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
-- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
-  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
-  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
-  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
-  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
-  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
-  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
-  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
-  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
-  Jackson 2 wherever Groovy scripting is included. CAS
-  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
-  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
-  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
-  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
-  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
-- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html#build) can also be supplied as an
-  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
-  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
-  Javadoc errors fail the build unless that flag is set.
-- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}
