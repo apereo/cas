@@ -1,0 +1,170 @@
+# Stateless Ticket Registry
+
+Source: https://apereo.github.io/cas/development/ticketing/Stateless-Ticket-Registry.html
+
+The stateless ticket registry is a ticket registry that does not track or store tickets in a persistent manner via a backend storage technology. All generated tickets are self-contained and are able to carry their own state which in turn makes them portable across CAS nodes and clustered deployments. Each ticket is digitally encrypted to ensure its integrity and confidentiality. Furthermore, generated tickets are compressed as much as possible and are constrained to a pre-defined size to ensure backward compatibility with various CAS clients where possible.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-support-stateless-ticket-registry"
+}
+```
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.ticket.registry.stateless.crypto.encryption.key` (Required; type `String`): The encryption key. The encryption key by default and unless specified otherwise must be randomly-generated string whose length is defined by the encryption key size setting.
+- `cas.ticket.registry.stateless.crypto.signing.key` (Required; type `String`): The signing key is a string whose length is defined by the signing key size setting.
+- `cas.ticket.registry.stateless.crypto.alg` (Optional; type `String`; default `AES`): The signing/encryption algorithm to use.
+- `cas.ticket.registry.stateless.crypto.enabled` (Optional; type `Boolean`; default `true`): Whether crypto operations are enabled.
+- `cas.ticket.registry.stateless.crypto.encryption.key-size` (Optional; type `Integer`; default `16`): Encryption key size.
+- `cas.ticket.registry.stateless.crypto.signing-enabled` (Optional; type `Boolean`; default `true`): Whether signing encryption operations are enabled.
+- `cas.ticket.registry.stateless.crypto.signing.key-size` (Optional; type `Integer`; default `512`): The signing key size.
+- `cas.ticket.registry.stateless.storage-type` (Optional; type `String`)
+
+**Signing & encryption**
+
+This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
+
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
+
+```bash
+wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java -jar jwk-gen.jar -t oct -s [size]
+```
+
+The outcome would be similar to:
+
+```json
+{
+  "kty": "oct",
+  "kid": "...",
+  "k": "..."
+}
+```
+
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+
+---
+
+## Features
+
+- No centralized backend storage or caching technology is required to be present, configured, installed, managed, maintained, tuned, etc.
+- …as a result, you do not need to worry about storage schema upgrades, migrations, etc.
+- …as a result, you do not need to worry about cleaning up expired tickets or garbage-collecting ticket entities.
+- …as a result, you do not need to worry about sharing tickets across CAS nodes in a clustered deployment and synchronizing state.
+- …as a result, you do not need to pay for storage or possible caching technology licenses especially if your CAS deployment is cloud-native.
+
+The above features do come with a number of caveats and limitations. See below.
+
+## Supported Protocols
+
+- [CAS Protocol](https://apereo.github.io/cas/development/protocol/CAS-Protocol.html) is supported.
+- [SAML1 Protocol](https://apereo.github.io/cas/development/protocol/SAML-v1-Protocol.html) is supported.
+- [SAML2 Protocol](https://apereo.github.io/cas/development/authentication/Configuring-SAML2-Authentication.html) is supported with the following exceptions:
+  - [SAML2 attribute queries](https://apereo.github.io/cas/development/installation/Configuring-SAML2-AttributeQuery.html)
+- [OAuth2 Protocol](https://apereo.github.io/cas/development/authentication/OAuth-Authentication.html) is supported with the following exceptions:
+  - [Device Authorization](https://apereo.github.io/cas/development/authentication/OAuth-ProtocolFlow-DeviceAuthorization.html)
+  - [Token Exchange](https://apereo.github.io/cas/development/authentication/OAuth-ProtocolFlow-TokenExchange.html)
+- [OpenID Connect Protocol](https://apereo.github.io/cas/development/protocol/OIDC-Protocol.html) is supported with the following exceptions:
+  - [DPoP](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-DPoP.html)
+  - The `poll` and `ping` delivery modes of [CIBA](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-CIBA.html); the `push` delivery mode is supported.
+  - [Verifiable presentations](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-Verifiable-Credentials.html#verifiable-presentations); the issuance of [verifiable credentials](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-Verifiable-Credentials.html) is supported.
+
+> **What About...?**
+>
+> Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported. The objective is to start with a small batch of most common features and capabilities and iteratively grow and improve. If you do find something that might be missing or acts dysfunctional, please investigate, isolate, verify and consider contributing a fix.
+
+## Suggestions
+
+- Increase the expiration policy of service tickets to be around `30` seconds to allow for decryption operations to decode tickets in time.
+- Assign names to all authentication handlers, and preferably short, concise names.
+- Use shorter URLs for applications, especially those that use the CAS protocol. This will help minimize the size of the generated service tickets.
+- Turn off ticket-granting cookie signing and keep its encryption, to keep the cookie within browser limits.
+
+## Ticket-granting Cookie Size
+
+The ticket-granting cookie carries the entire stateless ticket-granting ticket, including the authenticated principal id, the credentials, and the authentication attributes. Principal attributes are not kept in the ticket, as noted below. The size of the cookie grows with the number and size of the authentication attributes and credentials, and multifactor authentication providers such as Duo Security can add many of their own. Browsers only guarantee cookies of up to `4096` bytes and silently drop larger ones, in which case every request asks the user to sign in again. CAS logs a warning when the cookie exceeds this size:
+
+```bash
+WARN <Cookie [TGC] is [4436] bytes, larger than the [4096] bytes browsers are guaranteed to accept...>
+```
+
+You may turn off cookie signing and keep cookie encryption, which makes the cookie about a quarter smaller:
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.tgc.crypto.encryption.key` (Required; type `String`): The encryption key is a string whose length is defined by the encryption key size setting.
+- `cas.tgc.crypto.signing.key` (Required; type `String`): The signing key is a string whose length is defined by the signing key size setting.
+- `cas.tgc.crypto.alg` (Optional; type `String`): The signing/encryption algorithm to use.
+- `cas.tgc.crypto.enabled` (Optional; type `Boolean`; default `true`): Whether crypto operations are enabled.
+- `cas.tgc.crypto.encryption-enabled` (Optional; type `Boolean`; default `true`)
+- `cas.tgc.crypto.encryption.key-size` (Optional; type `Integer`; default `512`): The encryption key size.
+- `cas.tgc.crypto.signing-enabled` (Optional; type `Boolean`; default `true`)
+- `cas.tgc.crypto.signing.key-size` (Optional; type `Integer`; default `512`): The signing key size.
+- `cas.tgc.crypto.strategy-type` (Optional; type `String`; default `ENCRYPT_AND_SIGN`): Control the cipher sequence of operations. The accepted values are: - `ENCRYPT_AND_SIGN`: Encrypt the value first, and then sign. - `SIGN_AND_ENCRYPT`: Sign the value first, and then encrypt.
+
+**Signing & encryption**
+
+This CAS feature is able to accept signing and encryption crypto keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
+
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
+
+```bash
+wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
+java -jar jwk-gen.jar -t oct -s [size]
+```
+
+The outcome would be similar to:
+
+```json
+{
+  "kty": "oct",
+  "kid": "...",
+  "k": "..."
+}
+```
+
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+
+---
+
+> **Signing Key**
+>
+> Signing remains active as long as the signing key is defined. Remove the signing key to turn signing off, and do not turn off cookie encryption.
+
+## Caveats
+
+The stateless ticket registry may not be a suitable solution for all deployment scenarios and its use and adoption does require a number of compromises and security trade-offs. The following is a list of limitations and caveats that one should be aware of:
+
+> **Life Advice**
+>
+> Depending on your point of view, any one of the caveats noted here could be argued as a minor lapse in security. Lessened security constraints around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
+
+- Tickets are not single-use. A service ticket, proxy ticket, OAuth authorization code, or a pre-authorized code or credential nonce of verifiable credentials can be validated, exchanged or used again and again until it expires, unlike what the CAS protocol and OAuth2 specifications require, so keep their expiration short. Expiration policies ignore usage counts and *only* enforce an expiration instant; the ticket-granting ticket expires at the end of its maximum lifetime, and any idle timeout configured for it is not enforced.
+- Issued tickets cannot be revoked. Logging out removes the ticket-granting cookie from the browser, but a copy of that cookie remains valid until the ticket-granting ticket expires. Likewise, revoking an OAuth access or refresh token has no effect before it expires.
+- Generated tickets are generally controlled to be no larger than `256` characters. You *might* need to adjust your servlet container of choice to allow for larger form/response header sizes. Likewise, you must ensure your applications, particularly those that deal with CAS or OpenID Connect protocols are OK with somewhat larger and longer ticket and token sizes.
+- Super long application URLs that might negatively influence the size of the generated service ticket are compressed using a pre-defined modest shortening technique, which in turn is taken into account by a specialized ticket validation strategy. For best results, and this is true for all CAS-supported protocols, it is recommended that applications use shorter URLs.
+- To minimize the length of the generated tickets, tickets are only encrypted.
+- The single sign-on session is tracked by the ticket-granting cookie as usual, which carries the stateless ticket-granting ticket itself. Browsers only guarantee cookies of up to `4096` bytes and silently drop larger ones, which ends the single sign-on session.
+- **Important:** Principal attributes produced and collected during the first leg of the authentication transaction are not kept in any ticket. The ticket-granting ticket keeps the principal id, and CAS fetches all principal attributes from configured attribute repositories once more every time the ticket-granting ticket is read, such as when single sign-on sessions are established for applications, and again during back-channel ticket validation attempts. As a result, single sign-on decisions such as multifactor authentication triggers, access strategies and single sign-on participation policies that are based on principal attributes, as well as attribute release, only see attributes that the attribute repositories produce. In other words, if your attributes are only produced once during the authentication transaction by an authentication handler and family, such as claims from delegated authentication or multifactor authentication providers, you must also configure [an attribute repository](https://apereo.github.io/cas/development/integration/Attribute-Resolution.html) to fetch the attributes yet again. The ticket-granting ticket keeps its authentication attributes as they are; service tickets, proxy tickets and OAuth or OpenID Connect tokens only carry the authentication method, the successful authentication handlers, the credential types, remember-me, the delegated identity provider name (`clientName`) and the multifactor authentication context and trusted device attributes, kept as text. Other authentication attributes are not released during ticket validation. Principals that do not accept new attributes, such as those produced by surrogate authentication, keep the attributes they were created with.
+- Every read of the ticket-granting ticket asks the configured attribute repositories for principal attributes. Results are cached for a period of time so most reads do not reach the repositories. If principal resolution fails with an error, the ticket-granting ticket is treated as missing and the user is asked to sign in again. Attribute repositories that do not respond may instead produce no attributes, depending on their configuration.
+- Sessions kept in the ticket registry, such as replicated sessions for delegated authentication or OAuth and OpenID Connect, or HTTP sessions stored in the ticket registry, travel in their session cookie as stateless tickets. They expire at a fixed instant after they are created, and since the whole session is in the cookie, it must stay well under `4096` bytes.
+- Replicated session cookies for delegated authentication and for OAuth and OpenID Connect are pinned to the browser by default: the client IP address and user agent are added to the cookie value. Since encryption for these cookies is turned off by default, that value is sent as plain text, and the spaces and separators in the user agent make browsers truncate or drop the cookie, so the session is lost on the next request. Turn on encryption for these cookies, or turn off pinning with the `pin-to-session` setting of the same cookies.
+- [Password reset](https://apereo.github.io/cas/development/password_management/Password-Management-Reset.html) links carry the stateless ticket that tracks the request, so they are a few hundred to a few thousand characters long. A link is not single-use: it can be used again until it expires, regardless of the number of uses allowed for password reset links, so keep its expiration short.
+- [Account registration](https://apereo.github.io/cas/development/registration/Account-Registration-Overview.html) activation links carry the stateless ticket that tracks the registration request, which itself carries the encoded registration token, so they are a few thousand characters long. A link is not single-use: it can be used again until it expires, so keep its expiration short.
+- [CIBA](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-CIBA.html) requests are kept in the `auth_req_id` returned to the client, which is also part of the verification link sent to the user, so it is a few hundred characters long. The `poll` and `ping` delivery modes need CAS to remember that the user approved the request and that its tokens were issued, which this registry cannot do: with these modes, token requests are rejected. Use the `push` delivery mode, where tokens are sent to the client as soon as the user approves the request.
+- [Dynamic client registration](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-Dynamic-Registration.html) returns a registration access token that is a stateless access token. Like other access tokens, it cannot be revoked and stays valid until it expires.
+- [Pushed authorization requests](https://apereo.github.io/cas/development/authentication/OIDC-Authentication-PAR.html) are kept in the `request_uri` returned to the client, which is therefore a few hundred to a few thousand characters long and travels in the authorization URL. Like other tickets, a `request_uri` is not single-use and can be used again until it expires.
+- [Delegated authentication](https://apereo.github.io/cas/development/integration/Delegate-Authentication.html) to SAML2 identity providers sends the id of the ticket that tracks the authentication request as the SAML2 `RelayState`. With this registry, that id is the ticket itself, which is far longer than the 80 bytes the SAML2 bindings specification allows for `RelayState`. Identity providers that enforce this limit reject the request or return a different `RelayState`, and the response can no longer be matched to its request. Verify that your identity providers accept longer `RelayState` values before using delegated SAML2 authentication with this registry.
+- [Simple multifactor authentication](https://apereo.github.io/cas/development/mfa/Simple-Multifactor-Authentication.html) tokens are stored as stateless tickets while the user still receives and types the short code. The webflow keeps the stored token and checks the code against it, so a code is only accepted in the login flow that sent it. Tokens are not removed after use and stay valid until they expire. Tokens obtained from the REST endpoint are returned as stateless tickets, so the full ticket id, and not a short code, must be presented to validate them.
+- [Duo Security](https://apereo.github.io/cas/development/mfa/DuoSecurity-Authentication.html) session storage in the ticket registry (`TICKET_REGISTRY`) is not supported. The ticket that keeps the state of the authentication flow is sent to Duo Security as the `state` of the request, and with this registry that ticket carries the whole flow state, which does not fit in the `1024` characters Duo Security accepts. Set the Duo Security session storage type to `BROWSER_STORAGE`, which is the default.
+- In the absence of a central backend storage service, back-channel single logout operations are not supported. Likewise, all operations that ask for active single sign-on sessions or anything that in general deals with tracking single sign-on sessions is out of scope and unlikely to be supported. You will lose the ability to determine whether a user is logged in and as a result will be unable to administratively terminate a user’s session.

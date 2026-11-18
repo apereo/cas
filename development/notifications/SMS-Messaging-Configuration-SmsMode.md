@@ -1,0 +1,26 @@
+# SmsMode SMS Messaging
+
+Source: https://apereo.github.io/cas/development/notifications/SMS-Messaging-Configuration-SmsMode.html
+
+Send SMS messages from CAS through smsmode.
+
+To learn more, [visit this site](https://www.smsmode.com/).
+
+```groovy
+dependencies {
+    /*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */
+    implementation "org.apereo.cas:cas-server-support-sms-smsmode"
+}
+```
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.sms-provider.sms-mode.access-token` (Required; type `String`): Secure token used to establish a handshake with the service.
+- `cas.sms-provider.sms-mode.url` (Required; type `String`; default `https://rest.smsmode.com/sms/v1/messages`): URL to contact and send messages (POST only).
+- `cas.sms-provider.sms-mode.proxy-url` (Optional; type `String`): URL of the proxy (if defined).

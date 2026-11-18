@@ -1,0 +1,64 @@
+{%- assign changes = include.changes -%}
+{::nomarkdown}
+{%- if changes == nil or changes.baseline == nil -%}
+<p class="cas-settings-changes-none">This build has no earlier version to compare with, or its configuration catalog was not available.</p>
+{%- else -%}
+<div class="cas-settings-changes">
+    <ul class="cas-settings-changes-summary">
+        <li><a href="#added-settings"><strong>{{ changes.added.size }}</strong> added</a></li>
+        <li><a href="#removed-settings"><strong>{{ changes.removed.size }}</strong> removed</a></li>
+        <li><a href="#replaced-settings"><strong>{{ changes.replaced.size }}</strong> replaced</a></li>
+        <li><a href="#changed-defaults"><strong>{{ changes.defaults.size }}</strong> new defaults</a></li>
+    </ul>
+    <p>Compared with <strong>{{ changes.baseline }}</strong>. As JSON: <a href="/cas/assets/data/{{ version }}/settings-changes.json">settings-changes.json</a>.</p>
+
+    <h2 id="added-settings">Added Settings</h2>
+    {%- if changes.added.size == 0 -%}<p>No settings were added.</p>{%- endif -%}
+    {%- assign groups = changes.added | group_by: "area" | sort: "name" -%}
+    {%- for group in groups -%}
+    <h3>{{ group.name }}</h3>
+    <ul class="cas-settings-changes-list">
+        {%- for setting in group.items -%}
+        <li><code class="cas-setting">{{ setting.name | escape }}</code>{% if setting.defaultValue != "" %}<span class="cas-settings-changes-default">default <code>{{ setting.defaultValue | escape }}</code></span>{% endif %}{% if setting.summary != "" %}<span class="cas-settings-changes-text">{{ setting.summary | escape }}</span>{% endif %}</li>
+        {%- endfor -%}
+    </ul>
+    {%- endfor -%}
+
+    <h2 id="removed-settings">Removed Settings</h2>
+    <p>These settings are no longer recognized; remove them from your configuration, and check the release notes for what replaces them.</p>
+    {%- if changes.removed.size == 0 -%}<p>No settings were removed.</p>{%- endif -%}
+    {%- assign groups = changes.removed | group_by: "area" | sort: "name" -%}
+    {%- for group in groups -%}
+    <h3>{{ group.name }}</h3>
+    <ul class="cas-settings-changes-list">
+        {%- for setting in group.items -%}
+        <li><code>{{ setting.name | escape }}</code></li>
+        {%- endfor -%}
+    </ul>
+    {%- endfor -%}
+
+    <h2 id="replaced-settings">Replaced Settings</h2>
+    <p>These settings are deprecated in favor of another one; move to the replacement before the old name is removed.</p>
+    {%- if changes.replaced.size == 0 -%}<p>No settings were replaced.</p>{%- else -%}
+    <ul class="cas-settings-changes-list">
+        {%- for setting in changes.replaced -%}
+        <li><code class="cas-setting">{{ setting.name | escape }}</code><span class="cas-settings-changes-text">replaced by <code class="cas-setting">{{ setting.replacement | escape }}</code></span></li>
+        {%- endfor -%}
+    </ul>
+    {%- endif -%}
+
+    <h2 id="changed-defaults">Changed Defaults</h2>
+    <p>The default value of these settings changed. If you relied on the previous default, set it explicitly.</p>
+    {%- if changes.defaults.size == 0 -%}<p>No default values changed.</p>{%- else -%}
+    <table class="cas-settings-changes-defaults">
+        <thead><tr><th>Setting</th><th>Before</th><th>Now</th></tr></thead>
+        <tbody>
+        {%- for setting in changes.defaults -%}
+        <tr><td><code class="cas-setting">{{ setting.name | escape }}</code></td><td><code>{{ setting.before | escape }}</code></td><td><code>{{ setting.after | escape }}</code></td></tr>
+        {%- endfor -%}
+        </tbody>
+    </table>
+    {%- endif -%}
+</div>
+{%- endif -%}
+{:/nomarkdown}

@@ -1,0 +1,102 @@
+# SAML2 Services
+
+Source: https://apereo.github.io/cas/development/services/SAML2-Service-Management.html
+
+SAML relying parties and services must be registered within the [CAS service registry](https://apereo.github.io/cas/development/services/Service-Management.html) similar to the following example:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "evaluationOrder" : 10,
+  "metadataLocation" : "https://url/to/metadata.xml"
+}
+```
+
+> **Entity ID Patterns**
+>
+> The `serviceId` field here should represent the entity id of the SAML2 service provider in form of a proper regular expression, allowing you to authorize and register multiple SAML2 service providers in your metadata file, if necessary. Remember to escape all the right characters when you build the expression pattern.
+
+The following fields are available for SAML services:
+
+| Field | Description |
+| --- | --- |
+| `metadataLocation` | Location of service metadata defined from system files, classpath, directories or URL resources. |
+| `idpMetadataLocation` | Directory location of [identity provider metadata](https://apereo.github.io/cas/development/installation/Configuring-SAML2-DynamicMetadata.html) available to CAS as an override. |
+| `metadataProxyLocation` | Proxy endpoint (`https://proxy-address:8901`) to fetch service metadata from URL resources. |
+| `metadataSignatureLocation` | Location of the metadata signing certificate/public key to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata. |
+| `metadataExpirationDuration` | If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again. Default is `60` minutes. |
+| `requireSignedRoot` | Whether the metadata root element is required to be signed. Default is `true`. |
+| `signAssertions` | Whether [assertions should be signed](https://apereo.github.io/cas/development/installation/Configuring-SAML2-Security.html). Default is `FALSE`. Accepted values are `TRUE`, `FALSE`, `UNDEFINED`. When set to `UNDEFINED`, CAS will respect the `WantAssertionsSigned` flag in the SAML service provider metadata. |
+| `signResponses` | Whether [responses should be signed](https://apereo.github.io/cas/development/installation/Configuring-SAML2-Security.html). Default is `true`. |
+| `encryptionOptional` | Encrypt whenever possible (i.e a compatible key is found in the peer’s metadata) or skip encryption otherwise. Default is `false`. |
+| `encryptAssertions` | Whether [assertions should be encrypted](https://apereo.github.io/cas/development/installation/Configuring-SAML2-Security.html). Default is `false`. |
+| `encryptAttributes` | Whether assertion attributes should be encrypted. Default is `false`. |
+| `encryptableAttributes` | Set of attributes nominated for encryption, disqualifying others absent in this collection. Default (i.e. `*`) is to encrypt all once `encryptAttributes` is true. |
+| `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request. The value may be specified as a path to an [external Groovy script](https://apereo.github.io/cas/development/integration/Apache-Groovy-Scripting.html). |
+| `requiredNameIdFormat` | If defined, will force the indicated Name ID format in the final SAML response. |
+| `skewAllowance` | If defined, acts as a global value and indicates number of seconds used to skew authentication dates such as `IssueInstant`, `SessionNotOnOrAfter`, `Conditions`’s `NotBefore` and `NotOnOrAfter`, etc. Can be a duration, i.e. `PT2H` |
+| `validityUntil` | If defined, indicates number of seconds used to skew authentication date for `SessionNotOnOrAfter`. Can be a duration, i.e. `PT1H` |
+| `metadataCriteriaPattern` | [If defined](https://apereo.github.io/cas/development/installation/SAML2-ServiceProvider-Metadata-Filtering.html), will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern. |
+| `metadataCriteriaDirection` | [If defined](https://apereo.github.io/cas/development/installation/SAML2-ServiceProvider-Metadata-Filtering.html), will force the `PredicateFilter` to either include or remove entities from the resolved metadata. Allowed values are `INCLUDE`,`EXCLUDE`. |
+| `metadataCriteriaRoles` | [If defined](https://apereo.github.io/cas/development/installation/SAML2-ServiceProvider-Metadata-Filtering.html), will allow the defined metadata roles (i.e. `SPSSODescriptor`, `IDPSSODescriptor`). Default is `SPSSODescriptor`. |
+| `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`. |
+| `metadataCriteriaRemoveRolelessEntityDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`. |
+| `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response. |
+| `attributeFriendlyNames` | Map that defines attribute friendly names for a given attribute name to be encoded in the SAML response. |
+| `attributeValueTypes` | Map that defines the type of attribute values for a given attribute name. |
+| `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject’s name id. Use `none` to skip. |
+| `logoutResponseBinding` | If defined, will overwrite the binding used to prepare logout responses for the service provider. |
+| `logoutResponseEnabled` | Control whether SAML2 logout responses should be generated and sent for this SAML2 service provider. |
+| `signLogoutResponse` | Control whether SAML2 logout responses should be signed. |
+| `signLogoutRequest` | Control whether SAML2 logout request should be signed when sent or accepted. |
+| `issuerEntityId` | If defined, will override the issuer value with the given identity provider entity id. This may be useful in cases where CAS needs to maintain multiple identity provider entity ids. |
+| `assertionAudiences` | Comma-separated list of audience urls to include in the assertion. Will override the entity id. |
+| `subjectLocality` | If defined, will overwrite the `SubjectLocality` attribute of the SAML2 authentication statement. |
+| `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject’s name id. Use `none` to skip. |
+| `skipValidatingAuthnRequest` | Skip validating the SAML2 authentication request and its signature in particular. Default is `false`. |
+| `skipGeneratingAssertionNameId` | Whether generation of a name identifier should be skipped for assertions. Default is `false`. |
+| `skipGeneratingTransientNameId` | Whether transient name identifier generation should be skipped. Default is `false`. |
+| `isSkipGeneratingResponseInResponseTo` | Whether generation of the `InResponseTo` element should be skipped for responses. Default is `false`. |
+| `skipGeneratingSubjectConfirmationInResponseTo` | Whether generation of the `InResponseTo` element should be skipped for subject confirmations. Default is `false`. |
+| `skipGeneratingSubjectConfirmationNotOnOrAfter` | Whether generation of the `NotOnOrBefore` element should be skipped for subject confirmations. Default is `false`. |
+| `skipGeneratingSubjectConfirmationAddress` | Whether generation of the `Address` element should be skipped for subject confirmations. Default is `false`. |
+| `skipGeneratingSubjectConfirmationRecipient` | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`. |
+| `skipGeneratingSubjectConfirmationNotBefore` | Whether generation of the `NotBefore` element should be skipped for subject confirmations. Default is `true`. |
+| `skipGeneratingSubjectConfirmationNameId` | Whether generation of the `NameID` element should be skipped for subject confirmations. Default is `true`. |
+| `skipGeneratingServiceProviderNameIdQualifier` | Whether generation of the `SPNameQualifier` element should be skipped. Default is `false`. |
+| `skipGeneratingAuthenticatingAuthority` | Whether generation of the `AuthenticatingAuthorities` element should be skipped. Default is `false`. |
+| `skipGeneratingNameIdQualifier` | Whether generation of the `NameIdQualifier` element should be skipped. Default is `false`. |
+| `skipGeneratingSessionNotOnOrAfter` | Whether generation of the `SessionNotOnOrAfter` element should be skipped. Default is `false`. |
+| `signingCredentialFingerprint` | `SHA-1` digest of the signing credential’s public key, parsed as a regular expression, used for the purposes of key rotation when dealing with multiple credentials. |
+| `signingCredentialType` | Acceptable values are `BASIC` and `X509`. This setting controls the type of the signature block produced in the final SAML response for this application. The latter, being the default, encodes the signature in `PEM` format inside a `X509Data` block while the former encodes the signature based on the resolved public key under a `DEREncodedKeyValue` block. |
+| `signingSignatureReferenceDigestMethods` | Collection of signing signature reference digest methods, if any, to override the global defaults. |
+| `signingKeyAlgorithm` | Signing key algorithm to forcibly use for signing operations when loading the private key. Default is `RSA`. |
+| `signingSignatureAlgorithms` | Collection of signing signature algorithms, if any, to override the global defaults. |
+| `signingSignatureBlackListedAlgorithms` | Collection of rejected signing signature algorithms, if any, to override the global defaults. |
+| `signingSignatureWhiteListedAlgorithms` | Collection of allowed signing signature algorithms, if any, to override the global defaults. |
+| `signingSignatureCanonicalizationAlgorithm` | The signing signature canonicalization algorithm, if any, to override the global defaults. |
+| `encryptionDataAlgorithms` | Collection of encryption data algorithms, if any, to override the global defaults. |
+| `encryptionKeyAlgorithms` | Collection of encryption key transport algorithms, if any, to override the global defaults. |
+| `encryptionBlackListedAlgorithms` | Collection of rejected encryption algorithms, if any, to override the global defaults. |
+| `encryptionWhiteListedAlgorithms` | Collection of allowed encryption algorithms, if any, to override the global defaults. |
+| `whiteListBlackListPrecedence` | Preference value indicating which should take precedence when both whitelist and blacklist are non-empty. Accepted values are `INCLUDE` or `EXCLUDE`. Default is `INCLUDE`. |
+| `validateMetadataCertificates` | When `true`, will activate a metadata filter to verify all certificates in the metadata are valid and not expired. |
+
+> **Keep What You Need!**
+>
+> You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is UNNECESSARY to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.authn.saml-idp.services.defaults` (Optional; type `Map<String,String>`): Control the default, initial values for fields that are part of a SAML service definition. This is defined as a map where the key is the field name (i.e. `signAssertions`) and the value should be the default value. If a service definition explicitly defines a value for a field, that value will take over and the default defined here will be ignored. If a service definition does not define a value for a field and no defaults are specified for that field, then the default value that is directly assigned to the field in the body of the service definition will take over.
+
+## Service Provider Integrations
+
+A number of SAML2 service provider integrations are provided natively by CAS. To learn more, please [review this guide](https://apereo.github.io/cas/development/integration/Configuring-SAML-SP-Integrations.html).
+
+## Service Provider Metadata
+
+SAML2 service provider metadata can be registered with and managed by CAS in several ways. To learn more, please [review this guide](https://apereo.github.io/cas/development/installation/SAML2-ServiceProvider-Metadata.html).
