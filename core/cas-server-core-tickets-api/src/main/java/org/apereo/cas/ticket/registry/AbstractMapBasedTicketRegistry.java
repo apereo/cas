@@ -2,8 +2,12 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.EncodedTicket;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.commands.AddTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.pubsub.commands.DeleteTicketMessageQueueCommand;
@@ -158,6 +162,65 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
                     && Strings.CI.equals(criteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
             .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Count every ticket in the map, without reading any of them.
+     *
+     * @return the number of tickets
+     */
+    @Override
+    public long countTickets() {
+        return getMapInstance().size();
+    }
+
+    /**
+     * Count the tickets of each type by their prefix, which a ticket keeps whether or not it is encoded, without
+     * decoding or copying any of them.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        return getMapInstance()
+            .values()
+            .stream()
+            .collect(Collectors.groupingBy(ticket -> Objects.toString(ticket.getPrefix(), "UNKNOWN"), TreeMap::new, Collectors.counting()));
+    }
+
+    @Override
+    public long sessionCount() {
+        return countTicketsOfType(TicketGrantingTicket.class);
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        return countTicketsOfType(ServiceTicket.class);
+    }
+
+    /**
+     * Count the tickets of a type without decoding or copying them: a ticket kept as is is checked by its class, and
+     * an encoded ticket by its prefix, against the ticket definitions of that type. A count that cannot be made is
+     * reported as unknown, the way the counts of other registries are.
+     *
+     * @param type the type of ticket
+     * @return the number of tickets of that type, or {@link Long#MIN_VALUE} when it is unknown
+     */
+    protected long countTicketsOfType(final Class<? extends Ticket> type) {
+        try {
+            val prefixes = ticketCatalog.findTicketImplementations(type)
+                .stream()
+                .map(TicketDefinition::getPrefix)
+                .collect(Collectors.toSet());
+            return getMapInstance()
+                .values()
+                .stream()
+                .filter(ticket -> ticket instanceof EncodedTicket ? prefixes.contains(ticket.getPrefix()) : type.isInstance(ticket))
+                .count();
+        } catch (final Exception e) {
+            LOGGER.trace("Tickets of type [{}] could not be counted: [{}]", type.getSimpleName(), e.getMessage());
+            return Long.MIN_VALUE;
+        }
     }
 
     /**

@@ -541,7 +541,8 @@ class OidcFederationDefaultTrustChainResolverTests {
                 assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.hasVerifiedSector(entityId, metadata));
             }
             metadata.setSectorIDURI(new URI("https://localhost:1/sector"));
-            assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.hasVerifiedSector(entityId, metadata));
+            val unreachable = assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.hasVerifiedSector(entityId, metadata));
+            assertInstanceOf(IOException.class, unreachable.getCause());
             metadata.setSectorIDURI(new URI("https://169.254.169.254/sector"));
             assertFalse(resolver.hasVerifiedSector(entityId, metadata));
             metadata.setSectorIDURI(null);
@@ -827,7 +828,8 @@ class OidcFederationDefaultTrustChainResolverTests {
             val chain = List.of(relyingPartyConfiguration(), statement(trustAnchorKey, TRUST_ANCHOR, RELYING_PARTY, relyingPartyKey, 0));
             when(retriever.fetchEntityConfiguration(new EntityID(TRUST_ANCHOR))).thenThrow(new ResolveException("Not reachable"));
             val resolver = resolver(new JWKSet(trustAnchorKey.toPublicJWK()), new TrustChainConstraints(3));
-            assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.resolveSentTrustChain(RELYING_PARTY, chain));
+            val unavailable = assertThrows(OidcFederationResolutionUnavailableException.class, () -> resolver.resolveSentTrustChain(RELYING_PARTY, chain));
+            assertInstanceOf(ResolveException.class, unavailable.getCause());
 
             trustAnchorPublishesNoHistoricalKeys();
             assertTrue(resolver.resolveSentTrustChain(RELYING_PARTY, chain).isPresent());

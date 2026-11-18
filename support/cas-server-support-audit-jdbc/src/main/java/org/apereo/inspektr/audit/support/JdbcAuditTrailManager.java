@@ -1,6 +1,8 @@
 package org.apereo.inspektr.audit.support;
 
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import lombok.Getter;
@@ -22,6 +24,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionOperations;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.sql.Timestamp;
 
 /**
  * <p>Implementation of {@link AuditTrailManager} to persist the
@@ -41,7 +44,8 @@ import jakarta.validation.constraints.Size;
  *  AUD_USERAGENT     VARCHAR2(100)  NOT NULL,
  *  AUD_LOCALE        VARCHAR2(50)   NOT NULL,
  *  AUD_HEADERS       JSON   NOT NULL,
- *  AUD_EXTRA_INFO    JSON   NOT NULL
+ *  AUD_EXTRA_INFO    JSON   NOT NULL,
+ *  AUD_TARGET        VARCHAR2(512)
  * )
  * </pre>
  *
@@ -112,7 +116,11 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         /**
          * Extra info column.
          */
-        EXTRA_INFO("AUD_EXTRA_INFO");
+        EXTRA_INFO("AUD_EXTRA_INFO"),
+        /**
+         * Target column: what the action was for, such as an application or a multifactor provider.
+         */
+        TARGET("AUD_TARGET");
 
         private final String columnName;
     }
@@ -186,6 +194,10 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
             parameterMap.put(AuditTableColumns.USERAGENT.getColumnName(), clientInfo.getUserAgent());
             parameterMap.put(AuditTableColumns.LOCALE.getColumnName(), locale);
             parameterMap.put(AuditTableColumns.ACTION.getColumnName(), action);
+            val target = auditActionContext.getTarget();
+            parameterMap.put(AuditTableColumns.TARGET.getColumnName(), target == null || columnLength <= 0 || target.length() <= columnLength
+                ? target
+                : target.substring(0, columnLength));
 
             val converter = new MapToJsonAttributeConverter();
             parameterMap.put(AuditTableColumns.HEADERS.getColumnName(), converter.convertToDatabaseColumn(clientInfo.getHeaders()));
@@ -246,6 +258,54 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         return getAuditRecordsSince(builder, args.toArray(), count);
     }
 
+    /**
+     * Counts records with one query that any database runs: the rows of the period and actions are grouped by action,
+     * and by target when asked, and each hour is a column that adds up the rows falling in it.
+     *
+     * @param query the period and actions to count
+     * @return the counts
+     */
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        val hours = query.hours();
+        if (hours.isEmpty() || query.actions().isEmpty()) {
+            return Optional.of(List.of());
+        }
+        val date = AuditTableColumns.DATE.getColumnName();
+        val action = AuditTableColumns.ACTION.getColumnName();
+        val columns = IntStream.range(0, hours.size())
+            .mapToObj(index -> "SUM(CASE WHEN %s>=? AND %s<? THEN 1 ELSE 0 END) AS H%d".formatted(date, date, index))
+            .collect(Collectors.joining(", "));
+        val actions = List.copyOf(query.actions());
+        val target = AuditTableColumns.TARGET.getColumnName();
+        val grouping = query.byTarget() ? action + ", " + target : action;
+        val sql = "SELECT %s, %s FROM %s WHERE %s>=? AND %s<? AND %s IN (%s)%s GROUP BY %s".formatted(grouping, columns, tableName,
+            date, date, action, actions.stream().map(_ -> "?").collect(Collectors.joining(",")),
+            query.byTarget() ? " AND " + target + " IS NOT NULL" : StringUtils.EMPTY, grouping);
+        val args = new ArrayList<>();
+        hours.forEach(hour -> {
+            args.add(Timestamp.valueOf(hour));
+            args.add(Timestamp.valueOf(hour.plus(AuditSummaryQuery.BUCKET)));
+        });
+        args.add(Timestamp.valueOf(query.from()));
+        args.add(Timestamp.valueOf(query.to()));
+        args.addAll(actions);
+        LOGGER.debug("Summarizing audit records with query [{}]", sql);
+        val counts = new ArrayList<AuditActionCount>();
+        val first = query.byTarget() ? 3 : 2;
+        jdbcTemplate.query(sql, resultSet -> {
+            val actionPerformed = resultSet.getString(1);
+            val actionTarget = query.byTarget() ? resultSet.getString(2) : null;
+            for (var index = 0; index < hours.size(); index++) {
+                val count = resultSet.getLong(index + first);
+                if (count > 0) {
+                    counts.add(new AuditActionCount(hours.get(index), actionPerformed, count, actionTarget));
+                }
+            }
+        }, args.toArray());
+        return Optional.of(counts);
+    }
+
     private List<? extends AuditActionContext> getAuditRecordsSince(final StringBuilder where, final Object[] args,
                                                                     final long count) {
         return transactionTemplate.execute((TransactionCallback<List>) transactionStatus -> {
@@ -280,6 +340,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
         val tenant = resultSet.getString(AuditTableColumns.TENANT.getColumnName());
         val geoLocation = resultSet.getString(AuditTableColumns.GEOLOCATION.getColumnName());
         val locale = StringUtils.defaultIfBlank(resultSet.getString(AuditTableColumns.LOCALE.getColumnName()), Locale.US.toLanguageTag());
+        val target = resultSet.getString(AuditTableColumns.TARGET.getColumnName());
 
         val headers = new HashMap<String, String>();
         for (val headerName : headerNames) {
@@ -293,6 +354,6 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
             .setTenant(tenant)
             .setHeaders(headers);
         val auditDate = audDate.toLocalDateTime();
-        return new AuditActionContext(principal, resource, action, appCode, auditDate, clientInfo);
+        return new AuditActionContext(principal, resource, action, appCode, auditDate, clientInfo, target);
     }
 }

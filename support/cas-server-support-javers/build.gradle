@@ -13,6 +13,7 @@ ext {
 dependencies {
     implementation libraries.javersmongo
     implementation libraries.mongo
+    implementation libraries.springsecurityweb
 
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-authentication")

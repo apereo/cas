@@ -7,6 +7,10 @@
  * reload or a closed tab can be picked up again. Reopening the same application, or a new application of the
  * same type, offers to resume the draft. Saving or discarding removes it, and a draft older than thirty days is
  * dropped. Nothing is sent to the server.
+ *
+ * Editing an existing application also remembers the definition the edit started from, and a draft keeps it too.
+ * Before the edit is saved, the application is read again; when someone else changed or deleted it in the meantime,
+ * the operator sees what changed and chooses to keep editing or to save anyway.
  */
 class PalantirServiceEditGuard {
     static STORAGE_PREFIX = "PalantirServiceDraft:";
@@ -21,6 +25,8 @@ class PalantirServiceEditGuard {
     static state = {wizard: null, editor: null};
 
     static listening = new Set();
+
+    static originals = new Map();
 
     static initialized = false;
 
@@ -123,8 +129,11 @@ class PalantirServiceEditGuard {
 
     static writeDraft(key, text) {
         try {
-            window.localStorage.setItem(PalantirServiceEditGuard.STORAGE_PREFIX + key,
-                JSON.stringify({text: text, savedAt: new Date().toISOString()}));
+            window.localStorage.setItem(PalantirServiceEditGuard.STORAGE_PREFIX + key, JSON.stringify({
+                text: text,
+                savedAt: new Date().toISOString(),
+                original: PalantirServiceEditGuard.originals.get(key) ?? null
+            }));
         } catch (error) {
             console.debug("Palantir could not keep a draft of the application", error);
         }
@@ -166,10 +175,87 @@ class PalantirServiceEditGuard {
             allowEscapeKey: false
         });
         if (result.isConfirmed) {
+            if (draft.original?.text) {
+                PalantirServiceEditGuard.originals.set(key, draft.original);
+            }
             return draft.text;
         }
         PalantirServiceEditGuard.removeDraft(key);
         return null;
+    }
+
+    /**
+     * Remember the saved definition an edit of an existing application starts from.
+     *
+     * @param key the storage key of the application's draft
+     * @param definition the definition as the server returned it
+     */
+    static remember(key, definition) {
+        if (definition?.id !== null && definition?.id !== undefined) {
+            PalantirServiceEditGuard.originals.set(key, {id: String(definition.id), text: JSON.stringify(definition)});
+        }
+    }
+
+    /**
+     * Read the application again before an edit is saved, and ask the operator what to do when someone else changed
+     * or deleted it since the edit started. An application whose id was changed in the edit, or that cannot be
+     * read for another reason, is saved as usual.
+     *
+     * @param mode wizard or editor
+     * @param text the definition about to be saved
+     * @returns {Promise<string>} save when nothing changed, overwrite when the operator chose to save anyway, or
+     * cancel to keep editing
+     */
+    static async checkConflict(mode, text) {
+        const state = PalantirServiceEditGuard.state[mode];
+        const original = state ? PalantirServiceEditGuard.originals.get(state.key) : null;
+        let id;
+        try {
+            id = String(JSON.parse(text).id);
+        } catch (error) {
+            id = null;
+        }
+        if (!original || id !== original.id) {
+            return "save";
+        }
+        let current = null;
+        try {
+            current = await $.ajax({
+                url: `${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`,
+                dataType: "json",
+                headers: {"Accept": "application/json"}
+            });
+        } catch (xhr) {
+            if (xhr?.status !== 404) {
+                return "save";
+            }
+        }
+        if (current && PalantirServiceEditGuard.normalize(JSON.stringify(current)) === PalantirServiceEditGuard.normalize(original.text)) {
+            return "save";
+        }
+        const message = current
+            ? "Someone saved changes to this application after you started editing it. Saving yours replaces their changes."
+            : "Someone deleted this application after you started editing it. Saving yours creates it again.";
+        const diff = current
+            ? `<div class="palantir-conflict__diff">${PalantirServiceHistory.table("When you started editing", "Saved since",
+                PalantirServiceHistory.compare(PalantirServiceHistory.canonical(JSON.parse(original.text)),
+                    PalantirServiceHistory.canonical(current)))}</div>`
+            : "";
+        const result = await Swal.fire({
+            title: current ? "This application has changed" : "This application was deleted",
+            html: `<p class="palantir-conflict__message">${escapePalantirMarkup(message)}</p>${diff}`,
+            icon: "warning",
+            width: Math.min(1100, $(window).width() - 32),
+            showCancelButton: true,
+            confirmButtonText: "Save mine anyway",
+            cancelButtonText: "Keep editing",
+            focusCancel: true,
+            customClass: {popup: "palantir-conflict"},
+            didOpen: popup => {
+                $(popup).on("click", "[data-diff-fold]", event => PalantirServiceHistory.unfold(event.currentTarget));
+            }
+        });
+        return result.isConfirmed ? "overwrite" : "cancel";
     }
 
     /**
@@ -291,9 +377,9 @@ class PalantirServiceEditGuard {
             icon: "warning",
             showDenyButton: true,
             showCancelButton: true,
-            confirmButtonText: "Keep a draft and close",
-            denyButtonText: "Discard changes",
-            cancelButtonText: "Keep editing",
+            confirmButtonText: "Save as Draft",
+            denyButtonText: "Discard Changes",
+            cancelButtonText: "Keep Editing",
             focusCancel: true
         }).then(result => {
             if (result.isConfirmed) {
@@ -324,6 +410,7 @@ class PalantirServiceEditGuard {
             if (!state.keepDraft) {
                 PalantirServiceEditGuard.removeDraft(state.key);
             }
+            PalantirServiceEditGuard.originals.delete(state.key);
         }
         PalantirServiceEditGuard.state[mode] = null;
     }

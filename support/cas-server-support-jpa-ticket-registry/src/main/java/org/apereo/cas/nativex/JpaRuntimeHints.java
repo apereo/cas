@@ -19,6 +19,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.integration.jdbc.lock.LockRepository;
+import org.springframework.integration.support.locks.LockRegistry;
 import org.springframework.orm.jpa.EntityManagerProxy;
 import jakarta.persistence.EntityManager;
 
@@ -35,7 +36,7 @@ public class JpaRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, JpaTicketRegistryProperties.class, AbstractJpaProperties.class,
             ConnectionPoolingProperties.class, EncryptionRandomizedSigningJwtCryptographyProperties.class,
             EncryptionRandomizedCryptoProperties.class, SigningJwtCryptoProperties.class);
-        registerProxyHints(hints, LockRepository.class);
+        registerProxyHints(hints, LockRepository.class, LockRegistry.class);
         hints.proxies().registerJdkProxy(EntityManager.class, EntityManagerProxy.class);
         registerReflectionHints(hints, List.of(BaseTicketEntity.class, JpaTicketEntity.class, MySQLJpaTicketEntity.class,
             PostgresJpaTicketEntity.class, OracleJpaTicketEntity.class, MsSqlServerJpaTicketEntity.class));

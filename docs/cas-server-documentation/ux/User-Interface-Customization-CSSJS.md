@@ -119,6 +119,11 @@ networks with limited internet access.
 The Third party static resources are packaged in "WebJAR" jar files and served up via the servlet `3.0` feature 
 that merges any folders under `META-INF/resources` in web application jars with the application's web root.
 
+To keep the web application small, the WebJARs packaged with CAS carry only what CAS itself serves, along with the
+fonts and images those files reference. Source maps, sources, examples, alternative themes, individual icon files
+and legacy font formats are left out. If your customized views need any of those files, add the WebJAR as a dependency
+to your overlay project, as described below; the copy in your overlay takes precedence over the one packaged with CAS.
+
 ### Building WebJARs
 
 You can search for webjars at https://webjars.org. There are three flavors of WebJARs that you 

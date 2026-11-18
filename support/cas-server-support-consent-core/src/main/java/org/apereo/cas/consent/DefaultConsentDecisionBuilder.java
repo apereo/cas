@@ -127,7 +127,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
             val base64 = EncodingUtils.encodeBase64(Objects.requireNonNull(json));
             return this.consentCipherExecutor.encode(base64);
         } catch (final Exception e) {
-            throw new IllegalArgumentException("Could not serialize attributes for consent decision");
+            throw new IllegalArgumentException("Could not serialize attributes for consent decision", e);
         }
     }
 }

@@ -60,7 +60,7 @@ public class DefaultAcceptableUsagePolicyRepository extends BaseAcceptableUsageP
                 val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
                 yield Pair.of(principal.getId(), policyMap);
             }
-            default -> Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
+            case AUTHENTICATION -> Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());
         };
     }
 }

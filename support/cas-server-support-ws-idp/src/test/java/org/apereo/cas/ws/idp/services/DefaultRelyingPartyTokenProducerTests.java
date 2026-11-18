@@ -13,6 +13,7 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 import lombok.val;
 import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.fediz.core.exception.ProcessingException;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.junit.jupiter.api.Tag;
@@ -91,8 +92,11 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
 
         val assertion = getValidationResult();
         val securityToken = mock(SecurityToken.class);
-        assertThrows(IllegalArgumentException.class, () -> wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
+        val exception = assertThrows(IllegalArgumentException.class, () -> wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
             WSFederationRequest.of(request), request, assertion));
+        val processingException = assertInstanceOf(ProcessingException.class, exception.getCause());
+        assertEquals(ProcessingException.TYPE.BAD_REQUEST, processingException.getType());
+        assertInstanceOf(SoapFault.class, processingException.getCause());
     }
 
 

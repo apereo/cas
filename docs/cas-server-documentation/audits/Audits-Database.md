@@ -34,6 +34,12 @@ CREATE TABLE COM_AUDIT_TRAIL
     AUD_USERAGENT     VARCHAR2(100)   NOT NULL,
     AUD_LOCALE        VARCHAR2(10)    NOT NULL,
     AUD_HEADERS       TEXT   NOT NULL,
-    AUD_EXTRA_INFO    TEXT   NOT NULL
+    AUD_EXTRA_INFO    TEXT   NOT NULL,
+    AUD_TARGET        VARCHAR(512)
 )
 ```
+
+`AUD_TARGET` holds what an action was for, when it is something CAS can count by, such as the application signed in to
+or the multifactor provider that was triggered; it is empty for other records. An index on `AUD_DATE` and `AUD_ACTION`
+keeps queries over a period, such as hourly summaries, fast. When CAS does not update the schema itself, add the column
+and the index to an existing table before upgrading.

@@ -257,6 +257,28 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .filter(ticket -> !ticket.isExpired());
     }
 
+    /**
+     * Count the tickets of each type by the estimated size of its collection, which the database keeps without
+     * reading any document. A collection two ticket types share is counted once.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        val counted = new HashSet<String>();
+        ticketCatalog.findAll().forEach(definition -> {
+            val collection = definition.getProperties().getStorageName();
+            if (StringUtils.isNotBlank(collection) && counted.add(collection)) {
+                val count = mongoTemplate.estimatedCount(collection);
+                if (count > 0) {
+                    counts.put(definition.getPrefix(), count);
+                }
+            }
+        });
+        return counts;
+    }
+
     @Override
     public long serviceTicketCount() {
         return countTicketsByTicketType(ServiceTicket.class);

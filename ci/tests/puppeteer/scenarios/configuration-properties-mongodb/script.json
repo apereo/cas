@@ -10,6 +10,10 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.logout.follow-service-redirects=false",
     
+    "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
+    "--cas.standalone.configuration-security.iterations=1000",
+    "--cas.standalone.configuration-security.psw=x6Fcw2H&@RWHfi",
+
     "--management.endpoint.env.show-values=ALWAYS",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

@@ -93,7 +93,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesTo()));
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
-                throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
+                throw new IllegalArgumentException(new ProcessingException(ex.getMessage(), ex, ProcessingException.TYPE.BAD_REQUEST));
             }
             LoggingUtils.error(LOGGER, ex);
             throw ex;

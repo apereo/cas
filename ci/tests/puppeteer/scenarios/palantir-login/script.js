@@ -1,8 +1,14 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    RegisteredServiceSections, openRegisteredServiceWizardDialog, isPopulatingWizard,
    activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
-   PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext */
+   PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext, fetchServices, notyf,
+   PalantirSamlMetadataImport, PalantirApplicationAccess, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
+   PalantirCommandPalette, Chart, PalantirApplicationSelection, PalantirHome, PalantirModules, signInsChart,
+   topApplicationsChart */
 const assert = require("assert");
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
 const cas = require("../../cas.js");
 
 const DASHBOARD_URL = "https://localhost:8443/cas/palantir/dashboard";
@@ -24,7 +30,8 @@ const TABS = [
     {index: 13, label: "MFA", button: "#mfaTabButton", tabs: "mfa-tabs", tables: ["mfaDevicesTable"]},
     {index: 14, label: "Multitenancy", button: "#tenantsTabButton", tabs: "tenancy-tabs", tables: ["tenantsTable"]},
     {index: 15, label: "Cluster", button: "#clusterTabButton", tabs: "cluster-tabs", tables: []},
-    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []}
+    {index: 16, label: "Users", button: "#usersTabButton", tabs: null, tables: []},
+    {index: 17, label: "Home", button: "#homeTabButton", tabs: null, tables: []}
 ];
 
 const PROTOCOL_FIELDS = {
@@ -189,6 +196,48 @@ async function verifyFeatureCatalog(page) {
  *
  * @param page the puppeteer page
  */
+async function verifyHome(page) {
+    await cas.separator();
+    await page.waitForFunction(() => currentActiveTab === Tabs.HOME.index
+        && $("#homeGrid > [data-home-widget='status']").length === 1, {timeout: 30000});
+    const home = await page.evaluate(() => ({
+        widgets: $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get(),
+        status: $("#homeGrid .palantir-home__status-title").text(),
+        version: PalantirHome.summary.sections.server.version
+    }));
+    await cas.logg(`Home opens first with ${home.widgets.join(", ")}; ${home.status}; CAS ${home.version}`);
+    assert(home.widgets.includes("health"));
+    assert(home.widgets.includes("resources"));
+    assert(home.widgets.includes("endpoints"));
+    await page.waitForFunction(() => Chart.getChart(document.getElementById("homeHealthChart")) !== undefined, {timeout: 10000});
+    const slowest = await page.evaluate(() => $("#homeGrid [data-home-widget='endpoints'] tbody tr").length);
+    await cas.logg(`Slowest endpoints listed on Home: ${slowest}`);
+
+    await page.click("#homeGrid [data-home-for='resources'][data-home-action='hide']");
+    await page.waitForFunction(() => $("#homeGrid > [data-home-widget='resources']").length === 0
+        && JSON.parse(localStorage.getItem("PalantirHomeLayout")).hidden.includes("resources"), {timeout: 10000});
+    await page.click("#homeCustomize");
+    await page.waitForSelector("#homeCustomizeMenu [data-home-action='show'][data-home-for='resources']", {visible: true, timeout: 10000});
+    await page.click("#homeCustomizeMenu [data-home-action='show'][data-home-for='resources']");
+    await page.waitForFunction(() => $("#homeGrid > [data-home-widget='resources']").length === 1, {timeout: 10000});
+    await cas.logg("A Home card can be hidden and shown again");
+
+    await page.click("#homeGrid [data-home-for='resources'][data-home-action='earlier']");
+    await page.waitForFunction(() => {
+        const order = $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get();
+        const stored = JSON.parse(localStorage.getItem("PalantirHomeLayout")).order;
+        return order.indexOf("resources") < order.indexOf("health") && stored.indexOf("resources") < stored.indexOf("health");
+    }, {timeout: 10000});
+    await page.click("#homeCustomize");
+    await page.click("#homeCustomizeMenu [data-home-action='reset']");
+    await page.waitForFunction(() => localStorage.getItem("PalantirHomeLayout") === null
+        && $("#homeGrid > [data-home-widget]").first().data("homeWidget") === "status", {timeout: 10000});
+
+    assert(await page.$("#homeGrid .palantir-home__widget-head button:not(.palantir-home__title-link):not([data-home-action])") === null);
+    await page.click("#homeGrid [data-home-widget='types'] h3 .palantir-home__title-link");
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 30000});
+}
+
 async function verifyRegisteredServices(page) {
     await cas.separator();
     await page.waitForFunction(() => $.fn.dataTable.isDataTable("#applicationsTable"), {timeout: 30000});
@@ -206,10 +255,79 @@ async function verifyRegisteredServices(page) {
     await cas.logg(`Card view shows ${views.cards} cards for ${views.rows} rows on the table's page`);
     assert(views.cards === views.rows);
 
+    await page.waitForFunction(() => /every minute|^No /.test($("#topApplicationsChartStatus").text()), {timeout: 30000});
+    const top = await page.evaluate(() => ({
+        status: $("#topApplicationsChartStatus").text(),
+        names: topApplicationsChart.data.labels,
+        shown: $("#topApplicationsChart").is(":visible"),
+        last: $("#applications-tab > *").filter(":visible").last().find("#topApplicationsChart").length === 1
+    }));
+    await cas.logg(`Top applications: ${top.status} ${top.names.join(", ")}; shown: ${top.shown}`);
+    assert(top.shown === top.names.length > 0, "The top applications chart is shown only when it has data");
+    assert(!top.shown || top.last, "The top applications chart is the last thing on the applications page");
+    const openable = await page.$("#topApplicationsList [data-top-application]:not(.is-gone)");
+    if (top.shown && openable !== null) {
+        await openable.click();
+        await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("instance") !== undefined
+            && $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
+        await cas.logg(`A top application opens: ${await page.evaluate(() => $("#editServiceWizardDialog").dialog("option", "title"))}`);
+        await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+        await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+    }
+    await verifyApplicationTypeFilter(page);
+
+    if (count > 0) {
+        await page.waitForFunction(() => $("#servicesChartTitle").closest(".palantir-chart-card").is(":visible"), {timeout: 10000});
+        await page.evaluate(() => $("[data-palantir-magnify=servicesChart]").trigger("click"));
+        await page.waitForFunction(() => {
+            const canvas = document.querySelector(".palantir-magnifier canvas");
+            return canvas !== null && Chart.getChart(canvas) !== undefined && canvas.getBoundingClientRect().width > 400;
+        }, {timeout: 10000});
+        await cas.logg("The applications chart opens magnified");
+        await page.evaluate(() => $(".palantir-magnifier").dialog("close"));
+    }
+
     await cas.click(page, "#newService");
     await page.waitForFunction(() => $("#newServicePlain").is(":visible")
         && $("#newServiceWizard").is(":visible"), {timeout: 15000});
     await cas.logg("New application menu offers both the editor and the wizard");
+}
+
+/**
+ * Choose a type in the applications type filter and check that the table and the cards keep only applications of
+ * that type, as many as the filter counts, then show all of them again. The filter is hidden while the registry
+ * holds a single type, which is only reported.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyApplicationTypeFilter(page) {
+    const filter = await page.evaluate(() => ({
+        visible: $("#applicationsTypeFilter").is(":visible"),
+        types: $("#applicationsTypeFilter button[data-application-type]").map(function () {
+            return {type: String($(this).data("application-type")), count: Number($(this).find(".palantir-type-filter__count").text())};
+        }).get()
+    }));
+    if (!filter.visible) {
+        await cas.logg(`Type filter is hidden for ${filter.types.length - 1} application type(s)`);
+        return;
+    }
+    const chosen = filter.types.find((entry) => entry.type !== "all");
+    await cas.click(page, `#applicationsTypeFilter button[data-application-type="${chosen.type}"]`);
+    await page.waitForFunction((type) => $(`#applicationsTypeFilter button[data-application-type="${type}"]`).attr("aria-pressed") === "true",
+        {timeout: 10000}, chosen.type);
+    const shown = await page.evaluate(() => ({
+        rows: $("#applicationsTable").DataTable().rows({search: "applied"}).count(),
+        badges: $("#applicationsCards .palantir-application-card .palantir-protocol-badge").map(function () {
+            return [...this.classList].find((name) => name.startsWith("is-"));
+        }).get()
+    }));
+    await cas.logg(`Type ${chosen.type} shows ${shown.rows} applications and ${shown.badges.length} cards`);
+    assert(shown.rows === chosen.count);
+    assert(shown.badges.every((badge) => badge === `is-${chosen.type}`));
+    await cas.click(page, "#applicationsTypeFilter button[data-application-type=\"all\"]");
+    await page.waitForFunction((total) => $("#applicationsTable").DataTable().rows({search: "applied"}).count() === total,
+        {timeout: 10000}, filter.types.find((entry) => entry.type === "all").count);
+    await cas.logg("Type filter shows all applications again");
 }
 
 /**
@@ -254,19 +372,28 @@ async function walkWizardSteps(page) {
 }
 
 /**
- * Assert the wizard's dynamically built fields do not exist until the dialog is opened.
- * The template already renders hidden values for switch buttons before the builders run.
+ * Assert that startup does not build the wizard: its fields are built in the background once the dashboard is shown
+ * and the browser is idle, so they either do not exist yet or were built after the dashboard appeared.
  *
  * @param page the puppeteer page
  */
 async function verifyWizardIsDeferred(page) {
-    const built = await page.evaluate(() => ({
-        nameField: document.querySelector("#registeredServiceName") !== null,
-        params: document.querySelectorAll("#editServiceWizardForm [data-param-name]:not(input[type='hidden'][data-switch-btn])").length
-    }));
-    await cas.logg(`Before opening the wizard: name field present=${built.nameField}, dynamic fields=${built.params}`);
-    assert(built.nameField === false);
-    assert(built.params === 0);
+    const built = await page.evaluate(() => {
+        const shown = performance.getEntriesByName("palantir-dashboard-shown")[0]?.startTime ?? null;
+        const wizard = performance.getEntriesByName("palantir-wizard-built")[0]?.startTime ?? null;
+        return {
+            shown: shown,
+            wizard: wizard,
+            params: document.querySelectorAll("#editServiceWizardForm [data-param-name]:not(input[type='hidden'][data-switch-btn])").length
+        };
+    });
+    await cas.logg(`Dashboard shown at ${built.shown} ms; wizard built at ${built.wizard ?? "not yet"} ms; dynamic fields=${built.params}`);
+    assert(built.shown !== null);
+    if (built.wizard === null) {
+        assert(built.params === 0);
+    } else {
+        assert(built.wizard > built.shown);
+    }
 }
 
 /**
@@ -566,6 +693,12 @@ async function verifyServiceWizard(page) {
         await cas.logg(`${name} steps: ${steps.join(" > ")}`);
         assert(steps[0] === "basics" && steps.at(-1) === "review" && new Set(steps).size === steps.length);
 
+        await page.evaluate(() => $("#registeredServiceName").val("").trigger("input").trigger("change"));
+        await page.waitForFunction(() => $("#saveServiceWizard").prop("disabled")
+            && $("#saveServiceWizardHint").text().includes("Name"), {timeout: 10000});
+        const required = await page.evaluate(() => $("#saveServiceWizardHint").text().trim());
+        await cas.logg(`${name}: without a name, Save is disabled and the wizard says ${required}`);
+
         await cas.logg(`Wizard verified for ${name}`);
         await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
         await discardUnsavedChanges(page, name);
@@ -576,11 +709,9 @@ async function verifyServiceWizard(page) {
 }
 
 /**
- * Open and dismiss the plain definition editor, through the New menu left open by the caller.
- *
- * It is a jQuery UI dialog now rather than hand-written MDC markup, so this checks the widget is
- * created, the Ace editor inside it is attached, and Cancel closes it. Choosing the menu entry is
- * also what dismisses the menu, which is why nothing clicks elsewhere to close it.
+ * The JSON editor opens on a start screen of templates for a new definition: the templates that ship with CAS are
+ * offered for every protocol of the deployment, a search narrows them, and choosing one moves to the editor with a
+ * definition CAS can read. A syntax error is reported on its line, and Cancel asks before discarding the edits.
  *
  * @param page the puppeteer page
  */
@@ -589,15 +720,45 @@ async function verifyPlainEditorDialog(page) {
     await cas.click(page, "#newServicePlain");
     await page.waitForFunction(() => $("#editServiceDialog").hasClass("ui-dialog-content")
         && $("#editServiceDialog").dialog("isOpen")
-        && document.querySelector("#serviceEditor").classList.contains("ace_editor"), {timeout: 30000});
-    await cas.logg("Plain definition editor opened as a jQuery UI dialog");
-    await cas.assertVisibility(page, "#saveService");
-    await cas.assertVisibility(page, "#cancelService");
+        && PalantirServiceEditor.view === "start"
+        && $("#serviceTemplateCards [data-template-key]").length > 1, {timeout: 30000});
+    const start = await page.evaluate(() => ({
+        templates: PalantirServiceTemplates.all().length,
+        protocols: [...new Set(PalantirServiceTemplates.all().map((template) => template.protocol.key))],
+        continueDisabled: $("#continueServiceTemplate").prop("disabled")
+    }));
+    await cas.logg(`JSON editor offers ${start.templates} template(s) for ${start.protocols.join(", ")}`);
+    assert(start.templates >= 20);
+    assert(start.protocols.includes("cas") && start.protocols.includes("saml") && start.protocols.includes("oidc"));
+    assert(start.continueDisabled === true);
+
+    await page.type("#serviceTemplateSearch", "proxy tickets");
+    await page.waitForFunction(() => $("#serviceTemplateCards [data-template-key]").length === 2, {timeout: 10000});
+    await page.click("#serviceTemplateCards [data-template-key]:not([data-template-key=blank])");
+    await page.click("#continueServiceTemplate");
+    await page.waitForFunction(() => PalantirServiceEditor.view === "editor"
+        && $("#serviceEditorCheck").attr("data-state") === "ok", {timeout: 10000});
+    const definition = await page.evaluate(() => JSON.parse(ace.edit("serviceEditor").getValue()));
+    await cas.log(`Started from the template ${definition.name}`);
+    assert(definition.proxyPolicy !== undefined);
+    assert(definition.id === undefined);
+
+    await cas.click(page, "#validateService");
+    await page.waitForFunction(() => !$("#serviceEditorProblem").prop("hidden"), {timeout: 15000});
+    const validation = await page.evaluate(() => $("#serviceEditorProblem").attr("data-state"));
+    await cas.logg(`Validating the template answers ${validation}`);
+    assert(validation === "ok");
+
+    await page.evaluate(() => ace.edit("serviceEditor").session.insert({row: 2, column: 0}, "    \"broken\"\n"));
+    await page.waitForFunction(() => $("#serviceEditorCheck").attr("data-state") === "error", {timeout: 10000});
+    const syntax = await page.evaluate(() => $("#serviceEditorCheck").text());
+    await cas.logg(`A syntax error is reported as: ${syntax}`);
+    assert(syntax.startsWith("Line "));
 
     await page.evaluate(() => $("#cancelService").trigger("click"));
-    await page.waitForFunction(() => $("#editServiceDialog").hasClass("ui-dialog-content")
-        && $("#editServiceDialog").dialog("isOpen") === false, {timeout: 15000});
-    await cas.logg("Plain definition editor dismissed through Cancel");
+    await discardUnsavedChanges(page, "JSON editor");
+    await page.waitForFunction(() => $("#editServiceDialog").dialog("isOpen") === false, {timeout: 15000});
+    await cas.logg("JSON editor dismissed through Cancel");
 }
 
 /**
@@ -613,6 +774,16 @@ async function verifySettingsDialog(page) {
         && $("#palantirActuatorsTable").DataTable().data().count() > 0, {timeout: 30000});
     const endpoints = await page.evaluate(() => $("#palantirActuatorsTable").DataTable().data().count());
     await cas.logg(`Settings dialog lists ${endpoints} actuator endpoints`);
+
+    await page.evaluate(() => sessionStorage.setItem("PalantirResetProbe", "kept"));
+    await cas.click(page, "#resetPalantirPreferences");
+    await page.waitForFunction(() => $(".swal2-title").text() === "Reset all preferences?", {timeout: 10000});
+    await page.click(".swal2-cancel");
+    await page.waitForFunction(() => !Swal.isVisible(), {timeout: 10000});
+    const kept = await page.evaluate(() => sessionStorage.getItem("PalantirResetProbe"));
+    await cas.logg(`Declining to reset the preferences keeps them: ${kept}`);
+    assert(kept === "kept");
+    await page.evaluate(() => sessionStorage.removeItem("PalantirResetProbe"));
     await page.evaluate(() => $("#palantirSettingsDialog").dialog("close"));
 }
 
@@ -686,6 +857,23 @@ async function verifyCommandPalette(page) {
             $("#applicationsTable").DataTable().search("").draw();
             $("#applications-tab .dt-search input").val("");
         });
+    }
+
+    const nested = await page.evaluate(() => PalantirCommandPalette.sectionEntries(PalantirCommandPalette.navigationItems())
+        .map((entry) => entry.label)
+        .find((label) => label.split(" › ").length > 2));
+    if (nested) {
+        await cas.sleep(1000);
+        await page.evaluate(() => document.activeElement?.blur());
+        await page.keyboard.press("/");
+        const match = await searchCommandPalette(page, nested.split(" › ").at(-1));
+        await cas.log(`Command palette offers ${match} for a section inside a section`);
+        await page.evaluate((label) => PalantirCommandPalette.search(label).find((entry) => entry.label === label).run(), nested);
+        await page.evaluate(() => $("#palantirCommandPalette").dialog("close"));
+        const tab = nested.split(" › ").at(-1);
+        await page.waitForFunction((name) => $(".jqueryui-tabs > ul > li.ui-tabs-active:visible").toArray()
+            .some((element) => $(element).find("a").first().text().replace(/\s+/g, " ").trim() === name), {timeout: 15000}, tab);
+        await cas.logg(`Command palette opened the nested section ${nested}`);
     }
     await cas.screenshot(page);
 }
@@ -772,10 +960,12 @@ async function verifyServiceHistory(page) {
         latestSelected: $("#entityHistoryTable tbody tr:first-child").hasClass("is-selected"),
         compare: $("#entityHistoryCompare").val(),
         changed: $("#entityHistoryDiff td.is-added, #entityHistoryDiff td.is-removed").length,
-        summary: $("#entityHistorySummary").text()
+        summary: $("#entityHistorySummary").text(),
+        author: $("#entityHistoryTable tbody tr:first-child .palantir-history__author").text()
     }));
-    await cas.log(`History: ${history.versions} versions; ${history.summary}`);
+    await cas.log(`History: ${history.versions} versions; ${history.summary}; latest changed by ${history.author}`);
     assert(history.versions >= 2);
+    assert(history.author.length > 0);
     assert(history.latestSelected);
     assert(history.compare === "previous");
     assert(history.changed > 0);
@@ -822,6 +1012,456 @@ async function verifyServiceHistory(page) {
 }
 
 /**
+ * Open an application in the editor, change it behind the editor's back, and check that saving the edit shows what
+ * changed instead of overwriting it; keep editing, then discard the edit and delete the application.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyEditConflict(page) {
+    await cas.separator();
+    const serviceId = await page.evaluate(async () => {
+        const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify({
+                "@class": "org.apereo.cas.services.CasRegisteredService",
+                serviceId: "^https://conflict.example.org/.*",
+                name: "ConflictExample",
+                description: "Original description"
+            })
+        });
+        const created = await response.json();
+        await fetchServices();
+        return created.id;
+    });
+    await page.waitForFunction((id) => $(`#applicationsTable span[serviceId=${id}]`).length > 0, {timeout: 30000}, serviceId);
+    await page.evaluate((id) => applicationActionHandler("editPlain", applicationRowContext(String(id))), serviceId);
+    await page.waitForFunction(() => $("#editServiceDialog").dialog("instance") !== undefined
+        && $("#editServiceDialog").dialog("isOpen"), {timeout: 30000});
+    await cas.sleep(1000);
+
+    await page.evaluate(async (id) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {headers: {"Accept": "application/json"}});
+        const service = await response.json();
+        await fetch(CasActuatorEndpoints.registeredServices(), {
+            method: "PUT",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify({...service, description: "Changed elsewhere"})
+        });
+        const editor = ace.edit("serviceEditor");
+        const edited = JSON.parse(editor.getValue());
+        edited.name = "ConflictExampleEdited";
+        editor.setValue(JSON.stringify(edited, null, 4), -1);
+    }, serviceId);
+    await cas.sleep(1000);
+
+    await page.evaluate(() => $("#saveService").trigger("click"));
+    await page.waitForFunction(() => $(".swal2-title").text() === "This application has changed", {timeout: 30000});
+    const changed = await page.evaluate(() => $(".palantir-conflict__diff td.is-added").length);
+    await cas.logg(`Saving a stale edit shows ${changed} changed line(s) instead of overwriting`);
+    assert(changed > 0);
+    await page.click(".swal2-cancel");
+    await page.waitForFunction(() => !Swal.isVisible() && $("#editServiceDialog").dialog("isOpen"), {timeout: 10000});
+    const description = await page.evaluate(async (id) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {headers: {"Accept": "application/json"}});
+        return (await response.json()).description;
+    }, serviceId);
+    assert(description === "Changed elsewhere");
+
+    await page.evaluate(() => $("#cancelService").trigger("click"));
+    await discardUnsavedChanges(page, "Edit conflict");
+    await page.waitForFunction(() => !$("#editServiceDialog").dialog("isOpen"), {timeout: 15000});
+    await page.evaluate(async (id) => {
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"}
+        });
+    }, serviceId);
+}
+
+/**
+ * Fill the SAML2 wizard from the metadata of the SAML2 test service provider, read by the server from its URL, and
+ * check that the entity id and the metadata location come from it; then discard the wizard.
+ *
+ * @param page the puppeteer page
+ */
+async function verifySamlMetadataImport(page) {
+    await cas.separator();
+    const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
+    const available = await page.evaluate((serviceClass) => Object.hasOwn(PalantirDashboardConfiguration.supportedServiceTypes(), serviceClass)
+        && PalantirSamlMetadataImport.canReadUrls(), samlClass);
+    if (!available) {
+        await cas.logy("SAML2 metadata import is not available; skipping");
+        return;
+    }
+    const metadataLocation = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
+    await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#fillServiceWizardFromMetadata").is(":visible"), {timeout: 30000});
+    await cas.sleep(1000);
+    await page.evaluate(() => $("#fillServiceWizardFromMetadata").trigger("click"));
+    await page.waitForSelector("#samlMetadataImportUrl", {visible: true});
+    await page.evaluate(() => $("#samlMetadataImportUrl").val(""));
+    await page.type("#samlMetadataImportUrl", metadataLocation);
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => $(".swal2-title").text() === "Filled from metadata"
+        || $(".swal2-title").text() === "The metadata could not be read", {timeout: 60000});
+    const outcome = await page.evaluate(() => {
+        const definition = JSON.parse(ace.edit("wizardServiceEditor").getValue());
+        return {
+            title: $(".swal2-title").text(),
+            message: $(".swal2-html-container").text(),
+            serviceId: definition.serviceId,
+            metadataLocation: definition.metadataLocation
+        };
+    });
+    await cas.log(`${outcome.title}: ${outcome.message}`);
+    assert(outcome.title === "Filled from metadata");
+    assert(outcome.serviceId && outcome.serviceId.length > 0);
+    assert(outcome.metadataLocation === metadataLocation);
+    await page.evaluate(() => Swal.close());
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "SAML2 metadata import");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
+/**
+ * Register the SAML2 test service provider with its metadata URL, check the health of its metadata from the menu of
+ * its card, and check that the metadata is downloaded, holds the service provider and is resolved by CAS, and that the
+ * metadata is shown; then delete the application.
+ *
+ * @param page the puppeteer page
+ */
+async function verifySamlMetadataHealth(page) {
+    await cas.separator();
+    const available = await page.evaluate(() => Boolean(CasActuatorEndpoints.registeredServices()
+        && CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache()));
+    if (!available) {
+        await cas.logy("SAML2 metadata health is not available; skipping");
+        return;
+    }
+    const metadataLocation = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
+    const serviceId = await page.evaluate(async (location) => {
+        const preview = await PalantirSamlMetadataImport.request(location);
+        const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: JSON.stringify({
+                "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+                serviceId: preview.entityId,
+                name: "MetadataHealthExample",
+                metadataLocation: location
+            })
+        });
+        return (await response.json()).id;
+    }, metadataLocation);
+    await cas.log(`Registered SAML2 application ${serviceId} for ${metadataLocation}`);
+
+    await page.evaluate(() => fetchServices());
+    await cas.click(page, "#applicationsCardsView");
+    await page.evaluate(() => $("#applicationsTable").DataTable().search("MetadataHealthExample").draw());
+    const menu = `#applicationsCards .palantir-application-card[data-service-id="${serviceId}"] [data-application-action="menu"]`;
+    await page.waitForSelector(menu, {visible: true, timeout: 30000});
+    await page.click(menu);
+    await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").click();
+    await page.waitForFunction(() => $("#samlMetadataHealthDialog").dialog("instance") !== undefined
+        && $("#samlMetadataHealthDialog").dialog("isOpen")
+        && ["ok", "warn", "fail"].includes($("#samlMetadataHealthSummary").attr("data-status")), {timeout: 60000});
+    const health = await page.evaluate(() => ({
+        status: $("#samlMetadataHealthSummary").attr("data-status"),
+        checks: Object.fromEntries($("#samlMetadataHealthChecks li").map(function () {
+            return [[$(this).attr("data-check-title"), $(this).attr("data-check-status")]];
+        }).get()),
+        details: $("#samlMetadataHealthChecks li").map(function () {
+            return $(this).text().replace(/\s+/g, " ").trim();
+        }).get(),
+        metadata: !$("#samlMetadataHealthMetadata").prop("hidden")
+    }));
+    for (const detail of health.details) {
+        await cas.log(detail);
+    }
+    await cas.logg(`Metadata health of application ${serviceId}: ${health.status}`);
+    await cas.screenshot(page);
+    assert(health.checks["Download"] === "ok");
+    assert(health.checks["Service provider"] === "ok");
+    assert(health.checks["Resolution by CAS"] === "ok");
+    assert(health.metadata);
+
+    await page.evaluate(async (id) => {
+        $("#samlMetadataHealthDialog").dialog("close");
+        $("#applicationsTable").DataTable().search("").draw();
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"}
+        });
+        fetchServices();
+    }, serviceId);
+}
+
+/**
+ * Open an application whose multifactor policy only names principal attributes in the wizard, and check that the
+ * definition the wizard generates keeps them with the policy's type, so that CAS accepts it.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyMultifactorPolicyRoundTrip(page) {
+    await cas.separator();
+    await page.evaluate(() => openRegisteredServiceWizardDialog({
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        id: 654321,
+        name: "MultifactorPolicyRoundTrip",
+        serviceId: "https://mfa-round-trip.example.org/.*",
+        multifactorPolicy: {
+            "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+            principalAttributeNameTrigger: "gender",
+            bypassPrincipalAttributeName: "gender"
+        }
+    }));
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === "MultifactorPolicyRoundTrip", {timeout: 30000});
+    await cas.sleep(2000);
+    const outcome = await page.evaluate(async () => {
+        const text = ace.edit("wizardServiceEditor").getValue();
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/validate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: text
+        });
+        return {policy: JSON.parse(text).multifactorPolicy, status: response.status, body: await response.text()};
+    });
+    await cas.log(`Generated multifactor policy: ${JSON.stringify(outcome.policy)}; validation answered ${outcome.status} ${outcome.body}`);
+    assert(outcome.policy["@class"] === "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy");
+    assert(outcome.policy.principalAttributeNameTrigger === "gender" && outcome.policy.bypassPrincipalAttributeName === "gender");
+    assert(outcome.status === 200);
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Multifactor policy round trip");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
+/**
+ * Create three applications, disable one from its context menu action and enable it again, then select two of them
+ * with their checkboxes and delete them together; the third is removed afterwards. The Applications page is opened
+ * first, since an earlier step may have left another page showing.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyApplicationBulkActions(page) {
+    await cas.separator();
+    const ids = await page.evaluate(async () => {
+        const created = [];
+        for (const suffix of ["One", "Two", "Three"]) {
+            const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+                method: "POST",
+                headers: {"Content-Type": "application/json", "Accept": "application/json"},
+                body: JSON.stringify({
+                    "@class": "org.apereo.cas.services.CasRegisteredService",
+                    serviceId: `^https://bulk-${suffix.toLowerCase()}.example.org/.*`,
+                    name: `BulkExample${suffix}`
+                })
+            });
+            created.push((await response.json()).id);
+        }
+        return created;
+    });
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).trigger("click"));
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 30000});
+    await page.evaluate(() => fetchServices());
+    await page.waitForFunction((created) => created.every((id) => registeredServicesById.has(String(id))), {timeout: 30000}, ids);
+    await page.evaluate(() => {
+        $("#applicationsTableView").trigger("click");
+        $("#applicationsTable").DataTable().search("BulkExample").draw();
+    });
+    await page.waitForFunction(() => $("#applicationsTable").is(":visible"), {timeout: 30000});
+    const strategy = async (id) => page.evaluate(async (serviceId) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, {headers: {"Accept": "application/json"}});
+        return (await response.json()).accessStrategy ?? null;
+    }, id);
+
+    for (const disable of [true, false]) {
+        await page.evaluate(([id, key]) => applicationActionHandler(key, applicationRowContext(String(id))), [ids[0], disable ? "disable" : "enable"]);
+        await page.waitForSelector(".swal2-confirm", {visible: true});
+        await page.click(".swal2-confirm");
+        await page.waitForFunction(([id, expected]) => PalantirApplicationAccess.isServiceDisabled(id) === expected
+            && $(`#applicationsTable tbody tr:has([data-select-service="${id}"])`).hasClass("is-disabled") === expected,
+        {timeout: 30000}, [ids[0], disable]);
+        const saved = await strategy(ids[0]);
+        await cas.log(`${disable ? "Disabled" : "Enabled"} application ${ids[0]}: ${JSON.stringify(saved)}`);
+        assert(isDisabledAccessStrategy(saved) === disable);
+    }
+
+    await page.evaluate(() => {
+        $("#applicationsTableView").trigger("click");
+        $("#applicationsTable").DataTable().search("BulkExample").draw();
+    });
+    const cell = async (id) => (await page.waitForFunction((serviceId) => $(`#applicationsTable tbody tr:has([data-select-service="${serviceId}"]) > td:visible`)
+        .not(".palantir-application-type").get(0), {timeout: 30000}, id)).asElement();
+    await (await cell(ids[0])).click();
+    await (await cell(ids[1])).click();
+    await page.waitForFunction(() => !$("#applicationsSelectionBar").prop("hidden")
+        && $(".palantir-selection-bar__count").text().startsWith("2 "), {timeout: 10000});
+    await page.evaluate(() => notyf.dismissAll());
+    const [exported] = await Promise.all([
+        page.waitForResponse((response) => response.url().includes("/registeredServices/export?"), {timeout: 30000}),
+        page.click("button[name=exportSelectedServices]")
+    ]);
+    const requested = new URL(exported.url()).searchParams.getAll("ids").sort();
+    await cas.logg(`Exporting the selection asks for ${requested.join(", ")} and answers ${exported.status()} with ${exported.headers()["filename"]}`);
+    assert(exported.status() === 200);
+    assert(exported.headers()["filename"] === "services.zip");
+    assert(JSON.stringify(requested) === JSON.stringify([String(ids[0]), String(ids[1])].sort()));
+    const archive = await page.evaluate(async (url) => {
+        const bytes = new Uint8Array(await (await fetch(url, {credentials: "include"})).arrayBuffer());
+        return {size: bytes.length, signature: bytes.length >= 4 ? new DataView(bytes.buffer).getUint32(0, true) : 0};
+    }, exported.url());
+    await cas.log(`The exported archive holds ${archive.size} bytes`);
+    assert(archive.size > 0 && archive.signature === 0x04034b50);
+
+    for (const disable of [true, false]) {
+        const button = disable ? "disableSelectedServices" : "enableSelectedServices";
+        await page.waitForFunction((name) => !$(`button[name=${name}]`).prop("disabled"), {timeout: 10000}, button);
+        await page.click(`button[name=${button}]`);
+        await page.waitForSelector(".swal2-confirm", {visible: true});
+        await page.click(".swal2-confirm");
+        await page.waitForFunction((expected) => $(".swal2-title").text() === `2 applications ${expected ? "disabled" : "enabled"}`,
+            {timeout: 60000}, disable);
+        await page.evaluate(() => Swal.close());
+        const saved = [await strategy(ids[0]), await strategy(ids[1])];
+        await cas.logg(`${disable ? "Disabled" : "Enabled"} the selection: ${JSON.stringify(saved)}`);
+        assert(saved.every((value) => isDisabledAccessStrategy(value) === disable));
+        await page.waitForFunction((selected) => selected.every((id) => PalantirApplicationSelection.has(String(id))), {timeout: 10000}, [ids[0], ids[1]]);
+    }
+
+    await page.click("button[name=deleteSelectedServices]");
+    await page.waitForSelector(".swal2-confirm", {visible: true});
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => $(".swal2-title").text() === "2 applications deleted", {timeout: 60000});
+    const remaining = await page.evaluate(async (created) => {
+        const response = await fetch(CasActuatorEndpoints.registeredServices(), {headers: {"Accept": "application/json"}});
+        const registered = new Set((await response.json())[1].map((service) => String(service.id)));
+        return created.map((id) => registered.has(String(id)));
+    }, ids);
+    await cas.logg(`After deleting the selection, the applications still registered: ${remaining.join(", ")}`);
+    assert(!remaining[0] && !remaining[1] && remaining[2]);
+
+    await page.evaluate(async (id) => {
+        Swal.close();
+        $("#applicationsTable").DataTable().search("").draw();
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {method: "DELETE", headers: {"Content-Type": "application/json"}});
+        fetchServices();
+    }, ids[2]);
+}
+
+/**
+ * Whether a saved access strategy turns the application off, as Palantir decides it.
+ *
+ * @param strategy the access strategy
+ * @returns {boolean} true when the application is disabled
+ */
+function isDisabledAccessStrategy(strategy) {
+    if (!strategy) {
+        return false;
+    }
+    if (strategy["@class"] === "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy") {
+        return strategy.enabled === false;
+    }
+    const strategies = Array.isArray(strategy.strategies?.[1]) ? strategy.strategies[1] : strategy.strategies ?? [];
+    return strategy["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy"
+        && strategies.some(isDisabledAccessStrategy);
+}
+
+/**
+ * The ticket registry endpoint is read-only in this scenario: its write controls are disabled and a request that
+ * would change something through it is refused before it is sent, while other endpoints stay writable.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyReadOnlyEndpoint(page) {
+    await cas.separator();
+    const deletes = [];
+    const onRequest = (request) => {
+        if (request.method() === "DELETE" && request.url().includes("/actuator/ticketRegistry")) {
+            deletes.push(request.url());
+        }
+    };
+    page.on("request", onRequest);
+    const outcome = await page.evaluate(async () => {
+        let refused = null;
+        try {
+            await $.ajax({url: `${CasActuatorEndpoints.ticketRegistry()}/clean`, type: "DELETE"});
+        } catch (xhr) {
+            refused = xhr.statusText;
+        }
+        return {
+            access: PalantirDashboardConfiguration.actuatorEndpointAccess().ticketRegistry,
+            writable: CasActuatorEndpoints.writable("ticketRegistry"),
+            servicesWritable: CasActuatorEndpoints.writable("registeredServices"),
+            cleanDisabled: $("#cleanTicketsButton").prop("disabled"),
+            newServiceDisabled: $("#newService").prop("disabled"),
+            refused: refused
+        };
+    });
+    page.off("request", onRequest);
+    await cas.log(`Ticket registry access: ${JSON.stringify(outcome)}`);
+    assert(outcome.access === "READ_ONLY");
+    assert(!outcome.writable && outcome.servicesWritable);
+    assert(outcome.cleanDisabled && !outcome.newServiceDisabled);
+    assert(outcome.refused === "palantir-read-only");
+    assert(deletes.length === 0);
+    await page.evaluate(() => notyf.dismissAll());
+}
+
+/**
+ * Import a YAML application definition through the Import button's file input, check that it is imported once
+ * and shows up in the applications table, and delete it afterwards.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyServiceImport(page) {
+    await cas.separator();
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "palantir-import-")), "ImportExample.yml");
+    fs.writeFileSync(file, [
+        "--- !<org.apereo.cas.services.CasRegisteredService>",
+        "serviceId: \"^https://import.example.org/.*\"",
+        "name: \"ImportExample\"",
+        "description: \"Imported from YAML\""
+    ].join("\n"));
+
+    const imports = [];
+    const onRequest = (request) => {
+        if (request.method() === "POST" && request.url().endsWith("/registeredServices/import")) {
+            imports.push(request.headers()["content-type"]);
+        }
+    };
+    page.on("request", onRequest);
+    const input = await page.$("#serviceFileInput");
+    await input.uploadFile(file);
+    await page.waitForSelector(".swal2-confirm", {visible: true});
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => $(".swal2-title").text() === "Imported", {timeout: 30000});
+    const message = await page.evaluate(() => $(".swal2-html-container").text());
+    await cas.logg(message);
+    await page.evaluate(() => Swal.close());
+
+    const listed = await page.waitForFunction(() => [...registeredServicesById.values()]
+        .find((service) => service.name === "ImportExample")?.id, {timeout: 30000});
+    const serviceId = await listed.jsonValue();
+    page.off("request", onRequest);
+    await cas.log(`Import requests: ${imports.join(", ")}`);
+    assert(imports.length === 1 && imports[0].startsWith("application/yaml"));
+    assert(serviceId !== undefined);
+    await page.waitForFunction((id) => $(`#applicationsTable span[serviceId=${id}]`).length > 0, {timeout: 30000}, serviceId);
+    await cas.logg(`Imported application ${serviceId} is listed`);
+
+    await page.evaluate(async (id) => {
+        await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {
+            method: "DELETE",
+            headers: {"Content-Type": "application/json"}
+        });
+    }, serviceId);
+    fs.rmSync(path.dirname(file), {recursive: true, force: true});
+}
+
+/**
  * Ask the Interrupts section of the Authentication page which interrupt a user would see, and check that it
  * reports the resolved user and the answer of every interrupt source.
  *
@@ -854,6 +1494,135 @@ async function verifyInterruptInquiry(page) {
     assert(inquiry.message === "", inquiry.message);
     assert(inquiry.principal === "casuser");
     await cas.screenshot(page);
+}
+
+/**
+ * Look up the throttled attempts of one username on the Throttles page, check the hint and the button that shows all
+ * attempts again, then show them all. The page needs the throttles endpoint, which the throttle module provides.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyZenMode(page) {
+    await page.evaluate(() => {
+        document.activeElement?.blur();
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).trigger("click");
+    });
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("KeyZ");
+    await page.keyboard.up("Shift");
+    await page.waitForFunction(() => document.documentElement.hasAttribute("data-palantir-zen")
+        && !$("#app-bar").is(":visible") && localStorage.getItem("PalantirZenMode") === "true", {timeout: 10000});
+    await page.keyboard.press("s");
+    await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+    await cas.logg("Zen mode hides the header, navigation and footer, and the page shortcuts still work");
+    await page.click("#palantirZenExit");
+    await page.waitForFunction(() => !document.documentElement.hasAttribute("data-palantir-zen")
+        && $("#app-bar").is(":visible") && localStorage.getItem("PalantirZenMode") === null, {timeout: 10000});
+}
+
+/**
+ * The Modules tab under System Info lists the CAS modules the server runs. A build that does not record module
+ * details, as local builds do not, reports none, and the tab says so.
+ */
+async function verifyCasModules(page) {
+    await page.evaluate(() => {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]`).trigger("click");
+        $("#system-tabs").tabs("option", "active", $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index());
+        $("#system-info-tabs").tabs("option", "active", $("#system-info-tabs ul li a[href='#casmodules-tab']").parent().index());
+    });
+    await page.waitForFunction(() => PalantirModules.modules !== null, {timeout: 30000});
+    const modules = await page.evaluate(() => ({
+        count: PalantirModules.modules.length,
+        cards: $("#casModulesCards .palantir-modules__card").length,
+        empty: $("#casModulesCards .palantir-empty-state").text()
+    }));
+    await cas.logg(`CAS modules: ${modules.count}`);
+    if (modules.count === 0) {
+        assert(modules.empty.includes("no CAS modules"));
+        return;
+    }
+    assert(modules.cards === modules.count);
+    await page.type("#casModulesFilter", "palantir");
+    await page.waitForFunction(() => $("#casModulesCards .palantir-modules__card").toArray()
+        .every((card) => card.textContent.toLowerCase().includes("palantir")), {timeout: 10000});
+    await page.click("#casModulesCards .palantir-modules__card [data-module-action='dependency']");
+    const declaration = await page.evaluate(() => $("#casModulesCards .palantir-modules__dependency:not([hidden]) code").text());
+    await cas.log(`Declared as: ${declaration}`);
+    assert(declaration.includes("org.apereo.cas") && declaration.includes("palantir"));
+    await page.evaluate(() => $("#casModulesFilter").val("").trigger("input"));
+}
+
+async function verifySystemMetrics(page) {
+    await page.evaluate(() => {
+        localStorage.removeItem("PalantirPinnedMetrics");
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]`).trigger("click");
+    });
+    await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 30000});
+    await page.evaluate(() => {
+        const index = $("#system-tabs ul li a[href='#systemmetrics-tab']").parent().index();
+        $("#system-tabs").tabs("option", "active", index);
+    });
+    await page.waitForFunction(() => $("#metricsTiles [data-metric-tile]").length > 0
+        && $("#metricsTiles .palantir-metrics__tile-number").toArray().every((element) => element.textContent !== "…"), {timeout: 30000});
+    const tiles = await page.evaluate(() => $("#metricsTiles [data-metric-tile]").map((index, element) =>
+        `${$(element).find(".palantir-metrics__tile-name").text()}=${$(element).find(".palantir-metrics__tile-number").text()}`).get());
+    await cas.logg(`Metrics board: ${tiles.join(", ")}`);
+    assert(tiles.some((tile) => tile.startsWith("jvm.memory.used=") && tile.endsWith("%")));
+
+    await page.click("#metricsExplorerView");
+    await page.waitForFunction(() => $("#metricsList [data-metric='jvm.threads.peak']").length === 1, {timeout: 30000});
+    await page.click("#metricsList [data-metric='jvm.threads.peak']");
+    await page.waitForFunction(() => $("#metricsDetailName").text() === "jvm.threads.peak"
+        && $("#metricsDetailStats .palantir-metrics__stat").length > 0, {timeout: 30000});
+    const value = await page.evaluate(() => $("#metricsDetailStats strong").first().text());
+    await cas.logg(`Peak threads in the explorer: ${value}`);
+    assert(/^\d[\d,.]*$/.test(value));
+
+    await page.click("#metricsDetailPin");
+    await page.waitForFunction(() => JSON.parse(localStorage.getItem("PalantirPinnedMetrics"))
+        .some((pin) => pin.name === "jvm.threads.peak"), {timeout: 10000});
+    await page.click("#metricsDetailPin");
+    await page.waitForFunction(() => !JSON.parse(localStorage.getItem("PalantirPinnedMetrics"))
+        .some((pin) => pin.name === "jvm.threads.peak"), {timeout: 10000});
+    await page.click("#metricsBoardView");
+    await page.evaluate(() => localStorage.removeItem("PalantirPinnedMetrics"));
+}
+
+async function verifySignIns(page) {
+    await page.evaluate(() => {
+        const index = $("#system-tabs ul li a[href='#systemstatus-tab']").parent().index();
+        $("#system-tabs").tabs("option", "active", index);
+    });
+    await page.waitForFunction(() => /sign-ins · counted at/.test($("#signInsChartStatus").text()), {timeout: 30000});
+    const status = await page.evaluate(() => $("#signInsChartStatus").text());
+    const counted = await page.evaluate(() => signInsChart.data.datasets.map((dataset) => dataset.data.length));
+    await cas.logg(`Sign-ins chart: ${status}; hours per series ${counted.join(", ")}`);
+    assert(counted.every((hours) => hours === 2));
+
+    await page.waitForFunction(() => /every minute|^No /.test($("#multifactorProvidersChartStatus").text()), {timeout: 30000});
+    await cas.logg(`Multifactor by provider: ${await page.evaluate(() => $("#multifactorProvidersChartStatus").text())}`);
+    assert(await page.$("#systemstatus-tab #topApplicationsChart") === null);
+}
+
+async function verifyThrottlesUsername(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.throttles()))) {
+        await cas.logy("Throttles endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.THROTTLES.index}]`).trigger("click"));
+    await page.waitForFunction(() => $("#throttlesUsername").is(":visible"), {timeout: 30000});
+    await page.evaluate(() => $("#throttlesUsername").val("PalantirNobody"));
+    const [response] = await Promise.all([
+        page.waitForResponse((answer) => answer.url().includes("/throttles?username=PalantirNobody"), {timeout: 30000}),
+        page.click("#filterThrottlesButton")
+    ]);
+    await page.waitForFunction(() => $("#throttlesUsernameHint").text().startsWith("0 throttled attempts for PalantirNobody")
+        && $("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
+    await cas.logg(`Throttled attempts of one username: ${response.status()}, ${await page.evaluate(() => $("#throttlesUsernameHint").text())}`);
+    assert(response.status() === 200);
+    await page.click("#showAllThrottlesButton");
+    await page.waitForFunction(() => $("#throttlesUsername").val() === "" && !$("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
 }
 
 /**
@@ -898,6 +1667,7 @@ async function verifyShortcutsOverlay(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
+    await verifyHome(page);
     await verifyRegisteredServices(page);
     await verifyPlainEditorDialog(page);
     await verifyTheme(page);
@@ -908,7 +1678,19 @@ async function verifyShortcutsOverlay(page) {
     await verifyCommandPalette(page);
     await verifyUserLookup(page, failures);
     await verifyServiceHistory(page);
+    await verifyServiceImport(page);
+    await verifyEditConflict(page);
+    await verifySamlMetadataImport(page);
+    await verifyMultifactorPolicyRoundTrip(page);
+    await verifyApplicationBulkActions(page);
+    await verifySamlMetadataHealth(page);
+    await verifyReadOnlyEndpoint(page);
     await verifyInterruptInquiry(page);
+    await verifyThrottlesUsername(page);
+    await verifyCasModules(page);
+    await verifySystemMetrics(page);
+    await verifySignIns(page);
+    await verifyZenMode(page);
     await verifyShortcutsOverlay(page);
 
     if (failures.length > 0) {
@@ -920,5 +1702,6 @@ async function verifyShortcutsOverlay(page) {
     assert(failures.length === 0, `Browser errors: ${failures.join(" | ")}`);
     await cas.logg("Palantir dashboard verified with no browser errors");
 
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await cas.closeBrowser(browser);
 })();

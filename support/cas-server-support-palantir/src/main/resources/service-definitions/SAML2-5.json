@@ -1,0 +1,16 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://sp.example.org/saml",
+  "name": "Persistent NameID",
+  "description": "Sends a persistent, opaque NameID that stays the same for each user of this service provider.",
+  "requiredNameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+  "metadataLocation": "https://sp.example.org/saml/metadata",
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator": {
+      "@class": "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "salt": "replace-with-a-long-random-salt",
+      "attribute": "uid"
+    }
+  }
+}

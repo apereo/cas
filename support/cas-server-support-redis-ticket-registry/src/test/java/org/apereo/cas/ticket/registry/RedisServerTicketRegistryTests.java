@@ -135,6 +135,10 @@ class RedisServerTicketRegistryTests {
             val serviceTicketCount = getNewTicketRegistry().serviceTicketCount();
             assertEquals(totalThreads, serviceTicketCount);
 
+            val countsByType = getNewTicketRegistry().countTicketsByType();
+            assertEquals(Long.valueOf(totalThreads), countsByType.get(TicketGrantingTicket.PREFIX));
+            assertEquals(Long.valueOf(totalThreads), countsByType.get(ServiceTicket.PREFIX));
+
             val sessions = getNewTicketRegistry().getSessionsFor(authentication.getPrincipal().getId()).toList();
             assertEquals(totalThreads, sessions.size());
 

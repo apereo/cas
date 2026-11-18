@@ -48,8 +48,9 @@ class BindModeSearchDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthe
     void verifyInvalidAction() {
         val h = new BindModeSearchDatabaseAuthenticationHandler(new BindJdbcAuthenticationProperties(),
             PrincipalFactoryUtils.newPrincipalFactory(), this.dataSource);
-        assertThrows(FailedLoginException.class,
+        val exception = assertThrows(FailedLoginException.class,
             () -> h.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("unknown", "Mellon"), mock(Service.class)));
+        assertNotNull(exception.getCause());
     }
 
     @TestConfiguration(value = "TestConfiguration", proxyBeanMethods = false)

@@ -326,7 +326,7 @@ class CasKryoTranscoderTests {
         } catch (final KryoException e) {
             LOGGER.trace(e.getMessage(), e);
         } catch (final Exception e) {
-            throw new AssertionError("Not resetting Kryo between de-serializations with unregistered class.");
+            throw new AssertionError("Not resetting Kryo between de-serializations with unregistered class.", e);
         }
     }
 

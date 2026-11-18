@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://survey\\.example\\.org/.*",
+  "name": "Send an anonymous username",
+  "description": "Sends an opaque identifier that stays the same for each user of this application but reveals nothing about them.",
+  "usernameAttributeProvider": {
+    "@class": "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator": {
+      "@class": "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+      "salt": "replace-with-a-long-random-salt",
+      "attribute": "uid"
+    }
+  }
+}

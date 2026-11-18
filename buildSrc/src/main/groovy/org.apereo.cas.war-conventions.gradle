@@ -1,3 +1,5 @@
+import org.apereo.cas.gradle.CasBuildSettings
+
 project.pluginManager.apply('war')
 
 ext {
@@ -17,12 +19,13 @@ sourceSets {
 project.pluginManager.apply('org.apereo.cas.spring-boot-conventions')
 project.pluginManager.apply('org.apereo.cas.webapp-dependencies-conventions')
 
-def buildScript = providers.systemProperty('buildScript').getOrNull()
+def buildScript = CasBuildSettings.stringProperty(project, 'buildScript')
 if (buildScript?.trim()) {
     def buildScriptFile = file(buildScript)
-    if (buildScriptFile.exists()) {
-        ansi.green "Applying build script ${buildScript}"
-        project.apply from: buildScriptFile
+    if (!buildScriptFile.isFile()) {
+        throw new GradleException("Build script ${buildScript} does not exist")
     }
+    ansi.green "Applying build script ${buildScript}"
+    project.apply from: buildScriptFile
 }
 
