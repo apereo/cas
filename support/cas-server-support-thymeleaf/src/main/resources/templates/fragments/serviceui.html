@@ -25,9 +25,9 @@
                  th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
 
             <div class="ml-2">
-                <h2 id="serviceUIMetadataDisplayName" th:utext="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
-                <p th:if="${showServiceUIDetails}" id="serviceUIMetadataDescription"
-                   th:utext="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
+                <h2 id="serviceUIMetadataDisplayName" th:utext="${#cas.sanitizeHtml(serviceUIMetadata.displayName)}">serviceUIMetadata.displayName</h2>
+                <div th:if="${showServiceUIDetails}" id="serviceUIMetadataDescription" class="cas-service-description"
+                     th:utext="${#cas.sanitizeHtml(serviceUIMetadata.description)}">serviceUIMetadata.description</div>
 
                 <div id="wildcardService" th:if="${#cas.isTrue(wildcardedRegisteredService) and showServiceUIDetails}">
                     <p><i class="mdi mdi-information-slab-box" aria-hidden="true"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
@@ -48,7 +48,8 @@
             <img th:if="${registeredService.logo}" th:src="${registeredService.logo}" th:alt="${registeredService.name}"/>
             <div id="servicedesc" class="ml-2">
                 <strong><i class="mdi mdi-web" aria-hidden="true"></i>[[${registeredService.name}]]</strong>
-                <p th:if="${showServiceUIDetails}" th:utext="${registeredService.description}">Registered Service Description</p>
+                <div th:if="${showServiceUIDetails}" class="cas-service-description"
+                     th:utext="${#cas.sanitizeHtml(registeredService.description)}">Registered Service Description</div>
                 <div id="wildcardService" th:if="${showServiceUIDetails and #cas.isTrue(wildcardedRegisteredService)}">
                     <p><i class="mdi mdi-information-slab-box" aria-hidden="true"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
                 </div>

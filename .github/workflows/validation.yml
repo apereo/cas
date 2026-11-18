@@ -23,6 +23,7 @@ on:
     branches:
       - master
       - next
+      - yolo
       - '!**.**.**'
       - '!heroku-*'
   pull_request:

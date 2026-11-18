@@ -40,4 +40,25 @@ class TicketRegistryHealthIndicatorTests {
         val health = indicator.health(true);
         assertEquals(Health.status("WARN").build().getStatus(), health.getStatus());
     }
+
+    /**
+     * Health checks in quick succession share one count, and a count the registry cannot make is unknown.
+     */
+    @Test
+    void verifyCountsAreShared() {
+        val ticketRegistry = mock(TicketRegistry.class);
+        when(ticketRegistry.sessionCount()).thenReturn(5L);
+        when(ticketRegistry.serviceTicketCount()).thenReturn(0L);
+
+        val indicator = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(ticketRegistry), -1, -1);
+        assertEquals(Status.UP, indicator.health(true).getStatus());
+        assertEquals(Status.UP, indicator.health(true).getStatus());
+        verify(ticketRegistry, times(1)).sessionCount();
+        verify(ticketRegistry, times(1)).serviceTicketCount();
+
+        val unknown = mock(TicketRegistry.class);
+        when(unknown.sessionCount()).thenReturn(Long.MIN_VALUE);
+        when(unknown.serviceTicketCount()).thenReturn(0L);
+        assertEquals(Status.UNKNOWN, new TicketRegistryHealthIndicator(new DirectObjectProvider<>(unknown), -1, -1).health(true).getStatus());
+    }
 }

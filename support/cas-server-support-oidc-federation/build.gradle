@@ -25,6 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
 
     implementation libraries.nimbus
+    implementation libraries.nimbusoidc
     implementation libraries.jose4j
 
     testImplementation project(":core:cas-server-core-multitenancy")

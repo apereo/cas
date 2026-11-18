@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import tools.jackson.databind.ObjectMapper;
@@ -161,6 +164,63 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
         assertTrue(body.containsKey(samlRegisteredService.getServiceId()));
+    }
+
+    @Test
+    void verifyPreviewOfAggregate() throws Throwable {
+        try (val webServer = new MockWebServer(new ClassPathResource("metadata/testshib-providers.xml"), MediaType.APPLICATION_XML_VALUE)) {
+            webServer.start();
+            val location = "http://localhost:%s/metadata".formatted(webServer.getPort());
+            var body = previewMetadata(location, null, 200);
+            val entities = (List<String>) body.get("entities");
+            assertTrue(entities.size() > 1);
+            assertTrue(entities.contains("https://sp.testshib.org/shibboleth-sp"));
+            assertFalse(body.containsKey("metadata"));
+
+            body = previewMetadata(location, "https://sp.testshib.org/shibboleth-sp", 200);
+            assertEquals("https://sp.testshib.org/shibboleth-sp", body.get("entityId"));
+            assertTrue(body.get("metadata").toString().contains("entityID=\"https://sp.testshib.org/shibboleth-sp\""));
+
+            body = previewMetadata(location, "https://unknown.example.org", 400);
+            assertTrue(body.get("error").toString().contains("https://unknown.example.org"));
+        }
+    }
+
+    @Test
+    void verifyPreviewOfServiceProvider() throws Throwable {
+        try (val webServer = new MockWebServer(new ClassPathResource("metadata/sp-metadata-pattern.xml"), MediaType.APPLICATION_XML_VALUE)) {
+            webServer.start();
+            val body = previewMetadata("http://localhost:%s/sp".formatted(webServer.getPort()), null, 200);
+            assertEquals(List.of("http://mmoayyed.unicon.net:8081/sp/saml"), body.get("entities"));
+            assertEquals("http://mmoayyed.unicon.net:8081/sp/saml", body.get("entityId"));
+            assertTrue(body.get("metadata").toString().contains("SPSSODescriptor"));
+        }
+    }
+
+    @Test
+    void verifyPreviewRefusesWhatIsNotServiceProviderMetadata() throws Throwable {
+        assertTrue(previewMetadata("classpath:metadata/testshib-providers.xml", null, 400).containsKey("error"));
+        assertTrue(previewMetadata("file:/etc/hosts", null, 400).containsKey("error"));
+        try (val webServer = new MockWebServer(HttpStatus.NOT_FOUND)) {
+            webServer.start();
+            assertTrue(previewMetadata("http://localhost:%s/missing".formatted(webServer.getPort()), null, 400).containsKey("error"));
+        }
+        try (val webServer = new MockWebServer(new ClassPathResource("metadata/idp-metadata.xml"), MediaType.APPLICATION_XML_VALUE)) {
+            webServer.start();
+            val body = previewMetadata("http://localhost:%s/idp".formatted(webServer.getPort()), null, 400);
+            assertTrue(body.get("error").toString().contains("no SAML2 service provider"));
+        }
+    }
+
+    private Map previewMetadata(final String location, final String entityId, final int status) throws Exception {
+        val request = get("/actuator/samlIdPRegisteredServiceMetadataCache/preview")
+            .queryParam("metadataLocation", location)
+            .accept(MediaType.APPLICATION_JSON);
+        if (entityId != null) {
+            request.queryParam("entityId", entityId);
+        }
+        return MAPPER.readValue(mockMvc.perform(request)
+            .andExpect(status().is(status)).andReturn().getResponse().getContentAsString(), Map.class);
     }
 
     @Test

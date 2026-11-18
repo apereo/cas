@@ -1,8 +1,6 @@
 package org.apereo.cas.util.lock;
 
 import module java.base;
-import org.springframework.integration.support.locks.DefaultLockRegistry;
-import org.springframework.integration.support.locks.PassThruLockRegistry;
 
 /**
  * This is {@link LockRepository}.
@@ -29,7 +27,7 @@ public interface LockRepository {
      * @return the default lock repository
      */
     static DefaultLockRepository noOp() {
-        return new DefaultLockRepository(new PassThruLockRegistry());
+        return new DefaultLockRepository(lockKey -> PassThroughLock.INSTANCE);
     }
 
     /**
@@ -41,7 +39,7 @@ public interface LockRepository {
      * @return the default lock repository
      */
     static DefaultLockRepository asDefault() {
-        return new DefaultLockRepository(new DefaultLockRegistry(DEFAULT_MASK_ARRAY_LENGTH));
+        return new DefaultLockRepository(new StripedLockRegistry(DEFAULT_MASK_ARRAY_LENGTH));
     }
 
     /**

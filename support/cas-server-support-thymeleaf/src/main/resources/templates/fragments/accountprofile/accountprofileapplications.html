@@ -26,7 +26,7 @@
                         <a th:id="${'service' + service.id}" th:data-account-service-url="${service.serviceId}"
                            th:text="${service.name}">Application</a>
                     </div>
-                    <div class="cas-account-item-meta" th:text="${service.description}">Description</div>
+                    <div class="cas-account-item-meta" th:utext="${#cas.sanitizeHtml(service.description)}">Description</div>
                 </div>
                 <div class="cas-account-item-actions">
                     <a class="acct-btn acct-btn-text" target="_blank" rel="noopener noreferrer"

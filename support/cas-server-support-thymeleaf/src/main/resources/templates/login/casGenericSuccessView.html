@@ -152,7 +152,7 @@
                                         </script>
                                     </td>
                                     <td class="mdc-data-table__cell">
-                                        <span th:utext="${service.description}"/>
+                                        <div class="cas-service-description" th:utext="${#cas.sanitizeHtml(service.description)}"></div>
                                     </td>
                                 </tr>
                                 </tbody>

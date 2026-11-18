@@ -2,12 +2,6 @@ function mfaProviderPropertiesMutable() {
     return PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig();
 }
 
-function escapeMfaHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 /**
  * Move to the configuration tab's dynamic sources panel.
  *
@@ -149,8 +143,8 @@ async function populateMultifactorProviderTables() {
                             properties.forEach(([propKey, propValue]) => {
                                 if (propKey.startsWith(configPrefix)) {
                                     table.row.add({
-                                        0: `<code>${escapeMfaHtml(propKey)}</code>`,
-                                        1: `<code>${escapeMfaHtml(propValue.value)}</code>`,
+                                        0: `${palantirCode(propKey)}`,
+                                        1: `${palantirCode(propValue.value)}`,
                                         propertyName: propKey,
                                         propertyValue: propValue.value
                                     });
@@ -173,6 +167,71 @@ async function populateMultifactorProviderTables() {
     }
 }
 
+/**
+ * The kind of a multifactor device, from the provider that registered it, for the badge of its card.
+ *
+ * @param {object} device the device
+ * @returns {{key: string, icon: string}} the badge style and its icon
+ */
+function mfaDeviceKind(device) {
+    const source = `${device.source ?? ""} ${device.type ?? ""}`.toLowerCase();
+    const kinds = [["duo", "mdi-shield-check-outline"], ["google", "mdi-two-factor-authentication"],
+        ["webauthn", "mdi-fingerprint"], ["fido", "mdi-fingerprint"], ["yubi", "mdi-usb-flash-drive-outline"],
+        ["simple", "mdi-message-text-lock-outline"], ["sms", "mdi-message-text-lock-outline"], ["mobile", "mdi-cellphone-key"]];
+    const kind = kinds.find(([match]) => source.includes(match));
+    return {key: kind ? kind[0] : "other", icon: kind ? kind[1] : "mdi-key-chain-variant"};
+}
+
+/**
+ * One registered multifactor device as a card: its name and provider, when it was last used and when it expires,
+ * and what identifies it.
+ *
+ * @param {object} device the device as the endpoint answers it
+ * @returns {string} the card markup
+ */
+function mfaDeviceCard(device) {
+    const escape = escapePalantirMarkup;
+    const kind = mfaDeviceKind(device);
+    const id = String(device.id ?? "");
+    const providerId = device?.details?.providerId ?? "Unknown";
+    const name = device.name || id || "Unnamed device";
+    const source = device.source || "Multifactor device";
+    const lastUsed = palantirRecordDate(device.lastUsedDateTime);
+    const expires = palantirRecordDate(device.expirationDateTime);
+    const expired = expires !== null && expires.getTime() <= Date.now();
+    const details = [["ID", id, "is-wrap"], ["Number", device.number, ""], ["Model", device.model, "is-text"],
+        ["Last used", lastUsed ? palantirRecordWhen(lastUsed) : null, "is-text"]]
+        .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== "");
+    return `
+        <article class="palantir-record-card is-mfa${expired ? " is-expired" : ""}" data-mfa-device="${escape(id)}"
+                 data-mfa-provider="${escape(providerId)}" aria-label="${escape(name)}">
+            <header class="palantir-record-card__head">
+                <span class="palantir-protocol-badge is-mfa" title="${escape(source)}"><i class="mdi ${kind.icon}" aria-hidden="true"></i></span>
+                <div class="palantir-record-card__title">
+                    <h4 title="${escape(name)}">${escape(name)}</h4>
+                    <p>${escape(source)}${device.type ? ` · ${escape(device.type)}` : ""}</p>
+                </div>
+            </header>
+            <ul class="palantir-record-card__flags">
+                <li class="${lastUsed ? "is-on" : ""}"><i class="mdi mdi-history" aria-hidden="true"></i>${lastUsed
+        ? `Used ${escape(palantirRecordAgo(lastUsed))}` : "No recorded use"}</li>
+                <li class="${expired ? "is-alert" : expires ? "is-on" : ""}"><i class="mdi ${expired ? "mdi-alert-circle-outline" : "mdi-calendar-clock"}" aria-hidden="true"></i>${expired
+        ? "Expired" : expires ? `Expires ${escape(palantirRecordWhen(expires))}` : "Does not expire"}</li>
+            </ul>
+            ${details.length > 0 ? `<dl class="palantir-record-card__details">${details.map(([label, value, style]) => `
+                <div><dt>${label}</dt><dd class="${style}" title="${escape(value)}">${escape(value)}</dd></div>`).join("")}</dl>` : ""}
+            <footer class="palantir-record-card__actions">
+                <button type="button" class="palantir-button" data-mfa-action="copy"${id === "" ? " disabled" : ""}>
+                    <i class="mdi mdi-content-copy" aria-hidden="true"></i>Copy ID
+                </button>
+                <button type="button" class="palantir-icon-button palantir-record-card__delete" data-mfa-action="remove"
+                        data-palantir-write="mfaDevices" aria-label="Remove ${escape(name)}" title="Remove device">
+                    <i class="mdi mdi-delete-outline" aria-hidden="true"></i>
+                </button>
+            </footer>
+        </article>`;
+}
+
 async function initializeMultifactorOperations() {
     const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
         pageLength: 10,
@@ -180,14 +239,16 @@ async function initializeMultifactorOperations() {
         columnDefs: [
             {visible: false, targets: 8}
         ],
-        drawCallback: settings => {
+        drawCallback: function () {
             $("#mfaDevicesTable tr").addClass("mdc-data-table__row");
             $("#mfaDevicesTable td").addClass("mdc-data-table__cell");
+            renderPalantirRecordCards(this.api(), "mfaDevicesCards", mfaDeviceCard,
+                username => `No multifactor devices are registered for ${username}.`);
         }
     });
+    placePalantirRecordCards("mfaDevicesTable", "mfaDevicesCards", "Search for a username to see their devices.");
 
-    function removeMfaDevice(context) {
-        const {key, providerId, username} = context.rowData;
+    function removeMfaDevice({key, providerId, username}) {
         Swal.fire({
             title: "Are you sure you want to delete this entry?",
             text: "Once deleted, you may not be able to recover this entry.",
@@ -198,10 +259,13 @@ async function initializeMultifactorOperations() {
             .then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${CasActuatorEndpoints.mfaDevices()}/${username}/${providerId}/${key}`,
+                        url: `${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}/${encodeURIComponent(providerId)}/${encodeURIComponent(key)}`,
                         type: "DELETE",
                         contentType: "application/x-www-form-urlencoded",
-                        success: (response, status, xhr) => context.row.remove().draw(),
+                        success: () => mfaDevicesTable
+                            .rows((index, data) => data.key === key && data.providerId === providerId)
+                            .remove()
+                            .draw(),
                         error: (xhr, status, error) => {
                             console.error("Error fetching data:", error);
                             displayBanner(xhr);
@@ -215,12 +279,27 @@ async function initializeMultifactorOperations() {
         table: mfaDevicesTable,
         selector: "#mfaDevicesTable tbody tr",
         items: {
-            remove: {name: "Remove MFA Device", icon: contextMenuIcon("mdi-delete")}
+            remove: {name: "Remove MFA Device", write: "mfaDevices", icon: contextMenuIcon("mdi-delete")}
         },
         callback: (key, context) => {
             if (key === "remove") {
-                removeMfaDevice(context);
+                removeMfaDevice(context.rowData);
             }
+        }
+    });
+
+    $("#mfaDevicesCards").off("click").on("click", "[data-mfa-action]", event => {
+        const button = event.currentTarget;
+        const card = button.closest("[data-mfa-device]");
+        const row = mfaDevicesTable.rows((index, data) => String(data.key) === card.dataset.mfaDevice
+            && data.providerId === card.dataset.mfaProvider).data().toArray()[0];
+        if (!row) {
+            return;
+        }
+        if (button.dataset.mfaAction === "copy") {
+            copyToClipboard(String(row.key));
+        } else if (button.dataset.mfaAction === "remove") {
+            removeMfaDevice(row);
         }
     });
 
@@ -238,23 +317,25 @@ async function initializeMultifactorOperations() {
             });
 
             mfaDevicesTable.clear();
-            $.get(`${CasActuatorEndpoints.mfaDevices()}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`, response => {
                 for (const device of Object.values(response)) {
                     mfaDevicesTable.row.add({
-                        0: `<code>${device.name ?? "N/A"}</code>`,
-                        1: `<code>${device.type ?? "N/A"}</code>`,
-                        2: `<code>${device.id ?? "N/A"}</code>`,
-                        3: `<code>${device.number ?? "N/A"}</code>`,
-                        4: `<code>${device.model ?? "N/A"}</code>`,
-                        5: `<code>${device.lastUsedDateTime ?? "N/A"}</code>`,
-                        6: `<code>${device.expirationDateTime ?? "N/A"}</code>`,
-                        7: `<code>${device.source ?? "N/A"}</code>`,
-                        8: `<span>${device.payload}</span>`,
+                        0: `${palantirCode(device.name ?? "N/A")}`,
+                        1: `${palantirCode(device.type ?? "N/A")}`,
+                        2: `${palantirCode(device.id ?? "N/A")}`,
+                        3: `${palantirCode(device.number ?? "N/A")}`,
+                        4: `${palantirCode(device.model ?? "N/A")}`,
+                        5: `${palantirCode(device.lastUsedDateTime ?? "N/A")}`,
+                        6: `${palantirCode(device.expirationDateTime ?? "N/A")}`,
+                        7: `${palantirCode(device.source ?? "N/A")}`,
+                        8: palantirCode(device.payload ?? ""),
                         providerId: device?.details?.providerId ?? "Unknown",
                         key: device.id,
-                        username: username
+                        username: username,
+                        record: device
                     });
                 }
+                $("#mfaDevicesCards").data("searched", username);
                 mfaDevicesTable.draw();
                 $("#mfaDevicesButton").prop("disabled", false);
                 Swal.close();
@@ -319,7 +400,7 @@ async function initializeTrustedMultifactorOperations() {
         table: mfaTrustedDevicesTable,
         selector: "#mfaTrustedDevicesTable tbody tr",
         items: {
-            remove: {name: "Remove Trusted MFA Device", icon: contextMenuIcon("mdi-delete")}
+            remove: {name: "Remove Trusted MFA Device", write: "multifactorTrustedDevices", icon: contextMenuIcon("mdi-delete")}
         },
         callback: (key, context) => {
             if (key === "remove") {
@@ -345,14 +426,14 @@ async function initializeTrustedMultifactorOperations() {
             $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${username}`, response => {
                 for (const device of Object.values(response)) {
                     mfaTrustedDevicesTable.row.add({
-                        0: `<code>${device.id ?? "N/A"}</code>`,
-                        1: `<code>${device.principal ?? "N/A"}</code>`,
-                        2: `<code>${device.deviceFingerprint ?? "N/A"}</code>`,
-                        3: `<code>${device.recordDate ?? "N/A"}</code>`,
-                        4: `<code>${device.name ?? "N/A"}</code>`,
-                        5: `<code>${device.expirationDate ?? "N/A"}</code>`,
-                        6: `<code>${device.multifactorAuthenticationProvider ?? "N/A"}</code>`,
-                        7: `<code>${device.recordKey ?? "N/A"}</code>`,
+                        0: `${palantirCode(device.id ?? "N/A")}`,
+                        1: `${palantirCode(device.principal ?? "N/A")}`,
+                        2: `${palantirCode(device.deviceFingerprint ?? "N/A")}`,
+                        3: `${palantirCode(device.recordDate ?? "N/A")}`,
+                        4: `${palantirCode(device.name ?? "N/A")}`,
+                        5: `${palantirCode(device.expirationDate ?? "N/A")}`,
+                        6: `${palantirCode(device.multifactorAuthenticationProvider ?? "N/A")}`,
+                        7: `${palantirCode(device.recordKey ?? "N/A")}`,
                         key: device.recordKey
                     });
                 }

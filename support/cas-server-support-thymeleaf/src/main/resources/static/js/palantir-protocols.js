@@ -66,12 +66,6 @@ function protocolConfigurationPropertiesMutable() {
     return PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig();
 }
 
-function escapeProtocolHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 /**
  * Move to the configuration tab, waiting for it to initialize.
  *
@@ -84,6 +78,58 @@ async function switchToConfigurationDynamicSourcesTabFromProtocol() {
     activateDashboardTab(Tabs.CONFIGURATION.index);
     selectSidebarMenuTab(Tabs.CONFIGURATION.index);
     await initializeDashboardTab(Tabs.CONFIGURATION);
+}
+
+let pendingSamlMetadataManager = null;
+
+/**
+ * Open the SAML2 service provider metadata management section under Protocols, with the metadata manager whose
+ * source, such as <code>mongodb://</code>, is given selected once the managers are known.
+ *
+ * @param sourceId the source of the metadata manager
+ */
+async function showSamlMetadataManager(sourceId) {
+    pendingSamlMetadataManager = sourceId;
+    activateDashboardTab(Tabs.PROTOCOLS.index);
+    selectSidebarMenuTab(Tabs.PROTOCOLS.index);
+    await initializeDashboardTab(Tabs.PROTOCOLS);
+    const outer = $("#protocols-tabs");
+    const protocol = outer.find("> ul > li").index($("#saml2protocol").closest("li"));
+    if (outer.data("ui-tabs") && protocol >= 0) {
+        outer.tabs("option", "active", protocol);
+    }
+    const inner = $("#saml2-inner-tabs");
+    const section = inner.find("> ul > li").index($("#saml2metadatamgmt-li"));
+    if (inner.data("ui-tabs") && section >= 0 && !$("#saml2metadatamgmt-li").hasClass("d-none")) {
+        inner.tabs("option", "active", section);
+    }
+    $("#saml2metadatamgmt-tab")[0]?.scrollIntoView({block: "start", behavior: "smooth"});
+    selectPendingSamlMetadataManager();
+}
+
+/**
+ * Select the metadata manager asked for by <code>showSamlMetadataManager</code> once its option exists.
+ *
+ * @returns {boolean} whether a manager was selected
+ */
+function selectPendingSamlMetadataManager() {
+    const sourceId = pendingSamlMetadataManager;
+    const select = $("#saml2MetadataManagersSelect");
+    if (sourceId === null || select.find("option").length === 0) {
+        return false;
+    }
+    pendingSamlMetadataManager = null;
+    const option = select.find("option").filter((index, element) => String(element.value).toLowerCase() === String(sourceId).toLowerCase());
+    if (option.length === 0) {
+        notyf.error(`No SAML2 metadata manager handles ${sourceId} locations.`);
+        return false;
+    }
+    select.val(option.val());
+    if (select.selectmenu("instance")) {
+        select.selectmenu("refresh");
+    }
+    select.trigger("palantir:managerselected");
+    return true;
 }
 
 async function showProtocolConfigurationPropertyHelp(propertyName) {
@@ -162,12 +208,8 @@ async function initializeSAML1ProtocolOperations() {
 
 function showSaml2IdPMetadata() {
     $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/idp/metadata`, response => {
-        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataDialog"));
-        const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml", {useWorker: false});
-        editor.setValue(new XMLSerializer().serializeToString(response));
-        editor.gotoLine(1);
-        editor.setReadOnly(true);
-        oidcOpConfigurationDialog["open"]();
+        showPalantirCodeDialog("saml2MetadataDialog", "SAML2 Identity Provider Metadata",
+            new XMLSerializer().serializeToString(response), "xml");
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
         displayBanner(xhr);
@@ -176,12 +218,8 @@ function showSaml2IdPMetadata() {
 
 function showOidcJwks() {
     $.get(`${PalantirDashboardConfiguration.casServerPrefix()}/oidc/jwks`, response => {
-        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
-        const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
-        editor.setValue(JSON.stringify(response, null, 2));
-        editor.gotoLine(1);
-        editor.setReadOnly(true);
-        oidcOpConfigurationDialog["open"]();
+        showPalantirCodeDialog("oidcOpConfigurationDialog", "OpenID Connect JSON Web Keystore",
+            JSON.stringify(response, null, 2), "json");
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
         displayBanner(xhr);
@@ -304,12 +342,8 @@ async function initializeOidcProtocolOperations() {
         $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
             hideBanner();
             fetchOidcDiscoveryDocument().then(response => {
-                let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
-                const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
-                editor.setValue(JSON.stringify(response, null, 2));
-                editor.gotoLine(1);
-                editor.setReadOnly(true);
-                oidcOpConfigurationDialog["open"]();
+                showPalantirCodeDialog("oidcOpConfigurationDialog", "OpenID Connect Configuration",
+                    JSON.stringify(response, null, 2), "json");
             }).catch(xhr => {
                 console.error("Error fetching data:", xhr);
                 displayBanner(xhr);
@@ -482,8 +516,8 @@ async function initializeOidcProtocolOperations() {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
                         oidcConfigurationPropsTable.row.add({
-                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
-                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            0: `${palantirCode(propKey)}`,
+                            1: `${palantirCode(propValue.value)}`,
                             propertyName: propKey,
                             propertyValue: propValue.value
                         });
@@ -545,7 +579,7 @@ async function initializeOidcProtocolOperations() {
                 table: oidcClientJwksTable,
                 selector: "#oidcClientJwksTable tbody tr",
                 items: {
-                    delete: {name: "Delete", icon: contextMenuIcon("mdi-delete")}
+                    delete: {name: "Delete", write: "oidcJwks", icon: contextMenuIcon("mdi-delete")}
                 },
                 callback: (key, context) => {
                     if (key === "delete") {
@@ -558,9 +592,9 @@ async function initializeOidcProtocolOperations() {
                 oidcClientJwksTable.clear();
                 for (const entry of response) {
                     oidcClientJwksTable.row.add({
-                        0: `<code>${entry.jkt}</code>`,
-                        1: `<code>${entry.createdAt}</code>`,
-                        2: `<code>${entry.jwk}</code>`,
+                        0: `${palantirCode(entry.jkt)}`,
+                        1: `${palantirCode(entry.createdAt)}`,
+                        2: `${palantirCode(entry.jwk)}`,
                         jkt: entry.jkt
                     });
                 }
@@ -700,7 +734,7 @@ async function initializeSAML2ProtocolOperations() {
                     editor.setReadOnly(true);
                     for (const [entityId, entry] of Object.entries(response)) {
                         editor.setValue(entry.metadata);
-                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
+                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: ${palantirCode(entry.cachedInstant)}`);
                     }
                     editor.gotoLine(1);
                     showElements("#saml2MetadataCacheEditorContainer");
@@ -761,7 +795,7 @@ async function initializeSAML2ProtocolOperations() {
                 copyToClipboard(entityIdValue).then(() => {
                     Swal.fire({
                         title: "Copied",
-                        html: `Entity ID <code>${entityIdValue}</code> has been copied to the clipboard.`,
+                        html: `Entity ID ${palantirCode(entityIdValue)} has been copied to the clipboard.`,
                         showConfirmButton: false,
                         icon: "success",
                         timer: 2000
@@ -827,8 +861,8 @@ async function initializeSAML2ProtocolOperations() {
                 items: {
                     view: {name: "View Metadata", icon: contextMenuIcon("mdi-eye")},
                     copyEntityId: {name: "Copy Entity ID", icon: contextMenuIcon("mdi-content-copy")},
-                    register: {name: "Register as SAML2 Service Provider", icon: contextMenuIcon("mdi-plus-circle")},
-                    delete: {name: "Delete Metadata", icon: contextMenuIcon("mdi-delete")}
+                    register: {name: "Register as SAML2 Service Provider", write: "registeredServices", icon: contextMenuIcon("mdi-plus-circle")},
+                    delete: {name: "Delete Metadata", write: "samlIdPRegisteredServiceMetadata", icon: contextMenuIcon("mdi-delete")}
                 },
                 callback: (key, context) => {
                     const {entryId, managerName, entityId, entryName} = context.rowData;
@@ -850,9 +884,9 @@ async function initializeSAML2ProtocolOperations() {
                     for (const entry of response) {
                         const entityId = parseEntityIdFromMetadata(entry.value);
                         saml2MetadataManagerEntriesTable.row.add({
-                            0: `<code>${entry.id}</code>`,
-                            1: `<code>${entry.name}</code>`,
-                            2: `<code>${entityId}</code>`,
+                            0: `${palantirCode(entry.id)}`,
+                            1: `${palantirCode(entry.name)}`,
+                            2: `${palantirCode(entityId)}`,
                             entryId: entry.id,
                             managerName: managerName,
                             entityId: entityId,
@@ -992,6 +1026,9 @@ async function initializeSAML2ProtocolOperations() {
                     fetchMetadataManagerEntries(ui.item.label);
                 }
             });
+            $("#saml2MetadataManagersSelect")
+                .off("palantir:managerselected")
+                .on("palantir:managerselected", () => fetchMetadataManagerEntries($("#saml2MetadataManagersSelect option:selected").text()));
             $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers`, response => {
                 response.forEach((manager, idx) => {
                     $("#saml2MetadataManagersSelect").append(
@@ -1003,7 +1040,7 @@ async function initializeSAML2ProtocolOperations() {
                     );
                 });
                 $("#saml2MetadataManagersSelect").selectmenu("refresh");
-                if (response.length > 0) {
+                if (!selectPendingSamlMetadataManager() && response.length > 0) {
                     fetchMetadataManagerEntries(response[0].name);
                 }
             }).fail((xhr, status, error) => {
@@ -1039,8 +1076,8 @@ async function initializeSAML2ProtocolOperations() {
                     let properties = source.properties && Object.entries(source.properties || {});
                     properties.forEach(([propKey, propValue]) => {
                         saml2ConfigurationPropsTable.row.add({
-                            0: `<code>${escapeProtocolHtml(propKey)}</code>`,
-                            1: `<code>${escapeProtocolHtml(propValue.value)}</code>`,
+                            0: `${palantirCode(propKey)}`,
+                            1: `${palantirCode(propValue.value)}`,
                             propertyName: propKey,
                             propertyValue: propValue.value
                         });

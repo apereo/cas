@@ -135,7 +135,7 @@ async function initializeScheduledTasksOperations() {
             {
                 data: "threadId",
                 width: "8%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "threadState",
@@ -145,7 +145,7 @@ async function initializeScheduledTasksOperations() {
             {
                 data: "priority",
                 width: "8%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "daemon",
@@ -204,7 +204,7 @@ async function initializeScheduledTasksOperations() {
             {
                 data: "task",
                 width: "14%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "target",
@@ -256,7 +256,7 @@ async function initializeScheduledTasksOperations() {
     }
 
     function renderOptionalCode(value) {
-        return value === undefined || value === null || value === "" ? "-" : `<code>${escapeHtml(value)}</code>`;
+        return value === undefined || value === null || value === "" ? "-" : `${palantirCode(value)}`;
     }
 
     function formatScheduledTaskDuration(value) {

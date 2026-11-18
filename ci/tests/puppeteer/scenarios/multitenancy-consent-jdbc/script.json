@@ -32,6 +32,5 @@
     
     "--cas.http-client.host-name-verifier=none"
   ],
-  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
 }

@@ -75,7 +75,8 @@ public class CasAuditTools {
             record.getResourceOperatedUpon(), record.getApplicationCode(),
             clientInfo != null ? clientInfo.getClientIpAddress() : null,
             clientInfo != null ? clientInfo.getUserAgent() : null,
-            clientInfo != null ? clientInfo.getGeoLocation() : null);
+            clientInfo != null ? clientInfo.getGeoLocation() : null,
+            record.getTarget());
     }
 
     public record AuditRecords(String username, String since, int count, List<AuditRecord> records) {
@@ -83,6 +84,7 @@ public class CasAuditTools {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record AuditRecord(String when, @Nullable String action, @Nullable String resource, @Nullable String application,
-                              @Nullable String clientIpAddress, @Nullable String userAgent, @Nullable String geoLocation) {
+                              @Nullable String clientIpAddress, @Nullable String userAgent, @Nullable String geoLocation,
+                              @Nullable String target) {
     }
 }

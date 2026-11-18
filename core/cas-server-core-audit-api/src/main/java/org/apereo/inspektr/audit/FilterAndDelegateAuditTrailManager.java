@@ -86,6 +86,15 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, Ap
     }
 
     @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        return auditTrailManagers
+            .stream()
+            .map(manager -> manager.summarize(query))
+            .flatMap(Optional::stream)
+            .findFirst();
+    }
+
+    @Override
     public void removeAll() {
         auditTrailManagers.forEach(AuditTrailManager::removeAll);
     }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.util.DateTimeUtils;
 import org.aspectj.lang.JoinPoint;
@@ -23,6 +24,8 @@ import org.springframework.webflow.execution.Event;
 @RequiredArgsConstructor
 @SuppressWarnings("NullAway")
 public class NullableReturnValueAuditResourceResolver implements AuditResourceResolver {
+    private static final String MULTIFACTOR_PROVIDER_ATTRIBUTE = "org.apereo.cas.authentication.MultifactorAuthenticationProvider";
+
     protected Function<String[], @Nullable String[]> resourcePostProcessor = Function.identity();
 
     private final AuditResourceResolver delegate;
@@ -63,5 +66,23 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
         val resolved = delegate.resolveFrom(joinPoint, e);
         return resolved != null ? resourcePostProcessor.apply(resolved) : ArrayUtils.EMPTY_STRING_ARRAY;
     }
-}
 
+    /**
+     * An event that routes to a multifactor provider names the provider: its id is the provider's, and it carries the
+     * provider among its attributes. Other events, such as success or error, name nothing.
+     *
+     * @param joinPoint   the join point
+     * @param returnValue the returned value
+     * @return the id of the multifactor provider, or null
+     */
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint joinPoint, @Nullable final Object returnValue) {
+        val event = returnValue instanceof final Collection<?> events && !events.isEmpty()
+            ? events.iterator().next()
+            : returnValue;
+        return event instanceof final Event resolved && resolved.getAttributes() != null
+            && resolved.getAttributes().contains(MULTIFACTOR_PROVIDER_ATTRIBUTE)
+            ? StringUtils.trimToNull(resolved.getId())
+            : null;
+    }
+}

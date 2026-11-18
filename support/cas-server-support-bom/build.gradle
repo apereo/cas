@@ -76,16 +76,9 @@ publishing {
     }
 }
 
+CasBuildSettings.configureSigning(project, signing)
+
 signing {
-    required = CasBuildSettings.isPublishReleases(project) && !CasBuildSettings.isSkipArtifactSigning(project)
-
-    if (System.getenv("PGP_PRIVATE_KEY") && System.getenv("PGP_PASSPHRASE")) {
-        useInMemoryPgpKeys(
-                System.getenv("PGP_PRIVATE_KEY"),
-                System.getenv("PGP_PASSPHRASE")
-        )
-    }
-
     publishing.publications.withType(MavenPublication).configureEach { publication ->
         sign(publication)
     }

@@ -1,0 +1,40 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://app\\.example\\.org/callback",
+  "name": "Refresh tokens",
+  "description": "Issues refresh tokens for offline_access, renews them on use, and sets how long access and refresh tokens last.",
+  "generateRefreshToken": true,
+  "renewRefreshToken": true,
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code",
+      "refresh_token"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile",
+      "offline_access"
+    ]
+  ],
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxTimeToLive": "PT8H",
+    "timeToKill": "PT1H"
+  },
+  "refreshTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthRefreshTokenExpirationPolicy",
+    "timeToKill": "P14D"
+  }
+}

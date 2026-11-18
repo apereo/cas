@@ -107,7 +107,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             return jwe.getPayload();
         } catch (final Exception e) {
             LOGGER.debug("Unable to decrypt credential request", e);
-            throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request cannot be decrypted");
+            throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request cannot be decrypted", e);
         }
     }
 
@@ -134,7 +134,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
         } catch (final Exception e) {
             LOGGER.debug("Credential response encryption key cannot be used", e);
             throw OidcVerifiableCredentialEncryptionException.invalidParameters(
-                "Credential response encryption key cannot be used with %s".formatted(algorithm));
+                "Credential response encryption key cannot be used with %s".formatted(algorithm), e);
         }
     }
 
@@ -151,7 +151,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
             LOGGER.warn("Unable to encrypt credential response", e);
-            throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response cannot be encrypted");
+            throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response cannot be encrypted", e);
         }
     }
 
@@ -234,7 +234,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             return jwe;
         } catch (final Exception e) {
             LOGGER.debug("Unable to read encrypted credential request", e);
-            throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request is not a JWE");
+            throw OidcVerifiableCredentialEncryptionException.invalidRequest("Encrypted credential request is not a JWE", e);
         }
     }
 
@@ -243,7 +243,7 @@ public class OidcVerifiableCredentialDefaultEncryptionService implements OidcVer
             return PublicJsonWebKey.Factory.newPublicJwk(jwk);
         } catch (final Exception e) {
             LOGGER.debug("Unable to read credential response encryption key", e);
-            throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response encryption jwk is invalid");
+            throw OidcVerifiableCredentialEncryptionException.invalidParameters("Credential response encryption jwk is invalid", e);
         }
     }
 }

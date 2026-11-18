@@ -1,0 +1,17 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://sp.example.org/saml",
+  "name": "Encrypted assertions",
+  "description": "Encrypts assertions with the certificate in the service provider's metadata.",
+  "encryptAssertions": true,
+  "metadataLocation": "https://sp.example.org/saml/metadata",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "mail"
+      ]
+    ]
+  }
+}

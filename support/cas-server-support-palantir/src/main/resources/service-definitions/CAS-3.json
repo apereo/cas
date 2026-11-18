@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://admin\\.example\\.org/.*",
+  "name": "Allow only members of a group",
+  "description": "Lets in only people whose memberOf attribute holds admins; everyone else is sent to an explanation page.",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes": {
+      "@class": "java.util.HashMap",
+      "memberOf": [
+        "java.util.HashSet",
+        [
+          "admins"
+        ]
+      ]
+    },
+    "unauthorizedRedirectUrl": "https://www.example.org/not-authorized"
+  }
+}

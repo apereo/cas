@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://app\\.example\\.org/.*",
+  "name": "Ask for consent before releasing attributes",
+  "description": "Shows the attributes about to be released and asks the user to agree before continuing.",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "consentPolicy": {
+      "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+      "status": "TRUE"
+    },
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "mail",
+        "displayName"
+      ]
+    ]
+  }
+}

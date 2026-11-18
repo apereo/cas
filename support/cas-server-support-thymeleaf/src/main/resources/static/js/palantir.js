@@ -13,8 +13,12 @@ class PalantirDashboardConfiguration {
         return this.all().actuatorEndpoints || {};
     }
 
-    static serviceDefinitions() {
-        return this.all().serviceDefinitions || {};
+    static actuatorEndpointAccess() {
+        return this.all().actuatorEndpointAccess || {};
+    }
+
+    static serviceTemplates() {
+        return this.all().serviceTemplates || [];
     }
 
     static supportedServiceTypes() {
@@ -39,6 +43,15 @@ class PalantirDashboardConfiguration {
 
     static mutablePropertySourcesAvailable() {
         return this.all().mutablePropertySourcesAvailable || false;
+    }
+
+    /**
+     * Whether CAS can encrypt and decrypt configuration values, because configuration security is set up.
+     *
+     * @returns {boolean} true when configuration values can be encrypted
+     */
+    static configurationEncryptionAvailable() {
+        return this.all().configurationEncryptionAvailable === true;
     }
 
     static trumbowygIconsPath() {
@@ -100,12 +113,15 @@ function registerPalantirTabInitializers() {
         initializeClusterTopologyOperations);
     registerDashboardTabInitializers(Tabs.USERS,
         initializeUserLookupOperations);
+    registerDashboardTabInitializers(Tabs.HOME,
+        initializePalantirHome);
 }
 
 /**
  * Resolve the tab to open.
  *
- * The tab the operator last used is preferred, then Applications, then whichever destination the
+ * A reload stays on the page this browser tab was showing; a new visit opens Home. Without Home, the
+ * tab the operator last used is preferred, then Applications, then whichever destination the
  * deployment's enabled actuator endpoints actually left on the rail. Only the first visible entry
  * is guaranteed to exist, so it is the last resort rather than Applications, which a deployment
  * without the registered services endpoint does not show at all.
@@ -113,9 +129,29 @@ function registerPalantirTabInitializers() {
  * @returns {number} the tab index to activate
  */
 function resolveInitialDashboardTab() {
-    const storedTab = window.localStorage.getItem("PalantirSelectedTab");
-    if ($(`nav.sidebar-navigation ul li[data-tab-index=${storedTab}]`).is(":visible")) {
-        return Number(storedTab);
+    const shown = value => {
+        const index = Number.parseInt(value, 10);
+        return Number.isInteger(index) && String(index) === String(value)
+            && $(`nav.sidebar-navigation ul li[data-tab-index=${index}]`).is(":visible") ? index : null;
+    };
+    let reloadedTab = null;
+    let storedTab = null;
+    try {
+        reloadedTab = window.sessionStorage.getItem("PalantirSelectedTab");
+        storedTab = window.localStorage.getItem("PalantirSelectedTab");
+    } catch (error) {
+        console.debug("The last page cannot be read from the browser", error);
+    }
+    const reloaded = shown(reloadedTab);
+    if (reloaded !== null) {
+        return reloaded;
+    }
+    if (shown(Tabs.HOME.index) !== null) {
+        return Tabs.HOME.index;
+    }
+    const stored = shown(storedTab);
+    if (stored !== null) {
+        return stored;
     }
     if ($(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).is(":visible")) {
         return Tabs.APPLICATIONS.index;
@@ -137,10 +173,15 @@ function resolveInitialDashboardTab() {
 async function initializePalantir() {
     try {
         installJQueryCompatibility();
+        allowAlertsOverModalDialogs();
         applySharedDialogStyle();
+        keepPalantirPopupsInView();
+        PalantirMagnifier.initialize();
         initializeTableAndDialogAccessibility();
+        initializePalantirEndpointAccess();
         await initializeCasFeatures();
         showElements("#dashboard");
+        performance.mark("palantir-dashboard-shown");
         const visibleCount = processNavigationTabs();
         updatePalantirNavigationGroups();
         const selectedTab = resolveInitialDashboardTab();
@@ -259,9 +300,22 @@ function updatePalantirNavigationGroups() {
     if (active) {
         const label = active.querySelector(".sidebar-navigation-label")?.textContent.trim() ?? "";
         const group = active.closest(".palantir-nav-group")?.querySelector(".palantir-nav-group-name")?.textContent.trim() ?? "";
-        $("#palantirPageTitle").text(label);
+        $("#palantirPageTitle").text(active.dataset.tabIndex === String(Tabs.HOME.index) ? palantirGreeting() : label);
         $("#palantirPageGroup").text(group).toggleClass("d-none", group === "");
     }
+}
+
+/**
+ * The heading of Home: a greeting for the time of day on this computer, naming the user signed in to Palantir.
+ *
+ * @param {Date} now the moment to greet for
+ * @returns {string} the greeting
+ */
+function palantirGreeting(now = new Date()) {
+    const hour = now.getHours();
+    const part = hour < 12 ? "Morning" : hour < 18 ? "Afternoon" : "Evening";
+    const user = document.getElementById("palantirPageTitle")?.dataset.palantirUser?.trim() ?? "";
+    return user === "" ? `Good ${part}!` : `Good ${part}, ${user}!`;
 }
 
 /**
@@ -319,6 +373,26 @@ function initializePalantirNavigationMenus() {
     });
 }
 
+/**
+ * Show focus rings only while the keyboard is used to move between controls.
+ *
+ * A browser draws the ring on whatever has focus as soon as any key is pressed, so a control clicked a moment
+ * earlier, or the main panel, gained a ring when a single-key shortcut was used. The ring is hidden after a click,
+ * a tap or a shortcut, and returns once Tab or an arrow key moves focus.
+ */
+function initializePalantirFocusRings() {
+    const root = document.documentElement;
+    document.addEventListener("pointerdown", () => root.setAttribute("data-palantir-pointer-focus", ""), true);
+    document.addEventListener("keydown", event => {
+        const key = typeof event.key === "string" ? event.key : "";
+        if (key === "Tab" || key.startsWith("Arrow")) {
+            root.removeAttribute("data-palantir-pointer-focus");
+        } else if (key.length === 1 && key !== " " && !event.target.closest?.("input, textarea, select, [contenteditable='true']")) {
+            root.setAttribute("data-palantir-pointer-focus", "");
+        }
+    }, true);
+}
+
 function initializeSidebarSections() {
     $("#dashboard [data-palantir-action='sections']").off("click").on("click", () => {
         if ($("#dashboard").hasClass("is-nav-open")) {
@@ -343,6 +417,8 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeTooltips();
 
     PalantirTheme.initialize();
+    PalantirZenMode.initialize();
+    initializePalantirFocusRings();
     initializeSidebarSections();
     initializePalantirNavigationMenus();
     $("nav.sidebar-navigation ul li").off().on("click", function () {

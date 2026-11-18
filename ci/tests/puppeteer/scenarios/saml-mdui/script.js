@@ -1,4 +1,5 @@
 
+const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -32,6 +33,11 @@ async function verify(page, hasInfoUrl) {
     await cas.assertVisibility(page, "#serviceUIMetadataLogo");
     await cas.assertVisibility(page, "#serviceUIMetadataDisplayName");
     await cas.assertVisibility(page, "#serviceUIMetadataDescription");
+    const description = await page.$eval("#serviceUIMetadataDescription",
+        (element) => ({text: element.textContent.trim(), markup: element.innerHTML}));
+    await cas.log(`Service description: ${description.text}`);
+    assert(description.text.length > 0);
+    assert(!/<(script|style|iframe|img)\b|\son[a-z]+=/i.test(description.markup), "Description markup is sanitized");
     if (hasInfoUrl) {
         await cas.assertVisibility(page, "#serviceUIMetadataInformationUrl");
     }
