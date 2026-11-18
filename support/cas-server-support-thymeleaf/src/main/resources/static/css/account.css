@@ -620,6 +620,14 @@
     overflow-wrap: anywhere;
 }
 
+.cas-account-item-meta p {
+    margin: 0;
+}
+
+.cas-account-item-meta p + p {
+    margin-top: 2px;
+}
+
 .cas-account-item-actions {
     display: flex;
     flex-wrap: wrap;

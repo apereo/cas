@@ -5,6 +5,8 @@ import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 
 /**
  * This is {@link DynamoDbAuditTrailManager}.
@@ -26,6 +28,12 @@ public class DynamoDbAuditTrailManager extends AbstractAuditTrailManager {
     @Override
     protected void saveAuditRecord(final AuditActionContext audit) {
         this.dynamoDbFacilitator.save(audit);
+        this.dynamoDbFacilitator.count(audit);
+    }
+
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        return Optional.of(dynamoDbFacilitator.summarize(query));
     }
 
     @Override

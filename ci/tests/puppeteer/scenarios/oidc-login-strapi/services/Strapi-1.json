@@ -13,10 +13,10 @@
   "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "refresh_token", "authorization_code" ] ],
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ],
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "email_verified", "username" ] ],
     "consentPolicy": {
       "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
-      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["email", "username"]],
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["email", "email_verified", "username"]],
       "status": "TRUE"
     }    
   }

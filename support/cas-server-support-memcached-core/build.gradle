@@ -9,6 +9,8 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
 
+    api libraries.commonspool
+
     implementation libraries.kryo
     implementation libraries.jodatime
 

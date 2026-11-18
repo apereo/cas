@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import module java.base;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import com.jayway.jsonpath.JsonPath;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -44,12 +45,36 @@ class StatisticsEndpointTests extends AbstractCasEndpointTests {
         st2.markTicketExpired();
     }
 
+    /**
+     * Tickets are counted per type, named from the ticket catalog, without removing the expired ones, which the registry
+     * cleaner removes; the total, sessions and service tickets add up from the same count, and a second call right
+     * after the first answers the same count.
+     */
     @Test
     void verifyOperation() throws Throwable {
-        mockMvc.perform(get("/actuator/statistics")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk());
+        val first = mockMvc.perform(get("/actuator/statistics")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.upTime").isNumber())
+            .andExpect(jsonPath("$.tickets").isNumber())
+            .andExpect(jsonPath("$.sessions").isNumber())
+            .andExpect(jsonPath("$.serviceTickets").isNumber())
+            .andReturn().getResponse().getContentAsString();
+        val counted = JsonPath.read(first, "$.counted");
+        assertTrue(JsonPath.<Integer>read(first, "$.sessions") >= 2);
+        assertTrue(JsonPath.<Integer>read(first, "$.serviceTickets") >= 2);
+
+        val types = JsonPath.<List<Map<String, Object>>>read(first, "$.ticketsByType");
+        val total = types.stream().mapToLong(type -> ((Number) type.get("count")).longValue()).sum();
+        assertEquals(((Number) JsonPath.read(first, "$.tickets")).longValue(), total);
+        val sessions = types.stream().filter(type -> "TGT".equals(type.get("prefix"))).findFirst().orElseThrow();
+        assertEquals("Ticket Granting Ticket", sessions.get("name"));
+        assertEquals("session", sessions.get("kind"));
+
+        mockMvc.perform(get("/actuator/statistics").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.counted").value(counted));
     }
 }
 

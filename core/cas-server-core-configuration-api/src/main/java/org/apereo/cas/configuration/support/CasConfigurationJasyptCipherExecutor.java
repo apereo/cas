@@ -201,14 +201,14 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * Encrypt value as string.
+     * Encrypt value as string. A failure is logged without the value, which is a secret in plain text.
      *
      * @param value the value
-     * @return the string
+     * @return the string, or null when the value could not be encrypted
      */
     public @Nullable String encryptValue(@Nullable final String value) {
         return encryptValue(value, e -> {
-            LOGGER.warn("Could not encrypt value [{}]", value, e);
+            LOGGER.warn("Could not encrypt the configuration value; check that configuration security is set up", e);
             return null;
         });
     }

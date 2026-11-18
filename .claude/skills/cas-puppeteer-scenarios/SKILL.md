@@ -1,76 +1,52 @@
 ---
 name: cas-puppeteer-scenarios
-description: "Write, fix and review the end-to-end puppeteer scenarios under ci/tests/puppeteer: run.sh behavior, init/bootstrap scripts, script.json properties and variations, storage-backend scenarios (JPA, Redis, Mongo, DynamoDB, LDAP, REST, localstack), cas.js helpers, actuator coverage and the CI retry rules. Use when touching ci/tests/puppeteer or ci/tests/**/run-*.sh, or cross-checking a change against its scenarios."
+description: "Write, fix and review the end-to-end puppeteer scenarios under ci/tests/puppeteer/scenarios: script.json properties and variations, browser and cas.js helpers, the server behavior a step should assert (errors, refusals, protocol responses), storage-backend scenarios (JPA, Redis, Mongo, DynamoDB, LDAP, REST, localstack), actuator coverage and multi-server scenarios. Use when writing or changing a scenario script, or cross-checking a change against its scenarios; for run.sh, CI jobs and test servers use cas-puppeteer-runner."
 ---
+
 
 
 # CAS puppeteer scenarios
 
-## run.sh, init scripts and writing scenarios
+## Browser and cas.js helpers
 
-- `ci/tests/puppeteer/run.sh` runs a scenario's `initScript` entries with `eval "source ${script}"`, so they execute in the runner's own shell. An `exit` on the success path therefore terminates the whole scenario run, which looks like the scenario dying silently right after the init script's last line of output. Let a successful init script fall off the end, and reserve `exit 1` for the failure path, which is what that exit is there for. `ci/tests/ldap/run-ad-server.sh` still carries an `exit 0` early return for the already-running case and has the same hazard.
-- Init scripts are sourced, so `set -e`, `set -u` or `pipefail` in one would stay on for the rest of `run.sh`; 17 scenarios source such a script, and a leaked `set -e` made a failing test exit `run.sh` at its first attempt with code 1 (whole-script retry) instead of 5 after its in-process attempts. `run.sh` turns those options off after each init script, so do not rely on them persisting.
-- Prefer polling the service's own port over a container health check, and dump `docker compose logs` on the failure path: an unhealthy container tells you nothing, while the service's logs say why it would not start.
-- In CI, `run.sh` launches the Gradle build (`bootWar`, or `bootJar` for starter scenarios; native keeps `build` + `nativeCompile`) in the background and runs npm install, ESLint, bootstrap and init scripts while it builds, waiting on the build process only before launching the CAS instance that needs it. Init and bootstrap scripts must therefore never depend on the built artifact, and a fixed `sleep` in them now runs while the build competes for CPU, so poll instead. `PUPPETEER_BUILD_OVERLAP=false` restores the sequential order. `PUPPETEER_BUILD_CTR` is the build timeout in minutes, measured from launch.
-- `run.sh` lints the scenario before running it and stops on any ESLint error. Page globals used inside `page.evaluate` or `page.waitForFunction` callbacks (`$`, `ace`, Palantir classes) must be named in the script's `/* global ... */` header, or `no-undef` fails the job; run `npx eslint scenarios/<name>/script.js` from `ci/tests/puppeteer` before handing a scenario off.
 - Drive jQuery UI select menus in dialogs through the widget (`selectmenu("open")`, then the `menuWidget()`'s `menu("focus", null, item)` and `menu("select", $.Event("click", {target}))`), not with a coordinate click on the item, which misses when the dialog scrolls; then wait for the result with `page.waitForFunction` rather than asserting at once.
-- A container answering HTTP is not a container ready for setup calls. Apache Syncope's Tomcat answers `/syncope/` several seconds before its content loader populates the empty Master domain, and admin REST calls made in that window fail with `AuthorizationDeniedException` (seen once the build overlapped the init scripts and slowed startup). `ci/tests/syncope/run-syncope-server.sh` therefore waits for `Started SyncopeCoreApplication` in the container log; readiness waits in other init scripts should likewise key off the application's own started signal, bounded, with `exit 1` on timeout.
-- Scenario matrix jobs in `functional-tests.yml` restore the Gradle User Home with `cache-read-only: true` and do not set `cache: 'gradle'` on `setup-java`; saving from every one of the ~560 jobs cost ~12 s each and churned the Actions cache, and the two actions caching the same directory conflict.
-- The matrix jobs cache the Node.js install under `${{ runner.tool_cache }}/node/<NODE_VERSION_REQUIRED>` with a key that is that exact version, restored before `setup-node` and saved only from the default branch on a miss. A version change in `NODE_CURRENT` or a scenario's `requirements.nodejs` is a new key, so `setup-node` downloads the instructed version; keep those values exact versions (a range would never match the cached directory) and do not add `check-latest`.
-- The matrix jobs start `ci/tests/puppeteer/prefetch-docker-images.sh <scenario>` right after checkout (in `native-tests.yml`, after `Configure CI` and only when the scenario's native run is enabled, since init scripts run only in the `--nr` step and the pulls then finish during the native build): it finds the images the scenario's bootstrap, init and ready scripts need (their `docker run`/`pull`/`build` commands, `*_IMAGE` and `*COMPOSE_FILE` assignments, compose files, Dockerfile `FROM` lines, and the `ci/tests` scripts they call) and pulls them in the background while the job sets up, logging to `$RUNNER_TEMP/docker-prefetch.log` (printed by the `Docker Prefetch Summary` step). Images a script builds itself, compose services with `build:` and run.sh's own `cas-<scenario>` images are skipped, and so are scenarios that are disabled or miss a `conditions.env` variable (run.sh skips those too). It is best-effort: an image it misses or is still pulling is pulled by the init script as before, so new init scripts need no changes, but keep image references literal or in a plain `*_IMAGE=` assignment so they are found. `--list` prints what it would pull. Images are not stored in the Actions cache: it is already at its limit, and restoring a tarball is a download too.
-- `initScript` entries run once *per instance*, right before that instance starts; `bootstrapScript` runs once for the scenario. A multi-instance scenario whose nodes share a backend (Pulsar, MySQL, MongoDB, Kafka, Redis) must start it from `bootstrapScript`: as an init script it is restarted under the first node before the second one starts, which wipes its state and leaves node 1's connections to reconnect (or not) to a fresh server. The symptom is node 1 silently missing everything node 2 publishes.
-- Instances whose resolved dependencies are identical share one build: `run.sh` builds only the first instance of each dependency set and copies its artifact to the others. Only instance-specific `dependencies` cause another build. Instances still start one after another, because several multi-instance scenarios need instance 1 up before instance 2 starts (Spring Boot Admin client registration, passive service-registry replication, cas2cas delegation).
-- `run.sh` exit codes carry meaning for the `Run Tests` retry (`retry_on_exit_code: 1`): 1 is a setup failure worth another attempt (init scripts, containers, npm), 2 a failed build, 3 a build that exceeded `PUPPETEER_BUILD_CTR`, 4 a CAS instance that exited or did not answer its health check within `PUPPETEER_STARTUP_TIMEOUT` seconds (300 in CI, unlimited locally; a single probe may use the whole remaining budget, since some login pages take ~30 s to render, e.g. `thymeleaf-templates-rest` before its template server is up), and 5 a scenario script that still failed after its in-process attempts (3 in CI, against the running server). 2-5 fail at once; a whole-script retry cannot fix them and repeats the build and startup. Keep new failure paths on 1 only if a rerun can help.
-- `tests.yml`, `functional-tests.yml` and `native-tests.yml` retry failures the same way: a boolean `retryFailedScenarios`
-  dispatch input gates a step that runs `ci/tests/select-failed-jobs.sh <list.json>`, which narrows the listed
-  categories/scenarios in place to the jobs that failed, timed out or were cancelled in the latest attempt of the
-  workflow's previous completed run, and writes a step summary. Call that script from any other matrix workflow; do not
-  inline the logic. It matches job names, so a matrix job's `name:` must stay exactly the category or scenario, and the
-  listing job needs `permissions: actions: read`. No matching job leaves `[]`, so every matrix job that consumes the list is
-  skipped when it is empty (an empty matrix fails the job). A category retry disables PTS and coverage and skips the
-  `coverage` job, which would otherwise upload a partial report.
-- `run.sh` joins a scenario's `properties` with spaces and passes them unquoted, so a value containing a space is cut at the space (`display-name=My CAS One` arrives as `My`). Use values without spaces in `script.json`.
-- `ci/tests/keycloak/run-keycloak-server.sh` polls the `cas` realm's discovery document; Keycloak answers HTTP well before the realm import finishes, and a pac4j OIDC client that fetched its metadata in that window stays broken for every later in-process attempt.
-- `run.sh` installs the Chrome build Puppeteer pins (`npx puppeteer browsers install chrome`) after `npm install`, because npm can finish without puppeteer's postinstall having downloaded it, which only shows up later as `Could not find Chrome`.
-- A scenario that navigates to `https://localhost:9859/anything/...` needs `ci/tests/httpbin/run-httpbin-server.sh` among its init scripts; without it the redirect lands on `chrome-error://` and the ticket assertion fails.
-- Webflow executions are client-side by default (`cas.webflow.session.storage=false`): the `execution` value is the signed and encrypted flow state, so replaying one simply resumes that state, and "reusing a consumed execution" is only meaningful with server-side storage (`http-session-ticket-registry` covers it). Server-side keys are numbered per session (`e1s1`, `e2s1`, ...), and a new HTTP session numbers from `e1` again, so opening the login page before the replay hands out the very key being replayed and the "replay" logs in. Replay from a non-CAS page, after deleting the TGC with `page.deleteCookie({name: "TGC", url: "https://localhost:8443/cas/"})` (`cas.deleteCookies(page)` only sees cookies of the page's current URL, which on httpbin excludes the `/cas` path). A well-formed but altered execution fails decoding with `ClientFlowExecutionRepositoryException`, and `FlowExecutionExceptionResolver` redirects to a fresh flow (302). A malformed one (no `uuid_data` shape) raises `BadlyFormattedFlowExecutionKeyException`, which the resolver now also restarts; it drops any `execution` query parameter from the redirect, which is what avoids the redirect loop that once made it skip this exception. `webflow-clientside-sessions` exercises all three cases plus a double submit and the back button. The ticket-granting cookie value embeds the `User-Agent` when `cas.tgc.pin-to-session` is on; a request without one is pinned to a placeholder (`DefaultCasCookieValueManager`), so the cookie only matches later requests that also send none. It used to throw and answer 500.
-- `actuator-endpoint-roles` is the table-driven check of endpoint security: every row is called anonymously (401), as `casviewer` without `ADMIN` (403) and as `casadmin` (2xx, or "reachable" for operations needing a payload). Users come from its `users.json` (`cas.monitor.endpoints.json.location`). Add a row there when adding an actuator endpoint whose module needs no external service; rows default to `Content-Type: application/json`, so give operations that consume form parameters (the `casValidate` ones) `contentType: FORM`, or they answer 415.
-- To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
 - `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
 - After a redirect to a `custom://` scheme, the tab stops taking keyboard input in CI (most likely Chrome's tab-modal external-protocol prompt): `cas.type` and `cas.pressEnter` report success but the form is never submitted, so a later `cas.loginWith` times out while navigation still works and CAS logs nothing. Continue on a fresh tab (`cas.newPage(context, true)`) after a custom-scheme step (`oidc-logout`).
-- A scenario that stubs an MFA verification service sees the provider's availability check as well as the real calls (YubiKey pings its API URL without parameters before the first verification), so pick the request to assert by its content, not by position (`mfa-yubikey-login-attribute-per-service`).
-- The SAML2 identity provider releases attributes listed in its default attribute definitions (`samlidp-attribute-definitions.json`: `uid`, `mail`, ...) under their `urn:oid` names, with the plain name as `FriendlyName`. Scripts that read an assertion key attributes by `FriendlyName`, falling back to `Name` (`saml2-idp-login-encrypted`).
-- With static users enabled (the default `casuser`), a wrong password for an LDAP user is reported as "account not recognized": the static handler's `AccountNotFoundException` outranks the LDAP handler's `FailedLoginException` in the webflow exception catalog. LDAP scenarios that assert login errors set `--cas.authn.accept.enabled=false` (`pm-must-change-password-ldap-ad`).
 - Palantir's Users tab puts the focus in its username field once the tab has loaded, asynchronously, so a hotkey such as "/" pressed soon after opening it is typed into the field instead (`palantir-login` opens another tab before testing "/").
-- Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
-- `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
-- In CI, `cas.prepareChromium` unzips the Chromium profile only when it is missing, so the in-process attempts of a
-  script share one profile and a retry starts with the cookies the failed attempt left: the login form is gone and
-  `cas.loginWith` times out on `#username`. Sign in only when the form is there
-  (`if (await cas.isVisible(page, "#username"))`, as `palantir-login` does), or the first failure hides itself behind
-  three identical login timeouts.
+- WebAuthn scenarios drive the CDP virtual authenticator (`cas.createWebAuthnVirtualAuthenticator(page, protocol, resident, options)`
+  spreads `options` into the authenticator, e.g. `isUserVerified`). `cas.setWebAuthnSignCount(device, n)` replaces each
+  credential with the same key and a different sign count, which is how `mfa-webauthn-register-logout-login` proves a
+  cloned authenticator (count going back) is refused; `WebAuthn.setUserVerified` toggles user verification mid-scenario.
+- `cas.generateOtp(config, stepOffset)` builds the code for a neighbouring time step without waiting; use it to test
+  `window-size` (the next step is accepted with the default window, refused with `window-size=1`) and replay
+  (`USED_OTPS` records the codes already sent). `parseOtpAuthenticationUrl` reads `digits` and `period` from the URI.
+- `WebAuthn.getCredentials` omits `rpId` for non-resident credentials, and `WebAuthn.addCredential` refuses a credential
+  without one; `cas.setWebAuthnSignCount` passes the relying party (default `localhost`).
+- Navigating to the page already shown plus a `#fragment` does not reload it: to see data imported through an actuator,
+  `cas.goto` the page without the fragment, then click the tab.
+- `.gitignore` drops every `ci/tests/puppeteer/**/*.jwks`: client key sets a scenario ships must use another extension
+  (`client-public.json`), or the scenario passes locally and fails in CI with a missing file.
 - X.509 scenarios present the client certificate from their own folder (`trustStoreCertificateFile` /
   `trustStorePrivateKeyFile` in `script.json`): their `init.sh` re-signs that `cert.pem` and imports it into the
   scenario's `truststore.jks`. `x509-login-passwordless` presented `x509-login`'s certificate, trusted only because it
   shares the subject and key, and every handshake failed once the runners moved to Ubuntu 26.04. A failed handshake in
   the `request`-based interception shows up as `ERR_CONNECTION_REFUSED`, and `cas.logr` logs only its first argument,
   so put the error in the message.
-- In CI, `run.sh` bounds each script attempt with `PUPPETEER_SCRIPT_TIMEOUT` (420 seconds; 0 locally, meaning no limit). A script whose steps all finish but whose node process never exits then fails that attempt and is retried, instead of running into the 20 minute job timeout.
-- AOT training runs extract the built artifact with `-Djarmode=tools extract` and launch what it produces. Since Spring Boot
-  4.2 (gh-51372) extracting a war writes `cas/cas.jar` (root web content moved to `META-INF/resources/`), no longer
-  `cas/cas.war`; `run.sh` launches `cas/cas.jar` and falls back to `cas/cas.<projectType>`. When a Spring Boot bump fails
-  every AOT scenario at once, diff `loader/spring-boot-jarmode-tools/.../ExtractCommand.java` between the two tags first.
-- `ci/tests/gcp/Dockerfile` builds the Firestore and Pub/Sub emulators on the pinned `google-cloud-cli` Alpine image and
-  installs the JDK the emulators need. Do not run `gcloud components update` there: it pulls the newest emulators onto
-  the pinned image, so the same commit can pass in the morning and fail in the afternoon. Firestore emulator v1.23.0
-  (Cloud SDK 592) requires Java 25, and the container died within the 5 second start check on Java 21. When Renovate
-  bumps the image, check the Cloud SDK release notes for emulator Java requirements.
-- `ci/tests/aws/run-aws-server.sh` serves the `AmazonWebServices` unit test category, not only scenarios: tests start as
-  soon as it returns, and `@EnabledIfListeningOnPort(port = 4566)` passes while localstack's services are still starting.
-  Components that create their AWS resources while starting (the log4j2 `SQSAppender` creates its queue in `start()`, and
-  log4j drops an appender whose start fails) then fail the test. The script removes any previous container with
-  `docker rm -f`, waits until it is gone (a `--rm` container still being removed makes `docker run --name` conflict), and
-  polls `/_localstack/health` until every service it enables is `available` or `running`, bounded, `exit 1` on timeout.
+
+## Server behavior to assert
+
+- Strapi 5.61.1's CAS provider requires `email_verified` to be boolean `true`; seed it for the scenario's fixture user
+  and allow its release. CAS's OIDC profile mapper converts the stub's `true` string into a boolean. Strapi keeps upstream
+  tokens in its session and redirects to `/api/auth/cas/callback` without token query parameters; assert the callback's
+  successful JSON response (`jwt` and the CAS user's identity), not an `id_token` in the browser URL.
+- Webflow executions are client-side by default (`cas.webflow.session.storage=false`): the `execution` value is the signed and encrypted flow state, so replaying one simply resumes that state, and "reusing a consumed execution" is only meaningful with server-side storage (`http-session-ticket-registry` covers it). Server-side keys are numbered per session (`e1s1`, `e2s1`, ...), and a new HTTP session numbers from `e1` again, so opening the login page before the replay hands out the very key being replayed and the "replay" logs in. Replay from a non-CAS page, after deleting the TGC with `page.deleteCookie({name: "TGC", url: "https://localhost:8443/cas/"})` (`cas.deleteCookies(page)` only sees cookies of the page's current URL, which on httpbin excludes the `/cas` path). A well-formed but altered execution fails decoding with `ClientFlowExecutionRepositoryException`, and `FlowExecutionExceptionResolver` redirects to a fresh flow (302). A malformed one (no `uuid_data` shape) raises `BadlyFormattedFlowExecutionKeyException`, which the resolver now also restarts; it drops any `execution` query parameter from the redirect, which is what avoids the redirect loop that once made it skip this exception. `webflow-clientside-sessions` exercises all three cases plus a double submit and the back button. The ticket-granting cookie value embeds the `User-Agent` when `cas.tgc.pin-to-session` is on; a request without one is pinned to a placeholder (`DefaultCasCookieValueManager`), so the cookie only matches later requests that also send none. It used to throw and answer 500.
+- `actuator-endpoint-roles` is the table-driven check of endpoint security: every row is called anonymously (401), as `casviewer` without `ADMIN` (403) and as `casadmin` (2xx, or "reachable" for operations needing a payload). Users come from its `users.json` (`cas.monitor.endpoints.json.location`). Add a row there when adding an actuator endpoint whose module needs no external service; rows default to `Content-Type: application/json`, so give operations that consume form parameters (the `casValidate` ones) `contentType: FORM`, or they answer 415.
+- To prove CAS refuses a tampered SAML2 AuthnRequest, intercept the browser hop from the SP to `/cas/idp/profile/SAML2/*/SSO` with `page.setRequestInterception(true)` (see `saml2-idp-login-acs-signed`). POST binding: rewrite `SAMLRequest` in `postData` and `request.continue({postData})`. Redirect binding: inflate with `zlib.inflateRawSync`, alter, deflate, then `request.abort()` and `cas.goto` the altered URL rather than overriding `url` on a redirected request. Assert that the tampering really happened, otherwise a request without the attribute passes for the wrong reason.
+- A scenario that stubs an MFA verification service sees the provider's availability check as well as the real calls (YubiKey pings its API URL without parameters before the first verification), so pick the request to assert by its content, not by position (`mfa-yubikey-login-attribute-per-service`).
+- The SAML2 identity provider releases attributes listed in its default attribute definitions (`samlidp-attribute-definitions.json`: `uid`, `mail`, ...) under their `urn:oid` names, with the plain name as `FriendlyName`. Scripts that read an assertion key attributes by `FriendlyName`, falling back to `Name` (`saml2-idp-login-encrypted`).
+- With static users enabled (the default `casuser`), a wrong password for an LDAP user is reported as "account not recognized": the static handler's `AccountNotFoundException` outranks the LDAP handler's `FailedLoginException` in the webflow exception catalog. LDAP scenarios that assert login errors set `--cas.authn.accept.enabled=false` (`pm-must-change-password-ldap-ad`).
+- Before writing a negative assertion, read the server code for the exact error. Each token-endpoint failure surfaces differently: device code reuse → `access_denied` (`InvalidOAuth20DeviceTokenException`), a mismatched ST service → `INVALID_SERVICE` and the ticket is consumed. Where the specification names the error (CIBA Core §11: `authorization_pending`, `invalid_grant`), the scenario asserts the specification even when the current code differs, and the hand-off says so.
+- `from` in actuator and ticket registry queries (`ssoSessions?from=`, `TicketRegistryStreamCriteria`) is a 0-based offset in every registry. A scenario that deletes all SSO sessions passes `from=0` (or omits it); `from=1` leaves the first session alive, which only shows once that session outlives the scenario's other timeouts, such as a remember-me TGT in a browser profile that later browsers share.
 - A proxy callback (`pgtUrl`) is contacted by CAS itself (`ProxyAuthenticationHandler` expects an acceptable status), so
   it must be a local endpoint: GitHub stopped answering requests from the CI runners with an acceptable status, which
   failed `ticket-validation-casv3-pgt` and the `cas` unit tests using `https://www.github.com`. Scenarios use httpbin
@@ -79,41 +55,20 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   client only: a `Cas20ProxyHandler` built in the test (delivers the PGT IOU) needs its own client on
   `CasSSLContext.disabled()`, or the IOU callback fails with PKIX path errors. A public URL is fine only where
   nothing contacts it (a redirect target, a service id, a failure path).
-- WebAuthn scenarios drive the CDP virtual authenticator (`cas.createWebAuthnVirtualAuthenticator(page, protocol, resident, options)`
-  spreads `options` into the authenticator, e.g. `isUserVerified`). `cas.setWebAuthnSignCount(device, n)` replaces each
-  credential with the same key and a different sign count, which is how `mfa-webauthn-register-logout-login` proves a
-  cloned authenticator (count going back) is refused; `WebAuthn.setUserVerified` toggles user verification mid-scenario.
 - The OIDC front-channel logout page (`casPropagateLogoutView`) calls each `logoutUrl` with JSONP, so the front-channel
   request shows up as a script request in the browser. Capture it with `page.on("request")` filtered on the URL and read
   `iss`/`sid` from its query; httpbin answers it with JSON, which the page ignores.
-- `cas.generateOtp(config, stepOffset)` builds the code for a neighbouring time step without waiting; use it to test
-  `window-size` (the next step is accepted with the default window, refused with `window-size=1`) and replay
-  (`USED_OTPS` records the codes already sent). `parseOtpAuthenticationUrl` reads `digits` and `period` from the URI.
 - A token sent by a client may be a JWT (`jwtAccessToken`, `jwtRefreshToken`). Every lookup of a client-supplied token in
   the ticket registry must first go through `OAuth20JwtAccessTokenEncoder.toDecodableCipher(...).decode(token)`, which
   returns non-JWT values unchanged; revocation and the refresh grant skipped this. `OAuth20RefreshTokenAuthenticator`
   (public clients presenting a JWT refresh token) still does, because it has no `JwtBuilder`.
-- `.gitignore` drops every `ci/tests/puppeteer/**/*.jwks`: client key sets a scenario ships must use another extension
-  (`client-public.json`), or the scenario passes locally and fails in CI with a missing file.
 - The REST multifactor trigger (`cas.authn.mfa.triggers.rest`) sends a GET with a JSON body unless `method` is set; a mock
   endpoint registered with `app.post` never sees it. Set `cas.authn.mfa.triggers.rest.method=POST`.
-- `WebAuthn.getCredentials` omits `rpId` for non-resident credentials, and `WebAuthn.addCredential` refuses a credential
-  without one; `cas.setWebAuthnSignCount` passes the relying party (default `localhost`).
-- Navigating to the page already shown plus a `#fragment` does not reload it: to see data imported through an actuator,
-  `cas.goto` the page without the fragment, then click the tab.
 - The OIDC per-service "signing" key set (`fetchJsonWebKeySetForSigning`, `InternalJwtAccessTokenCipherExecutor`) also
   verifies what the application signs (request objects via `DefaultOAuth20RequestParameterResolver`), so public-only keys
   must stay in it; only keys marked `use=enc` may be dropped.
 - CAS shell validation: the `quit` command deliberately returns EXECUTION_ERROR and Spring Shell then prints a
   CommandExecutionException trace; `.github/workflows/validation.yml` only counts exception lines before the quit message.
-- SPNEGO scenarios get a real KDC from `ci/tests/kerberos/run-kerberos-server.sh` (port 10088, not 88: macOS runs its own
-  KDC on 88). Chrome sends Negotiate tokens only with `--auth-server-allowlist=localhost`; it reads `KRB5_CONFIG` and
-  `KRB5CCNAME` from the environment given to `cas.newBrowser` (a missing cache makes it show the 401 body, which is the
-  login form in mixed mode). CAS must get the port from `kerberos-conf`: blank `cas.authn.spnego.system.kerberos-kdc` and
-  `kerberos-realm`, because Java ignores krb5.conf once both system properties are set and they cannot carry a port.
-  jcifs-ext logs the service principal in with `jcifs-service-password` only when `javax.security.auth.useSubjectCredsOnly`
-  is true (`cas.authn.spnego.system.use-subject-creds-only=true`). With the CAS default (false) it skips its JAAS login
-  and the JDK looks for a keytab instead, which fails with "Cannot find key of appropriate type to decrypt AP-REQ".
 - Negative-path facts learned while adding refusal checks (read from the code, confirm on first run):
   `RegisteredServiceResponseHeadersEnforcementFilter` answers 403 for any request whose `service` is unregistered or denied,
   validation endpoints included, so mismatch against a registered service; a TGT id passed as `ticket` is `INTERNAL_ERROR`, not
@@ -261,6 +216,9 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   from starting without Google credentials (exit code 4 in `actuator-endpoint-roles`).
 - `qrauthn-login` logs in over a STOMP callback; `connectAndLogin` returns a promise that settles when that
   callback's assertions finish, and the browser is closed only after it, or the assertions hit a detached frame.
+
+## Multi-server scenarios
+
 - `oidc-federation-end2end` runs a CAS trust anchor (8443) and a CAS OP (8444) with two relying parties: go-oidfed OFFA
   (`oidfed/offa`, pinned, `https://localhost` on port 443 with host networking) and the scenario's Node RP (`rp.js`,
   `https://localhost:9861`, started inside the script). `init.sh` works in the git-ignored
@@ -292,3 +250,4 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   keep that setting in seconds (`PTnS`). Scenario `*.jwks` files are git-ignored (`ci/tests/puppeteer/**/*.jwks`)
   except under `oidc-federation-end2end/metadata/`: a scenario that needs committed keys must add its own exception to
   `.gitignore`, or `git status` will not show the file and CI will run without it.
+- How `run.sh` builds, starts and retries scenarios, CI jobs and the test servers under `ci/tests/`: see the `cas-puppeteer-runner` skill.

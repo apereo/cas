@@ -2,7 +2,6 @@ import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.CasProjectConventions
 import org.apereo.cas.gradle.PublishProjectModulesMetadataTask
 import org.gradle.api.attributes.*
-import java.util.concurrent.ConcurrentHashMap
 
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
@@ -32,47 +31,10 @@ buildscript {
     }
 }
 
-ext {
-    ci = System.getenv("CI") || providers.systemProperty("CI").present
-    
-    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
-
-    repositoryUsername = providers.systemProperty("repositoryUsername").getOrElse(System.getenv("REPOSITORY_USER"))
-    repositoryPassword = providers.systemProperty("repositoryPassword").getOrElse(System.getenv("REPOSITORY_PWD"))
-
-    snapshotVersion = version.toString().endsWith("-SNAPSHOT")
-    publishSnapshots = providers.systemProperty("publishSnapshots").present && snapshotVersion
-    publishReleases = providers.systemProperty("publishReleases").present && !snapshotVersion
-
-    publishFlag = publishSnapshots || publishReleases
-
-    publishMinimalArtifacts = providers.systemProperty("publishMinimalArtifacts").present
-
-    skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
-    skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
-    skipSpringBootDevTools = providers.systemProperty("skipSpringBootDevTools").present
-    publicationType = providers.systemProperty("publishingType").getOrElse("AUTOMATIC")
-
-    skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
-    terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
-    skipNullAway = providers.systemProperty("skipNullAway").getOrElse("false") == "true"
-    skipHotSwapAgent = providers.systemProperty("skipHotSwapAgent").getOrElse("false") == "true"
-
-    enableRemoteDebugging = providers.systemProperty("enableRemoteDebugging").present
-    remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
-    generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
-    generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
-
-
-    excludedFilesFromTestCoverage = [
-        *CasBuildSettings.excludedFilesFromTestCoverage()
-    ]
-}
-
 apply plugin: "org.apereo.cas.root-conventions"
 apply plugin: "org.apereo.cas.overrides-conventions"
 
-if (publishReleases || publishSnapshots) {
+if (publishFlag) {
     apply plugin: "com.gradleup.nmcp.aggregation"
     nmcpAggregation {
         // publishAllChecksums.set(true)
@@ -80,7 +42,7 @@ if (publishReleases || publishSnapshots) {
             username = "${repositoryUsername}"
             password = "${repositoryPassword}"
             publicationName = "Apereo CAS Release ${project.version}"
-            publicationType = "${publicationType}"
+            publicationType = CasBuildSettings.publishingType(project)
             validationTimeout.set(Duration.ZERO)
             publishingTimeout.set(Duration.ZERO)
             uploadSnapshotsParallelism.set(4)
@@ -103,13 +65,12 @@ apply from: rootProject.file("gradle/dependencyUpdates.gradle")
 
 def sonarqubeRequested = CasBuildSettings.isTaskRequested(project, 'sonar') || CasBuildSettings.isTaskRequested(project, 'sonarqube')
 
-if (!providers.systemProperty("skipSonarqube").present && sonarqubeRequested) {
+if (!CasBuildSettings.isFlagEnabled(project, "skipSonarqube") && sonarqubeRequested) {
     apply plugin: "org.sonarqube"
 
     sonar {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
-        def token = providers.systemProperty("SONARCLOUD_TOKEN")
-                .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+        def token = CasBuildSettings.stringProperty(project, "SONARCLOUD_TOKEN")
 
         def projectKey = "${sonarOrganization}_${sonarProjectName}"
         properties {
@@ -179,7 +140,7 @@ if (CasBuildSettings.isJavadocRequested(gradle, project) || CasBuildSettings.isP
         classpath = aggregateJavadocClasspath
         destinationDir = new File(project.layout.buildDirectory.getAsFile().get(), 'javadoc')
         options.addBooleanOption('html5', true)
-        failOnError = CasBuildSettings.isPublishFlag(project) ? false : providers.systemProperty('ignoreJavadocFailures').present
+        failOnError = CasBuildSettings.isFailOnJavadocErrors(project)
     }
 
     tasks.register('aggregateJavadocsIntoJar', Jar) {
@@ -370,7 +331,7 @@ if (projectModulesMetadataTaskRequested) {
         dependsOn(generateProjectModulesMetadata)
         modulesMetadataFile.set(modulesOutputFile)
         casVersion.set(project.version.toString())
-        mongoImportExecutable.set(providers.systemProperty("casModuleMetadataMongoImportExecutable").orElse("mongoimport"))
+        mongoImportExecutable.set(CasBuildSettings.mongoImportExecutable(project))
     }
 }
 

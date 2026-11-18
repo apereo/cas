@@ -972,9 +972,9 @@ function reloadAuthenticationHandlersTable() {
             for (const handler of response) {
                 authenticationHandlersTable.row.add({
                     0: `${handler.name}`,
-                    1: `<code>${handler.type}</code>`,
-                    2: `<code>${handler.state}</code>`,
-                    3: `<code>${handler.order}</code>`
+                    1: `${palantirCode(handler.type)}`,
+                    2: `${palantirCode(handler.state)}`,
+                    3: `${palantirCode(handler.order)}`
                 });
             }
             authenticationHandlersTable.draw();
@@ -1161,7 +1161,7 @@ async function initializeAuthenticationOperations() {
     let authnHandlersToolbarEntries = "";
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         authnHandlersToolbarEntries += `
-            <button type="button" id="newAuthenticationHandlerButton"
+            <button type="button" data-palantir-write="casConfig" id="newAuthenticationHandlerButton"
                     onclick="openNewAuthenticationHandlerDialog()"
                     title="Add a new authentication handler"
                     class="mdc-button mdc-button--raised">
@@ -1402,7 +1402,7 @@ async function initializeAuthenticationOperations() {
 
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         toolbarEntries += `
-            <button type="button" id="newExternalIdentityProvider"
+            <button type="button" data-palantir-write="casConfig" id="newExternalIdentityProvider"
                     onclick="newExternalIdentityProvider()"
                     title="Create a new external identity provider"
                     class="mdc-button mdc-button--raised">
@@ -1437,7 +1437,7 @@ async function initializeAuthenticationOperations() {
                 },
                 error: (xhr) => {
                     const body = xhr.responseText || "An unknown error occurred.";
-                    Swal.fire("Error", `Failed to send password reset for <strong>${username}</strong>.<br/><code>${body}</code>`, "error");
+                    Swal.fire("Error", `Failed to send password reset for <strong>${username}</strong>.<br/>${palantirCode(body)}`, "error");
                 }
             });
         });
@@ -1462,9 +1462,9 @@ async function initializeAuthenticationOperations() {
                 pmPasswordHistoryTable.clear();
                 for (const record of records) {
                     pmPasswordHistoryTable.row.add([
-                        `<code>${record.id}</code>`,
+                        `${palantirCode(record.id)}`,
                         record.username,
-                        `<code>${record.password}</code>`,
+                        `${palantirCode(record.password)}`,
                         record.recordDate
                     ]);
                 }

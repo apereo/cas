@@ -8,6 +8,7 @@ import org.apereo.cas.dynamodb.DynamoDbTableUtils;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
@@ -516,6 +517,16 @@ public class DynamoDbTicketRegistryFacilitator {
         return ticketCatalog.findTicketDefinition(ticketType)
             .map(def -> countByIndex(def.getProperties().getStorageName(), PREFIX_INDEX_NAME, ColumnNames.PREFIX, prefix))
             .orElse(-1L);
+    }
+
+    /**
+     * Count the tickets of one type through the prefix index of its table.
+     *
+     * @param definition the ticket definition
+     * @return the number of tickets of that type
+     */
+    public long countTickets(final TicketDefinition definition) {
+        return countByIndex(definition.getProperties().getStorageName(), PREFIX_INDEX_NAME, ColumnNames.PREFIX, definition.getPrefix());
     }
 
     private List<GlobalSecondaryIndex> buildGlobalSecondaryIndexes() {

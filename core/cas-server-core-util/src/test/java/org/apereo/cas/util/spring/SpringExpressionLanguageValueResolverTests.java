@@ -8,8 +8,14 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,9 +26,20 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasCoreUtilAutoConfiguration.class)
+@SpringBootTest(classes = {
+    CasCoreUtilAutoConfiguration.class,
+    SpringExpressionLanguageValueResolverTests.MessageBrokerTaskSchedulerTestConfiguration.class
+})
 @ExtendWith(CasTestExtension.class)
 class SpringExpressionLanguageValueResolverTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    @Test
+    void verifyTaskSchedulerBesideAnotherScheduler() {
+        val taskScheduler = applicationContext.getBean("taskScheduler", TaskScheduler.class);
+        assertNotSame(applicationContext.getBean("messageBrokerTaskScheduler"), taskScheduler);
+    }
     @Test
     void verifyFormatOperation() {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
@@ -65,5 +82,13 @@ class SpringExpressionLanguageValueResolverTests {
         assertNotNull(resolver.resolve("${#zonedDateTime}"));
         assertNotNull(resolver.resolve("${#zonedDateTimeUtc}"));
         assertNotNull(resolver.resolve("${T(java.util.Locale).GERMAN.getLanguage()}"));
+    }
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class MessageBrokerTaskSchedulerTestConfiguration {
+        @Bean
+        public TaskScheduler messageBrokerTaskScheduler() {
+            return new ThreadPoolTaskScheduler();
+        }
     }
 }

@@ -13,6 +13,9 @@ ext {
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-protocol")
+    api project(":api:cas-server-core-api-events")
+
+    implementation libraries.metrics
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow-api")
@@ -37,6 +40,7 @@ dependencies {
     implementation project(":support:cas-server-support-metrics")
 
     compileOnly project(":support:cas-server-support-reports-core")
+    compileOnly project(":support:cas-server-support-javers")
 
     implementation libraries.snakeyaml
     implementation libraries.jose4j
@@ -70,7 +74,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")
-
     
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

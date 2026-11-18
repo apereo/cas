@@ -81,13 +81,14 @@ class FunctionUtilsTests {
 
     @Test
     void verifyDoIf3() {
-        assertThrows(IllegalArgumentException.class, () -> FunctionUtils.doIf(input -> {
+        val exception = assertThrows(IllegalArgumentException.class, () -> FunctionUtils.doIf(input -> {
                 throw new IllegalArgumentException();
             },
             t -> null,
             (CheckedFunction<Object, Boolean>) t -> {
                 throw new IllegalArgumentException();
             }).apply(Void.class));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 
     @Test
@@ -126,12 +127,13 @@ class FunctionUtilsTests {
 
     @Test
     void verifyDoAndHandle() {
-        assertThrows(IllegalArgumentException.class,
+        val exception = assertThrows(IllegalArgumentException.class,
             () -> FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) _ -> {
                 throw new IllegalArgumentException();
             }, _ -> {
                 throw new IllegalArgumentException();
             }).apply(Void.class));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
 
         assertFalse(FunctionUtils.doAndHandle((CheckedFunction<Object, Boolean>) _ -> {
             throw new IllegalArgumentException();

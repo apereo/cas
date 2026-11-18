@@ -1,0 +1,10 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://kiosk\\.example\\.org/.*",
+  "name": "Always ask for credentials",
+  "description": "Does not take part in single sign-on: people sign in again every time they reach this application.",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "ssoEnabled": false
+  }
+}

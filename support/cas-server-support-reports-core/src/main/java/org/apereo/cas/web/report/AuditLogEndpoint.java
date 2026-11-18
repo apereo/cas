@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,9 +33,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Endpoint(id = "auditLog", defaultAccess = Access.NONE)
 @Slf4j
 public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
+    /**
+     * The actions counted when none are asked for: sign-ins that succeed or fail, sign-ins refused by throttling, and
+     * multifactor authentication being triggered.
+     */
+    public static final String DEFAULT_SUMMARY_ACTIONS =
+        "AUTHENTICATION_SUCCESS,AUTHENTICATION_FAILED,THROTTLED_LOGIN_ATTEMPT,AUTHENTICATION_EVENT_TRIGGERED";
+
+    private static final Duration MAX_SUMMARY_PERIOD = Duration.ofDays(7);
+
+    private static final Duration SUMMARY_KEPT_FOR = Duration.ofMinutes(1);
 
     private final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
     private final ObjectProvider<AuditActionDateProvider> auditActionDateProvider;
+
+    private final Map<AuditSummaryQuery, AuditSummary> summaries = new ConcurrentHashMap<>();
 
     public AuditLogEndpoint(final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager,
                             final ConfigurableApplicationContext applicationContext,
@@ -104,5 +118,53 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
             .toList();
         LOGGER.debug("Found [{}] audit log records", records.size());
         return records;
+    }
+
+    /**
+     * Count audit records per action and per hour, and per target when asked, as the audit storage counts them. Each
+     * answer is kept for a minute, so viewers asking for the same period share one count.
+     *
+     * @param interval the period up to the current hour, at most a week
+     * @param actions  the actions to count
+     * @param groupBy  {@code target} to count per target too
+     * @return the summary
+     */
+    @GetMapping(path = "/summary", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Count audit records per action and per hour, when the audit storage can count them.",
+        parameters = {
+            @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT24H; at most a week"),
+            @Parameter(name = "actions", description = "The actions to count"),
+            @Parameter(name = "groupBy", description = "target, to count per target too: what each action was for")
+        })
+    public AuditSummary getAuditSummary(
+        @RequestParam(required = false, defaultValue = "PT24H") final String interval,
+        @RequestParam(required = false, defaultValue = DEFAULT_SUMMARY_ACTIONS) final List<String> actions,
+        @RequestParam(required = false, defaultValue = "") final String groupBy) {
+        val period = Beans.newDuration(interval);
+        val length = period.isNegative() || period.isZero() || period.compareTo(MAX_SUMMARY_PERIOD) > 0 ? MAX_SUMMARY_PERIOD : period;
+        val now = auditActionDateProvider.getObject().get();
+        val to = AuditSummaryQuery.hourOf(now).plus(AuditSummaryQuery.BUCKET);
+        val query = new AuditSummaryQuery(to.minus(length), to, new LinkedHashSet<>(actions), "target".equalsIgnoreCase(groupBy));
+        val expired = Instant.now().minus(SUMMARY_KEPT_FOR);
+        summaries.values().removeIf(summary -> summary.generated().isBefore(expired));
+        val cached = summaries.get(query);
+        if (cached != null) {
+            return cached;
+        }
+        val counts = auditTrailManager.getObject().summarize(query);
+        val summary = new AuditSummary(query, counts.isPresent(), counts.orElseGet(List::of), Instant.now());
+        summaries.put(query, summary);
+        return summary;
+    }
+
+    /**
+     * Counts of audit records per action and per hour.
+     *
+     * @param query     the period and actions counted
+     * @param supported whether the audit storage can count its records; when not, counts is empty
+     * @param counts    the counts, hours and actions without records left out
+     * @param generated when the counts were made
+     */
+    public record AuditSummary(AuditSummaryQuery query, boolean supported, List<AuditActionCount> counts, Instant generated) {
     }
 }

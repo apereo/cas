@@ -12,12 +12,17 @@ import org.springframework.boot.health.contributor.Health;
  * Monitors the status of a {@link TicketRegistry}
  * for exposing internal
  * state information used in status reports.
+ * <p>
+ * Counting sessions and service tickets can take a while in a registry that holds many tickets, so the counts are kept
+ * for a few seconds and health checks in quick succession share them. A count the registry cannot make, reported as a
+ * negative number, makes the status unknown.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
 @RequiredArgsConstructor
 public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
+    private static final Duration COUNTS_LIFETIME = Duration.ofSeconds(15);
 
     /**
      * Ticket registry instance that exposes state info.
@@ -34,6 +39,8 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
      */
     private final int sessionCountWarnThreshold;
 
+    private final AtomicReference<TicketCounts> counts = new AtomicReference<>();
+
     private static void buildHealthCheckStatus(final Health.Builder builder,
                                                final long sessionCount, final long ticketCount, final String msg) {
         builder
@@ -47,10 +54,11 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
         builder.withDetail("name", getClass().getSimpleName());
 
         ticketRegistryProvider.ifAvailable(registryState -> {
-            val sessionCount = registryState.sessionCount();
-            val ticketCount = registryState.serviceTicketCount();
+            val current = currentCounts(registryState);
+            val sessionCount = current.sessions();
+            val ticketCount = current.serviceTickets();
 
-            if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
+            if (sessionCount < 0 || ticketCount < 0) {
                 val msg = String.format("Ticket registry %s reports unknown session and/or ticket counts.",
                     this.ticketRegistryProvider.getClass().getName());
                 buildHealthCheckStatus(builder.unknown(), sessionCount, ticketCount, msg);
@@ -71,5 +79,18 @@ public class TicketRegistryHealthIndicator extends AbstractHealthIndicator {
 
             buildHealthCheckStatus(builder.up(), sessionCount, ticketCount, "OK");
         });
+    }
+
+    private TicketCounts currentCounts(final TicketRegistry registry) {
+        val cached = counts.get();
+        if (cached != null && cached.counted().plus(COUNTS_LIFETIME).isAfter(Instant.now())) {
+            return cached;
+        }
+        val fresh = new TicketCounts(registry.sessionCount(), registry.serviceTicketCount(), Instant.now());
+        counts.set(fresh);
+        return fresh;
+    }
+
+    private record TicketCounts(long sessions, long serviceTickets, Instant counted) {
     }
 }
