@@ -10,7 +10,7 @@ function overrideConfigPropertyValue(name, value) {
 
 function searchForConfigPropertyButton(name) {
     $("#configuration-tabs").tabs("option", "active", $("#casConfigSearch").index());
-    $("#configSearchQuery").val(`^${name}$`).focus().select();
+    $("#configSearchQuery").val(`^${String(name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`).focus().select();
     $("#configSearchButton").click();
 }
 
@@ -19,8 +19,8 @@ function effectiveConfigPropertyValue(name) {
         Swal.fire({
             title: "Effective Property Value",
             html: `
-                The effective configuration value for <code>${name}</code> is:<p/>
-                <pre><code class="border-rounded language-html">${name}=${response.property.value}</code></pre>
+                The effective configuration value for ${palantirCode(name)} is:<p/>
+                <pre><code class="border-rounded language-html">${escapePalantirMarkup(name)}=${escapePalantirMarkup(response.property.value)}</code></pre>
             `,
             icon: "info",
             width: "50%",
@@ -82,6 +82,115 @@ function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
                         });
                 }
             });
+    }
+}
+
+/**
+ * Whether a configuration value is encrypted by CAS.
+ *
+ * @param value the value
+ * @returns {boolean} true when the value carries the prefix of encrypted CAS settings
+ */
+function isEncryptedConfigValue(value) {
+    return String(value ?? "").startsWith("{cas-cipher}");
+}
+
+/**
+ * Encrypt or decrypt the value a dynamic configuration source stores for a property, and store the result in its place.
+ *
+ * The value is read from the source itself, since the environment may show it masked. A value that is already in the
+ * requested form is left alone. Once stored, CAS offers to refresh its runtime context, since CAS decrypts encrypted
+ * values of dynamic sources as it applies the configuration.
+ *
+ * @param operation encrypt or decrypt
+ * @param name the property name
+ * @param propertySource the property source, as the environment names it
+ * @returns {Promise<void>} resolved once the value is stored or the operator gave up
+ */
+async function toggleConfigPropertyEncryption(operation, name, propertySource) {
+    const encrypting = operation === "encrypt";
+    const source = configPropertySourceName(propertySource);
+    const confirmation = await Swal.fire({
+        title: encrypting ? "Encrypt this value?" : "Decrypt this value?",
+        html: encrypting
+            ? `The value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its encrypted form,
+               which CAS decrypts when it applies its configuration.`
+            : `The encrypted value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its plain text.`,
+        icon: "question",
+        showConfirmButton: true,
+        showDenyButton: true,
+        confirmButtonText: encrypting ? "Encrypt" : "Decrypt",
+        denyButtonText: "Cancel"
+    });
+    if (!confirmation.isConfirmed) {
+        return;
+    }
+    try {
+        const stored = await $.ajax({
+            url: `${CasActuatorEndpoints.casConfig()}/retrieve`,
+            method: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                name: `^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+                value: "",
+                propertySource: source
+            })
+        });
+        const entry = (stored ?? []).find(property => property.name === name);
+        if (!entry) {
+            throw new Error(`${source} holds no value for ${name}.`);
+        }
+        const current = String(entry.value ?? "");
+        if (encrypting === isEncryptedConfigValue(current)) {
+            Swal.fire({
+                icon: "info",
+                title: encrypting ? "Already encrypted" : "Not encrypted",
+                text: `${source} already holds the ${encrypting ? "encrypted" : "plain"} value of ${name}.`
+            });
+            return;
+        }
+        const value = await $.ajax({
+            url: `${CasActuatorEndpoints.casConfig()}/${operation}`,
+            method: "POST",
+            data: current,
+            contentType: "text/plain; charset=utf-8",
+            dataType: "text"
+        });
+        await $.ajax({
+            url: `${CasActuatorEndpoints.casConfig()}/update`,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify([{name: name, value: value, propertySource: source}])
+        });
+    } catch (error) {
+        if (error?.status === 400) {
+            Swal.fire({
+                icon: "error",
+                title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`,
+                text: error.responseText || "Check that configuration security is set up."
+            });
+        } else if (error?.status !== undefined) {
+            displayBanner(error);
+        } else {
+            Swal.fire({icon: "error", title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`, text: error.message});
+        }
+        return;
+    }
+    try {
+        reloadConfigurationTable(await $.get(CasActuatorEndpoints.env()));
+    } catch (xhr) {
+        displayBanner(xhr);
+    }
+    const title = `Property ${name} ${encrypting ? "Encrypted" : "Decrypted"}`;
+    if (CasActuatorEndpoints.refresh()) {
+        refreshCasServerConfiguration(title);
+    } else {
+        Swal.fire({
+            icon: "success",
+            title: title,
+            text: "The new value takes effect once CAS refreshes its configuration or restarts."
+        });
     }
 }
 
@@ -325,7 +434,7 @@ function openNewConfigurationPropertyDialog(config) {
                 let value = $("#newConfigPropertyValue").val();
                 const encrypt = $("#encryptConfigProperty").val();
 
-                if (encrypt && encrypt === "true" && CasActuatorEndpoints.casConfig()) {
+                if (encrypt === "true" && PalantirDashboardConfiguration.configurationEncryptionAvailable() && CasActuatorEndpoints.casConfig()) {
                     value = await encryptConfigProperty(value);
                 }
 
@@ -384,6 +493,11 @@ function openNewConfigurationPropertyDialog(config) {
                 }
 
                 $("#newConfigPropertyValue").val(config.value ?? "");
+                const encryption = PalantirDashboardConfiguration.configurationEncryptionAvailable();
+                $("#encryptConfigProperty").closest("[id$='SwitchButtonPanel'], [id$='checkBoxPanel']").toggleClass("d-none", !encryption);
+                if (!encryption) {
+                    $("#encryptConfigProperty").val("false");
+                }
 
                 if (config.propertySource) {
                     $("#propertySourcesSelect").val(config.propertySource ?? "");
@@ -495,8 +609,8 @@ function reloadConfigurationTable(response) {
                 const propertyName = key.replace(".value", "");
                 configurationTable.row.add({
                     0: `${camelcaseToTitleCase(source.name)}`,
-                    1: `<code>${propertyName}</code>`,
-                    2: `<code>${value}</code>`,
+                    1: `${palantirCode(propertyName)}`,
+                    2: `${palantirCode(value)}`,
                     propertyName: propertyName,
                     propertyValue: value,
                     propertySource: source.name
@@ -505,8 +619,8 @@ function reloadConfigurationTable(response) {
                 if (PalantirDashboardConfiguration.mutablePropertySources().some(entry => source.name.endsWith(entry))) {
                     mutableConfigurationTable.row.add({
                         0: `${camelcaseToTitleCase(source.name)}`,
-                        1: `<code>${propertyName}</code>`,
-                        2: `<code>${value}</code>`,
+                        1: `${palantirCode(propertyName)}`,
+                        2: `${palantirCode(value)}`,
                         propertyName: propertyName,
                         propertyValue: value,
                         propertySource: source.name
@@ -594,9 +708,19 @@ function normalizeSpringBeans(response) {
                 type: bean.type ?? "",
                 scope: bean.scope ?? "singleton",
                 classification: classifySpringBean(bean.type),
-                dependencies: bean.dependencies ?? []
+                dependencies: [...(bean.dependencies ?? [])].sort()
             });
         });
+    });
+    const dependents = new Map();
+    entries.forEach(entry => entry.dependencies.forEach(dependency => {
+        if (!dependents.has(dependency)) {
+            dependents.set(dependency, new Set());
+        }
+        dependents.get(dependency).add(entry.name);
+    }));
+    entries.forEach(entry => {
+        entry.dependents = [...(dependents.get(entry.name) ?? [])].sort();
     });
     return entries.sort((a, b) => a.name.localeCompare(b.name));
 }
@@ -609,6 +733,54 @@ function hideSpringBeansTab() {
 function setSpringBeansAvailable() {
     showElements($("#springBeansContent"));
     showElements($("#springBeansTabItem"));
+}
+
+/**
+ * What a condition checks, shown as a labelled pill with its class name underneath: a condition is named after the
+ * annotation behind it, such as OnPropertyCondition for a check on a configuration property.
+ *
+ * @param {string} condition the condition's class name
+ * @returns {string} the markup
+ */
+function springConditionLabel(condition) {
+    const name = String(condition ?? "");
+    const kinds = [
+        [/OnMissingBean|OnBean|OnSingleCandidate/, "bean", "Bean", "mdi-cube-outline"],
+        [/OnMissingClass|OnClass/, "class", "Class", "mdi-language-java"],
+        [/OnProperty/, "property", "Property", "mdi-tune-variant"],
+        [/Feature/, "feature", "CAS feature", "mdi-flag-outline"],
+        [/OnWebApplication|OnNotWebApplication|OnWarDeployment/, "web", "Web application", "mdi-web"],
+        [/OnResource/, "resource", "Resource", "mdi-file-outline"],
+        [/OnExpression/, "expression", "Expression", "mdi-code-braces"],
+        [/OnJava|OnJndi|OnCloudPlatform|OnThreading/, "runtime", "Runtime", "mdi-server-outline"],
+        [/OnEndpoint|OnAvailableEndpoint|OnEnabledHealthIndicator|OnEnabledInfoContributor|OnManagementPort/, "endpoint", "Endpoint", "mdi-api"]
+    ];
+    const kind = kinds.find(([pattern]) => pattern.test(name));
+    const label = kind ? kind[2] : name.replace(/^On/, "").replace(/Condition$/, "").replace(/([a-z0-9])([A-Z])/g, "$1 $2") || "Condition";
+    return `
+        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapeConfigHtml(name)}">
+            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapeConfigHtml(label)}
+        </span>
+        <code class="spring-condition-class">${escapeConfigHtml(name)}</code>`.trim();
+}
+
+/**
+ * A condition's message, easier to scan: the annotation it reports on stands out, the details in parentheses are
+ * set apart, and quoted names such as classes and beans read as code.
+ *
+ * @param {string} message the message
+ * @returns {string} the markup
+ */
+function springConditionMessage(message) {
+    const text = String(message ?? "").trim();
+    if (text === "") {
+        return "<span class=\"spring-condition-message is-empty\">No condition message provided.</span>";
+    }
+    const formatted = escapeConfigHtml(text)
+        .replace(/@(Conditional\w*|Profile)\b/g, "<span class=\"spring-condition-annotation\">@$1</span>")
+        .replace(/\(([^()]+)\)/g, "<span class=\"spring-condition-details\">$1</span>")
+        .replace(/(?:&#39;|&#x27;|')([^&']+?)(?:&#39;|&#x27;|')/g, "<code>$1</code>");
+    return `<span class="spring-condition-message">${formatted}</span>`;
 }
 
 function collectSpringConditionMatches(source, matches, matchType, contextName) {
@@ -755,13 +927,13 @@ function initializeGroovyScriptCacheManagerOperations() {
             {
                 data: "key",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeConfigHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             },
             {
                 data: "resourceName",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeConfigHtml(data || "N/A")}</code>`
+                    ? `${palantirCode(data || "N/A")}`
                     : data
             }
         ],
@@ -860,8 +1032,8 @@ function initializeGroovyScriptCacheManagerOperations() {
         selector: "#groovyScriptCacheTable tbody tr",
         items: {
             view: {name: "View Resource", icon: contextMenuIcon("mdi-eye")},
-            recompute: {name: "Recompute Resource", icon: contextMenuIcon("mdi-refresh")},
-            delete: {name: "Delete Key", icon: contextMenuIcon("mdi-delete")}
+            recompute: {name: "Recompute Resource", write: "groovyCache", icon: contextMenuIcon("mdi-refresh")},
+            delete: {name: "Delete Key", write: "groovyCache", icon: contextMenuIcon("mdi-delete")}
         },
         callback: (key, context) => {
             if (key === "view") {
@@ -975,16 +1147,16 @@ async function initializeConfigurationOperations() {
     `;
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
         toolbarEntries += `
-            <button type="button" title="Create a new configuration property" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
+            <button type="button" data-palantir-write="casConfig" title="Create a new configuration property" onclick="createNewConfigurationProperty(this);" id="newConfigPropertyButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Property</span>
             </button>
-            <button type="button" title="Delete all configuration properties" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" data-palantir-write="casConfig" title="Delete all configuration properties" onclick="deleteAllConfigurationProperties(this);" id="deleteAllConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Delete All</span>
             </button>
-            <button type="button" title="Import configuration from properties from files" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
+            <button type="button" data-palantir-write="casConfig" title="Import configuration from properties from files" onclick="importConfigurationProperties(this);" id="importConfigurationPropertiesButton" class="mdc-button mdc-button--raised">
                 <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
             </button>
-            <button type="button" id="refreshConfigurationButton"
+            <button type="button" data-palantir-write="refresh" id="refreshConfigurationButton"
                     title="Refresh CAS Server Configuration"
                     onclick="refreshCasServerConfiguration('Context Refresh');"
                     class="mdc-button mdc-button--raised">
@@ -1029,8 +1201,22 @@ async function initializeConfigurationOperations() {
         selector: "#mutableConfigurationTable tbody tr",
         items: {
             effective: {name: "View Effective Value", icon: contextMenuIcon("mdi-eye")},
-            update: {name: "Update Configuration Property Value", icon: contextMenuIcon("mdi-content-save-edit")},
-            delete: {name: "Delete Configuration Property Value", icon: contextMenuIcon("mdi-delete")},
+            update: {name: "Update Configuration Property Value", write: "casConfig", icon: contextMenuIcon("mdi-content-save-edit")},
+            encrypt: {
+                name: "Encrypt Configuration Property Value",
+                write: "casConfig",
+                icon: contextMenuIcon("mdi-lock"),
+                visible: context => PalantirDashboardConfiguration.configurationEncryptionAvailable()
+                    && !isEncryptedConfigValue(context.rowData.propertyValue)
+            },
+            decrypt: {
+                name: "Decrypt Configuration Property Value",
+                write: "casConfig",
+                icon: contextMenuIcon("mdi-lock-open-variant"),
+                visible: context => PalantirDashboardConfiguration.configurationEncryptionAvailable()
+                    && isEncryptedConfigValue(context.rowData.propertyValue)
+            },
+            delete: {name: "Delete Configuration Property Value", write: "casConfig", icon: contextMenuIcon("mdi-delete")},
             help: {
                 name: "Configuration Property Help",
                 icon: contextMenuIcon("mdi-help"),
@@ -1043,6 +1229,8 @@ async function initializeConfigurationOperations() {
                 effectiveConfigPropertyValue(propertyName);
             } else if (key === "update") {
                 updateConfigPropertyValueFromRow(context.row, propertySource, propertyName, propertyValue);
+            } else if (key === "encrypt" || key === "decrypt") {
+                toggleConfigPropertyEncryption(key, propertyName, propertySource);
             } else if (key === "delete") {
                 deleteConfigPropertyValueFromRow(context.row, propertySource, propertyName);
             } else if (key === "help") {
@@ -1129,6 +1317,29 @@ async function initializeConfigurationOperations() {
         }
     });
     configPropsTable.clear();
+    initializeDataTableContextMenu({
+        table: configPropsTable,
+        selector: "#configPropsTable tbody tr:not(.palantir-table-group-row)",
+        items: {
+            help: {
+                name: "Configuration Property Help",
+                icon: contextMenuIcon("mdi-help"),
+                visible: () => CasActuatorEndpoints.configurationMetadata()
+            },
+            copy: {name: "Copy Property Name", icon: contextMenuIcon("mdi-content-copy")}
+        },
+        callback: (key, context) => {
+            const propertyName = context.rowData?.propertyName;
+            if (!propertyName) {
+                return;
+            }
+            if (key === "help") {
+                searchForConfigPropertyButton(propertyName);
+            } else if (key === "copy") {
+                copyToClipboard(propertyName);
+            }
+        }
+    });
 
     if (CasActuatorEndpoints.configProps()) {
         $.get(CasActuatorEndpoints.configProps(), response => {
@@ -1141,8 +1352,9 @@ async function initializeConfigurationOperations() {
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
-                            1: `<code>${property}</code>`,
-                            2: `<code>${propValue}</code>`
+                            1: `${palantirCode(property)}`,
+                            2: `${palantirCode(propValue)}`,
+                            propertyName: toKebabCase(property)
                         });
                     }
                 }
@@ -1154,8 +1366,9 @@ async function initializeConfigurationOperations() {
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
                             0: `${sourceBean}`,
-                            1: `<code>${toKebabCase(property)}</code>`,
-                            2: `<code>${propValue}</code>`
+                            1: `${palantirCode(toKebabCase(property))}`,
+                            2: `${palantirCode(propValue)}`,
+                            propertyName: toKebabCase(property)
                         });
                     }
                 }
@@ -1172,45 +1385,64 @@ async function initializeConfigurationOperations() {
         deferRender: true,
         pageLength: 10,
         autoWidth: false,
-        order: [[0, "asc"]],
+        order: [[1, "asc"]],
         columns: [
             {
+                data: null,
+                orderable: false,
+                searchable: false,
+                width: "44px",
+                className: "spring-bean-toggle-cell",
+                render: (data, type, row) => type === "display" && (row.dependencies.length > 0 || row.dependents.length > 0)
+                    ? `<button type="button" class="spring-bean-toggle" aria-expanded="false"
+                               aria-label="Show what ${escapeConfigHtml(row.name)} depends on and what uses it">
+                           <i class="mdi mdi-chevron-right" aria-hidden="true"></i>
+                       </button>`
+                    : ""
+            },
+            {
                 data: "name",
-                width: "22%",
-                render: (data, type) => type === "display"
-                    ? `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>`
-                    : data
+                width: "31%",
+                render: (data, type, row) => {
+                    if (type !== "display") {
+                        return data;
+                    }
+                    const counts = [];
+                    if (row.dependencies.length > 0) {
+                        counts.push(`${row.dependencies.length} ${row.dependencies.length === 1 ? "dependency" : "dependencies"}`);
+                    }
+                    if (row.dependents.length > 0) {
+                        counts.push(`used by ${row.dependents.length}`);
+                    }
+                    return `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>${counts.length > 0
+                        ? `<span class="spring-bean-counts">${counts.join(" · ")}</span>` : ""}`;
+                }
             },
             {
                 data: "type",
-                width: "34%",
+                width: "42%",
                 render: (data, type) => type === "display"
                     ? `<code class="spring-bean-type">${escapeConfigHtml(data)}</code>`
                     : data
             },
             {
                 data: "scope",
-                width: "10%",
-                render: data => escapeConfigHtml(data)
+                width: "12%",
+                render: (data, type) => type === "display"
+                    ? `<span class="spring-bean-scope scope-${escapeConfigHtml(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapeConfigHtml(data || "singleton")}</span>`
+                    : data
             },
             {
                 data: "classification",
-                width: "12%",
+                width: "15%",
                 render: (data, type) => type === "display"
                     ? `<span class="spring-bean-classification classification-${escapeConfigHtml(String(data).toLowerCase())}">${escapeConfigHtml(data)}</span>`
                     : data
             },
             {
                 data: "dependencies",
-                render: (data, type) => {
-                    if (type !== "display") {
-                        return Array.isArray(data) ? data.join(", ") : data;
-                    }
-                    const dependencies = Array.isArray(data) ? data : [];
-                    return dependencies.length > 0
-                        ? `<span class="spring-bean-dependencies">${dependencies.map(escapeConfigHtml).join(", ")}</span>`
-                        : `<span class="text-muted">&mdash;</span>`;
-                }
+                visible: false,
+                render: data => Array.isArray(data) ? data.join(" ") : ""
             }
         ],
         drawCallback: settings => {
@@ -1218,6 +1450,49 @@ async function initializeConfigurationOperations() {
             $("#springBeansTable td").addClass("mdc-data-table__cell");
         }
     });
+
+    /**
+     * The details of a bean shown under its row: the beans it depends on and the beans that depend on it, each a
+     * button that looks that bean up in the table.
+     *
+     * @param {object} bean the bean
+     * @returns {string} the markup
+     */
+    function springBeanDetails(bean) {
+        const list = (title, names, empty) => `
+            <div class="spring-bean-relations">
+                <h5>${title} <span>${names.length}</span></h5>
+                ${names.length > 0
+        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapeConfigHtml(name)}"
+                        title="Find ${escapeConfigHtml(name)}">${escapeConfigHtml(name)}</button>`).join("")}</div>`
+        : `<p class="spring-bean-none">${empty}</p>`}
+            </div>`;
+        return `<div class="spring-bean-details">
+            ${list("Depends on", bean.dependencies, "This bean depends on no other bean.")}
+            ${list("Used by", bean.dependents, "No other bean depends on this one.")}
+        </div>`;
+    }
+
+    $("#springBeansTable tbody")
+        .off("click.palantirBeans")
+        .on("click.palantirBeans", "button.spring-bean-toggle", event => {
+            const tr = $(event.currentTarget).closest("tr");
+            const row = springBeansTable.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass("is-expanded");
+                event.currentTarget.setAttribute("aria-expanded", "false");
+            } else {
+                row.child(springBeanDetails(row.data()), "spring-bean-details-row").show();
+                tr.addClass("is-expanded");
+                event.currentTarget.setAttribute("aria-expanded", "true");
+            }
+        })
+        .on("click.palantirBeans", "button.spring-bean-chip", event => {
+            const name = event.currentTarget.dataset.springBean;
+            springBeansTable.search(name).draw();
+            $("#springBeansTable").closest(".dt-container").find("input[type=search]").val(name);
+        });
 
     function renderSpringBeans() {
         springBeansTable.clear();
@@ -1268,7 +1543,7 @@ async function initializeConfigurationOperations() {
                     return `
                         <span class="spring-condition-source spring-condition-source-${status}">
                             <i class="mdi ${icon}" aria-hidden="true"></i>
-                            <code>${escapeConfigHtml(data)}</code>
+                            ${palantirCode(data)}
                         </span>
                     `.trim();
                 }
@@ -1276,15 +1551,11 @@ async function initializeConfigurationOperations() {
             {
                 data: "condition",
                 width: "26%",
-                render: (data, type) => type === "display"
-                    ? `<code class="spring-condition-name">${escapeConfigHtml(data)}</code>`
-                    : data
+                render: (data, type) => type === "display" ? springConditionLabel(data) : data
             },
             {
                 data: "message",
-                render: (data, type) => type === "display"
-                    ? `<span class="spring-condition-message">${escapeConfigHtml(data || "No condition message provided.")}</span>`
-                    : data
+                render: (data, type) => type === "display" ? springConditionMessage(data) : data
             }
         ],
         drawCallback: settings => {

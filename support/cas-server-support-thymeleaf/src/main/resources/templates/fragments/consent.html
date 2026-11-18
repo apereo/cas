@@ -18,7 +18,7 @@
     </div>
     <h1 class="cas-consent-eyebrow" th:text="${eyebrow}">Authorization</h1>
     <p class="cas-consent-title" th:text="${name}">Example App</p>
-    <p class="cas-consent-lead" th:if="${description}" th:text="${description}">Description</p>
+    <div class="cas-consent-lead" th:if="${description}" th:utext="${#cas.sanitizeHtml(description)}">Description</div>
 </div>
 
 <!--/* One permission row; kind picks the icon set (scope or claim). */-->

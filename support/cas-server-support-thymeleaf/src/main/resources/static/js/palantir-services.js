@@ -1,6 +1,6 @@
 async function initializeServicesOperations() {
     const columnDefinitions = [
-        {visible: true, targets: 0},
+        {visible: true, targets: 0, width: "84px", className: "palantir-application-type"},
         {visible: true, targets: 1},
         {visible: true, targets: 2},
         {visible: true, targets: 3},
@@ -12,35 +12,26 @@ async function initializeServicesOperations() {
         pageLength: 25,
         autoWidth: false,
         columnDefs: columnDefinitions,
+        rowCallback: (row, data) => {
+            row.classList.toggle("is-disabled", PalantirApplicationAccess.isServiceDisabled(data.serviceId));
+            row.classList.toggle("is-checked", PalantirApplicationSelection.has(data.serviceId));
+        },
         drawCallback: settings => {
             $("#applicationsTable tr").addClass("mdc-data-table__row");
             $("#applicationsTable td").addClass("mdc-data-table__cell");
+            PalantirApplicationSelection.refresh();
         }
     });
     applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
-
-    const saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable({
-        pageLength: 25,
-        autoWidth: false,
-        columnDefs: [
-            {width: "15%", targets: 0},
-            {width: "35%", targets: 1},
-            {width: "50%", targets: 2}
-        ],
-        drawCallback: settings => {
-            $("#saml2MetadataProvidersTable tr").addClass("mdc-data-table__row");
-            $("#saml2MetadataProvidersTable td").addClass("mdc-data-table__cell");
-        }
-    });
-    saml2MetadataProvidersTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
+    PalantirApplicationSelection.initialize();
 
     $("#entityHistoryTable").DataTable({
         pageLength: 10,
         autoWidth: false,
-        order: [[2, "asc"]],
+        order: [[3, "asc"]],
         layout: {topStart: null, topEnd: null},
         columnDefs: [
-            {visible: false, type: "num", targets: 2}
+            {visible: false, type: "num", targets: 3}
         ],
         drawCallback: settings => {
             $("#entityHistoryTable tr").addClass("mdc-data-table__row");
@@ -49,49 +40,9 @@ async function initializeServicesOperations() {
     });
 
     initializeApplicationCards();
+    initializeApplicationTypeFilter();
     await fetchServices();
     await initializeFooterButtons();
-
-    let serviceDefinitionsEntries = "";
-    for (let type in PalantirDashboardConfiguration.serviceDefinitions()) {
-        serviceDefinitionsEntries += `<h3>${type} Templates</h3>`;
-        const entries = PalantirDashboardConfiguration.serviceDefinitions()[type];
-        serviceDefinitionsEntries += "<div>";
-        for (const entry of entries) {
-            const definition = JSON.parse(entry);
-            serviceDefinitionsEntries += `<a class="mr-4" name="serviceDefinitionEntry" title="${definition.description}" data-type="${type}" data-id="${definition.id}" href="#">${definition.name}-${definition.id}</a>`;
-        }
-        serviceDefinitionsEntries += "</div>";
-    }
-    $("#serviceTemplatesContainer")
-        .html(serviceDefinitionsEntries)
-        .accordion({
-            collapsible: true,
-            heightStyle: "content"
-        })
-        .tooltip();
-
-    $("a[name=serviceDefinitionEntry]").off().on("click", function () {
-        let type = $(this).data("type");
-        let id = $(this).data("id");
-
-        const entries = PalantirDashboardConfiguration.serviceDefinitions()[type];
-        for (const entry of entries) {
-            const definition = JSON.parse(entry);
-            if (definition.id === id) {
-                const serviceEditor = initializeAceEditor("serviceEditor", "json");
-                serviceEditor.setReadOnly(false);
-                serviceEditor.setValue(JSON.stringify(definition, null, 2));
-                serviceEditor.gotoLine(1);
-            }
-        }
-    });
-
-    if (Object.entries(serviceDefinitionsEntries).length > 0) {
-        $("#serviceTemplatesContainer").show();
-    } else {
-        $("#serviceTemplatesContainer").hide();
-    }
 }
 
 let serviceEditorInstance = null;
@@ -168,6 +119,7 @@ function getEditServiceDialogInstance() {
                         serviceEditorInstance.setValue(draft, -1);
                     }
                     PalantirServiceEditGuard.watch("editor", key, draft !== null);
+                    PalantirServiceEditor.opened(element.attr("newService") === "true", draft !== null);
                 });
             },
             close: () => element.dialog("close")
@@ -176,10 +128,131 @@ function getEditServiceDialogInstance() {
     return editServiceDialogInstance;
 }
 
+/**
+ * The content type the import endpoint expects for a file of application definitions, chosen by its extension.
+ *
+ * @param file the chosen file
+ * @returns {string} the content type
+ */
+function serviceImportContentType(file) {
+    const name = file.name.toLowerCase();
+    if (name.endsWith(".zip")) {
+        return "application/octet-stream";
+    }
+    if (name.endsWith(".yaml") || name.endsWith(".yml")) {
+        return "application/yaml";
+    }
+    return "application/json";
+}
+
+/**
+ * Import a JSON or YAML application definition, or a zip of JSON definitions as exported by Palantir, once the
+ * operator confirms it.
+ *
+ * @param file the chosen file
+ * @returns {Promise<void>} resolved once the import is sent or declined
+ */
+/**
+ * Say why CAS refused an application definition when it said why, and fall back to the usual banner otherwise.
+ *
+ * @param xhr the failed request
+ * @param title what failed
+ */
+function showUnreadableDefinition(xhr, title) {
+    const reason = xhr?.status === 400 ? xhr.responseJSON?.error : null;
+    if (reason) {
+        Swal.fire({
+            icon: "error",
+            title: title,
+            text: `CAS cannot read this definition: ${reason}`
+        });
+    } else {
+        displayBanner(xhr);
+    }
+}
+
+async function importServiceFile(file) {
+    const contentType = serviceImportContentType(file);
+    const archive = contentType === "application/octet-stream";
+    const result = await Swal.fire({
+        titleText: `Import ${file.name}?`,
+        text: archive
+            ? "Every JSON application definition in the archive takes effect immediately, replacing an application with the same id."
+            : "The application takes effect immediately, replacing an application with the same id.",
+        icon: "question",
+        showDenyButton: true,
+        confirmButtonText: "Import",
+        denyButtonText: "Cancel"
+    });
+    if (!result.isConfirmed) {
+        return;
+    }
+    const button = $("button[name=importService]");
+    const wasDisabled = button.prop("disabled");
+    button.prop("disabled", true);
+    const processing = archive ? "CAS is reading and saving the applications in the archive..." : "CAS is reading and saving the application...";
+    PalantirProgress.open(archive ? "Importing applications" : "Importing an application",
+        `Uploading ${file.name}...`, `${file.name} · ${PalantirProgress.size(file.size)}`);
+    try {
+        const request = $.ajax({
+            url: `${CasActuatorEndpoints.registeredServices()}/import`,
+            type: "POST",
+            contentType: contentType,
+            data: file,
+            processData: false,
+            dataType: "text",
+            xhr: () => {
+                const xhr = $.ajaxSettings.xhr();
+                xhr.upload?.addEventListener("progress", event => {
+                    if (event.lengthComputable && event.loaded < event.total) {
+                        PalantirProgress.update(`Uploading ${file.name}...`, event.loaded / event.total * 100);
+                    } else {
+                        PalantirProgress.update(processing);
+                    }
+                });
+                xhr.upload?.addEventListener("load", () => PalantirProgress.update(processing));
+                return xhr;
+            }
+        });
+        await request;
+        PalantirProgress.update("Refreshing the applications...");
+        await Promise.race([
+            new Promise(resolve => fetchServices(() => {
+                updateNavigationSidebar();
+                resolve();
+            })),
+            new Promise(resolve => setTimeout(resolve, 20000))
+        ]);
+        PalantirProgress.close();
+        const id = request.getResponseHeader("id");
+        Swal.fire({
+            title: "Imported",
+            text: archive
+                ? `The applications in ${file.name} are imported.`
+                : `${file.name} is imported${id ? ` as application ${id}` : ""}.`,
+            icon: "success"
+        });
+    } catch (xhr) {
+        PalantirProgress.close();
+        if (xhr?.status === 400) {
+            Swal.fire({
+                title: "Nothing imported",
+                text: `CAS could not read ${file.name} as an application definition.`,
+                icon: "error"
+            });
+        } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
+            console.error("Importing applications failed:", xhr?.status, xhr?.responseText);
+            displayBanner(xhr);
+        }
+    } finally {
+        button.prop("disabled", wasDisabled);
+    }
+}
+
 async function initializeServiceButtons() {
     PalantirServiceEditGuard.initialize();
     getEditServiceDialogInstance();
-    serviceEditorInstance = initializeAceEditor("serviceEditor");
+    serviceEditorInstance = PalantirServiceEditor.editor();
 
     function viewEntityHistory(serviceId) {
         PalantirServiceHistory.open(serviceId);
@@ -189,7 +262,7 @@ async function initializeServiceButtons() {
         table: $("#entityHistoryTable").DataTable(),
         selector: "#entityHistoryTable tbody tr",
         items: {
-            restore: {name: "Restore Version", icon: contextMenuIcon("mdi-history")}
+            restore: {name: "Restore Version", write: "entityHistory", icon: contextMenuIcon("mdi-history")}
         },
         callback: (key, context) => {
             if (key === "restore") {
@@ -228,9 +301,9 @@ async function initializeServiceButtons() {
                             url: `${CasActuatorEndpoints.registeredServices()}/${serviceId}`,
                             type: "DELETE",
                             headers: {"Content-Type": "application/json"},
-                            success: response => {
-                                let applicationsTable = $("#applicationsTable").DataTable();
-                                applicationsTable.row(context.$row).remove().draw();
+                            success: async () => {
+                                $("#applicationsTable").DataTable().row(context.$row).remove().draw();
+                                await fetchServices(() => updateNavigationSidebar());
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error deleting resource:", error);
@@ -250,6 +323,7 @@ async function initializeServiceButtons() {
                     return;
                 }
                 const value = JSON.stringify(response, null, 4);
+                PalantirServiceEditGuard.remember(PalantirServiceEditGuard.key("editor", response.id), response);
                 serviceEditorInstance.setValue(value, -1);
                 serviceEditorInstance.gotoLine(1);
                 const editServiceDialogElement = document.getElementById("editServiceDialog");
@@ -262,7 +336,7 @@ async function initializeServiceButtons() {
         }
     }
 
-    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", function () {
+    $("button[name=saveService],button[name=saveServiceWizard]").off().on("click", async function () {
         if (CasActuatorEndpoints.registeredServices()) {
             let isNewService = false;
             let value = "";
@@ -271,6 +345,9 @@ async function initializeServiceButtons() {
             const saveButton = $(this);
             switch (saveButton.attr("name")) {
             case "saveServiceWizard":
+                if (!PalantirWizardValidity.report()) {
+                    return;
+                }
                 const editServiceWizardDialogElement = document.getElementById("editServiceWizardDialog");
                 isNewService = $(editServiceWizardDialogElement).attr("newService") === "true";
                 const wizardEditor = initializeAceEditor("wizardServiceEditor");
@@ -285,13 +362,21 @@ async function initializeServiceButtons() {
                 break;
             }
 
-            Swal.fire({
-                title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
-                text: "Once updated, you may not be able to revert this entry.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
-            })
+            const mode = saveButton.attr("name") === "saveServiceWizard" ? "wizard" : "editor";
+            const conflict = isNewService ? "save" : await PalantirServiceEditGuard.checkConflict(mode, value);
+            if (conflict === "cancel") {
+                return;
+            }
+            const confirmation = conflict === "overwrite"
+                ? Promise.resolve({isConfirmed: true})
+                : Swal.fire({
+                    title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
+                    text: "Once updated, you may not be able to revert this entry.",
+                    icon: "question",
+                    showConfirmButton: true,
+                    showDenyButton: true
+                });
+            confirmation
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -300,7 +385,7 @@ async function initializeServiceButtons() {
                             contentType: "application/json",
                             data: value,
                             success: async response => {
-                                PalantirServiceEditGuard.saved(saveButton.attr("name") === "saveServiceWizard" ? "wizard" : "editor");
+                                PalantirServiceEditGuard.saved(mode);
                                 dialogInstance["close"]();
                                 await fetchServices(() => {
                                     let newServiceId = response.id;
@@ -314,7 +399,12 @@ async function initializeServiceButtons() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Update failed:", error);
-                                displayBanner(xhr);
+                                const reason = xhr?.status === 400 ? xhr.responseJSON?.error : null;
+                                if (mode === "editor" && reason) {
+                                    PalantirServiceEditor.showProblem("Not saved", `CAS cannot read this definition: ${reason}`, PalantirServiceEditor.rowOf(reason));
+                                } else {
+                                    showUnreadableDefinition(xhr, "The application was not saved");
+                                }
                             }
                         });
                     }
@@ -358,9 +448,26 @@ async function initializeServiceButtons() {
         items: {
             editPlain: {name: "Edit in Editor", icon: contextMenuIcon("mdi-pencil")},
             editWizard: {name: "Edit in Wizard", icon: contextMenuIcon("mdi-wizard-hat")},
-            duplicate: {name: "Duplicate Application", icon: contextMenuIcon("mdi-content-duplicate")},
-            delete: {name: "Delete Service Definition", icon: contextMenuIcon("mdi-delete")},
+            duplicate: {name: "Duplicate Application", write: "registeredServices", icon: contextMenuIcon("mdi-content-duplicate")},
+            disable: {
+                name: "Disable Application",
+                write: "registeredServices",
+                icon: contextMenuIcon("mdi-cancel"),
+                visible: context => !PalantirApplicationAccess.isServiceDisabled(context.rowData.serviceId)
+            },
+            enable: {
+                name: "Enable Application",
+                write: "registeredServices",
+                icon: contextMenuIcon("mdi-check-circle-outline"),
+                visible: context => PalantirApplicationAccess.isServiceDisabled(context.rowData.serviceId)
+            },
+            delete: {name: "Delete Service Definition", write: "registeredServices", icon: contextMenuIcon("mdi-delete")},
             sep1: "---------",
+            samlMetadataHealth: {
+                name: "Check Metadata Health",
+                icon: contextMenuIcon("mdi-heart-pulse"),
+                visible: context => PalantirSamlMetadataHealth.applies(registeredServicesById.get(String(context.rowData.serviceId)))
+            },
             history: {
                 name: "View Change History",
                 icon: contextMenuIcon("mdi-history"),
@@ -383,12 +490,16 @@ async function initializeServiceButtons() {
             editService(serviceId, true);
         } else if (key === "duplicate") {
             duplicateService(serviceId);
+        } else if (key === "disable" || key === "enable") {
+            PalantirApplicationAccess.change(serviceId, key === "disable");
         } else if (key === "delete") {
             deleteService(context);
         } else if (key === "history") {
             viewEntityHistory(serviceId);
         } else if (key === "changelog") {
             viewEntityChangelog(serviceId);
+        } else if (key === "samlMetadataHealth") {
+            PalantirSamlMetadataHealth.open(serviceId);
         }
     };
 }
@@ -400,10 +511,6 @@ async function fetchServices(callback) {
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
             registeredServicesById.clear();
-            let metadataSourcesCount = 0;
-
-            let saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable();
-            saml2MetadataProvidersTable.clear();
 
             for (const service of response[1]) {
                 registeredServicesById.set(String(service.id), service);
@@ -426,53 +533,46 @@ async function fetchServices(callback) {
                     serviceCountByType[4]++;
                 }
 
-                let serviceDetails = `<span serviceId="${service.id}" title='${service.name}'>${service.name}</span>`;
-                serviceDetails += "<p>";
-                if (service.informationUrl) {
-                    serviceDetails += `<a target="_blank" rel="noopener" href='${service.informationUrl}'>Information URL</a>`;
+                const name = escapePalantirMarkup(service.name ?? "");
+                const links = [
+                    applicationLink(service.informationUrl, "Information URL"),
+                    applicationLink(service.privacyUrl, "Privacy URL")
+                ].filter(Boolean);
+                let serviceDetails = `<span serviceId="${service.id}" title="${name}">${name}</span>`;
+                if (PalantirApplicationAccess.isDisabled(service.accessStrategy)) {
+                    serviceDetails += " <span class=\"palantir-status-tag is-disabled\"><i class=\"mdi mdi-cancel\" aria-hidden=\"true\"></i>Disabled</span>";
                 }
-                if (service.privacyUrl) {
-                    serviceDetails += `&nbsp;<a target="_blank" rel="noopener" href='${service.privacyUrl}'>Privacy URL</a>`;
+                if (links.length > 0) {
+                    serviceDetails += `<div class="palantir-application-links">${links.join("")}</div>`;
                 }
 
-                let serviceIdDetails = `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`;
-                if (serviceClass.includes("SamlRegisteredService")) {
-                    serviceIdDetails += `<br><p><a href='${service.metadataLocation}' target='_blank'>Metadata Location</a>`;
+                let serviceIdDetails = `<span serviceId="${service.id}" class="text-wrap">${escapePalantirMarkup(service.serviceId ?? "")}</span>`;
+                const metadataLink = serviceClass.includes("SamlRegisteredService")
+                    ? samlMetadataLocationMarkup(service.metadataLocation)
+                    : null;
+                if (metadataLink) {
+                    serviceIdDetails += `<div class="palantir-application-links">${metadataLink}</div>`;
                 }
 
                 applicationsTable.row.add({
-                    0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
+                    0: `${PalantirApplicationSelection.checkbox(service.id, service.name ?? service.id)}<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
                     1: `${serviceDetails}`,
                     2: `${serviceIdDetails}`,
-                    3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
+                    3: `<span serviceId='${service.id}' class="text-wrap palantir-application-description">${renderPalantirDescription(service.description)}</span>`,
                     4: `${service.id}`,
                     serviceId: service.id
                 });
-
-                if (serviceClass.includes("SamlRegisteredService")) {
-                    const metadataLocation = service.metadataLocation;
-                    saml2MetadataProvidersTable.row.add({
-                        0: `<span serviceId='${service.id}' class="text-wrap">${service.id ?? ""}</span>`,
-                        1: `<span serviceId='${service.id}' class="text-wrap">${service.name ?? ""}</span>`,
-                        2: metadataLocation
-                    });
-                    metadataSourcesCount++;
-                }
-            }
-            const metadataSourcesTab = $("#saml2metadataproviders").parent().add("#saml2metadataproviders");
-            if (metadataSourcesCount > 0) {
-                showElements(metadataSourcesTab);
-            } else {
-                hideElements(metadataSourcesTab);
             }
 
-            applicationsTable.on("draw", async () => {
+            applicationsTable.off("draw.palantirServiceButtons").on("draw.palantirServiceButtons", async () => {
                 await initializeServiceButtons();
             });
 
-            applicationsTable.search("").draw();
-            saml2MetadataProvidersTable.search("").draw();
+            updateApplicationTypeFilter();
+            applicationsTable.draw();
+            prepareRegisteredServiceWizardWhenIdle();
 
+            $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
             if (servicesChart) {
                 servicesChart.data.datasets[0].data = serviceCountByType;
                 servicesChart.update();
@@ -483,8 +583,11 @@ async function fetchServices(callback) {
             }
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
             displayBanner(xhr);
         });
+    } else {
+        $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", true);
     }
 }
 
@@ -503,6 +606,15 @@ async function initializeFooterButtons() {
         }
     });
 
+    $("button[name=fillServiceWizardFromMetadata]").off().on("click", () => PalantirSamlMetadataImport.open());
+
+    $("#saveServiceWizardHint").off("click").on("click", () => PalantirWizardValidity.report());
+    let wizardValidityTimer = null;
+    $("#editServiceWizardDialog").off("input.palantirValidity change.palantirValidity")
+        .on("input.palantirValidity change.palantirValidity", "input, select, textarea", () => {
+            clearTimeout(wizardValidityTimer);
+            wizardValidityTimer = setTimeout(() => PalantirWizardValidity.refresh(), 150);
+        });
     $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
         const editor = initializeAceEditor("wizardServiceEditor");
         copyToClipboard(editor.getValue());
@@ -537,6 +649,10 @@ async function initializeFooterButtons() {
                     contentType: "application/json",
                     data: editor.getValue(),
                     success: response => {
+                        if (response === false || response === "false") {
+                            Swal.fire({icon: "error", title: "The application definition is not valid", text: "CAS cannot read this definition."});
+                            return;
+                        }
                         const message = `
                             The given application definition is valid and can be parsed by CAS. Please note that validity
                             does not imply behavioral correctness. It only indicates that the generated
@@ -547,7 +663,7 @@ async function initializeFooterButtons() {
                     },
                     error: (xhr, status, error) => {
                         console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                        displayBanner(xhr);
+                        showUnreadableDefinition(xhr, "The application definition is not valid");
                     }
                 });
             }
@@ -561,7 +677,7 @@ async function initializeFooterButtons() {
     $("button[name=newServicePlain]").off().on("click", () => {
         if (CasActuatorEndpoints.registeredServices()) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
-            const editor = initializeAceEditor("serviceEditor", "json");
+            const editor = PalantirServiceEditor.editor();
             editor.setValue("");
             editor.gotoLine(1);
 
@@ -570,39 +686,20 @@ async function initializeFooterButtons() {
         }
     });
 
+    $("#serviceFileInput")
+        .attr("accept", ".json,.yaml,.yml,.zip")
+        .off("change.import")
+        .on("change.import", event => {
+            const file = event.target.files[0];
+            $(event.target).val("");
+            if (file) {
+                importServiceFile(file);
+            }
+        });
+
     $("button[name=importService]").off().on("click", () => {
         if (CasActuatorEndpoints.registeredServices()) {
-            $("#serviceFileInput").click();
-            $("#serviceFileInput").change(event =>
-                Swal.fire({
-                    title: "Are you sure you want to import this entry?",
-                    text: "Once imported, the entry should take immediate effect.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
-                })
-                    .then((result) => {
-                        if (result.isConfirmed) {
-                            const file = event.target.files[0];
-                            const reader = new FileReader();
-                            reader.readAsText(file);
-                            reader.onload = e => {
-                                const fileContent = e.target.result;
-
-                                $.ajax({
-                                    url: `${CasActuatorEndpoints.registeredServices()}`,
-                                    type: "PUT",
-                                    contentType: "application/json",
-                                    data: fileContent,
-                                    success: response => $("#reloadAll").click(),
-                                    error: (xhr, status, error) => {
-                                        console.error("File upload failed:", error);
-                                        displayBanner(xhr);
-                                    }
-                                });
-                            };
-                        }
-                    }));
+            $("#serviceFileInput").trigger("click");
         }
     });
 
@@ -656,6 +753,19 @@ const registeredServicesById = new Map();
 
 const APPLICATIONS_VIEW_STORAGE_KEY = "PalantirApplicationsView";
 
+const APPLICATIONS_TYPE_STORAGE_KEY = "PalantirApplicationsType";
+
+const APPLICATION_TYPES = [
+    {key: "cas", label: "CAS"},
+    {key: "saml", label: "SAML2"},
+    {key: "oauth", label: "OAuth"},
+    {key: "oidc", label: "OpenID Connect"},
+    {key: "wsfed", label: "WS-Federation"},
+    {key: "other", label: "Other"}
+];
+
+let applicationTypeFilter = storedApplicationTypeFilter();
+
 let applicationCardsSelection = "";
 
 /**
@@ -680,10 +790,107 @@ function selectedApplicationRows() {
  * @param value the text to escape
  * @returns {string} the escaped text
  */
+/**
+ * A link from an application's row to one of its pages, for web addresses only.
+ *
+ * @param url the address
+ * @param label the link text
+ * @returns {string|null} the link, or null when there is no web address
+ */
+function applicationLink(url, label) {
+    if (typeof url !== "string" || !/^https?:\/\//i.test(url.trim())) {
+        return null;
+    }
+    return `<a target="_blank" rel="noopener noreferrer" href="${escapePalantirMarkup(url.trim())}">${escapePalantirMarkup(label)}</a>`;
+}
+
+const SAML_METADATA_SOURCES = {
+    mongodb: "MongoDB",
+    jdbc: "JDBC",
+    git: "Git",
+    redis: "Redis",
+    dynamodb: "DynamoDB",
+    awss3: "Amazon S3",
+    rest: "REST",
+    json: "JSON",
+    file: "File",
+    classpath: "Classpath"
+};
+
+/**
+ * Show where a SAML2 application reads its metadata from. A web address is a link to the metadata; a metadata
+ * manager source such as <code>mongodb://</code> is tagged with its kind and links to the metadata management
+ * section under Protocols; a file or classpath location is tagged with its kind.
+ *
+ * @param location the metadata location
+ * @returns {string|null} the markup, or null when there is no location
+ */
+function samlMetadataLocationMarkup(location) {
+    const value = typeof location === "string" ? location.trim() : "";
+    if (value === "") {
+        return null;
+    }
+    const link = applicationLink(value, "Metadata Location");
+    if (link) {
+        return link;
+    }
+    const scheme = (value.match(/^([a-z][a-z0-9+.-]*):/i)?.[1] ?? "").toLowerCase();
+    const kind = SAML_METADATA_SOURCES[scheme] ?? (scheme === "" ? "Location" : scheme.toUpperCase());
+    const tag = `<span class="palantir-tag palantir-metadata-source" title="${escapePalantirMarkup(value)}">`
+        + `<i class="mdi mdi-database-outline" aria-hidden="true"></i>${escapePalantirMarkup(kind)}</span>`;
+    if (!value.startsWith(`${scheme}://`) || !CasActuatorEndpoints.samlIdpRegisteredServiceMetadata() || $("#saml2protocol").length === 0) {
+        return tag;
+    }
+    return `${tag}<a href="#" data-saml-metadata-manager="${escapePalantirMarkup(`${scheme}://`)}"
+        title="Open the ${escapePalantirMarkup(kind)} metadata manager under Protocols">Metadata Location</a>`;
+}
+
 function escapePalantirMarkup(value) {
     return String(value ?? "").replace(/[&<>"']/g, character => ({
         "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
     })[character]);
+}
+
+/**
+ * Render a registered service description, which the wizard's editor keeps as HTML, as safe markup: paragraphs, line
+ * breaks and bold, italic and underlined text are kept without attributes, scripts and styles are dropped, and every
+ * other element is replaced by its text, so a description from metadata or dynamic registration cannot inject markup.
+ *
+ * @param value the description
+ * @returns {string} the markup to show
+ */
+function renderPalantirDescription(value) {
+    const allowed = new Set(["P", "BR", "B", "STRONG", "I", "EM", "U"]);
+    const dropped = new Set(["SCRIPT", "STYLE", "TEMPLATE", "NOSCRIPT"]);
+    const copy = (from, to) => from.childNodes.forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE) {
+            to.append(node.textContent);
+        } else if (node.nodeType === Node.ELEMENT_NODE && !dropped.has(node.tagName)) {
+            if (allowed.has(node.tagName)) {
+                const element = document.createElement(node.tagName.toLowerCase());
+                copy(node, element);
+                to.append(element);
+            } else {
+                copy(node, to);
+            }
+        }
+    });
+    const target = document.createElement("div");
+    copy(new DOMParser().parseFromString(String(value ?? ""), "text/html").body, target);
+    return target.innerHTML;
+}
+
+/**
+ * The text of a registered service description, without its markup, for search and tooltips.
+ *
+ * @param value the description
+ * @returns {string} the text
+ */
+function describePalantirDescription(value) {
+    const body = new DOMParser().parseFromString(String(value ?? ""), "text/html").body;
+    body.querySelectorAll("script, style, template, noscript").forEach(element => element.remove());
+    body.querySelectorAll("p, br").forEach(element => element.after(" "));
+    return body.textContent.replace(/\s+/g, " ").trim();
 }
 
 /**
@@ -766,6 +973,83 @@ function updateApplicationsSummary() {
 }
 
 /**
+ * The type of applications the operator last chose to show, or all.
+ *
+ * @returns {string} a type key, or all
+ */
+function storedApplicationTypeFilter() {
+    try {
+        return window.localStorage.getItem(APPLICATIONS_TYPE_STORAGE_KEY) || "all";
+    } catch (error) {
+        return "all";
+    }
+}
+
+/**
+ * Show only the applications of one type, or all of them, and remember the choice.
+ *
+ * The table filters its rows, so its paging and the card view drawn from it follow.
+ *
+ * @param type a type key, or all
+ */
+function setApplicationTypeFilter(type) {
+    applicationTypeFilter = type;
+    try {
+        window.localStorage.setItem(APPLICATIONS_TYPE_STORAGE_KEY, type);
+    } catch (error) {
+        console.debug("Palantir could not persist the applications type filter", error);
+    }
+    $("#applicationsTypeFilter button[data-application-type]").each(function () {
+        $(this).attr("aria-pressed", String($(this).data("application-type") === type));
+    });
+    if ($.fn.dataTable.isDataTable("#applicationsTable")) {
+        $("#applicationsTable").DataTable().draw();
+    }
+}
+
+/**
+ * List the types of the registered applications, with how many of each, as the choices of the type filter.
+ *
+ * The filter is hidden while the registry holds a single type, and a chosen type that no application has any more
+ * falls back to all.
+ */
+function updateApplicationTypeFilter() {
+    const counts = new Map();
+    for (const service of registeredServicesById.values()) {
+        const key = applicationProtocolOf(service["@class"]).key;
+        counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    if (applicationTypeFilter !== "all" && !counts.has(applicationTypeFilter)) {
+        applicationTypeFilter = "all";
+    }
+    const choices = [{key: "all", label: "All", count: registeredServicesById.size}]
+        .concat(APPLICATION_TYPES.filter(type => counts.has(type.key)).map(type => ({...type, count: counts.get(type.key)})));
+    $("#applicationsTypeFilter")
+        .html(choices.map(choice => `
+            <button type="button" data-application-type="${choice.key}" aria-pressed="${choice.key === applicationTypeFilter}">
+                ${choice.key === "all" ? "" : `<span class="palantir-type-filter__dot is-${choice.key}" aria-hidden="true"></span>`}
+                ${escapePalantirMarkup(choice.label)}<span class="palantir-type-filter__count">${choice.count}</span>
+            </button>`).join(""))
+        .prop("hidden", counts.size < 2);
+}
+
+/**
+ * Wire the type filter: a search function that keeps the applications table to the chosen type, and its buttons.
+ */
+function initializeApplicationTypeFilter() {
+    if (!$.fn.dataTable.ext.search.some(search => search.palantirApplicationType)) {
+        const search = (settings, data, index, rowData) => applicationTypeFilter === "all"
+            || new $.fn.dataTable.Api(settings).table().node().id !== "applicationsTable"
+            || applicationProtocolOf(registeredServicesById.get(String(rowData?.serviceId))?.["@class"]).key === applicationTypeFilter;
+        search.palantirApplicationType = true;
+        $.fn.dataTable.ext.search.push(search);
+    }
+    $("#applicationsTypeFilter").off("click").on("click", "button[data-application-type]", event => {
+        setApplicationTypeFilter(String($(event.currentTarget).data("application-type")));
+    });
+}
+
+/**
  * Draw the card view from the rows the applications table currently shows.
  *
  * The table stays the source: its search, paging and the selected row decide which cards appear
@@ -792,8 +1076,9 @@ function renderApplicationCards() {
         if (service.privacyUrl) {
             links.push(`<a href="${escapePalantirMarkup(service.privacyUrl)}" target="_blank" rel="noopener">Privacy URL</a>`);
         }
-        if (service.metadataLocation) {
-            links.push(`<a href="${escapePalantirMarkup(service.metadataLocation)}" target="_blank" rel="noopener">Metadata Location</a>`);
+        const metadataLocation = samlMetadataLocationMarkup(service.metadataLocation);
+        if (metadataLocation) {
+            links.push(metadataLocation);
         }
         const tags = [];
         if (service.evaluationOrder !== undefined && service.evaluationOrder !== null) {
@@ -803,9 +1088,15 @@ function renderApplicationCards() {
             tags.push(`<span class="palantir-tag">Client ${escapePalantirMarkup(service.clientId)}</span>`);
         }
         const selected = node && node.classList.contains("selected");
+        const disabled = PalantirApplicationAccess.isDisabled(service.accessStrategy);
+        if (disabled) {
+            tags.unshift("<span class=\"palantir-status-tag is-disabled\"><i class=\"mdi mdi-cancel\" aria-hidden=\"true\"></i>Disabled</span>");
+        }
+        const checked = PalantirApplicationSelection.has(rowData.serviceId);
         return `
-            <article class="palantir-application-card${selected ? " is-selected" : ""}" data-service-id="${escapePalantirMarkup(rowData.serviceId)}">
+            <article class="palantir-application-card${selected ? " is-selected" : ""}${disabled ? " is-disabled" : ""}${checked ? " is-checked" : ""}" data-service-id="${escapePalantirMarkup(rowData.serviceId)}">
                 <header class="palantir-application-card-header">
+                    ${PalantirApplicationSelection.checkbox(rowData.serviceId, name)}
                     <span class="palantir-protocol-badge is-${protocol.key}" title="${escapePalantirMarkup(service["@class"])}">${escapePalantirMarkup(protocol.short)}</span>
                     <div class="palantir-application-card-title">
                         <h4>${escapePalantirMarkup(name)}</h4>
@@ -817,7 +1108,7 @@ function renderApplicationCards() {
                     </button>
                 </header>
                 <code class="palantir-application-card-pattern" title="${escapePalantirMarkup(service.serviceId)}">${escapePalantirMarkup(service.serviceId)}</code>
-                ${service.description ? `<p class="palantir-application-card-description">${escapePalantirMarkup(service.description)}</p>` : ""}
+                ${describePalantirDescription(service.description) ? `<div class="palantir-application-card-description">${renderPalantirDescription(service.description)}</div>` : ""}
                 ${tags.length > 0 || links.length > 0 ? `<div class="palantir-application-card-tags">${tags.join("")}${links.join("")}</div>` : ""}
                 <footer class="palantir-application-card-actions">
                     <button type="button" class="palantir-button is-primary" data-application-action="editWizard">
@@ -831,7 +1122,11 @@ function renderApplicationCards() {
     });
     if (cards.length === 0) {
         const searching = table.search() !== "";
-        container.html(`<p class="palantir-empty-state">${searching ? "No application matches that search." : "No applications are registered yet."}</p>`);
+        const filtered = applicationTypeFilter !== "all";
+        const message = searching || filtered
+            ? `No application matches ${searching && filtered ? "that search and type" : searching ? "that search" : "that type"}.`
+            : "No applications are registered yet.";
+        container.html(`<p class="palantir-empty-state">${message}</p>`);
     } else {
         container.html(cards.join(""));
     }
@@ -864,12 +1159,14 @@ function initializeApplicationCards() {
     if (tableRow.length > 0) {
         $("#applicationsCards").insertAfter(tableRow);
     }
+    $(document)
+        .off("click.palantirSamlMetadataManager")
+        .on("click.palantirSamlMetadataManager", "[data-saml-metadata-manager]", event => {
+            event.preventDefault();
+            showSamlMetadataManager(String($(event.currentTarget).data("saml-metadata-manager")));
+        });
     $("#applicationsCardsView, #applicationsTableView").off("click").on("click", event => {
         showApplicationsView($(event.currentTarget).data("applications-view"));
-    });
-
-    $("#applications-tabs").off("tabsactivate.palantirCards").on("tabsactivate.palantirCards", (event, ui) => {
-        $(".palantir-view-switch").toggleClass("d-none", !ui.newPanel.is("#applications-tab"));
     });
 
     $("#applicationsCards").off("click").on("click", "[data-application-action]", event => {

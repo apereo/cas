@@ -363,8 +363,10 @@ public class CasReportsAutoConfiguration {
         public StatisticsEndpoint statisticsReportEndpoint(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final ObjectProvider<TicketRegistry> ticketRegistry,
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final ObjectProvider<TicketCatalog> ticketCatalog,
             final CasConfigurationProperties casProperties) {
-            return new StatisticsEndpoint(ticketRegistry, casProperties);
+            return new StatisticsEndpoint(ticketRegistry, ticketCatalog, casProperties);
         }
 
         @Bean

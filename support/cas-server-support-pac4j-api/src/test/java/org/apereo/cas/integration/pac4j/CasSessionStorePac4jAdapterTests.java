@@ -94,8 +94,6 @@ class CasSessionStorePac4jAdapterTests {
         void setup() {
             val cookieValueManager = new NoOpCookieValueManager(tenantExtractor);
 
-            ticketRegistry.deleteAll();
-
             val cookie = casProperties.getAuthn().getPac4j().getCore().getSessionReplication().getCookie();
             cookie.setName("DISSESSIONxxx");
             this.cookieGenerator = CookieUtils.buildCookieRetrievingGenerator(cookie, cookieValueManager);

@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.integration.autoconfigure.IntegrationAutoConfiguration;
 import org.springframework.boot.integration.autoconfigure.IntegrationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
@@ -455,6 +456,7 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
 
     @Import(BaseTicketRegistryTests.SharedTestConfiguration.class)
     @ImportAutoConfiguration({
+        IntegrationAutoConfiguration.class,
         CasJpaTicketRegistryAutoConfiguration.class,
         CasHibernateJpaAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class,

@@ -13,7 +13,11 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.google.common.primitives.Longs;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,19 +27,28 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.criterion.SatisfyAnyCriterion;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,17 +72,21 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
 
     private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
+    private final ObjectProvider<HttpClient> httpClient;
+
     public SamlRegisteredServiceCachedMetadataEndpoint(
         final CasConfigurationProperties casProperties,
         final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
         final ObjectProvider<ServicesManager> servicesManager,
         final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
+        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
+        final ObjectProvider<HttpClient> httpClient) {
         super(casProperties, openSamlConfigBean.getObject().getApplicationContext());
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
         this.openSamlConfigBean = openSamlConfigBean;
+        this.httpClient = httpClient;
     }
 
     /**
@@ -215,6 +232,110 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         body.put("statistics", resolver.getStatistics());
         body.put("entries", resolver.getCachedEntries());
         return ResponseEntity.ok(body);
+    }
+
+    /**
+     * Read the metadata of SAML2 service providers from a URL, for an application that is not registered yet. The
+     * metadata is downloaded with the HTTP client the metadata resolvers use and parsed, and nothing is cached,
+     * stored as a backup or registered; its signature and validity are not checked, since nothing is trusted on
+     * its strength. Only http and https locations are read.
+     *
+     * @param metadataLocation the http or https URL of the metadata
+     * @param entityId         the entity id of the service provider to read, when the metadata is an aggregate
+     * @return the entity ids of the service providers the metadata holds and, when it holds one or the entity id
+     * names one of them, the metadata of that service provider; or the reason the metadata could not be read
+     */
+    @GetMapping(path = "/preview", produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON
+    })
+    @Operation(summary = "Read the metadata of SAML2 service providers from an http or https URL without registering, caching or storing it. "
+        + "The response lists the service providers the metadata holds and, when it holds one or an entity id names one of them, "
+        + "carries the metadata of that service provider",
+        parameters = {
+            @Parameter(in = ParameterIn.QUERY, name = "metadataLocation", required = true, description = "The http or https URL of the metadata"),
+            @Parameter(in = ParameterIn.QUERY, name = "entityId", description = "The entity id of the service provider to read from an aggregate")
+        })
+    public ResponseEntity<Map<String, Object>> previewMetadata(
+        @RequestParam final String metadataLocation,
+        @Nullable
+        @RequestParam(required = false) final String entityId) {
+        try {
+            val location = toReadableMetadataLocation(metadataLocation);
+            val root = SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), downloadMetadata(location), XMLObject.class);
+            val providers = root != null ? findServiceProviders(root) : List.<EntityDescriptor>of();
+            if (providers.isEmpty()) {
+                return previewFailure("The metadata at %s holds no SAML2 service provider".formatted(location));
+            }
+            var selected = Optional.<EntityDescriptor>empty();
+            if (StringUtils.isNotBlank(entityId)) {
+                selected = providers.stream().filter(provider -> entityId.equals(provider.getEntityID())).findFirst();
+                if (selected.isEmpty()) {
+                    return previewFailure("The metadata at %s holds no SAML2 service provider %s".formatted(location, entityId));
+                }
+            } else if (providers.size() == 1) {
+                selected = Optional.of(providers.getFirst());
+            }
+            val body = new LinkedHashMap<String, Object>();
+            body.put("metadataLocation", location);
+            body.put("entities", providers.stream().map(EntityDescriptor::getEntityID).filter(Objects::nonNull).toList());
+            if (selected.isPresent()) {
+                val provider = selected.get();
+                body.put("entityId", StringUtils.defaultString(provider.getEntityID()));
+                body.put("metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), provider).toString());
+            }
+            return ResponseEntity.ok(body);
+        } catch (final Exception e) {
+            LoggingUtils.warn(LOGGER, e);
+            return previewFailure(StringUtils.defaultIfBlank(e.getMessage(), e.getClass().getSimpleName()));
+        }
+    }
+
+    protected byte[] downloadMetadata(final String location) throws Exception {
+        HttpResponse response = null;
+        try {
+            val execution = HttpExecutionRequest.builder()
+                .method(HttpMethod.GET)
+                .url(location)
+                .httpClient(httpClient.getObject())
+                .maximumRetryAttempts(casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getMaximumRetryAttempts())
+                .build();
+            response = HttpUtils.execute(execution);
+            if (response == null) {
+                throw new SamlException("%s did not answer".formatted(location));
+            }
+            if (!HttpStatusCode.valueOf(response.getCode()).is2xxSuccessful()) {
+                throw new SamlException("%s answered HTTP %s".formatted(location, response.getCode()));
+            }
+            return EntityUtils.toByteArray(((HttpEntityContainer) response).getEntity());
+        } finally {
+            HttpUtils.close(response);
+        }
+    }
+
+    private static String toReadableMetadataLocation(final String metadataLocation) {
+        val uri = URI.create(metadataLocation.trim());
+        if (!Strings.CI.equalsAny(uri.getScheme(), "http", "https") || StringUtils.isBlank(uri.getHost())) {
+            throw new IllegalArgumentException("Metadata can only be read from an http or https URL");
+        }
+        return uri.toString();
+    }
+
+    private static List<EntityDescriptor> findServiceProviders(final XMLObject root) {
+        if (root instanceof final EntityDescriptor entity) {
+            return entity.getRoleDescriptors(SPSSODescriptor.DEFAULT_ELEMENT_NAME).isEmpty() ? List.of() : List.of(entity);
+        }
+        val providers = new ArrayList<EntityDescriptor>();
+        if (root instanceof final EntitiesDescriptor entities) {
+            entities.getEntityDescriptors().forEach(entity -> providers.addAll(findServiceProviders(entity)));
+            entities.getEntitiesDescriptors().forEach(group -> providers.addAll(findServiceProviders(group)));
+        }
+        return providers;
+    }
+
+    private static ResponseEntity<Map<String, Object>> previewFailure(final String reason) {
+        return ResponseEntity.badRequest().body(Map.of("error", reason));
     }
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {

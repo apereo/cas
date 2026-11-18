@@ -1,5 +1,7 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import lombok.val;
 import module java.base;
@@ -88,5 +90,31 @@ class AllAuditResourceResolverTests extends BaseAuditResolverTests {
         assertEquals(0, resolver.resolveFrom(jp, (Object) null).length);
         val returnValue = new Event(this, "success", new LocalAttributeMap<>("name", "value"));
         verifyAuditResourceResolver(resolver, jp, returnValue);
+        assertNull(resolver.resolveTarget(jp, returnValue));
+        val provider = new LocalAttributeMap<Object>("org.apereo.cas.authentication.MultifactorAuthenticationProvider", "provider");
+        assertEquals("mfa-duo", resolver.resolveTarget(jp, new Event(this, "mfa-duo", provider)));
+        assertEquals("mfa-duo", resolver.resolveTarget(jp, List.of(new Event(this, "mfa-duo", provider))));
+        assertNull(resolver.resolveTarget(jp, (Object) null));
+        assertNull(resolver.resolveTarget(jp, "text"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(AuditTrailManager.AuditFormats.class)
+    void verifyApplicationTarget(final AuditTrailManager.AuditFormats format) {
+        val resolver = new ShortenedReturnValueAsStringAuditResourceResolver();
+        resolver.setAuditFormat(format);
+        val saved = mock(RegisteredService.class);
+        when(saved.getId()).thenReturn(1001L);
+        val unsaved = mock(RegisteredService.class);
+        when(unsaved.getId()).thenReturn(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
+        val jp = mock(JoinPoint.class);
+        when(jp.getArgs()).thenReturn(new Object[]{saved});
+        assertEquals("1001", resolver.resolveTarget(jp, saved));
+        assertNull(resolver.resolveTarget(jp, unsaved));
+        assertEquals("1001", resolver.resolveTarget(jp, new IllegalArgumentException("failed")));
+        when(jp.getArgs()).thenReturn(new Object[]{unsaved});
+        assertNull(resolver.resolveTarget(jp, new IllegalArgumentException("failed")));
+        when(jp.getArgs()).thenReturn(new Object[]{1001L});
+        assertNull(resolver.resolveTarget(jp, new IllegalArgumentException("failed")));
     }
 }

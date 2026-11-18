@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://api\\.example\\.org/.*",
+  "name": "Machine to machine",
+  "description": "The client credentials flow for back-end services, with JWT access tokens that last an hour.",
+  "jwtAccessToken": true,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "client_credentials"
+    ]
+  ],
+  "accessTokenExpirationPolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthAccessTokenExpirationPolicy",
+    "maxTimeToLive": "PT1H",
+    "timeToKill": "PT1H"
+  }
+}

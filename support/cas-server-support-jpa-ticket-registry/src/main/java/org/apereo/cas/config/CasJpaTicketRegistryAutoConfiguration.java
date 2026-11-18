@@ -19,6 +19,7 @@ import org.apereo.cas.util.lock.DefaultLockRepository;
 import org.apereo.cas.util.lock.LockRepository;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -41,7 +42,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.integration.jdbc.lock.JdbcLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionOperations;
@@ -145,7 +145,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new JpaTransactionManager(emf))
-                .otherwise(PseudoTransactionManager::new)
+                .otherwise(PseudoPlatformTransactionManager::new)
                 .get();
         }
     }
@@ -267,7 +267,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             final LockRegistry jdbcLockRegistry) {
             return BeanSupplier.of(LockRepository.class)
                 .when(CONDITION_LOCKING.given(applicationContext.getEnvironment()))
-                .supply(() -> new DefaultLockRepository(jdbcLockRegistry))
+                .supply(() -> new DefaultLockRepository(jdbcLockRegistry::obtain))
                 .otherwise(LockRepository::noOp)
                 .get();
         }

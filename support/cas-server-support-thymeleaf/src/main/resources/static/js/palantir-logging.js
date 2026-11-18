@@ -84,7 +84,7 @@ async function initializeLoggingOperations() {
             function addLoggerToTable(logger) {
                 const background = determineLoggerColor(logger.level);
                 const loggerLevel = `
-                    <select data-logger='${logger.name}' name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
+                    <select data-logger='${logger.name}' data-palantir-write="loggers" name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
                         <option ${logger.level === "TRACE" ? "selected" : ""} value="TRACE">TRACE</option>
                         <option ${logger.level === "DEBUG" ? "selected" : ""} value="DEBUG">DEBUG</option>
                         <option ${logger.level === "INFO" ? "selected" : ""} value="INFO">INFO</option>
@@ -95,7 +95,7 @@ async function initializeLoggingOperations() {
                     `;
 
                 loggersTable.row.add({
-                    0: `<code>${logger.name}</code>`,
+                    0: `${palantirCode(logger.name)}`,
                     1: `${loggerLevel.trim()}`
                 });
             }

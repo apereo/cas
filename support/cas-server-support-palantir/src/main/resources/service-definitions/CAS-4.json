@@ -1,0 +1,16 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://payroll\\.example\\.org/.*",
+  "name": "Require multifactor authentication",
+  "description": "Always asks for a second factor through the named provider, and refuses access when the provider is unavailable.",
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders": [
+      "java.util.LinkedHashSet",
+      [
+        "mfa-duo"
+      ]
+    ],
+    "failureMode": "CLOSED"
+  }
+}

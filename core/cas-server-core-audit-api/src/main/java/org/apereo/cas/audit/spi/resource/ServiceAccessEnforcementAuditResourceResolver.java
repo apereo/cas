@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,24 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
             .findFirst()
             .ifPresent(strategy -> values.put("requiredAttributes", strategy.getRequiredAttributes()));
         return new String[]{auditFormat.serialize(values)};
+    }
+
+    /**
+     * The application the access check matched, by its id, whether access was granted or denied. A service that matches
+     * no application names nothing.
+     *
+     * @param auditableTarget the join point
+     * @param returnValue     the result of the access check
+     * @return the id of the registered service, or null
+     */
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
+        return returnValue instanceof final AuditableExecutionResult result
+            ? result.getRegisteredService()
+                .filter(registeredService -> registeredService.getId() != RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE)
+                .map(registeredService -> String.valueOf(registeredService.getId()))
+                .orElse(null)
+            : null;
     }
 
     protected @Nullable Principal determinePrincipal(final Authentication authentication) {

@@ -196,6 +196,29 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         }
     }
 
+    /**
+     * Count the tickets of each type with a {@code COUNT} on its table. A table two ticket types share is counted once.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        val counted = new HashSet<String>();
+        ticketCatalog.findAll().forEach(definition -> {
+            val table = definition.getProperties().getStorageName();
+            if (StringUtils.isNotBlank(table) && counted.add(table)) {
+                try (val rs = ignite.sql().execute(null, "SELECT COUNT(id) AS TOTAL FROM " + table)) {
+                    val count = rs.hasNext() ? rs.next().longValue("TOTAL") : 0;
+                    if (count > 0) {
+                        counts.put(definition.getPrefix(), count);
+                    }
+                }
+            }
+        });
+        return counts;
+    }
+
     @Override
     public long countTickets() {
         return ticketCatalog

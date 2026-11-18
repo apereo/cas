@@ -7,17 +7,25 @@ plugins {
     id "org.gradle.toolchains.foojay-resolver-convention" version "1.0.0"
 }
 
-ext.isCiServer = System.getenv().containsKey("CI")
-ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
-ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")
+/*
+    buildSrc classes are not visible to the settings script; the lookups below follow the same rules as
+    org.apereo.cas.gradle.CasBuildSettings: a system property first, then its upper-snake-case environment variable.
+ */
+def isCiServer = providers.systemProperty("CI")
+        .orElse(providers.environmentVariable("CI").filter { value -> !value.isBlank() })
+        .present
+def ptsEnabled = providers.systemProperty("PTS_ENABLED")
+        .orElse(providers.environmentVariable("PTS_ENABLED").filter { value -> !value.isBlank() })
+        .map { value -> value.isBlank() || value.equalsIgnoreCase("true") }
+        .getOrElse(true)
 
 buildCache {
     local { enabled = true }
     remote(develocity.buildCache) {
         enabled = true
         // Also check access key to avoid warning logs
-        def accessKey = System.getenv("DEVELOCITY_ACCESS_KEY")
-        push = isCiServer && accessKey != null && !accessKey.isEmpty()
+        def accessKey = providers.environmentVariable("DEVELOCITY_ACCESS_KEY").getOrElse("")
+        push = isCiServer && !accessKey.isEmpty()
     }
 }
 
@@ -28,9 +36,9 @@ develocity {
         publishing.onlyIf { it.authenticated }
         uploadInBackground = !isCiServer
         tag(isCiServer ? "CI" : "LOCAL")
-        tag(System.getProperty("os.name"))
-        tag(System.getProperty("os.arch"))
-        tag(Boolean.valueOf(System.getProperty("PTS_ENABLED")) ? "PTS_ENABLED" : "PTS_DISABLED")
+        tag(providers.systemProperty("os.name").get())
+        tag(providers.systemProperty("os.arch").get())
+        tag(ptsEnabled ? "PTS_ENABLED" : "PTS_DISABLED")
     }
 }
 

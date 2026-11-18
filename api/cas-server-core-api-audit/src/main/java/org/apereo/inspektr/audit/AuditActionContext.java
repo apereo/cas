@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.With;
 import module java.base;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Immutable container holding the core elements of an audit-able action that need to be recorded
@@ -17,7 +17,6 @@ import module java.base;
  * @since 1.0
  */
 @Getter
-@RequiredArgsConstructor
 @With
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
@@ -44,9 +43,35 @@ public class AuditActionContext implements Serializable {
     @JsonProperty("clientInfo")
     private final ClientInfo clientInfo;
 
+    /**
+     * What the action was for, when it was for something that can be counted: the id of the application signed in
+     * to, or the multifactor provider that was triggered. Kept apart from the resource, so storages can group by it.
+     */
+    @JsonProperty("target")
+    private final @Nullable String target;
+
+    public AuditActionContext(final String principal, final String resourceOperatedUpon, final String actionPerformed,
+                              final String applicationCode, final LocalDateTime whenActionWasPerformed,
+                              final ClientInfo clientInfo, @Nullable final String target) {
+        this.principal = principal;
+        this.resourceOperatedUpon = resourceOperatedUpon;
+        this.actionPerformed = actionPerformed;
+        this.applicationCode = applicationCode;
+        this.whenActionWasPerformed = whenActionWasPerformed;
+        this.clientInfo = clientInfo;
+        this.target = target;
+    }
+
+    public AuditActionContext(final String principal, final String resourceOperatedUpon, final String actionPerformed,
+                              final String applicationCode, final LocalDateTime whenActionWasPerformed,
+                              final ClientInfo clientInfo) {
+        this(principal, resourceOperatedUpon, actionPerformed, applicationCode, whenActionWasPerformed, clientInfo, null);
+    }
+
     public AuditActionContext(final AuditActionContext auditActionContext) {
         this(auditActionContext.getPrincipal(), auditActionContext.getResourceOperatedUpon(),
             auditActionContext.getActionPerformed(), auditActionContext.getApplicationCode(),
-            auditActionContext.getWhenActionWasPerformed(), auditActionContext.getClientInfo());
+            auditActionContext.getWhenActionWasPerformed(), auditActionContext.getClientInfo(),
+            auditActionContext.getTarget());
     }
 }

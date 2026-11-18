@@ -115,6 +115,10 @@ class CasActuatorEndpoints {
         return this.endpoints().casfeatures || this.endpoints().casFeatures;
     }
 
+    static casModules() {
+        return this.endpoints().casmodules || this.endpoints().casModules;
+    }
+
     static loggers() {
         return this.endpoints().loggers;
     }
@@ -236,11 +240,13 @@ class CasActuatorEndpoints {
     }
 
     static samlIdpRegisteredServiceMetadata() {
-        return this.endpoints().samlidpregisteredservicemetadata || this.endpoints().samlIdpRegisteredServiceMetadata;
+        return this.endpoints().samlidpregisteredservicemetadata || this.endpoints().samlIdpRegisteredServiceMetadata
+            || this.endpoints().samlIdPRegisteredServiceMetadata;
     }
 
     static samlIdpRegisteredServiceMetadataCache() {
-        return this.endpoints().samlidpregisteredservicemetadatacache || this.endpoints().samlIdpRegisteredServiceMetadataCache;
+        return this.endpoints().samlidpregisteredservicemetadatacache || this.endpoints().samlIdpRegisteredServiceMetadataCache
+            || this.endpoints().samlIdPRegisteredServiceMetadataCache;
     }
 
     static threadDump() {
@@ -271,11 +277,69 @@ class CasActuatorEndpoints {
         return this.endpoints().dependencies;
     }
 
+    /**
+     * Whether an endpoint accepts requests that change something. An endpoint whose access level is read-only
+     * answers only GET requests; an endpoint Palantir knows nothing about is left to the server to decide.
+     *
+     * @param name the endpoint id
+     * @returns {boolean} false when the endpoint is read-only
+     */
+    static writable(name) {
+        const access = PalantirDashboardConfiguration.actuatorEndpointAccess();
+        const key = Object.keys(access).find(id => id.toLowerCase() === String(name ?? "").toLowerCase());
+        return key === undefined || access[key] !== "READ_ONLY";
+    }
+
+    /**
+     * Whether any endpoint is read-only, so that the dashboard has controls to hold back.
+     *
+     * @returns {boolean} true when at least one endpoint is read-only
+     */
+    static anyReadOnly() {
+        return Object.values(PalantirDashboardConfiguration.actuatorEndpointAccess()).includes("READ_ONLY");
+    }
+
+    /**
+     * The endpoint a request URL goes to: the endpoint with the longest path that the URL's path starts with.
+     *
+     * @param url the request URL
+     * @returns {string|null} the endpoint id, or null when the URL goes to no known endpoint
+     */
+    static endpointFor(url) {
+        const access = PalantirDashboardConfiguration.actuatorEndpointAccess();
+        const links = CasActuatorEndpoints.endpoints();
+        let path;
+        try {
+            path = new URL(url, window.location.href).pathname;
+        } catch (error) {
+            return null;
+        }
+        const accessIds = new Set(Object.keys(access).map(id => id.toLowerCase()));
+        let match = null;
+        let matchLength = -1;
+        for (const [name, link] of Object.entries(links)) {
+            if (!accessIds.has(name.toLowerCase())) {
+                continue;
+            }
+            let linkPath;
+            try {
+                linkPath = new URL(link, window.location.href).pathname.replace(/\/$/, "");
+            } catch (error) {
+                continue;
+            }
+            if ((path === linkPath || path.startsWith(`${linkPath}/`)) && linkPath.length > matchLength) {
+                match = name;
+                matchLength = linkPath.length;
+            }
+        }
+        return match;
+    }
+
     static all() {
         return Object.getOwnPropertyNames(CasActuatorEndpoints)
             .filter(name =>
                 typeof CasActuatorEndpoints[name] === "function" &&
-                !["length", "name", "prototype", "all", "endpoints"].includes(name)
+                !["length", "name", "prototype", "all", "endpoints", "writable", "anyReadOnly", "endpointFor"].includes(name)
             )
             .map(name => ({ name, value: CasActuatorEndpoints[name]() }));
     }

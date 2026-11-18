@@ -18,6 +18,12 @@ const assert = require("assert");
     await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
 
     const baseUrl = "https://localhost:8443/cas/actuator";
+    const encrypted = await cas.doRequest(`${baseUrl}/casConfig/encrypt`, "POST",
+        {
+            "Content-Type": "text/plain"
+        }, 200, "true");
+    await cas.log(`Encrypted value: ${encrypted}`);
+    assert(encrypted.startsWith("{cas-cipher}"));
     const payload = [
         {
             "name": "cas.server.scope",
@@ -25,7 +31,7 @@ const assert = require("assert");
         },
         {
             "name": "cas.logout.follow-service-redirects",
-            "value": "true"
+            "value": encrypted
         }
     ];
     
@@ -53,8 +59,10 @@ const assert = require("assert");
         async (res) => {
             assert(res.status === 200);
             const property = res.data["property"];
-            assert(property["source"] === "bootstrapProperties-MongoDbPropertySource");
+            assert(property["source"] === "casConfigurationDecryptedProperties");
             assert(property["value"] === "true");
+            const stored = res.data["propertySources"].find((source) => source.name === "bootstrapProperties-MongoDbPropertySource");
+            assert(stored.property.value === encrypted);
         },
         async (error) => {
             throw error;

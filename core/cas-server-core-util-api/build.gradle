@@ -17,9 +17,6 @@ dependencies {
     implementation libraries.jasypt
     implementation libraries.jose4j
     implementation libraries.bouncycastle
-    implementation libraries.semver
-    implementation libraries.oshi
-    implementation libraries.apachevelocity
     implementation libraries.springsecurityweb
     implementation libraries.lz4
     

@@ -1,7 +1,8 @@
 ---
 name: cas-saml
-description: "Review and change SAML2 SP and IdP metadata handling: resolvers, MDQ, caching and backup files, signature trust, IdP metadata backends and generation, the shared HTTP client, the SAML2 metadata scenarios, and the pac4j-free session store of the SAML2 IdP. Use when touching support/cas-server-support-saml* code."
+description: "Review and change SAML2 SP and IdP metadata handling (resolvers, MDQ, caching and backup files, signature trust, IdP metadata backends and generation, the shared HTTP client, the SAML2 metadata scenarios), the pac4j-free session state of the SAML2 IdP, and the SAML2 SOAP profiles (ECP, attribute query, artifact resolution). Use when touching support/cas-server-support-saml* code."
 ---
+
 
 # SAML2 metadata
 
@@ -68,6 +69,10 @@ description: "Review and change SAML2 SP and IdP metadata handling: resolvers, M
   left as a lazy view over a store a later resolution replaces. There is no puppeteer scenario
   for per-service IdP metadata — no scenario sets `idpMetadataLocation` — so this path is
   covered by `SamlIdPMetadataResolverTests` alone.
+- `samlIdPRegisteredServiceMetadataCache/preview` reads http(s) SP metadata for an unregistered application (Palantir's
+  wizard): it downloads with the metadata HTTP client and parses, and deliberately bypasses the resolution plan, the
+  cache and `UrlResourceMetadataResolver`, whose backup file is shared per location and would be written, or served
+  stale, for a preview. Nothing it returns is trusted: no signature or validity filters run.
 - CAS does not use OpenSAML's `HTTPMetadataResolver` / `FileBackedHTTPMetadataResolver`.
   `UrlResourceMetadataResolver` reimplements fetch-and-back-up by hand, which is why the usual
   guarantees are absent: no background refresh timer and no min/max refresh delay. Do not assume

@@ -12,9 +12,9 @@ plugins {
 if (CasBuildSettings.shouldRegisterRootTask(project, 'testCategories')) {
 	tasks.register('testCategories') {
 		description = 'Display all available test categories'
+		def categoryRegex = CasBuildSettings.stringProperty(project, 'CATEGORY_REGEX', '.*')
 		doLast {
-			def pattern = System.getenv()['CATEGORY_REGEX'] ?: '.*'
-			def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+			def categoryMatchPattern = Pattern.compile(categoryRegex, Pattern.CASE_INSENSITIVE)
 			def result = TestCategories.values()
 				.findAll { it.name().find(categoryMatchPattern) }
 				.toSorted { o1, o2 ->
@@ -33,11 +33,11 @@ if (CasBuildSettings.shouldRegisterRootTask(project, 'puppeteerScenarios')) {
 		def puppeteerScenariosFrom = providers.gradleProperty('puppeteerScenariosFrom').getOrNull()
 		def puppeteerScenariosTo = providers.gradleProperty('puppeteerScenariosTo').getOrNull()
 		def scenariosDirectory = new File(project.rootDir, 'ci/tests/puppeteer/scenarios')
+		def scenarioRegex = CasBuildSettings.stringProperty(project, 'SCENARIO_REGEX', '.*')
 
 		doLast {
 			def scenarios = []
-			def pattern = System.getenv()['SCENARIO_REGEX'] ?: '.*'
-			def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+			def scenarioMatchPattern = Pattern.compile(scenarioRegex, Pattern.CASE_INSENSITIVE)
 
 			scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
 				scenarios += it.getName()

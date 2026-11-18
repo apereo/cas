@@ -8,6 +8,7 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.generic.BaseTicketEntity;
@@ -313,6 +314,34 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val query = entityManager.createQuery(sql).setParameter("type", getTicketTypeName(TicketGrantingTicket.class));
             return countToLong(query.getSingleResult());
         });
+    }
+
+    /**
+     * Count the tickets of each type with one grouped query over the type column, mapped back to ticket prefixes
+     * through the catalog. With encryption every ticket is stored as an encoded ticket and the column cannot tell
+     * types apart, so the tickets are read and counted instead.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        if (isCipherExecutorEnabled()) {
+            return super.countTicketsByType();
+        }
+        val prefixes = ticketCatalog.findAll()
+            .stream()
+            .collect(Collectors.toMap(definition -> definition.getImplementationClass().getName(),
+                TicketDefinition::getPrefix, (first, second) -> first));
+        val rows = transactionTemplate.execute(_ -> {
+            val sql = String.format("SELECT t.type, COUNT(t.id) FROM %s t GROUP BY t.type", ticketEntityFactory.getEntityName());
+            return entityManager.createQuery(sql, Object[].class).getResultList();
+        });
+        val counts = new TreeMap<String, Long>();
+        Objects.requireNonNullElse(rows, List.<Object[]>of()).forEach(row -> {
+            val type = String.valueOf(row[0]);
+            counts.merge(prefixes.getOrDefault(type, StringUtils.substringAfterLast(type, ".")), countToLong(row[1]), Long::sum);
+        });
+        return counts;
     }
 
     @Override

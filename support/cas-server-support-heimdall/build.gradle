@@ -17,6 +17,7 @@ dependencies {
 
     implementation libraries.jose4j
     implementation libraries.nimbus
+    implementation libraries.nimbusoidc
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
     

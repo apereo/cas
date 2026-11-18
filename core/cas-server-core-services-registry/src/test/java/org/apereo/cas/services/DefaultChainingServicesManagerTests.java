@@ -7,6 +7,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.springframework.context.support.StaticApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -52,6 +53,31 @@ class DefaultChainingServicesManagerTests {
             servicesManager.registerServiceManager(newServicesManager());
             servicesManager.save(Stream.of(newService(), newService(), newService()));
         }
+    }
+
+    /**
+     * A stream of services is read once, each service saved by the first manager that supports it, rather than handed to
+     * every manager, where the second would find it consumed.
+     */
+    @Test
+    void verifyStreamIsSavedOncePerService() {
+        val first = newService();
+        val second = newService();
+        val firstManager = mock(ServicesManager.class);
+        when(firstManager.supports(first)).thenReturn(true);
+        val secondManager = mock(ServicesManager.class);
+        when(secondManager.supports(second)).thenReturn(true);
+        val chaining = new DefaultChainingServicesManager();
+        chaining.registerServiceManager(firstManager);
+        chaining.registerServiceManager(secondManager);
+
+        chaining.save(Stream.of(first, second));
+        verify(firstManager).save(first);
+        verify(secondManager).save(second);
+        verify(firstManager, never()).save(second);
+        verify(secondManager, never()).save(first);
+        verify(firstManager, never()).save(ArgumentMatchers.<Stream<RegisteredService>>any());
+        verify(secondManager, never()).save(ArgumentMatchers.<Stream<RegisteredService>>any());
     }
 
     @Test

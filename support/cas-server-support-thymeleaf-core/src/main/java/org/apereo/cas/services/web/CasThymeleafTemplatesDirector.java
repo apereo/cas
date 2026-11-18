@@ -13,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Safelist;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.MessageSource;
@@ -40,6 +43,8 @@ public class CasThymeleafTemplatesDirector {
 
     private static final Pattern THEME_PROPERTY_PATTERN = Pattern.compile("^(#\\s*)?(cas\\.[\\w.\\-]+)\\s*=(.*)$");
 
+    private static final Safelist SAFE_HTML = Safelist.none().addTags("p", "br", "b", "strong", "i", "em", "u");
+
     private final ObjectProvider<CasWebflowExecutionPlan> webflowExecutionPlan;
     private final ObjectProvider<ThemeResolver> themeResolver;
     private final ObjectProvider<ThemeSource> themeSource;
@@ -56,6 +61,20 @@ public class CasThymeleafTemplatesDirector {
             return externalForm + '&';
         }
         return externalForm + '?';
+    }
+
+    /**
+     * Sanitize HTML that CAS does not control, such as a registered service description, so it can be written with
+     * {@code th:utext}: paragraphs, line breaks and bold, italic and underlined text are kept without attributes, and
+     * every other element is replaced by its text, dropping scripts and styles.
+     *
+     * @param html the html
+     * @return the sanitized html
+     */
+    public String sanitizeHtml(@Nullable final String html) {
+        return StringUtils.isBlank(html)
+            ? StringUtils.EMPTY
+            : Jsoup.clean(html, StringUtils.EMPTY, SAFE_HTML, new Document.OutputSettings().prettyPrint(false));
     }
 
     /**

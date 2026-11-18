@@ -40,6 +40,10 @@ account_profile_images:
   - src: img_34.png
     alt: Tokens listing an access token and a refresh token with the number of access tokens issued from it
     title: Refresh tokens next to access tokens
+palantir_images:
+  - src: img_35.png
+    alt: Palantir system metrics explorer showing HTTP requests with their statistics, a per-minute trend and a breakdown by URI
+    title: The metrics explorer, with values in their units, a live trend and a breakdown by tag
 release:
   line: 8.1.0 development
   summary: >-
@@ -221,12 +225,49 @@ single sign-on sessions, multifactor and trusted devices, consent decisions, res
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
 the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
-compares any recorded version side by side with the current definition or the version before it, and restores the
+names who made each change, and compares any recorded version side by side with the current definition or the version before it, and restores the
 selected version from the same dialog. Under *Interrupts*, the authentication section shows which
 [interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
 source answered.
 
-Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
+The JSON editor for application definitions is redesigned: a new definition starts from a gallery of templates, with
+many more templates for CAS, SAML2, OpenID Connect, OAuth and WS-Federation applications, filtered by protocol and
+searchable, and the editor checks the JSON as it is typed, shows problems on their line, follows the light or dark
+theme and can switch to the wizard. Templates of your own can be offered through a folder the dashboard reads. SAML2 applications whose metadata is held by a metadata
+manager, such as MongoDB, show that source and link to its management under protocols, and the settings dialog can
+reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog,
+which stores their feature flags in a chosen dynamic configuration source for the next start. System metrics open on a board of
+pinned metrics with their current values, units and trends, flagged when usage runs high, and an explorer finds any
+metric by name and shows its statistics, a live trend and a breakdown by tag that narrows the metric with a click.
+ Zen mode, on <kbd>Shift</kbd>+<kbd>Z</kbd>, puts away the header, navigation bar and footer, and the browser remembers it.
+Palantir now opens on a *Home* page of widgets for the server, its health checks and resources, HTTP requests and
+runtime metrics, sessions, applications by type and recent changes to applications with who made them, across the
+cluster when the service change history is installed, which people can reorder; it is drawn from one summary the server keeps for a
+few seconds, so it stays light however many administrators have it open. Attribute definitions are shown as cards
+that give each definition's kind, the flags it turns on and the values it sets, with buttons to view, edit or delete it. Single sign-on sessions are cards too, giving when and from which
+browser and device the user signed in, how often the session was used and the applications it reached, and so are
+Spring sessions, with a bar for how long each has left before it expires for being idle. Registered multifactor
+devices are cards as well, flagging the ones that expired. *System Info* lists the CAS modules the server runs, as
+cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day.
+
+{% include imagegallery.html images=page.palantir_images gallery_id="palantir" %}
+
+Saving an application that someone else changed or deleted in the meantime shows what they changed and asks before
+overwriting it, and actions that would change something through a read-only endpoint are disabled with an explanation.
+The application wizard can fill a SAML2 service provider from its metadata, read from a URL, pasted, or chosen or
+dropped as a file, picking the provider out of an aggregate. The menu of a SAML2 application checks the health of its metadata:
+whether it can be downloaded and holds the service provider, whether CAS resolves it, and when the metadata and the
+provider's certificates expire, showing the metadata it read; the separate list of SAML2 metadata sources is removed.
+Values held by dynamic configuration sources can be encrypted or decrypted in place from their menu when configuration
+security is set up, with an offer to refresh CAS afterwards. Application descriptions show their paragraphs and bold,
+italic and underlined text in the application cards and table instead of their markup, and a description of a single
+paragraph is saved as plain text. The applications chart, cards and search follow deleted applications as they follow
+new ones, and the applications can be filtered by type, such as CAS, SAML2 or OpenID Connect, each listed with how many
+applications it has. The wizard keeps Save disabled, naming the required fields still missing, until they are filled in, and a definition without a name or service id is refused with the reason instead of failing on the server. Validating or saving an application definition that CAS cannot read is refused with the reason, rather than reported
+as valid, and the wizard keeps the principal attributes of a multifactor policy, with the policy's type, when it
+edits an application. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
+once after a confirmation. Importing applications accepts YAML definitions and exported zip files as well as JSON, and imports each chosen file
+once. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
 closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days. A keyboard shortcut overlay opens
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
@@ -291,6 +332,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 {% include imagegallery.html images=page.account_profile_images gallery_id="account-profile" %}
 
+- {: .fixed data-area="ui"} Descriptions of applications keep their paragraphs and bold, italic and underlined text, and any
+  other markup is reduced to its text, wherever end users see them: the account profile and the OAuth and OpenID Connect
+  consent pages used to show the markup itself, and the service box of the login page and the list of applications after
+  login, along with the display name and description from SAML2 metadata, used to render it unfiltered.
 - {: .fixed data-area="ui"} The account profile only ends single sign-on sessions, revokes OpenID Connect tokens and removes
   trusted devices that belong to the signed-in user; it used to act on any session, token or device whose identifier was submitted.
 - {: .fixed data-area="ui"} The account profile and account management pages follow the shared card, text and border colors of the
@@ -315,6 +360,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   and [attribute release policies](../integration/Attribute-Release-Policy-Activation.html) match required values against
   the entire attribute value, like required and rejected attributes; `admin` no longer activates a policy for `sysadmin`.
   Use `.*admin.*` to match part of a value.
+- {: .fixed data-area="services"} Importing several applications at once, such as a zip of definitions, no longer fails
+  when [service version history](../services/Configuring-Service-Version-History.html) is turned on, and records the
+  history of each imported application; it also no longer fails when more than one kind of application, such as CAS
+  and SAML2, is registered.
 - {: .fixed data-area="services"} [Service replication](../services/Configuring-Service-Replication.html) no longer broadcasts
   every service definition from every node on each reload: a loaded definition is sent only when it differs from the
   replicated copy, and the replicated copies are kept across reloads instead of being cleared, so nodes started later still
@@ -348,6 +397,46 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
 
+- {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in
+  all and for every kind of ticket, such as sessions, service tickets or OAuth tokens, named after their definitions
+  and counted in one pass, instead of reading every ticket and removing the expired ones on each call; expired tickets
+  are left to the registry cleaner. Its answer and the counts of the session
+  health indicator are kept for a few seconds, so callers in quick succession share one count. Ticket registries count
+  tickets per kind the cheapest way their store allows, without reading the tickets: the in-memory registry and those
+  built on it by type, JPA with one grouped query (unless tickets are encrypted), MongoDB by the estimated size of each
+  collection, Redis with one scan of the ticket keys, asked for ten thousand keys at a time, Hazelcast by map size,
+  Ignite and Geode with a count per table or region, DynamoDB through its prefix index and Firestore with a count query
+  per collection; Redis also counts sessions and service tickets that way. Other registries read their
+  tickets to count them. Palantir's ticket registry chart shows all tickets and a bar for every kind of ticket, refreshed
+  once a minute, and its health chart reads the same timed health checks as the *Home* page.
+- {: .new data-area="ui"} The [audit log endpoint](../audits/Audits.html) can count audit records per action and per hour
+  over a period of up to a week, as the audit storage counts them for the whole cluster: databases with one grouped query,
+  MongoDB with one aggregation, and Redis and DynamoDB from hourly counters kept as records are written. A
+  [REST audit service](../audits/Audits-REST.html) is asked for its own counts. Other audit storages, such as files, logs
+  or Amazon Firehose, report that they cannot count. Palantir's *System Status* page uses it for a sign-in chart:
+  succeeded, failed and throttled sign-ins per hour over the last two hours, and multifactor authentication
+  triggered, refreshed once a minute. Database audit tables gain an index on the audit date. Every Palantir chart now
+  shares one look and color palette in light and dark themes, appears only once it has data to show, and an enlarged
+  chart keeps its labels, colors and tooltips and keeps updating while it is open.
+- {: .new data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) lists the URLs that answer slowest on
+  average, with their longest time, requests and server errors, on *Home* and as a chart on *System Status*, from the
+  request metrics the server already keeps. *Home* cards can be hidden, brought back or reset to the original layout,
+  and the browser remembers the choice; Home asks the server only for what the shown cards need, so a card that is slow
+  to fill can be hidden to take its work off the server.
+- {: .new data-area="ui"} Audit records name what an action was for in a field of their own, the *target*: the id of
+  the application signed in to, when CAS knows it, and the multifactor provider that was triggered. Every audit storage
+  keeps it, and the [audit log endpoint](../audits/Audits.html) can count records per target as well as per action and
+  hour: databases and MongoDB in their query, Redis and DynamoDB from counters kept as records are written, a
+  [REST audit service](../audits/Audits-REST.html) through its summary request. Palantir uses it for the applications
+  with the most sign-ins over the last two hours, by name, at the bottom of the *Applications* page, where a click on
+  an application opens it, and for multifactor authentication per provider on the *System Status* page. The audit
+  events table shows the target of each record and opens the application it names. Saving or deleting an application,
+  and checking access to one, record that application as well. Records written before this version have no target.
+- {: .action data-area="operations"} [Database audit storage](../audits/Audits-Database.html) adds the `AUD_TARGET`
+  column and an index on `AUD_DATE` and `AUD_ACTION` to the audit table. CAS adds them when it updates the schema
+  itself; otherwise add them to the existing table before upgrading, or recording audit events fails.
+- {: .fixed data-area="services"} Importing an archive of application definitions reads and saves each definition once;
+  each one was read by every available format and could be saved twice, which doubled the time an import took.
 - {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
   each proxy of a chain once; a ticket obtained through several proxies listed each of them as many times as there were proxies.
 - {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a
@@ -402,6 +491,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### OAuth & OpenID Connect
 {: .changed data-area="oidc"}
 
+- {: .fixed data-area="oidc"} Authorization responses returned in the [URI fragment](../authentication/OAuth-Authentication-Clients-ResponseMode.html)
+  percent-encode their parameters as the specification requires. A `state` that carried JSON or other reserved characters,
+  as 1Password's "Unlock with SSO" now sends, failed the redirect with a server error, and values with `&`, `=`, `#` or
+  spaces, such as an `error_description`, reached the application truncated or malformed.
 - {: .fixed data-area="oidc"} [Front-channel logout](../authentication/OIDC-Authentication-Logout.html) requests now carry the same
   `sid` as the ID token and the back-channel logout token; the session identifier used to be computed differently, so
   applications could not match it to the session they had recorded.
@@ -789,7 +882,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `gateway` parameter is honored as before.
 - {: .new data-area="authentication"} The `throttles` actuator endpoint of
   [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
-  throttled records of one username, matched regardless of case, instead of every record.
+  throttled records of one username, matched regardless of case, instead of every record. Palantir's throttles page
+  uses it to show the attempts of one username.
 
 ### SAML2
 {: .changed data-area="saml"}
@@ -877,6 +971,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="ui"} When password management is turned off, the login page no longer links to `https://pwd.example.org`; the
   address of an external password recovery page is set with the `cas.pm-links.forgot-password.url` theme property, and
   nothing is shown when it is blank.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) shows values that come from requests, such as
+  usernames, browser user agents, device names, attribute values and configuration values, as text in its tables and
+  dialogs; they were inserted as markup. Palantir also no longer signs out when the server briefly answers with an
+  error, as while it restarts, and notices an expired session again.
 - {: .fixed data-area="ui"} Date fields in the [Palantir](../installation/Admin-Dashboard.html) service wizard open a calendar to
   pick from: the expiration date, client secret expiration dates, and the start and end of a time-based access strategy, which
   take the start and the end of the picked day. Values of the access strategy types (remote, HTTP request, time-based and
@@ -936,9 +1034,39 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 
 ## Other Stuff
 
+- {: .fixed data-area="services"} When CAS runs as an executable web application, the initial load of
+  [registered services](../services/Service-Management.html) after startup no longer fails intermittently with a
+  `Zip file closed` error; it now starts once the application is ready, after Spring Boot has cleared its class loader caches.
+- {: .fixed data-area="mfa"} When CAS adds the user index to an existing DynamoDb table of
+  [Google Authenticator devices](../mfa/GoogleAuthenticator-Authentication-Registration-DynamoDb.html), it waits until the
+  index is built before using it, so device lookups no longer fail while DynamoDb fills the index from existing devices.
+- {: .fixed data-area="operations"} [Encrypted settings](../configuration/Configuration-Properties-Security-CAS.html) kept
+  in dynamic configuration sources, such as MongoDb, JDBC or REST, are decrypted when CAS applies its configuration, at
+  startup and after a refresh; they used to be applied as they were stored, still encrypted. The `casConfig` endpoint
+  answers a bad request when a value cannot be encrypted or decrypted, where it used to answer with an empty value, and
+  a value that cannot be encrypted is no longer written to the logs in plain text.
 - {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
   follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
   and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
+- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
+  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
+  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
+  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
+  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
+  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
+  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
+  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
+  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
+  Jackson 2 wherever Groovy scripting is included. CAS
+  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
+  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
+  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
+  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
+  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
+- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html#build) can also be supplied as an
+  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
+  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
+  Javadoc errors fail the build unless that flag is set.
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 {% include release-footer.html %}

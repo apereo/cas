@@ -8,7 +8,8 @@
     <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
 
     <!--/*
-        Applies the stored theme before anything paints, so a dark dashboard does not flash light.
+        Applies the stored theme and zen mode before anything paints, so a dark dashboard does not flash light
+        and the navigation does not flash in zen mode.
         palantir-theme.js takes over once the scripts have loaded. It also opts the page out of the
         shared autofocus in cas.js, which would otherwise put focus in the first search box and keep
         the keyboard shortcuts from working until the operator clicked elsewhere.
@@ -26,6 +27,13 @@
             document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
             document.documentElement.setAttribute("data-theme-preference", preference);
             document.documentElement.classList.add("palantir-page");
+            try {
+                if (window.localStorage.getItem("PalantirZenMode") === "true") {
+                    document.documentElement.setAttribute("data-palantir-zen", "");
+                }
+            } catch (e) {
+                document.documentElement.removeAttribute("data-palantir-zen");
+            }
             document.documentElement.dataset.casAutofocus = "false";
         })();
     </script>
@@ -33,17 +41,21 @@
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.jqueryui.css}}" />
     
-    <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.chart.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.ace-editor.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.notyf.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.jsyaml.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.jsdiff.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.hotkeys.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.tomselect.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.jqueryui.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.trumbowyg.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.contextmenu.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.contextmenu.position.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.highlight.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.chart.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.sweet-alert.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.notyf.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.jsyaml.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.jsdiff.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.hotkeys.js}}"></script>
+    <script type="text/javascript" defer th:src="@{#{webjars.tomselect.js}}"></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.trumbowyg.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
@@ -63,60 +75,68 @@
             return Object.freeze({
                 casServerPrefix: /*[[${casServerPrefix}]]*/,
                 actuatorEndpoints: /*[[${actuatorEndpoints}]]*/,
-                serviceDefinitions: /*[[${serviceDefinitions}]]*/,
+                actuatorEndpointAccess: /*[[${actuatorEndpointAccess}]]*/,
+                serviceTemplates: /*[[${serviceTemplates}]]*/,
                 supportedServiceTypes: /*[[${supportedServiceTypes}]]*/,
                 serviceProperties: /*[[${serviceProperties}]]*/,
                 availableMultifactorProviders: /*[[${availableMultifactorProviders}]]*/,
                 scriptFactoryAvailable: /*[[${scriptFactoryAvailable}]]*/,
                 mutablePropertySources: mutablePropertySources,
                 mutablePropertySourcesAvailable: mutablePropertySources.length > 0,
+                configurationEncryptionAvailable: /*[[${configurationEncryptionAvailable}]]*/ false,
                 trumbowygIconsPath: /*[[@{#{webjars.trumbowyg.icons}}]]*/ "",
                 mermaidScriptPath: /*[[@{#{webjars.mermaid.js}}]]*/ ""
             });
         })();
+        window.palantirWizardFieldBuilders = [];
+        window.palantirWizardField = builder => window.palantirWizardFieldBuilders.push(builder);
         /*]]>*/
     </script>
-    <script type="text/javascript" th:src="@{/js/palantir-theme.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-dashboard.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-endpoints.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-utils.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-settings.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-cas-config.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-mfa.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-pac4j.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-webflow.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-system.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-person-directory.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-consent.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-multitenancy.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-cluster.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-throttles.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-protocols.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-logging.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-tickets.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-tasks.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-sso.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-authn.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-interrupts.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-authz.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-charts.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-cas-discovery.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-cas-features.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-cas-events.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-users.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-command-palette.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-hotkeys.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-sections.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-history.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-guard.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard-cas.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
-    <script type="text/javascript" th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-theme.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-dashboard.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-endpoints.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-utils.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-settings.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-cas-config.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-mfa.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-pac4j.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-webflow.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-system.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-metrics.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-home.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-person-directory.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-consent.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-multitenancy.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-cluster.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-throttles.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-protocols.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-logging.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-tickets.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-tasks.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-sso.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-authn.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-interrupts.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-authz.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-charts.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-cas-discovery.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-cas-features.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-cas-events.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-users.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-command-palette.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-hotkeys.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-actions.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-editor.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-sections.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-history.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-guard.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-cas.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
     
 </head>
 
@@ -126,10 +146,6 @@
     <div layout:fragment="content" id="dashboard" class="d-none">
         <a class="palantir-skip-link" href="#palantirMainPanel">Skip to main content</a>
         <h1 class="palantir-sr-only">Palantir dashboard</h1>
-        <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
-        <script type="text/javascript" th:src="@{#{webjars.trumbowyg.js}}"></script>
-        <script type="text/javascript" th:src="@{#{webjars.contextmenu.js}}"></script>
-        <script type="text/javascript" th:src="@{#{webjars.contextmenu.position.js}}"></script>
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1">
@@ -141,7 +157,8 @@
                 </button>
                 <div class="palantir-page-heading">
                     <p class="palantir-page-group" id="palantirPageGroup"></p>
-                    <h2 class="palantir-page-title" id="palantirPageTitle" aria-live="polite">Applications</h2>
+                    <h2 class="palantir-page-title" id="palantirPageTitle" aria-live="polite"
+                        th:attr="data-palantir-user=${authentication != null ? authentication.name : ''}">Applications</h2>
                 </div>
             </header>
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
@@ -162,6 +179,7 @@
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/multitenancytab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/clustertab :: main}"/>
             <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/userstab :: main}"/>
+            <div th:if="${isRoleAdmin}" th:replace="~{fragments/palantir/hometab :: main}"/>
         </div>
 
         <div th:replace="~{fragments/palantir/settingspanel :: main}"/>

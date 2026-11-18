@@ -5,7 +5,7 @@ import org.gradle.api.artifacts.ProjectDependency
 
 description = "Builds the CAS web application for GraalVM native image deployments."
 
-def skipAot = providers.systemProperty("skipAot").getOrElse("false") == "true"
+def skipAot = CasBuildSettings.isFlagEnabled(project, "skipAot")
 
 apply plugin: "java"
 if (skipAot) {
@@ -108,21 +108,8 @@ dependencies {
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
 
-    def casModules = providers.systemProperty("casModules").getOrNull()
-    if (casModules != null) {
-        def dependencies = casModules.split(",")
-        dependencies.each {
-            def projectsToAdd = CasBuildSettings.matchingProjectPaths(project, it).findAll { candidatePath ->
-                logger.debug("Matching CAS module selector ${it} against ${candidatePath}")
-                candidatePath != project.path
-            }
-
-            if (!projectsToAdd.isEmpty()) {
-                projectsToAdd.each {
-                    implementation(project(path: it))
-                }
-            }
-        }
+    CasBuildSettings.casModuleProjectPaths(project).each { projectPath ->
+        implementation(project(path: projectPath))
     }
     
     testImplementation libraries.graalvmsdk
@@ -185,10 +172,10 @@ plugins.withId("org.graalvm.buildtools.native") {
 
             jvmArgs = list
 
-            def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
+            def aotSpringActiveProfiles = CasBuildSettings.stringProperty(project, "aotSpringActiveProfiles", "native")
             logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
 
-            def aotFeatureModules = providers.systemProperty("aotFeatureModules").getOrElse("")
+            def aotFeatureModules = CasBuildSettings.stringProperty(project, "aotFeatureModules", "")
             if (!aotFeatureModules.isBlank()) {
                 args(aotFeatureModules.split(","))
             }
@@ -244,7 +231,7 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:+ReportExceptionStackTraces')
                 buildArgs.add('-H:+InlineBeforeAnalysis')
                 buildArgs.add('-H:+TraceSecurityServices')
-                if (providers.systemProperty("nativeImagePrintAnalysisCallTree").getOrElse("false") == "true") {
+                if (CasBuildSettings.isFlagEnabled(project, "nativeImagePrintAnalysisCallTree")) {
                     buildArgs.add('-H:+PrintAnalysisCallTree')
                 }
                 buildArgs.add('-H:+AddAllCharsets')
@@ -252,13 +239,13 @@ plugins.withId("org.graalvm.buildtools.native") {
                 buildArgs.add('-H:IncludeLocales=en-GB')
                 buildArgs.add('-H:+ReportUnsupportedElementsAtRuntime')
 
-                def nativeImageHeapSize = providers.systemProperty("nativeImageHeapSize")
-                    .getOrElse(CasBuildSettings.isCi(project) ? "12G" : "14G")
+                def nativeImageHeapSize = CasBuildSettings.stringProperty(project, "nativeImageHeapSize",
+                    CasBuildSettings.isCi(project) ? "12G" : "14G")
                 buildArgs.add("-J-Xmx${nativeImageHeapSize}")
                 buildArgs.add('-J-Xms1G')
                 buildArgs.add('-J-XX:-UseParallelGC')
                 buildArgs.add('-J-XX:+UseG1GC')
-                def nativeImageParallelism = providers.systemProperty("nativeImageParallelism").getOrNull()
+                def nativeImageParallelism = CasBuildSettings.stringProperty(project, "nativeImageParallelism")
                 if (nativeImageParallelism != null) {
                     buildArgs.add("--parallelism=${nativeImageParallelism}")
                 }
@@ -282,9 +269,7 @@ plugins.withId("org.graalvm.buildtools.native") {
 //                }
                 buildArgs.add('--initialize-at-build-time=java.beans')
                 buildArgs.add('--initialize-at-build-time=com.sun.beans')
-                buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax.DefaultWithLexicalHandler')
 
-                buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
                 buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
                 buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
                 buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
