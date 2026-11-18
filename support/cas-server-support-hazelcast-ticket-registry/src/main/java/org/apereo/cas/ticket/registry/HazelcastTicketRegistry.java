@@ -189,6 +189,24 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
         return ticketMap != null ? ticketMap.size() : 0;
     }
 
+    /**
+     * Count the tickets of each type by the size of its map. A map two ticket types share is counted once.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        val counted = new HashSet<String>();
+        ticketCatalog.findAll().forEach(definition -> {
+            val map = getTicketMapInstanceByMetadata(definition);
+            if (map != null && counted.add(map.getName()) && !map.isEmpty()) {
+                counts.put(definition.getPrefix(), (long) map.size());
+            }
+        });
+        return counts;
+    }
+
     @Override
     public long serviceTicketCount() {
         val ticketMap = getTicketMapInstanceByPrefix(ServiceTicket.PREFIX);

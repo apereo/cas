@@ -359,7 +359,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
         } catch (final IOException e) {
             LOGGER.warn("Historical keys of trust mark issuer [{}] cannot be requested now: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
             throw new OidcFederationResolutionUnavailableException("Historical keys of trust mark issuer %s cannot be requested now"
-                .formatted(issuerConfiguration.getEntityID()));
+                .formatted(issuerConfiguration.getEntityID()), e);
         } catch (final Exception e) {
             LOGGER.warn("Unable to obtain the historical keys of trust mark issuer [{}]: [{}]", issuerConfiguration.getEntityID(), e.getMessage());
             return List.of();
@@ -487,7 +487,7 @@ public class OidcFederationDefaultTrustMarkValidator implements OidcFederationTr
             throw e;
         } catch (final IOException e) {
             throw new OidcFederationResolutionUnavailableException("Trust mark status endpoint %s cannot be reached now: %s"
-                .formatted(endpoint, e.getMessage()));
+                .formatted(endpoint, e.getMessage()), e);
         }
     }
 

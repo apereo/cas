@@ -26,6 +26,11 @@ project.ext['forceBootifulArtifact'] = null
 
 if (generateGitProperties) {
     project.pluginManager.apply('io.hndrs.git-properties')
+    /*
+        The project details appended to git.properties are part of the task's output, so they are declared as its
+        inputs too; otherwise the build cache hands every project the file the first project cached, naming that
+        project instead of its own.
+     */
     tasks.named('generateGitProperties') {
         def propertiesFile = project.layout.buildDirectory.file('resources/main/git.properties').get().asFile
         def projectGroup = CasBuildSettings.projectGroup(project)
@@ -35,6 +40,10 @@ if (generateGitProperties) {
 
         it.dotGitDirectory.set(new File(project.rootDir, '.git'))
         it.output.set(propertiesFile)
+        it.inputs.property("projectGroup", projectGroup)
+        it.inputs.property("projectName", projectName)
+        it.inputs.property("projectVersion", projectVersion)
+        it.inputs.property("projectDescription", String.valueOf(projectDescription))
         doLast {
             propertiesFile.withWriterAppend('UTF-8') { writer ->
                 writer << "project.group=${projectGroup}"
@@ -74,7 +83,7 @@ tasks.named('javadoc') {
     options.addBooleanOption('html5', true)
     options.addStringOption('Xdoclint:html,reference,syntax', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
-    failOnError = providers.systemProperty('ignoreJavadocFailures').present
+    failOnError = CasBuildSettings.isFailOnJavadocErrors(project)
     excludes = ['**/generated/**', '**/com/duosecurity/**']
 }
 

@@ -26,6 +26,7 @@ public class DefaultCasRuntimeModuleLoader implements CasRuntimeModuleLoader {
                 .version(props.get("project.version").toString())
                 .description(props.get("project.description").toString())
                 .build())
+            .distinct()
             .sorted(Comparator.comparing(CasRuntimeModule::getName))
             .collect(Collectors.toList());
     }

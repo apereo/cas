@@ -13,11 +13,11 @@
               <ul>
                 <li><a id="authenticationhandlers" href="#authenticationhandlers-tab">Authentication Handlers</a></li>
                 <li><a id="authenticationpolicies" href="#authenticationpolicies-tab">Authentication Policies</a></li>
-                <li class="d-none"><a id="delegatedclients" href="#delegatedclients-tab">External Identity Providers</a></li>
-                <li class="d-none"><a id="passwordmanagement" href="#passwordmanagement-tab">Password Management</a></li>
-                <li class="d-none"><a id="surrogacy" href="#surrogacy-tab">Impersonation</a></li>
-                <li class="d-none"><a id="passwordless" href="#passwordlessauthn-tab">Passwordless Authentication</a></li>
-                <li class="d-none"><a id="interrupts" href="#interrupts-tab">Interrupts</a></li>
+                <li class="d-none" data-palantir-requires="delegatedClients"><a id="delegatedclients" href="#delegatedclients-tab">External Identity Providers</a></li>
+                <li class="d-none" data-palantir-requires="passwordManagement"><a id="passwordmanagement" href="#passwordmanagement-tab">Password Management</a></li>
+                <li class="d-none" data-palantir-requires="impersonation"><a id="surrogacy" href="#surrogacy-tab">Impersonation</a></li>
+                <li class="d-none" data-palantir-requires="passwordless"><a id="passwordless" href="#passwordlessauthn-tab">Passwordless Authentication</a></li>
+                <li class="d-none" data-palantir-requires="interrupts"><a id="interrupts" href="#interrupts-tab">Interrupts</a></li>
               </ul>
 
 
@@ -135,7 +135,7 @@
                         </div>
                     </section>
                     <div class="d-flex">
-                        <button type="submit" name="pmInitiateButton" id="pmInitiateButton" class="mdc-button mdc-button--raised">
+                        <button data-palantir-write="passwordManagement" type="submit" name="pmInitiateButton" id="pmInitiateButton" class="mdc-button mdc-button--raised">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-lock-reset" aria-hidden="true"></i>Initiate</span>
                         </button>
                     </div>

@@ -15,6 +15,7 @@ dependencies {
     
     implementation libraries.bouncycastle
     implementation libraries.ldaptive
+    implementation libraries.commonscollections4
 
 
     

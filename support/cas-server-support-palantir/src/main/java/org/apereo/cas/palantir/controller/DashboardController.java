@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.configuration.api.MutablePropertySource;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -19,12 +20,16 @@ import org.apereo.cas.web.AbstractController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.actuate.endpoint.EndpointAccessResolver;
+import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -49,6 +54,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RequestMapping(PalantirConstants.URL_PATH_PALANTIR)
 @RequiredArgsConstructor
 @Tag(name = "Palantir")
+@Slf4j
 public class DashboardController extends AbstractController {
     /**
      * Registered service types are discovered with a full ClassGraph scan of the CAS namespace,
@@ -71,9 +77,11 @@ public class DashboardController extends AbstractController {
     private final EndpointLinksResolver endpointLinksResolver;
     private final WebEndpointProperties webEndpointProperties;
     private final ConfigurableApplicationContext applicationContext;
+    private final List<? extends ExposableEndpoint<?>> endpoints;
+    private final EndpointAccessResolver endpointAccessResolver;
 
-    private final Supplier<Map<String, List<String>>> exampleServiceDefinitions =
-        memoize(Unchecked.supplier(() -> loadExampleServiceDefinitions(SUPPORTED_SERVICE_DEFINITIONS.get().keySet())));
+    private final Supplier<List<Map<String, String>>> builtInServiceTemplates =
+        memoize(Unchecked.supplier(this::loadBuiltInServiceTemplates));
 
     /**
      * Dashboard home page explicitly defined.
@@ -119,23 +127,40 @@ public class DashboardController extends AbstractController {
         mav.addObject("isRoleAdmin", isRoleAdmin(authentication));
 
         val basePath = webEndpointProperties.getBasePath();
-        val endpoints = endpointLinksResolver.resolveLinks(basePath);
-        val actuatorEndpoints = endpoints
+        val resolvedLinks = endpointLinksResolver.resolveLinks(basePath);
+        val actuatorEndpoints = resolvedLinks
             .entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), casProperties.getServer().getPrefix() + entry.getValue().getHref()))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
+        mav.addObject("actuatorEndpointAccess", resolveEndpointAccess());
         mav.addObject("supportedServiceTypes", SUPPORTED_SERVICE_DEFINITIONS.get());
-        mav.addObject("serviceDefinitions", exampleServiceDefinitions.get());
+        mav.addObject("serviceTemplates", collectServiceTemplates());
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
             && ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent());
 
         val mutablePropertySources = CasCoreConfigurationUtils.getMutablePropertySources(applicationContext);
         mav.addObject("mutablePropertySources", mutablePropertySources.stream().map(MutablePropertySource::getName).toList());
+        mav.addObject("configurationEncryptionAvailable", StringUtils.isNotBlank(applicationContext.getEnvironment()
+            .getProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName())));
         mav.addObject("serviceProperties", SERVICE_PROPERTIES.get());
         return mav;
+    }
+
+    /**
+     * The access level of every discovered endpoint, resolved the way the endpoint's mappings are, so that the
+     * dashboard can hold back the requests a read-only endpoint refuses.
+     *
+     * @return the access level of each endpoint, by endpoint id
+     */
+    private Map<String, String> resolveEndpointAccess() {
+        return endpoints
+            .stream()
+            .collect(Collectors.toMap(endpoint -> endpoint.getEndpointId().toString(),
+                endpoint -> endpointAccessResolver.accessFor(endpoint.getEndpointId(), endpoint.getDefaultAccess()).name(),
+                (first, second) -> first, TreeMap::new));
     }
 
     private static boolean isRoleAdmin(final Authentication authentication) {
@@ -147,7 +172,7 @@ public class DashboardController extends AbstractController {
 
     /**
      * Wrap a supplier so the delegate runs on first use and its result is reused afterwards.
-     *
+     * <p>
      * Two callers racing on a cold context may each compute the value, which is harmless here
      * because every delegate is a pure scan of a fixed classpath; the point is that the scan leaves
      * the request path once a value has been published.
@@ -173,23 +198,65 @@ public class DashboardController extends AbstractController {
             })));
     }
 
-    private Map<String, List<String>> loadExampleServiceDefinitions(final Set<String> serviceTypes) throws IOException {
-        val jsonFilesMap = new HashMap<String, List<String>>();
-        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-        val resolver = new PathMatchingResourcePatternResolver();
-        val resources = resolver.getResources("classpath:service-definitions/**/*.json");
+    private List<Map<String, String>> collectServiceTemplates() {
+        val templates = new ArrayList<>(builtInServiceTemplates.get());
+        val directory = casProperties.getPalantir().getTemplatesDirectory();
+        if (StringUtils.isNotBlank(directory)) {
+            templates.addAll(loadSharedServiceTemplates(Path.of(StringUtils.removeStart(directory, "file:"))));
+        }
+        return templates;
+    }
 
+    private List<Map<String, String>> loadBuiltInServiceTemplates() throws IOException {
+        val resources = new PathMatchingResourcePatternResolver().getResources("classpath:service-definitions/**/*.json");
+        val templates = new ArrayList<Map<String, String>>();
         for (val resource : resources) {
             try (val input = resource.getInputStream()) {
                 val contents = new String(FileCopyUtils.copyToByteArray(input), StandardCharsets.UTF_8);
-                if (serviceTypes.stream().anyMatch(contents::contains)) {
-                    val definition = serializer.from(contents);
-                    if (definition != null) {
-                        jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), _ -> new ArrayList<>()).add(contents);
-                    }
-                }
+                toServiceTemplate(contents, "builtin").ifPresent(templates::add);
             }
         }
-        return jsonFilesMap;
+        return templates;
+    }
+
+    private List<Map<String, String>> loadSharedServiceTemplates(final Path directory) {
+        if (!Files.isDirectory(directory)) {
+            LOGGER.warn("Application templates directory [{}] does not exist or is not a directory", directory);
+            return List.of();
+        }
+        try (val files = Files.list(directory)) {
+            return files
+                .filter(file -> Files.isRegularFile(file) && Strings.CI.endsWith(file.getFileName().toString(), ".json"))
+                .sorted()
+                .map(file -> {
+                    try {
+                        val template = toServiceTemplate(Files.readString(file, StandardCharsets.UTF_8), "shared");
+                        if (template.isEmpty()) {
+                            LOGGER.warn("Skipping application template [{}]: CAS cannot read it, or its application type is not available", file);
+                        }
+                        return template;
+                    } catch (final Exception e) {
+                        LOGGER.warn("Skipping application template [{}]: [{}]", file, e.getMessage());
+                        return Optional.<Map<String, String>>empty();
+                    }
+                })
+                .flatMap(Optional::stream)
+                .toList();
+        } catch (final IOException e) {
+            LOGGER.warn("Unable to read application templates from [{}]: [{}]", directory, e.getMessage());
+            return List.of();
+        }
+    }
+
+    private Optional<Map<String, String>> toServiceTemplate(final String contents, final String source) {
+        val serviceTypes = SUPPORTED_SERVICE_DEFINITIONS.get().keySet();
+        if (serviceTypes.stream().noneMatch(contents::contains)) {
+            return Optional.empty();
+        }
+        val definition = new RegisteredServiceJsonSerializer(applicationContext).from(contents);
+        if (definition == null || !serviceTypes.contains(definition.getClass().getName())) {
+            return Optional.empty();
+        }
+        return Optional.of(Map.of("source", source, "type", definition.getClass().getName(), "definition", contents));
     }
 }

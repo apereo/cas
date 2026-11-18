@@ -30,12 +30,21 @@
         </div>
         <div class="palantir-nav-primary">
             <ul class="palantir-nav-direct">
+                <li th:if="${isRoleAdmin}" id="homeTabButton" data-tab-index="17">
+                    <button type="button" class="sidebar-navigation-button">
+                        <i class="mdi mdi-home-variant-outline" aria-hidden="true"></i>
+                        <span class="sidebar-navigation-text">
+                            <span class="sidebar-navigation-label">Home</span>
+                            <span class="sidebar-navigation-description" aria-hidden="true">Health, activity and what needs attention</span>
+                        </span>
+                    </button>
+                </li>
                 <li id="applicationsTabButton" class="active" data-tab-index="0">
                     <button type="button" class="sidebar-navigation-button" aria-current="page">
                         <i class="mdi mdi-apps" aria-hidden="true"></i>
                         <span class="sidebar-navigation-text">
                             <span class="sidebar-navigation-label">Applications</span>
-                            <span class="sidebar-navigation-description" aria-hidden="true">Registered services and SAML2 metadata sources</span>
+                            <span class="sidebar-navigation-description" aria-hidden="true">Registered services and applications</span>
                         </span>
                     </button>
                 </li>

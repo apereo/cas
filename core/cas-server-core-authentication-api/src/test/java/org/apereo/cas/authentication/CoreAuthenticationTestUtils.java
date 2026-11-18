@@ -70,7 +70,7 @@ public class CoreAuthenticationTestUtils {
         try {
             return new HttpBasedServiceCredential(new URI(url).toURL(), getRegisteredService(url));
         } catch (final Exception e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(e);
         }
     }
 

@@ -97,7 +97,7 @@ public class OidcFederationTrustAnchorKeys {
         } catch (final Exception e) {
             LOGGER.warn("Unable to read the historical keys of trust anchor [{}], so its trust chains are not used now: [{}]",
                 trustAnchorId, e.getMessage());
-            throw new OidcFederationResolutionUnavailableException("Historical keys of trust anchor %s cannot be read now".formatted(trustAnchorId));
+            throw new OidcFederationResolutionUnavailableException("Historical keys of trust anchor %s cannot be read now".formatted(trustAnchorId), e);
         }
     }
 

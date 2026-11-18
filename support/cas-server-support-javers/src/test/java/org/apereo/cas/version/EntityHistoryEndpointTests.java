@@ -27,7 +27,12 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -89,12 +94,86 @@ class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
         ).andExpect(status().isOk());
     }
 
+    /**
+     * A change made by a signed-in user names that user as its author; a change made with nobody signed in names CAS.
+     * The history the endpoint answers carries the author of each version.
+     */
+    @Test
+    void verifyHistoryNamesAuthor() throws Throwable {
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(service);
+        try {
+            SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("casadmin", "N/A", List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))));
+            service.setDescription("Changed by an administrator");
+            servicesManager.save(service);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+        val history = objectVersionRepository.getHistory(service);
+        assertEquals("casadmin", history.getFirst().author());
+        assertEquals(JaversEntityHistoryRepository.SYSTEM_AUTHOR, history.getLast().author());
+
+        mockMvc.perform(get("/actuator/entityHistory/registeredServices/" + service.getId())
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].author").value("casadmin"))
+            .andExpect(jsonPath("$[1].author").value(JaversEntityHistoryRepository.SYSTEM_AUTHOR));
+    }
+
+    /**
+     * The shared history lists the latest changes of every service, newest first, with who made them; a deletion is
+     * recorded with the service's last name, and a service saved again after its deletion keeps a readable history.
+     */
+    @Test
+    void verifyRecentChangesIncludeDeletions() {
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        service.setName("RecentChangesExample");
+        try {
+            SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("casadmin", "N/A", List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))));
+            servicesManager.save(service);
+            service.setDescription("Changed before deleting");
+            servicesManager.save(service);
+            servicesManager.delete(service);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+        val changes = objectVersionRepository.getRecentChanges(100)
+            .stream()
+            .filter(change -> change.id().equals(String.valueOf(service.getId())))
+            .toList();
+        assertEquals(List.of("deleted", "updated", "created"), changes.stream().map(EntityChange::action).toList());
+        assertTrue(changes.stream().allMatch(change -> "casadmin".equals(change.author())));
+        assertTrue(changes.stream().allMatch(change -> "RecentChangesExample".equals(change.name())));
+
+        servicesManager.save(service);
+        assertFalse(objectVersionRepository.getHistory(service).isEmpty());
+    }
+
     @Test
     void verifyChangelog() throws Throwable {
         val service1 = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val savedService = servicesManager.save(service1);
         mockMvc.perform(get("/actuator/entityHistory/registeredServices/" + savedService.getId() + "/changelog"))
             .andExpect(status().isOk());
+    }
+
+    /**
+     * Bulk saves, such as importing a zip of applications, return nothing; each service they save is still recorded,
+     * rather than the save failing on a missing result.
+     */
+    @Test
+    void verifyBulkSavesKeepHistory() {
+        val streamed = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val first = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val second = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        assertDoesNotThrow(() -> servicesManager.save(Stream.of(streamed)));
+        assertDoesNotThrow(() -> servicesManager.save(first, second));
+        for (val service : List.of(streamed, first, second)) {
+            assertNotNull(servicesManager.findServiceBy(service.getId()));
+            assertFalse(objectVersionRepository.getHistory(service).isEmpty());
+        }
     }
 
     @Test
@@ -187,9 +266,27 @@ class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
             return mock(MongoDatabaseFactory.class);
         }
 
+        /**
+         * Javers backed by its in-memory repository, whose snapshot lists are not safe for concurrent use: the test
+         * methods run in parallel, and a commit made while another method reads history fails that read with a
+         * {@link ConcurrentModificationException}. Every call is therefore made one at a time, as the MongoDb
+         * repository used outside tests allows.
+         *
+         * @return the javers instance
+         */
         @Bean(name = "JaversFromStarter")
         public Javers javers() {
-            return JaversBuilder.javers().build();
+            val javers = JaversBuilder.javers().build();
+            return (Javers) Proxy.newProxyInstance(Javers.class.getClassLoader(), new Class<?>[]{Javers.class},
+                (proxy, method, args) -> {
+                    synchronized (javers) {
+                        try {
+                            return method.invoke(javers, args);
+                        } catch (final InvocationTargetException e) {
+                            throw e.getCause();
+                        }
+                    }
+                });
         }
     }
 }

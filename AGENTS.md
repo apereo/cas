@@ -23,14 +23,18 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-heimdall-authzen`](.claude/skills/cas-heimdall-authzen/SKILL.md) | `support/cas-server-support-heimdall*` |
 | [`cas-import-pr`](.claude/skills/cas-import-pr/SKILL.md) | Bringing a contributor PR onto a local branch |
 | [`cas-interrupt-notifications`](.claude/skills/cas-interrupt-notifications/SKILL.md) | `support/cas-server-support-interrupt*` |
+| [`cas-jwt`](.claude/skills/cas-jwt/SKILL.md) | Issuing, reading, signing or encrypting JWTs in any module |
 | [`cas-ldap`](.claude/skills/cas-ldap/SKILL.md) | LDAP modules |
 | [`cas-mcp-server`](.claude/skills/cas-mcp-server/SKILL.md) | `support/cas-server-support-mcp` |
 | [`cas-oauth-oidc-authentication`](.claude/skills/cas-oauth-oidc-authentication/SKILL.md) | OAuth/OIDC/UMA client authentication, access-token-protected endpoints, `OAuth20UserProfile`, login callback |
-| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*`, OpenID Federation |
+| [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*` |
 | [`cas-oid4vc`](.claude/skills/cas-oid4vc/SKILL.md) | `support/cas-server-support-oidc-vc*`, wallets, SD-JWT/mdoc |
+| [`cas-oidc-federation`](.claude/skills/cas-oidc-federation/SKILL.md) | `support/cas-server-support-oidc-federation`, OpenID Federation |
+| [`cas-palantir`](.claude/skills/cas-palantir/SKILL.md) | Palantir admin dashboard (`palantir/**` templates, `palantir-*.js`) |
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
 | [`cas-protocol`](.claude/skills/cas-protocol/SKILL.md) | Service/proxy validation, SAML 1.1 |
-| [`cas-puppeteer-scenarios`](.claude/skills/cas-puppeteer-scenarios/SKILL.md) | `ci/tests/puppeteer/**`, `ci/tests/**/run-*.sh`, scenario cross-checks |
+| [`cas-puppeteer-runner`](.claude/skills/cas-puppeteer-runner/SKILL.md) | `ci/tests/puppeteer/run.sh`, init scripts, scenario CI jobs, `ci/tests/**/run-*.sh` test servers |
+| [`cas-puppeteer-scenarios`](.claude/skills/cas-puppeteer-scenarios/SKILL.md) | `ci/tests/puppeteer/scenarios/**`, scenario cross-checks |
 | [`cas-saml`](.claude/skills/cas-saml/SKILL.md) | `support/cas-server-support-saml*` metadata, SAML2 IdP session store |
 | [`cas-sandbox-verification`](.claude/skills/cas-sandbox-verification/SKILL.md) | Gradle, JDK 25 or Maven Central unavailable; the device VM test runner |
 | [`cas-service-registries`](.claude/skills/cas-service-registries/SKILL.md) | `ServicesManager`, `support/cas-server-support-*-service-registry*` |
@@ -39,7 +43,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-storage-backends`](.claude/skills/cas-storage-backends/SKILL.md) | MongoDB, Redis, JPA/Hibernate, DynamoDB modules |
 | [`cas-testing`](.claude/skills/cas-testing/SKILL.md) | Running tests, writing tests, flaky tests |
 | [`cas-ticket-registries`](.claude/skills/cas-ticket-registries/SKILL.md) | `support/cas-server-support-*-ticket-registry`, ticket compactors |
-| [`cas-ui`](.claude/skills/cas-ui/SKILL.md) | Templates, `static/**`, themes, theme builder, Palantir |
+| [`cas-ui`](.claude/skills/cas-ui/SKILL.md) | Templates, `static/**`, themes, theme builder |
 | [`cas-web-security`](.claude/skills/cas-web-security/SKILL.md) | `CasWebSecurityConfigurer`, CSRF, authentication entry points |
 
 ## Big picture

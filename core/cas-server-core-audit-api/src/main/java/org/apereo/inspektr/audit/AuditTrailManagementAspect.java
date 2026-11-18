@@ -65,6 +65,7 @@ public class AuditTrailManagementAspect {
         String currentPrincipal = null;
         val actions = new String[audits.value().length];
         var auditableResources = new String[audits.value().length][];
+        val targets = new String[audits.value().length];
         try {
             retVal = joinPoint.proceed();
 
@@ -77,6 +78,7 @@ public class AuditTrailManagementAspect {
                 auditResourceResolver.setAuditFormat(this.auditFormat);
 
                 auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
+                targets[i] = auditResourceResolver.resolveTarget(joinPoint, retVal);
                 actions[i] = auditActionResolver.resolveFrom(joinPoint, retVal, audits.value()[i]);
             }
             return retVal;
@@ -90,6 +92,7 @@ public class AuditTrailManagementAspect {
                     auditResourceResolver.setAuditFormat(this.auditFormat);
 
                     auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, e);
+                    targets[i] = auditResourceResolver.resolveTarget(joinPoint, e);
                     val auditActionResolver = Objects.requireNonNull(auditActionResolvers.get(audits.value()[i].actionResolverName()));
                     actions[i] = auditActionResolver.resolveFrom(joinPoint, e, audits.value()[i]);
                 }
@@ -97,7 +100,7 @@ public class AuditTrailManagementAspect {
             throw t;
         } finally {
             for (var i = 0; i < audits.value().length; i++) {
-                executeAuditCode(currentPrincipal, auditableResources[i], joinPoint, retVal, actions[i]);
+                executeAuditCode(currentPrincipal, auditableResources[i], targets[i], joinPoint, retVal, actions[i]);
             }
         }
     }
@@ -125,6 +128,7 @@ public class AuditTrailManagementAspect {
         String currentPrincipal = null;
         var auditResource = ArrayUtils.EMPTY_STRING_ARRAY;
         String action = null;
+        String target = null;
         Object retVal = null;
         try {
             retVal = joinPoint.proceed();
@@ -132,6 +136,7 @@ public class AuditTrailManagementAspect {
             currentPrincipal = getCurrentPrincipal(joinPoint, audit, retVal);
 
             auditResource = auditResourceResolver.resolveFrom(joinPoint, retVal);
+            target = auditResourceResolver.resolveTarget(joinPoint, retVal);
             action = auditActionResolver.resolveFrom(joinPoint, retVal, audit);
 
             return retVal;
@@ -139,10 +144,11 @@ public class AuditTrailManagementAspect {
             val e = wrapIfNecessary(t);
             currentPrincipal = getCurrentPrincipal(joinPoint, audit, e);
             auditResource = auditResourceResolver.resolveFrom(joinPoint, e);
+            target = auditResourceResolver.resolveTarget(joinPoint, e);
             action = auditActionResolver.resolveFrom(joinPoint, e, audit);
             throw t;
         } finally {
-            executeAuditCode(currentPrincipal, auditResource, joinPoint, retVal, action);
+            executeAuditCode(currentPrincipal, auditResource, target, joinPoint, retVal, action);
         }
     }
 
@@ -177,6 +183,7 @@ public class AuditTrailManagementAspect {
 
     private void executeAuditCode(@Nullable final String currentPrincipal,
                                   final String[] auditableResources,
+                                  @Nullable final String target,
                                   final ProceedingJoinPoint joinPoint,
                                   @Nullable final Object retVal,
                                   @Nullable final String action) {
@@ -192,7 +199,7 @@ public class AuditTrailManagementAspect {
 
         for (val auditableResource : auditableResources) {
             Assert.notNull(auditableResource, "'resourceOperatedUpon' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
-            val auditContext = new AuditActionContext(currentPrincipal, auditableResource, action, "CAS", actionDate, clientInfo);
+            val auditContext = new AuditActionContext(currentPrincipal, auditableResource, action, "CAS", actionDate, clientInfo, target);
 
             try {
                 for (val manager : auditTrailManagers) {

@@ -21,6 +21,7 @@ import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndex;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexDescription;
 import software.amazon.awssdk.services.dynamodb.model.GlobalSecondaryIndexUpdate;
+import software.amazon.awssdk.services.dynamodb.model.IndexStatus;
 import software.amazon.awssdk.services.dynamodb.model.KeySchemaElement;
 import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
@@ -45,6 +46,8 @@ public class DynamoDbTableUtils {
     private static final int DEFAULT_WAIT_TIMEOUT = 10 * 60 * 1000;
 
     private static final int DEFAULT_WAIT_INTERVAL = 10 * 1000;
+
+    private static final int DEFAULT_INDEX_WAIT_INTERVAL = 1000;
 
     /**
      * Wait until active.
@@ -75,6 +78,42 @@ public class DynamoDbTableUtils {
             throw new TableNeverTransitionedToStateException(tableName, TableStatus.ACTIVE);
         }
         return table;
+    }
+
+    /**
+     * Wait until a global secondary index of the table is active and no longer backfilling, which is when it can be
+     * written through and queried. The table itself must be active too. An index added to an existing table is
+     * created and filled from the existing items while the table stays active, so waiting for the table is not enough.
+     *
+     * @param dynamo    the dynamo
+     * @param tableName the table name
+     * @param indexName the index name
+     * @param timeout   the timeout
+     * @param interval  the interval between two checks
+     * @return the table description
+     */
+    public static TableDescription waitUntilIndexActive(final DynamoDbClient dynamo, final String tableName,
+                                                        final String indexName, final int timeout, final int interval) {
+        val endTime = System.currentTimeMillis() + timeout;
+        val request = DescribeTableRequest.builder().tableName(tableName).build();
+        var table = dynamo.describeTable(request).table();
+        while (!isIndexActive(table, indexName)) {
+            if (System.currentTimeMillis() >= endTime) {
+                throw new TableNeverTransitionedToStateException(tableName, indexName);
+            }
+            LOGGER.debug("Waiting for global secondary index [{}] of DynamoDb table [{}] to become active", indexName, tableName);
+            FunctionUtils.doUnchecked(_ -> Thread.sleep(interval));
+            table = dynamo.describeTable(request).table();
+        }
+        return table;
+    }
+
+    private static boolean isIndexActive(final TableDescription table, final String indexName) {
+        return table.tableStatus() == TableStatus.ACTIVE && Optional.ofNullable(table.globalSecondaryIndexes())
+            .orElseGet(List::of)
+            .stream()
+            .filter(index -> indexName.equals(index.indexName()))
+            .anyMatch(index -> index.indexStatus() == IndexStatus.ACTIVE && !Boolean.TRUE.equals(index.backfilling()));
     }
 
     /**
@@ -215,8 +254,8 @@ public class DynamoDbTableUtils {
                     .build();
                 LOGGER.info("Creating missing global secondary index [{}] on DynamoDb table [{}]", index.indexName(), tableName);
                 dynamoDbClient.updateTable(request);
-                waitUntilActive(dynamoDbClient, tableName);
-                tableDescription = dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+                tableDescription = waitUntilIndexActive(dynamoDbClient, tableName, index.indexName(),
+                    DEFAULT_WAIT_TIMEOUT, DEFAULT_INDEX_WAIT_INTERVAL);
             }
         }
         return tableDescription;
@@ -514,6 +553,10 @@ public class DynamoDbTableUtils {
 
         TableNeverTransitionedToStateException(final String tableName, final TableStatus desiredStatus) {
             super("Table " + tableName + " never transitioned to desired state of " + desiredStatus.toString());
+        }
+
+        TableNeverTransitionedToStateException(final String tableName, final String indexName) {
+            super("Global secondary index " + indexName + " of table " + tableName + " never became active");
         }
 
     }

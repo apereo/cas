@@ -2,7 +2,7 @@
 aceEditor = "1.44.0"
 acmeClient = "5.1.0"
 amazonDax = "2.0.11"
-amazonSdk = "2.57.13"
+amazonSdk = "2.59.3"
 azureInsights = "3.7.10"
 azureKustoLog4j = "1.0.0"
 animateCss = "4.1.1"
@@ -25,8 +25,8 @@ azuread = "1.26.1"
 base64Js = "1.5.1"
 bootstrap = "5.3.8"
 bootstrapSelect = "1.13.18"
-bouncycastleProv = "1.86"
-bouncycastlePkix = "1.86"
+bouncycastleProv = "1.87"
+bouncycastlePkix = "1.87"
 bucket4j = "8.10.1"
 caffeine = "3.3.1"
 casClient = "4.1.1"
@@ -40,9 +40,7 @@ commonsCli = "1.11.0"
 commonsCodec = "1.22.1"
 commonsCollections = "4.6.0"
 commonsCollections3 = "3.2.2"
-commonsCompress = "1.28.0"
 commonsIo = "2.22.0"
-commonsJexl = "3.7.1"
 commonsLang = "3.22.0"
 commonsPool = "2.13.1"
 commonsText = "1.15.0"
@@ -63,19 +61,19 @@ duoUniversalSdk = "1.4.0"
 eclipseAngusMail = "2.0.5"
 eclipseLink = "5.0.2"
 ehcache3 = "3.12.0"
-errorprone = "2.52.0"
+errorprone = "2.53.0"
 elasticApm = "1.57.1"
 eurekaClient = "2.0.6"
 fingerprintJs = "5.2.0"
-firebaseAdmin = "9.11.0"
+firebaseAdmin = "9.12.0"
 fluentd = "0.3.4"
 fluentdLog4j = "1.0.0"
 fontAwesome = "7.3.0"
 geode = "2.0.4"
 googleApiClient = "2.9.2"
 googleAuth = "1.5.0"
-googleCloudLogging = "3.41.0"
-googleCloudMonitor = "3.103.0"
+googleCloudLogging = "3.44.0"
+googleCloudMonitor = "3.104.0"
 googleCloudSdk = "8.3.1"
 googleMapsGeoCoding = "2.2.0"
 googleZxing = "3.5.4"
@@ -115,10 +113,8 @@ jakartaActivation = "2.1.4"
 jakartaAnnotationApi = "3.0.0"
 jakartaEl = "6.0.1"
 jakartaElImpl = "6.0.0"
-jakartaJms = "3.1.0"
 jakartaJstl = "3.0.2"
 jakartaServlet = "6.1.0"
-jakartaSoapApi = "3.0.2"
 jakartaValidation = "3.1.1"
 jansi = "2.4.3"
 jasypt = "1.9.3"
@@ -127,7 +123,6 @@ javaParser = "3.28.2"
 javers = "7.11.10"
 jaxbApi = "4.0.5"
 jaxbImpl = "4.0.9"
-jaxbRuntime = "4.0.5"
 jcifs = "1.3.17"
 jclouds = "2.7.0"
 jcloudsGoogleEngine = "1.9.3"
@@ -140,7 +135,7 @@ jodaTime = "2.15.1"
 jool = "0.9.16"
 jose4j = "0.9.7"
 jpaPersistenceApi = "3.2.0"
-jquery = "4.0.0"
+jquery = "4.1.0"
 jqueryContextMenu = "2.10.1"
 jqueryUi = "1.14.2"
 jradius = "1.1.5"
@@ -172,9 +167,9 @@ mailgun = "2.4.2"
 mailjet = "6.2.0"
 mariaDb = "4.0.0"
 material = "14.0.0"
-maxmind = "5.2.0"
+maxmind = "5.3.0"
 mdiFont = "7.4.47"
-mermaid = "12.2.0"
+mermaid = "12.3.0"
 micrometer = "1.18.0-RC2"
 micrometerTracing = "1.8.0-RC2"
 mockito = "5.24.0"
@@ -200,7 +195,6 @@ oktaHttpClient = "8.2.5"
 oktaSdk = "3.0.0"
 opensaml = "5.2.3"
 oracleJdbc = "23.26.4.0.0"
-oshi = "7.7.3"
 otel = "1.68.0"
 pac4j = "6.6.1"
 permitio = "2.2.5"
@@ -208,14 +202,12 @@ postgresql = "42.7.14"
 prometheus = "1.10.0"
 pulsar = "4.2.5"
 pushy = "0.15.6"
-quartz = "2.5.2"
 redisLettuce = "7.9.0.RELEASE"
 retrofit = "3.0.0"
 saajImpl = "3.0.6"
 scimSdkClient = "1.35.0"
-semver = "3.1.0"
 sendGrid = "4.10.3"
-sentry = "8.63.0"
+sentry = "8.65.0"
 shibbolethUtilJavaSupport = "9.2.3"
 slackClient = "1.55.0"
 slf4j = "2.0.20"
@@ -251,7 +243,6 @@ springWebflow = "4.0.1"
 springWs = "5.1.0-RC1"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
-streamBuffer = "2.1.0"
 swagger = "2.2.56"
 sweetAlert = "11.26.25"
 trumbowyg = "2.31.0"
@@ -264,7 +255,6 @@ tomSelect = "2.7.0"
 twilio = "13.2.1"
 unboundid = "7.0.6"
 whatWgFetch = "3.6.20"
-wsApi = "4.0.3"
 wsdl4j = "1.6.3"
 wss4j = "4.0.3"
 xmlSec = "4.0.4"
@@ -283,7 +273,7 @@ gradleLombok = "9.8.3"
 gradleNullAway = "3.3.0"
 gradleErrorProne = "5.2.0"
 gradleGraalVmNative = "1.1.19"
-gradleSonarqube = "7.5.0.8588"
+gradleSonarqube = "7.6.0.18749"
 gradleNmcpPublishing = "1.6.2"
 gradleJib = "3.5.4"
 
@@ -308,7 +298,6 @@ apm-agent-api = { module = "co.elastic.apm:apm-agent-api", version.ref = "elasti
 apm-agent-attach = { module = "co.elastic.apm:apm-agent-attach", version.ref = "elasticApm" }
 arrow-memory-netty = { module = "org.apache.arrow:arrow-memory-netty", version.ref = "arrow" }
 arrow-memory-unsafe = { module = "org.apache.arrow:arrow-memory-unsafe", version.ref = "arrow" }
-aspectjrt = { module = "org.aspectj:aspectjrt", version.ref = "aspectj" }
 aspectjweaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
 authlete-cbor = { module = "com.authlete:cbor", version.ref = "authleteCbor" }
 authlete-sd-jwt = { module = "com.authlete:sd-jwt", version.ref = "authlete" }
@@ -343,9 +332,7 @@ commons-cli = { module = "commons-cli:commons-cli", version.ref = "commonsCli" }
 commons-codec = { module = "commons-codec:commons-codec", version.ref = "commonsCodec" }
 commons-collections = { module = "commons-collections:commons-collections", version.ref = "commonsCollections3" }
 commons-collections4 = { module = "org.apache.commons:commons-collections4", version.ref = "commonsCollections" }
-commons-compress = { module = "org.apache.commons:commons-compress", version.ref = "commonsCompress" }
 commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
-commons-jexl3 = { module = "org.apache.commons:commons-jexl3", version.ref = "commonsJexl" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang" }
 commons-pool2 = { module = "org.apache.commons:commons-pool2", version.ref = "commonsPool" }
 commons-text = { module = "org.apache.commons:commons-text", version.ref = "commonsText" }
@@ -444,7 +431,6 @@ jackson-dataformat-cbor = { module = "tools.jackson.dataformat:jackson-dataforma
 jackson-dataformat-properties = { module = "tools.jackson.dataformat:jackson-dataformat-properties", version.ref = "jackson" }
 jackson-dataformat-smile = { module = "tools.jackson.dataformat:jackson-dataformat-smile", version.ref = "jackson" }
 jackson-dataformat-xml = { module = "tools.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
-jackson-dataformat-xml2 = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson2DataBind" }
 jackson-dataformat-yaml = { module = "tools.jackson.dataformat:jackson-dataformat-yaml", version.ref = "jackson" }
 jackson-datatype-guava = { module = "tools.jackson.datatype:jackson-datatype-guava", version.ref = "jackson" }
 jackson-mapper-asl = { module = "org.codehaus.jackson:jackson-mapper-asl", version.ref = "jacksonAsl" }
@@ -453,16 +439,12 @@ jackson-module-jakarta-xmlbind-annotations = { module = "tools.jackson.module:ja
 jakarta-activation-api = { module = "jakarta.activation:jakarta.activation-api", version.ref = "jakartaActivation" }
 jakarta-annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "jakartaAnnotationApi" }
 jakarta-el-api = { module = "jakarta.el:jakarta.el-api", version.ref = "jakartaEl" }
-jakarta-jms-api = { module = "jakarta.jms:jakarta.jms-api", version.ref = "jakartaJms" }
-jakarta-mail = { module = "org.eclipse.angus:jakarta.mail", version.ref = "eclipseAngusMail" }
 jakarta-persistence-api = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jpaPersistenceApi" }
 jakarta-servlet-api = { module = "jakarta.servlet:jakarta.servlet-api", version.ref = "jakartaServlet" }
 jakarta-servlet-jsp-jstl-api = { module = "jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api", version.ref = "jakartaJstl" }
 jakarta-transaction-api = { module = "jakarta.transaction:jakarta.transaction-api", version.ref = "jta" }
 jakarta-validation-api = { module = "jakarta.validation:jakarta.validation-api", version.ref = "jakartaValidation" }
 jakarta-xml-bind-api = { module = "jakarta.xml.bind:jakarta.xml.bind-api", version.ref = "jaxbApi" }
-jakarta-xml-soap-api = { module = "jakarta.xml.soap:jakarta.xml.soap-api", version.ref = "jakartaSoapApi" }
-jakarta-xml-ws-api = { module = "jakarta.xml.ws:jakarta.xml.ws-api", version.ref = "wsApi" }
 jansi = { module = "org.fusesource.jansi:jansi", version.ref = "jansi" }
 jasypt = { module = "org.jasypt:jasypt", version.ref = "jasypt" }
 java-driver-core = { module = "org.apache.cassandra:java-driver-core", version.ref = "apacheCassandra" }
@@ -471,7 +453,6 @@ javamelody-spring-boot-starter = { module = "net.bull.javamelody:javamelody-spri
 javaparser-core = { module = "com.github.javaparser:javaparser-core", version.ref = "javaParser" }
 javers-spring-boot-starter-mongo = { module = "org.javers:javers-spring-boot-starter-mongo", version.ref = "javers" }
 jaxb-impl = { module = "com.sun.xml.bind:jaxb-impl", version.ref = "jaxbImpl" }
-jaxws-rt = { module = "com.sun.xml.ws:jaxws-rt", version.ref = "jaxbRuntime" }
 jcifs = { module = "jcifs:jcifs", version.ref = "jcifs" }
 jcip-annotations = { module = "com.github.stephenc.jcip:jcip-annotations", version.ref = "jcpiAnnotations" }
 jclouds-allcompute = { module = "org.apache.jclouds:jclouds-allcompute", version.ref = "jclouds" }
@@ -605,7 +586,6 @@ opensaml-xmlsec-impl = { module = "org.opensaml:opensaml-xmlsec-impl", version.r
 opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "otel" }
 opentelemetry-sdk-autoconfigure = { module = "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure", version.ref = "otel" }
 orgjson = { module = "org.json:json", version.ref = "json" }
-oshi-core = { module = "com.github.oshi:oshi-core", version.ref = "oshi" }
 pac4j-cas = { module = "org.pac4j:pac4j-cas", version.ref = "pac4j" }
 pac4j-core = { module = "org.pac4j:pac4j-core", version.ref = "pac4j" }
 pac4j-http = { module = "org.pac4j:pac4j-http", version.ref = "pac4j" }
@@ -619,13 +599,11 @@ postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" 
 prometheus = { module = "io.prometheus:prometheus-metrics-exposition-formats", version.ref = "prometheus" }
 pulsar-client-api = { module = "org.apache.pulsar:pulsar-client-api", version.ref = "pulsar" }
 pushy = { module = "com.eatthepath:pushy", version.ref = "pushy" }
-quartz = { module = "org.quartz-scheduler:quartz", version.ref = "quartz" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 s3 = { module = "software.amazon.awssdk:s3", version.ref = "amazonSdk" }
 saaj-impl = { module = "com.sun.xml.messaging.saaj:saaj-impl", version.ref = "saajImpl" }
 scim-sdk-client = { module = "de.captaingoldfish:scim-sdk-client", version.ref = "scimSdkClient" }
 secretsmanager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "amazonSdk" }
-semver4j = { module = "com.vdurmont:semver4j", version.ref = "semver" }
 sendgrid-java = { module = "com.sendgrid:sendgrid-java", version.ref = "sendGrid" }
 sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 sentry-spring-boot-starter-jakarta = { module = "io.sentry:sentry-spring-boot-4-starter", version.ref = "sentry" }
@@ -666,7 +644,6 @@ spring-boot-session-redis = { module = "org.springframework.boot:spring-boot-ses
 spring-boot-sql = { module = "org.springframework.boot:spring-boot-sql", version.ref = "springBoot" }
 spring-boot-thymeleaf = { module = "org.springframework.boot:spring-boot-thymeleaf", version.ref = "springBoot" }
 spring-boot-transaction = { module = "org.springframework.boot:spring-boot-transaction", version.ref = "springBoot" }
-spring-boot-quartz = { module = "org.springframework.boot:spring-boot-quartz", version.ref = "springBoot" }
 spring-boot-web-server = { module = "org.springframework.boot:spring-boot-web-server", version.ref = "springBoot" }
 spring-boot-webmvc-core = { module = "org.springframework.boot:spring-boot-webmvc", version.ref = "springBoot" }
 spring-boot-webmvc-test = { module = "org.springframework.boot:spring-boot-webmvc-test", version.ref = "springBoot" }
@@ -742,11 +719,9 @@ spring-expression = { module = "org.springframework:spring-expression", version.
 spring-integration-amqp = { module = "org.springframework.integration:spring-integration-amqp", version.ref = "springIntegration" }
 spring-integration-core = { module = "org.springframework.integration:spring-integration-core", version.ref = "springIntegration" }
 spring-integration-jdbc = { module = "org.springframework.integration:spring-integration-jdbc", version.ref = "springIntegration" }
-spring-integration-jmx = { module = "org.springframework.integration:spring-integration-jmx", version.ref = "springIntegration" }
 spring-integration-redis = { module = "org.springframework.integration:spring-integration-redis", version.ref = "springIntegration" }
 spring-integration-zookeeper = { module = "org.springframework.integration:spring-integration-zookeeper", version.ref = "springIntegration" }
 spring-jdbc = { module = "org.springframework:spring-jdbc", version.ref = "spring" }
-spring-jms = { module = "org.springframework:spring-jms", version.ref = "spring" }
 spring-kafka = { module = "org.springframework.kafka:spring-kafka", version.ref = "springKafka" }
 spring-messaging = { module = "org.springframework:spring-messaging", version.ref = "spring" }
 spring-orm = { module = "org.springframework:spring-orm", version.ref = "spring" }
@@ -775,7 +750,6 @@ spymemcached = { module = "net.spy:spymemcached", version.ref = "spymemcached" }
 sqs = { module = "software.amazon.awssdk:sqs", version.ref = "amazonSdk" }
 ssm = { module = "software.amazon.awssdk:ssm", version.ref = "amazonSdk" }
 stomp-websocket = { module = "org.webjars:stomp-websocket", version.ref = "stompWebSocket" }
-streambuffer = { module = "com.sun.xml.stream.buffer:streambuffer", version.ref = "streamBuffer" }
 sts = { module = "software.amazon.awssdk:sts", version.ref = "amazonSdk" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
 swagger-core-jakarta = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }

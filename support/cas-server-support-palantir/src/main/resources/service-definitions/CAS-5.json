@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://exams\\.example\\.org/.*",
+  "name": "Available during a time window",
+  "description": "Allows sign-in only between a start and an end time, for example during an exam period.",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "startingDateTime": "2026-12-01T08:00:00Z",
+    "endingDateTime": "2026-12-19T18:00:00Z"
+  }
+}

@@ -103,6 +103,7 @@ function palantirShortcutGroups() {
             items: [
                 {keys: [[mac ? "⌘" : "Ctrl", "K"], ["/"]], label: "Search pages, sections, applications and actions"},
                 {keys: [["?"]], label: "Show these keyboard shortcuts"},
+                {keys: [["Shift", "Z"]], label: "Zen mode: hide or show the navigation bar and the footer"},
                 {keys: [["w"]], label: "Create an application in the wizard"},
                 {keys: [["n"]], label: "Create an item on the current page: an application, property, logger, handler, attribute definition or repository, tenant or access resource"},
                 {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes"}

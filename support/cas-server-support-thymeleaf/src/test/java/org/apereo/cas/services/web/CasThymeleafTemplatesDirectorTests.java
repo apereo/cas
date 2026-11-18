@@ -107,6 +107,21 @@ class CasThymeleafTemplatesDirectorTests {
         assertNotNull(casDirector);
     }
 
+    /**
+     * Service descriptions are HTML that CAS does not control: formatting survives, while markup that could run script
+     * or change the page is reduced to its text.
+     */
+    @Test
+    void verifySanitizeHtml() {
+        assertEquals(StringUtils.EMPTY, director.sanitizeHtml(null));
+        assertEquals(StringUtils.EMPTY, director.sanitizeHtml(" "));
+        assertEquals("<p>One <b>bold</b> and <em>soft</em></p><p>Two<br>lines</p>",
+            director.sanitizeHtml("<p>One <b>bold</b> and <em>soft</em></p><p>Two<br>lines</p>"));
+        assertEquals("Plain &amp; simple", director.sanitizeHtml("Plain & simple"));
+        assertEquals("<p>alink</p>", director.sanitizeHtml(
+            "<p onclick=\"steal()\">a<img src=x onerror=alert(1)><script>alert(2)</script><a href=\"javascript:alert(3)\">link</a></p>"));
+    }
+
     @TestConfiguration(value = "CasThymeleafTemplatesDirectorTestConfiguration", proxyBeanMethods = false)
     public static class CasThymeleafTemplatesDirectorTestConfiguration {
         @Bean

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriUtils;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -57,7 +58,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
     private static AbstractMap.SimpleImmutableEntry<String, String> splitQueryParameter(final String it) {
         val idx = it.indexOf('=');
         val key = idx > 0 ? it.substring(0, idx) : it;
-        val value = idx > 0 && it.length() > idx + 1 ? it.substring(idx + 1) : null;
+        val value = idx > 0 && it.length() > idx + 1 ? UriUtils.decode(it.substring(idx + 1), StandardCharsets.UTF_8) : null;
         return new AbstractMap.SimpleImmutableEntry<>(key, value);
     }
 

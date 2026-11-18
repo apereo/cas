@@ -73,19 +73,56 @@ async function initializeSystemOperations() {
         await refreshHttpTraces();
     }
 
+    let healthRequestPending = false;
+
+    /**
+     * Read the health checks from the summary behind Palantir's home page, which runs each check on its own, waits a
+     * bounded time for it, shows a check still running as slow, and keeps the answer for a while. The answer is
+     * shaped like the health endpoint's, with a check still running reported as SLOW. Older servers without the
+     * summary answer null, and the health endpoint is read instead.
+     *
+     * @returns {Promise<object|null>} the health, or null when the summary cannot be read
+     */
+    async function fetchHealthFromOverview() {
+        try {
+            const response = await fetch(`${retrieveDashboardUrl()}/overview?sections=health`, {credentials: "include", headers: {"Accept": "application/json"}});
+            if (!response.ok) {
+                return null;
+            }
+            const health = (await response.json()).sections?.health;
+            if (!health || !Array.isArray(health.components)) {
+                return null;
+            }
+            return {
+                status: health.status,
+                components: Object.fromEntries(health.components.map(component => [component.name,
+                    {status: component.status, millis: component.millis}]))
+            };
+        } catch (error) {
+            console.debug("The health checks are read from the health endpoint:", error);
+            return null;
+        }
+    }
+
     async function configureHealthChart() {
         function updateHealthChart(response) {
             if (response.components !== undefined && systemHealthChart) {
                 const payload = {
                     labels: [],
                     data: [],
-                    colors: []
+                    colors: [],
+                    descriptions: []
                 };
+                const timed = Object.values(response.components).some(component => Number.isFinite(Number(component.millis)));
                 Object.keys(response.components).forEach(key => {
+                    const component = response.components[key];
                     payload.labels.push(camelcaseToTitleCase(key));
-                    payload.data.push(1);
-                    payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
+                    payload.data.push(timed ? Math.max(1, Number(component.millis) || 1) : 1);
+                    payload.colors.push(palantirHealthColor(component.status));
+                    payload.descriptions.push(palantirHealthDescription(component.status, component.millis));
                 });
+                systemHealthChart.options.scales = palantirHealthScales(timed);
+                systemHealthChart.options.plugins.title.text = timed ? "System Health · time each check took" : "System Health";
                 systemHealthChart.data.labels = payload.labels;
                 systemHealthChart.data.datasets[0].data = payload.data;
                 systemHealthChart.data.datasets[0].backgroundColor = [...payload.colors];
@@ -93,20 +130,32 @@ async function initializeSystemOperations() {
                 systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
                     const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
                     originalLabels.forEach(label => {
-                        label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                        label.fillStyle = palantirHealthColor(response.status);
                         label.lineWidth = 0;
                     });
                     return originalLabels;
                 });
+                systemHealthChart.options.plugins.tooltip = {
+                    ...systemHealthChart.options.plugins.tooltip,
+                    callbacks: {label: context => payload.descriptions[context.dataIndex]}
+                };
                 systemHealthChart.update();
             }
         }
 
-        if (CasActuatorEndpoints.health()) {
+        if (!CasActuatorEndpoints.health() || healthRequestPending) {
+            return;
+        }
+        healthRequestPending = true;
+        return fetchHealthFromOverview().then(overview => {
+            if (overview !== null) {
+                updateHealthChart(overview);
+                healthRequestPending = false;
+                return;
+            }
             $.ajax({
                 url: CasActuatorEndpoints.health(),
                 method: "GET",
-                timeout: 5000,
                 success: function (response) {
                     updateHealthChart(response);
                 },
@@ -114,28 +163,207 @@ async function initializeSystemOperations() {
                     if (xhr.status === 503) {
                         const response = xhr.responseJSON;
                         updateHealthChart(response);
+                    } else if (xhr.status === 0) {
+                        console.warn("Health data is not available at the moment:", textStatus);
                     } else {
                         console.error("Error fetching health data:", errorThrown);
                         displayBanner(xhr);
                     }
+                },
+                complete: function () {
+                    healthRequestPending = false;
                 }
             });
-        }
+        });
     }
 
-    async function configureStatistics() {
-        if (CasActuatorEndpoints.statistics()) {
-            $.get(CasActuatorEndpoints.statistics(), response => {
+    let statisticsRequestPending = false;
+    let statisticsCounted = 0;
+    const STATISTICS_REFRESH = 60000;
 
-                if (!statisticsChart) {
-                    return;
-                }
-                const expired = response.expiredTickets;
-                const valid = response.validTickets;
-                statisticsChart.data.datasets[0].data = [valid, expired];
-                statisticsChart.update();
-            }).fail((xhr, status, error) => console.error("Error fetching data:", error));
+    /**
+     * Read the ticket counts for the Ticket Registry chart: all tickets, then a bar for every kind of ticket the
+     * registry holds, largest first, named the way CAS names it. Counting can take a moment in a registry that holds
+     * many tickets, so the chart says so until the first answer, refreshes once a minute, and a refresh waits for the
+     * one before it.
+     */
+    async function configureStatistics() {
+        if (!CasActuatorEndpoints.statistics()) {
+            $("#statisticsChartStatus").addClass("hide");
+            return;
         }
+        if (statisticsRequestPending) {
+            return;
+        }
+        statisticsRequestPending = true;
+        $.get(CasActuatorEndpoints.statistics(), response => {
+            statisticsCounted = Date.now();
+            const total = Number(response.tickets);
+            const types = (Array.isArray(response.ticketsByType) ? response.ticketsByType : [])
+                .filter(type => Number(type.count) > 0);
+            const unknown = !Number.isFinite(total) || total < 0;
+            $("#statisticsChartStatus").text(unknown
+                ? "This ticket registry could not count its tickets just now."
+                : `Counted at ${new Date(response.counted ?? Date.now()).toLocaleTimeString()} · every minute`);
+            if (statisticsChart) {
+                statisticsChart.data.labels = ["All Tickets", ...types.map(type => type.name)];
+                statisticsChart.data.ticketTypes = ["All Tickets", ...types.map(type => `${type.name} (${type.prefix})`)];
+                statisticsChart.data.datasets[0].data = [unknown ? 0 : total, ...types.map(type => Number(type.count))];
+                statisticsChart.update();
+            }
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            $("#statisticsChartStatus").text("The ticket counts could not be read just now; trying again in a minute.");
+        }).always(() => statisticsRequestPending = false);
+    }
+
+    let slowestRequestPending = false;
+    let slowestMeasured = 0;
+
+    /**
+     * Read the slowest URLs for the Slowest Endpoints chart from the summary behind Palantir's home page, which the
+     * server builds from the HTTP request timers it already keeps: one request, refreshed once a minute. The chart is
+     * hidden on servers whose summary has no such section.
+     */
+    async function configureSlowestEndpoints() {
+        if (!slowestEndpointsChart || slowestRequestPending) {
+            return;
+        }
+        slowestRequestPending = true;
+        $.get(`${retrieveDashboardUrl()}/overview`, {sections: "endpoints"}, response => {
+            slowestMeasured = Date.now();
+            const endpoints = response?.sections?.endpoints;
+            if (!endpoints || endpoints.unavailable) {
+                $("#slowestEndpointsChartCell").addClass("hide");
+                return;
+            }
+            $("#slowestEndpointsChartCell").removeClass("hide");
+            if (endpoints.pending) {
+                $("#slowestEndpointsChartStatus").text("Measuring the slowest endpoints…");
+                return;
+            }
+            const slowest = endpoints.slowest ?? [];
+            $("#slowestEndpointsChartStatus").text(slowest.length === 0
+                ? "No requests to measure yet, apart from Palantir's own, actuator endpoints and static files."
+                : `Slowest ${slowest.length} of ${endpoints.measured} URLs by average, since CAS started · every minute`);
+            slowestEndpointsChart.data.labels = slowest.map(endpoint => endpoint.uri);
+            slowestEndpointsChart.data.endpoints = slowest;
+            slowestEndpointsChart.data.datasets[0].data = slowest.map(endpoint => endpoint.meanSeconds * 1000);
+            slowestEndpointsChart.data.datasets[1].data = slowest.map(endpoint => endpoint.maxSeconds * 1000);
+            slowestEndpointsChart.update();
+        }).fail(() => {
+            slowestMeasured = Date.now();
+            $("#slowestEndpointsChartStatus").text("The slowest endpoints could not be read just now; trying again in a minute.");
+        }).always(() => slowestRequestPending = false);
+    }
+
+    let providersRequestPending = false;
+    let providersCounted = 0;
+
+    /**
+     * Read multifactor authentication per provider over the last two hours, counted by the audit storage from the
+     * provider each triggered event names, refreshed once a minute. An audit storage that cannot count hides the chart;
+     * the sign-ins chart says why.
+     */
+    async function configureMultifactorProviders() {
+        if (!CasActuatorEndpoints.auditLog() || !multifactorProvidersChart) {
+            $("#multifactorProvidersChartCell").addClass("hide");
+            return;
+        }
+        if (providersRequestPending) {
+            return;
+        }
+        providersRequestPending = true;
+        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {
+            interval: "PT2H",
+            actions: "AUTHENTICATION_EVENT_TRIGGERED",
+            groupBy: "target"
+        }, response => {
+            providersCounted = Date.now();
+            if (!response?.supported) {
+                $("#multifactorProvidersChartCell").addClass("hide");
+                return;
+            }
+            $("#multifactorProvidersChartCell").removeClass("hide");
+            const counts = (response.counts ?? []).filter(count => count.target && count.action === "AUTHENTICATION_EVENT_TRIGGERED");
+            const top = drawPalantirCountsByTarget(multifactorProvidersChart, counts);
+            $("#multifactorProvidersChartStatus").text(top.length === 0
+                ? "No multifactor authentication in the last 2 hours."
+                : `Top ${top.length} of ${top.measured} · every minute`);
+        }).fail(() => {
+            providersCounted = Date.now();
+            $("#multifactorProvidersChartStatus").text("This could not be counted just now; trying again in a minute.");
+        }).always(() => providersRequestPending = false);
+    }
+
+    let signInsRequestPending = false;
+    let signInsCounted = 0;
+    const SIGN_IN_SERIES = ["AUTHENTICATION_SUCCESS", "AUTHENTICATION_FAILED", "THROTTLED_LOGIN_ATTEMPT", "AUTHENTICATION_EVENT_TRIGGERED"];
+    const HOUR = 3600000;
+
+    function auditHourOf(value) {
+        if (Array.isArray(value)) {
+            return Date.UTC(value[0], value[1] - 1, value[2], value[3] ?? 0, value[4] ?? 0);
+        }
+        return Date.parse(`${String(value).replace(/Z$/, "")}Z`);
+    }
+
+    function generatedTime(value) {
+        if (typeof value === "number") {
+            return value < 1e11 ? value * 1000 : value;
+        }
+        const parsed = Date.parse(value);
+        return Number.isFinite(parsed) ? parsed : Date.now();
+    }
+
+    /**
+     * Read sign-ins per hour over the last two hours for the Sign-ins chart, as the audit storage counts them across the
+     * cluster: succeeded, failed and throttled sign-ins stacked, and multifactor authentication triggered as a line.
+     * Refreshed once a minute, which is as long as the server keeps a count. An audit storage that cannot count its
+     * records says so in place of the chart.
+     */
+    async function configureSignIns() {
+        if (!CasActuatorEndpoints.auditLog() || !signInsChart) {
+            $("#signInsChartCell").addClass("hide");
+            return;
+        }
+        if (signInsRequestPending) {
+            return;
+        }
+        signInsRequestPending = true;
+        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {interval: "PT2H", actions: SIGN_IN_SERIES.join(",")}, response => {
+            signInsCounted = Date.now();
+            const chartArea = $("#signInsChart").closest(".palantir-sign-ins-chart");
+            if (!response?.supported) {
+                chartArea.addClass("hide");
+                $("#signInsChartStatus").text("The audit storage of this server cannot count sign-ins per hour. "
+                    + "Audit records kept in a database, MongoDB, Redis, DynamoDB or a REST service can be counted.");
+                return;
+            }
+            chartArea.removeClass("hide");
+            const first = auditHourOf(response.query.from);
+            const hours = Array.from({length: Math.max(0, Math.round((auditHourOf(response.query.to) - first) / HOUR))},
+                (value, index) => first + index * HOUR);
+            const series = SIGN_IN_SERIES.map(() => hours.map(() => 0));
+            (response.counts ?? []).forEach(count => {
+                const index = Math.round((auditHourOf(count.hour) - first) / HOUR);
+                const position = SIGN_IN_SERIES.indexOf(count.action);
+                if (position >= 0 && index >= 0 && index < hours.length) {
+                    series[position][index] += Number(count.count) || 0;
+                }
+            });
+            const signIns = series.slice(0, 3).flat().reduce((total, value) => total + value, 0);
+            $("#signInsChartStatus").text(`${signIns.toLocaleString()} sign-ins · counted at `
+                + `${new Date(generatedTime(response.generated)).toLocaleTimeString()} · every minute`);
+            signInsChart.data.labels = hours.map(hour => new Date(hour).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}));
+            signInsChart.data.hours = hours.map(hour => new Date(hour).toLocaleString([], {
+                weekday: "short", hour: "2-digit", minute: "2-digit"
+            }));
+            series.forEach((values, position) => signInsChart.data.datasets[position].data = values);
+            signInsChart.update();
+        }).fail(() => {
+            $("#signInsChartStatus").text("Sign-ins could not be counted just now; trying again in a minute.");
+        }).always(() => signInsRequestPending = false);
     }
 
     let systemDataRequest = null;
@@ -419,15 +647,20 @@ async function initializeSystemOperations() {
             hideElements(tabItem);
             hideElements(panel);
             if (tabs.data("ui-tabs")) {
-                if (tabs.tabs("option", "active") === tabIndex) {
-                    tabs.tabs("option", "active", 0);
-                }
                 tabs.tabs("refresh");
+                const firstShown = tabs.find("> ul > li:not(.hide):not(.d-none)").first().index();
+                if (tabs.tabs("option", "active") === tabIndex && firstShown >= 0) {
+                    tabs.tabs("option", "active", firstShown);
+                }
             }
             if (tabs.find("> ul > li:not(.hide):not(.d-none)").length === 0) {
                 hideElements(tabs);
             }
         }
+    }
+
+    if (!CasActuatorEndpoints.casModules()) {
+        setSystemJqueryTabAvailable("#casmodulestab", "#casmodules-tab", false);
     }
 
     function hideDependenciesTab() {
@@ -436,6 +669,26 @@ async function initializeSystemOperations() {
 
     function hideVulnerabilitiesTab() {
         setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", false);
+    }
+
+    /**
+     * Load what the shown tab under System Info lists: the modules, the dependencies or the vulnerabilities.
+     *
+     * @returns {Promise<void>} resolved once it is loaded
+     */
+    async function refreshActiveSystemInfoTab() {
+        const tabs = $("#system-info-tabs");
+        if (!tabs.data("ui-tabs")) {
+            return;
+        }
+        const panel = tabs.find("> ul > li").eq(tabs.tabs("option", "active")).find("a").attr("href");
+        if (panel === "#casmodules-tab") {
+            await PalantirModules.load();
+        } else if (panel === "#casdependencies-tab") {
+            await refreshDependencies();
+        } else if (panel === "#casvulnerabilities-tab") {
+            await refreshVulnerabilities();
+        }
     }
 
     async function refreshDependencies() {
@@ -475,14 +728,9 @@ async function initializeSystemOperations() {
             hideVulnerabilitiesTab();
             return;
         }
-        Swal.fire({
-            title: "Checking vulnerabilities",
-            text: "Scanning dependencies and collecting vulnerability data...",
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        $("#casVulnerabilitiesStatus").empty();
+        $("#casvulnerabilities-tab").addClass("is-loading");
+        $("#casVulnerabilitiesTable").closest(".dt-container, table").attr("aria-busy", "true");
         return new Promise(resolve => {
             $.get(endpoint, response => {
                 setSystemJqueryTabAvailable("#casvulnerabilitiestab", "#casvulnerabilities-tab", true);
@@ -506,13 +754,17 @@ async function initializeSystemOperations() {
                 const errors = Array.isArray(response.errors) ? response.errors : [];
                 $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
                 vulnerabilitiesLoaded = true;
-                Swal.close();
+                $("#casvulnerabilities-tab").removeClass("is-loading");
+                casVulnerabilitiesTable.columns.adjust();
+                $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 updateNavigationSidebar();
                 resolve();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching dependency vulnerability data:", error);
+                $("#casVulnerabilitiesStatus").empty();
+                $("#casvulnerabilities-tab").removeClass("is-loading");
+                $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 hideVulnerabilitiesTab();
-                Swal.close();
                 updateNavigationSidebar();
                 resolve();
             });
@@ -986,7 +1238,7 @@ async function initializeSystemOperations() {
             return `
                 <div class="http-exchange-header-row">
                     <strong>${escapeHtml(name)}</strong>
-                    <code>${escapeHtml(renderedValue)}</code>
+                    ${palantirCode(renderedValue)}
                 </div>`;
         }).join("");
     }
@@ -1016,7 +1268,7 @@ async function initializeSystemOperations() {
                 <div class="http-exchange-metadata">
                     ${metadata.length === 0 ? `<div class="http-exchange-empty">No metadata recorded.</div>` : metadata.map(([name, value]) => `
                         <strong>${escapeHtml(name)}</strong>
-                        <code>${escapeHtml(value)}</code>
+                        ${palantirCode(value)}
                     `).join("")}
                 </div>
                 <div class="http-exchange-headers">
@@ -1219,7 +1471,7 @@ async function initializeSystemOperations() {
             .map(([name, value]) => `
                 <div class="http-trace-attribute-row">
                     <strong>${escapeHtml(name)}</strong>
-                    <code>${escapeHtml(value)}</code>
+                    ${palantirCode(value)}
                 </div>`)
             .join("");
     }
@@ -1272,13 +1524,13 @@ async function initializeSystemOperations() {
                     <tbody class="mdc-data-table__content">
                     ${spans.map(span => `
                         <tr class="mdc-data-table__row ${span.error ? "http-trace-row-error" : ""}">
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.traceId ?? "")}</code></td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.spanId ?? "")}</code></td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.parentSpanId || "")}</code></td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.traceId ?? "")}</td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.spanId ?? "")}</td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.parentSpanId || "")}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.name)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.serviceName)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(span.kind)}</td>
-                            <td class="mdc-data-table__cell"><code>${escapeHtml(span.startEpochNanos)}</code></td>
+                            <td class="mdc-data-table__cell">${palantirCode(span.startEpochNanos)}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.relativeStartNanos))}</td>
                             <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.durationNanos))}</td>
                             <td class="mdc-data-table__cell">${renderHttpTraceStatus(span.status, span.error)}</td>
@@ -1308,7 +1560,7 @@ async function initializeSystemOperations() {
                 <div class="http-trace-dialog-summary">
                     <div>
                         <span class="http-trace-dialog-label">Trace ID</span>
-                        <code>${escapeHtml(detail.traceId ?? "")}</code>
+                        ${palantirCode(detail.traceId ?? "")}
                     </div>
                     <div>
                         <span class="http-trace-dialog-label">Spans</span>
@@ -1701,6 +1953,11 @@ async function initializeSystemOperations() {
             hideElements($("#heapDumpAnalysisContainer"));
             return;
         }
+        if (!CasActuatorEndpoints.writable("heapDumpAnalysis")) {
+            notyf.dismissAll();
+            notyf.error(palantirReadOnlyMessage("heapDumpAnalysis"));
+            return;
+        }
         heapDumpClassesTable.clear();
         const refreshButton = $("#refreshHeapDumpAnalysisButton");
         refreshButton.prop("disabled", true);
@@ -1803,7 +2060,7 @@ async function initializeSystemOperations() {
         const usageLabel = usage === null ? "N/A" : formatMemoryPercent(usage);
 
         return {
-            0: `<code>${escapeHtml(pool.name)}</code>`,
+            0: `${palantirCode(pool.name)}`,
             1: formatMemoryBytes(pool.used),
             2: formatMemoryBytes(pool.committed),
             3: formatMemoryBytes(pool.max),
@@ -1881,60 +2138,7 @@ async function initializeSystemOperations() {
     }
 
     async function configureSystemMetrics() {
-        $("#systemMetricNameFilter").selectmenu({
-            change: function () {
-                $(this).selectmenu("close");
-                const metric = $(this).val();
-                systemMetricsTagsTable.clear();
-                systemMetricsMeasurementsTable.clear();
-                $("#systemMetricNameDescriptionContainer").hide();
-
-                if (metric && metric.length > 0) {
-                    $.get(`${CasActuatorEndpoints.metrics()}/${metric}`, response => {
-                        let description = `${response.description ?? "No description is available"}. Metric is measured in ${response.baseUnit ?? "unknown units"}.`;
-                        $("#systemMetricNameDescription").text(description);
-                        $("#systemMetricNameDescriptionContainer").show();
-
-                        response.availableTags.forEach(entry => {
-                            systemMetricsTagsTable.row.add({
-                                0: `<code>${entry.tag}</code>`,
-                                1: `<code>${entry.values.join(",")}</code>`
-                            });
-                        });
-                        systemMetricsTagsTable.draw();
-                        response.measurements.forEach(entry => {
-                            systemMetricsMeasurementsTable.row.add({
-                                0: `<code>${entry.statistic}</code>`,
-                                1: `<code>${entry.value}</code>`
-                            });
-                        });
-                        systemMetricsMeasurementsTable.draw();
-                    });
-                }
-            }
-        });
-
-        $("#systemMetricNameFilter").empty();
-        $("#systemMetricNameFilter").append(
-            $("<option>", {
-                value: "",
-                text: "Select a metric to view details..."
-            })
-        );
-
-        if (CasActuatorEndpoints.metrics()) {
-            $.get(CasActuatorEndpoints.metrics(), response => {
-                for (const name of response.names) {
-                    $("#systemMetricNameFilter").append(
-                        $("<option>", {
-                            value: name,
-                            text: name
-                        })
-                    );
-                    $("#systemMetricNameFilter").selectmenu("refresh");
-                }
-            });
-        }
+        PalantirMetrics.initialize();
     }
 
     async function fetchAvailableMetricNames() {
@@ -1957,10 +2161,14 @@ async function initializeSystemOperations() {
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
 
+            const used = Math.max(0, total - free);
+            $("#memoryChartStatus").text(Number.isFinite(maximum) && maximum > 0
+                ? `${used.toFixed(1)} GB in use of ${maximum.toFixed(1)} GB · ${Math.round(used / maximum * 100)}%`
+                : `${used.toFixed(1)} GB in use`);
             if (!memoryChart) {
                 return;
             }
-            memoryChart.data.datasets[0].data = [maximum, total, free];
+            memoryChart.data.datasets[0].data = [used, total, maximum];
             memoryChart.update();
         });
 
@@ -2001,24 +2209,6 @@ async function initializeSystemOperations() {
         drawCallback: settings => {
             $("#systemTable tr").addClass("mdc-data-table__row");
             $("#systemTable td").addClass("mdc-data-table__cell");
-        }
-    });
-
-    const systemMetricsTagsTable = $("#systemMetricsTagsTable").DataTable({
-        pageLength: 10,
-        autoWidth: false,
-        drawCallback: settings => {
-            $("#systemMetricsTagsTable tr").addClass("mdc-data-table__row");
-            $("#systemMetricsTagsTable td").addClass("mdc-data-table__cell");
-        }
-    });
-
-    const systemMetricsMeasurementsTable = $("#systemMetricsMeasurementsTable").DataTable({
-        pageLength: 10,
-        autoWidth: false,
-        drawCallback: settings => {
-            $("#systemMetricsMeasurementsTable tr").addClass("mdc-data-table__row");
-            $("#systemMetricsMeasurementsTable td").addClass("mdc-data-table__cell");
         }
     });
 
@@ -2085,7 +2275,7 @@ async function initializeSystemOperations() {
             {
                 data: "className",
                 render: (data, type) => type === "display"
-                    ? `<code>${escapeHtml(data)}</code>`
+                    ? `${palantirCode(data)}`
                     : data
             },
             {
@@ -2211,51 +2401,52 @@ async function initializeSystemOperations() {
         columns: [
             {
                 data: "startedAtMs",
-                width: "12rem",
+                width: "13%",
+                className: "dt-left",
                 render: (data, type, row) => type === "display" ? escapeHtml(row.startedAtLabel) : data
             },
             {
                 data: "traceId",
-                width: "18rem",
+                width: "19%",
                 render: (data, type) => type === "display"
                     ? `<code class="http-trace-id">${escapeHtml(data)}</code>`
                     : data
             },
             {
                 data: "rootSpan",
-                width: "18rem",
+                width: "18%",
                 render: (data, type) => type === "display"
                     ? renderHttpTraceRootSpan(data)
                     : data
             },
             {
                 data: "method",
-                width: "6.5rem",
+                width: "7%",
                 render: (data, type) => type === "display"
                     ? renderHttpTraceMethod(data)
                     : data
             },
             {
                 data: "url",
-                width: "24rem",
+                width: "21%",
                 render: (data, type) => type === "display"
                     ? `<code class="http-trace-url">${escapeHtml(data || "N/A")}</code>`
                     : data
             },
             {
                 data: "spanCount",
-                width: "5rem",
+                width: "5%",
                 className: "text-end"
             },
             {
                 data: "durationNanos",
-                width: "8rem",
+                width: "8%",
                 className: "text-end",
                 render: (data, type) => type === "display" ? escapeHtml(formatNanosDuration(data)) : data
             },
             {
                 data: "status",
-                width: "6.5rem",
+                width: "9%",
                 render: (data, type, row) => type === "display" ? renderHttpTraceStatus(data, row.error) : data
             }
         ],
@@ -2298,12 +2489,12 @@ async function initializeSystemOperations() {
             {
                 data: "groupId",
                 width: "28%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "artifactId",
                 width: "26%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "version",
@@ -2313,7 +2504,7 @@ async function initializeSystemOperations() {
             {
                 data: "source",
                 width: "34%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             }
         ],
         initComplete: () => applyMdcDataTableControls("#casDependenciesTable"),
@@ -2349,12 +2540,12 @@ async function initializeSystemOperations() {
             {
                 data: "dependency.groupId",
                 width: "15%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "dependency.artifactId",
                 width: "15%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "dependency.version",
@@ -2364,7 +2555,7 @@ async function initializeSystemOperations() {
             {
                 data: "dependency.source",
                 width: "22%",
-                render: (data, type) => type === "display" ? `<code>${escapeHtml(data)}</code>` : data
+                render: (data, type) => type === "display" ? `${palantirCode(data)}` : data
             },
             {
                 data: "modified",
@@ -2583,13 +2774,17 @@ async function initializeSystemOperations() {
 
     async function configureSystemInfo() {
         await fetchSystemData(response => {
-            const flattened = flattenJSON(response);
+            const shown = {...response};
+            if (CasActuatorEndpoints.casModules()) {
+                delete shown.casModules;
+            }
+            const flattened = flattenJSON(shown);
             systemTable.clear();
 
             for (const [key, value] of Object.entries(flattened)) {
                 systemTable.row.add({
-                    0: `<code>${key}</code>`,
-                    1: `<code>${value}</code>`
+                    0: `${palantirCode(key)}`,
+                    1: `${palantirCode(value)}`
                 });
             }
             systemTable.draw();
@@ -2639,13 +2834,15 @@ async function initializeSystemOperations() {
         if (ui.newPanel.attr("id") === "systemstatus-tab") {
             configureLiveMemory();
         }
-        if (ui.newPanel.attr("id") === "systeminfo-tab"
-            && $("#system-info-tabs").data("ui-tabs") && $("#system-info-tabs").tabs("option", "active") === 0) {
-            refreshDependencies();
+        if (ui.newPanel.attr("id") === "systeminfo-tab") {
+            refreshActiveSystemInfoTab();
         }
     });
 
     $("#system-info-tabs").on("tabsactivate", function (event, ui) {
+        if (ui.newPanel.attr("id") === "casmodules-tab") {
+            PalantirModules.load();
+        }
         if (ui.newPanel.attr("id") === "casdependencies-tab") {
             refreshDependencies();
         }
@@ -2670,36 +2867,46 @@ async function initializeSystemOperations() {
             if (activeTabs["system-tabs"] === mappingsTabIndex) {
                 await loadHttpRequestMappings();
             }
-            const systemInfoTabIndex = activeTabs["system-info-tabs"];
-            const dependenciesTabIndex = $("#system-info-tabs ul li a[href='#casdependencies-tab']").parent().index();
-            if (systemInfoTabIndex === dependenciesTabIndex) {
-                await refreshDependencies();
-            }
-            const vulnerabilitiesTabIndex = $("#system-info-tabs ul li a[href='#casvulnerabilities-tab']").parent().index();
-            if (systemInfoTabIndex === vulnerabilitiesTabIndex) {
-                await refreshVulnerabilities();
+            const systemInfoShown = (activeTabs["system-tabs"] ?? 0) === $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index();
+            if (systemInfoShown) {
+                refreshActiveSystemInfoTab();
             }
         } catch (e) { /* ignore */ }
     }
 
 
     setInterval(() => {
-        if (currentActiveTab === Tabs.SYSTEM.index && document.visibilityState === "visible") {
+        if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab, #httprequests-tab")) {
             configureSystemData();
+        }
+        if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab")) {
             configureHealthChart();
-            configureStatistics();
+            if (Date.now() - statisticsCounted >= STATISTICS_REFRESH) {
+                configureStatistics();
+            }
+            if (Date.now() - signInsCounted >= STATISTICS_REFRESH) {
+                configureSignIns();
+            }
+            if (Date.now() - slowestMeasured >= STATISTICS_REFRESH) {
+                configureSlowestEndpoints();
+            }
+            if (Date.now() - providersCounted >= STATISTICS_REFRESH) {
+                configureMultifactorProviders();
+            }
         }
     }, palantirSettings().refreshInterval);
 
-    if ($("#systeminfo-tab").is(":visible") && $("#system-info-tabs").data("ui-tabs")
-        && $("#system-info-tabs").tabs("option", "active") === 0) {
-        await refreshDependencies();
+    if ($("#systeminfo-tab").is(":visible")) {
+        await refreshActiveSystemInfoTab();
     }
 
     await configureHeapDumpAnalysis();
     await Promise.all([
         configureSystemData(),
         configureStatistics(),
+        configureSignIns(),
+        configureSlowestEndpoints(),
+        configureMultifactorProviders(),
         configureHealthChart(),
         configureSystemInfo(),
         configureSystemMetrics()
@@ -2766,4 +2973,206 @@ async function initializeSystemOperations() {
                 }
             });
     });
+}
+
+/**
+ * The CAS modules this server runs, as the casModules endpoint lists them, one card each, with a filter by text and by
+ * kind of module. The list does not change while CAS runs, so it is read once.
+ */
+class PalantirModules {
+    static modules = null;
+    static loading = null;
+    static kind = "all";
+    static GROUP = "org.apereo.cas";
+    static FORMAT_KEY = "PalantirModuleDependencyFormat";
+
+    static KINDS = [
+        {key: "support", label: "Support", icon: "mdi-puzzle-outline"},
+        {key: "core", label: "Core", icon: "mdi-cube-outline"},
+        {key: "api", label: "API", icon: "mdi-api"},
+        {key: "webapp", label: "Web application", icon: "mdi-web"},
+        {key: "other", label: "Other", icon: "mdi-package-variant-closed"}
+    ];
+
+    static kindOf(name) {
+        const match = String(name ?? "").match(/^cas-server-(support|core|api|webapp)\b/);
+        return match ? match[1] : "other";
+    }
+
+    static shortName(name) {
+        return String(name ?? "").replace(/^cas-server-(support|core|api|webapp)-/, "") || String(name ?? "");
+    }
+
+    static load() {
+        if (PalantirModules.modules !== null) {
+            return Promise.resolve();
+        }
+        if (PalantirModules.loading === null) {
+            PalantirModules.bind();
+            PalantirModules.loading = new Promise(resolve => {
+                $.get(CasActuatorEndpoints.casModules(), response => {
+                    PalantirModules.modules = (Array.isArray(response) ? response : [])
+                        .filter(module => module && module.name)
+                        .filter((module, index, modules) => modules.findIndex(other => other.name === module.name
+                            && other.version === module.version) === index)
+                        .sort((first, second) => String(first.name).localeCompare(String(second.name)));
+                    PalantirModules.render();
+                    resolve();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching the CAS modules:", error);
+                    $("#casModulesCards").html("<p class=\"palantir-empty-state\">The modules could not be read just now.</p>");
+                    PalantirModules.loading = null;
+                    resolve();
+                });
+            });
+        }
+        return PalantirModules.loading;
+    }
+
+    /**
+     * How a module is declared as a dependency, so it can be looked for in a Gradle or Maven build. CAS modules share
+     * one group, and the version is the one this server runs.
+     *
+     * @param {object} module the module
+     * @param {string} format gradle or maven
+     * @returns {string} the declaration
+     */
+    static declaration(module, format) {
+        const version = module.version || "${casVersion}";
+        return format === "maven"
+            ? `<dependency>\n    <groupId>${PalantirModules.GROUP}</groupId>\n    <artifactId>${module.name}</artifactId>\n    <version>${version}</version>\n</dependency>`
+            : `implementation "${PalantirModules.GROUP}:${module.name}:${version}"`;
+    }
+
+    static format() {
+        try {
+            return localStorage.getItem(PalantirModules.FORMAT_KEY) === "maven" ? "maven" : "gradle";
+        } catch (error) {
+            return "gradle";
+        }
+    }
+
+    static showDependency(card, format) {
+        const module = (PalantirModules.modules ?? []).find(entry => entry.name === card.dataset.module);
+        if (!module) {
+            return;
+        }
+        const panel = $(card).find(".palantir-modules__dependency");
+        panel.find("[data-module-format]").each((index, button) => button.setAttribute("aria-pressed", String(button.dataset.moduleFormat === format)));
+        panel.find("code").text(PalantirModules.declaration(module, format));
+    }
+
+    static bind() {
+        $("#casModulesCatalog").off("click.palantirModules").on("click.palantirModules", () => {
+            const tabs = $("#system-tabs");
+            tabs.tabs("option", "active", tabs.find("ul li a[href='#casfeaturestab-tab']").parent().index());
+        });
+        $("#casModulesCards").off("click.palantirModules")
+            .on("click.palantirModules", "[data-module-action='dependency']", event => {
+                const button = event.currentTarget;
+                const card = button.closest("[data-module]");
+                const panel = card.querySelector(".palantir-modules__dependency");
+                const open = panel.hidden;
+                panel.hidden = !open;
+                card.classList.toggle("is-expanded", open);
+                button.setAttribute("aria-expanded", String(open));
+                if (open) {
+                    PalantirModules.showDependency(card, PalantirModules.format());
+                    card.scrollIntoView({block: "nearest", behavior: "smooth"});
+                }
+            })
+            .on("click.palantirModules", "[data-module-format]", event => {
+                const format = event.currentTarget.dataset.moduleFormat;
+                try {
+                    localStorage.setItem(PalantirModules.FORMAT_KEY, format);
+                } catch (error) {
+                    console.debug("The dependency format is not remembered:", error);
+                }
+                PalantirModules.showDependency(event.currentTarget.closest("[data-module]"), format);
+            })
+            .on("click.palantirModules", "[data-module-action='copy']", event => {
+                copyToClipboard(event.currentTarget.closest(".palantir-modules__dependency").querySelector("code").textContent);
+                const button = $(event.currentTarget);
+                button.find("span").text("Copied");
+                setTimeout(() => button.find("span").text("Copy"), 1500);
+            });
+        $("#casModulesFilter").off("input.palantirModules").on("input.palantirModules", () => PalantirModules.render());
+        $("#casModulesKinds").off("click.palantirModules").on("click.palantirModules", "[data-module-kind]", event => {
+            PalantirModules.kind = event.currentTarget.dataset.moduleKind;
+            PalantirModules.render();
+        });
+    }
+
+    static render() {
+        const modules = PalantirModules.modules ?? [];
+        const query = String($("#casModulesFilter").val() ?? "").trim().toLowerCase();
+        $("#casModulesCatalog").toggleClass("hide", !CasActuatorEndpoints.casFeatures()
+            || $("#casfeaturestab").parent().is(".hide, .d-none"));
+        const counts = {all: modules.length};
+        modules.forEach(module => {
+            const kind = PalantirModules.kindOf(module.name);
+            counts[kind] = (counts[kind] ?? 0) + 1;
+        });
+        if (PalantirModules.kind !== "all" && !counts[PalantirModules.kind]) {
+            PalantirModules.kind = "all";
+        }
+        const escape = escapePalantirMarkup;
+        $("#casModulesKinds").html([{key: "all", label: "All"}, ...PalantirModules.KINDS]
+            .filter(kind => counts[kind.key])
+            .map(kind => `
+                <button type="button" class="palantir-modules__kind" data-module-kind="${kind.key}"
+                        aria-pressed="${PalantirModules.kind === kind.key}">${escape(kind.label)} <span>${counts[kind.key]}</span></button>`)
+            .join(""));
+        const shown = modules.filter(module => (PalantirModules.kind === "all" || PalantirModules.kindOf(module.name) === PalantirModules.kind)
+            && (query === "" || [module.name, module.version, module.description]
+                .some(value => String(value ?? "").toLowerCase().includes(query))));
+        $("#casModulesCount").text(shown.length === modules.length
+            ? `${modules.length} ${modules.length === 1 ? "module" : "modules"}`
+            : `${shown.length} of ${modules.length} modules`);
+        if (modules.length === 0) {
+            $("#casModulesCards").html("<p class=\"palantir-empty-state\">This server reports no CAS modules.</p>");
+            return;
+        }
+        if (shown.length === 0) {
+            $("#casModulesCards").html("<p class=\"palantir-empty-state\">No module matches that filter.</p>");
+            return;
+        }
+        $("#casModulesCards").html(shown.map(module => PalantirModules.card(module)).join(""));
+    }
+
+    static card(module) {
+        const escape = escapePalantirMarkup;
+        const kind = PalantirModules.KINDS.find(entry => entry.key === PalantirModules.kindOf(module.name));
+        const description = String(module.description ?? "").trim();
+        return `
+            <article class="palantir-record-card palantir-modules__card is-${kind.key}" aria-label="${escape(module.name)}"
+                     data-module="${escape(module.name)}">
+                <header class="palantir-record-card__head">
+                    <span class="palantir-protocol-badge is-module-${kind.key}" title="${escape(kind.label)}"><i class="mdi ${kind.icon}" aria-hidden="true"></i></span>
+                    <div class="palantir-record-card__title">
+                        <h4 title="${escape(module.name)}">${escape(PalantirModules.shortName(module.name))}</h4>
+                        <p title="${escape(module.name)}">${escape(module.name)}</p>
+                    </div>
+                </header>
+                ${description !== "" && description !== module.name
+        ? `<p class="palantir-modules__description">${escape(description)}</p>` : ""}
+                <footer class="palantir-modules__footer">
+                    ${module.version ? `<span class="palantir-modules__version"><i class="mdi mdi-tag-outline" aria-hidden="true"></i>${escape(module.version)}</span>` : "<span></span>"}
+                    <button type="button" class="palantir-modules__toggle" data-module-action="dependency" aria-expanded="false"
+                            aria-label="Show how ${escape(module.name)} is declared in Gradle or Maven">
+                        <i class="mdi mdi-code-braces" aria-hidden="true"></i>Dependency
+                    </button>
+                </footer>
+                <div class="palantir-modules__dependency" hidden>
+                    <div class="palantir-modules__formats" role="group" aria-label="Build tool">
+                        <button type="button" data-module-format="gradle" aria-pressed="false">Gradle</button>
+                        <button type="button" data-module-format="maven" aria-pressed="false">Maven</button>
+                        <button type="button" class="palantir-modules__copy" data-module-action="copy" title="Copy">
+                            <i class="mdi mdi-content-copy" aria-hidden="true"></i><span>Copy</span>
+                        </button>
+                    </div>
+                    <pre><code></code></pre>
+                </div>
+            </article>`;
+    }
 }
