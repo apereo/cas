@@ -13,6 +13,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 /**
  * This is {@link OAuth20ResponseModeFragmentBuilder}.
@@ -30,6 +31,21 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
         return OAuth20ResponseModeTypes.FRAGMENT;
     }
 
+    /**
+     * Build the redirect that carries the response parameters in the fragment of the redirect URI.
+     * Each parameter name and value is percent-encoded as a URI component, so values such as a JSON {@code state}
+     * reach the client intact (RFC 6749, section 4.2.2 and appendix B) instead of breaking the fragment or the
+     * redirect. The URL is complete once built here, so the redirect view does not expand URI template variables.
+     * The redirect URI keeps its own query, minus any parameter the response carries in the fragment. The query is
+     * replaced rather than added to, which used to repeat every parameter of the redirect URI, and its values are
+     * kept as they were encoded in the redirect URI.
+     *
+     * @param registeredService the registered service
+     * @param redirectUrl       the redirect url
+     * @param parameters        the response parameters
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @Override
     public ModelAndView build(final RegisteredService registeredService, final String redirectUrl,
                               final Map<String, String> parameters)
@@ -37,14 +53,10 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
 
         val fragment = parameters.entrySet()
             .stream()
-            .map(entry -> entry.getKey() + '=' + entry.getValue())
+            .map(entry -> UriUtils.encode(entry.getKey(), StandardCharsets.UTF_8)
+                + '=' + UriUtils.encode(entry.getValue(), StandardCharsets.UTF_8))
             .collect(Collectors.joining("&"));
 
-        /*
-         * The redirect URI keeps its own query, minus any parameter the response carries in the fragment. The query is
-         * replaced rather than added to, which used to repeat every parameter of the redirect URI, and its values are
-         * kept as they were encoded in the redirect URI.
-         */
         val urlBuilder = UriComponentsBuilder.fromUriString(redirectUrl);
         val queryParams = new LinkedMultiValueMap<String, @NonNull String>();
         urlBuilder.build().getQueryParams().forEach((name, values) -> {
@@ -61,6 +73,7 @@ public class OAuth20ResponseModeFragmentBuilder implements OAuth20ResponseModeBu
         
         LOGGER.debug("Redirecting to [{}]", resultUrl);
         val mv = new RedirectView(resultUrl);
+        mv.setExpandUriTemplateVariables(false);
         return new ModelAndView(mv);
     }
 }

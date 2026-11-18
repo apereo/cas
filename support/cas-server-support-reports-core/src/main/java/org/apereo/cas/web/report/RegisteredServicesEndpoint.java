@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -263,16 +264,25 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     /**
-     * Export.
+     * Export registered services as a zip file: all of them, or only those whose ids are given.
      *
+     * @param ids the ids of the registered services to export, or none to export every one of them
      * @return the response entity
      */
     @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    @Operation(summary = "Export registered services as a zip file")
-    public ResponseEntity<Resource> export() {
+    @Operation(summary = "Export registered services as a zip file",
+        parameters = @Parameter(name = "ids", description = "The ids of the registered services to export; all of them when left out",
+            in = ParameterIn.QUERY))
+    public ResponseEntity<Resource> export(@RequestParam(name = "ids", required = false) final Set<Long> ids) {
+        val selected = ids == null || ids.isEmpty()
+            ? null
+            : ids.stream().map(id -> servicesManager.getObject().findServiceBy(id)).filter(Objects::nonNull).toList();
+        if (selected != null && selected.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         val serializer = new RegisteredServiceJsonSerializer(applicationContext);
-        val resource = CompressionUtils.toZipFile(servicesManager.getObject().stream(),
+        val resource = CompressionUtils.toZipFile(selected == null ? servicesManager.getObject().stream() : selected.stream(),
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;
                 val fileName = String.format("%s-%s", service.getName(), service.getId());
@@ -342,6 +352,13 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         @RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+        if (registeredService == null) {
+            return unreadableService(registeredServiceSerializer, registeredServiceBody);
+        }
+        val incomplete = incompleteService(registeredService);
+        if (incomplete != null) {
+            return incomplete;
+        }
         registeredService.setId(RandomUtils.nextInt());
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
@@ -382,7 +399,11 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
                 ? new RegisteredServiceYamlSerializer(applicationContext)
                 : new RegisteredServiceJsonSerializer(applicationContext);
             val registeredService = registeredServiceSerializer.from(registeredServiceBody);
-            return ResponseEntity.ok(registeredService != null);
+            if (registeredService == null) {
+                return unreadableService(registeredServiceSerializer, registeredServiceBody);
+            }
+            val incomplete = incompleteService(registeredService);
+            return incomplete != null ? incomplete : ResponseEntity.ok(true);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
@@ -416,8 +437,56 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         @RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+        if (registeredService == null) {
+            return unreadableService(registeredServiceSerializer, registeredServiceBody);
+        }
+        val incomplete = incompleteService(registeredService);
+        if (incomplete != null) {
+            return incomplete;
+        }
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
+    }
+
+    /**
+     * Refuse a definition that lacks what every registered service needs, a name and a service id, saying which is
+     * missing, rather than failing while it is saved.
+     *
+     * @param registeredService the definition
+     * @return a bad request naming what is missing, or null when nothing is
+     */
+    private static ResponseEntity<Map<String, String>> incompleteService(final RegisteredService registeredService) {
+        val missing = new ArrayList<String>();
+        if (StringUtils.isBlank(registeredService.getName())) {
+            missing.add("name");
+        }
+        if (StringUtils.isBlank(registeredService.getServiceId())) {
+            missing.add("serviceId");
+        }
+        if (missing.isEmpty()) {
+            return null;
+        }
+        return ResponseEntity.badRequest().body(Map.of("error",
+            "The definition has no %s".formatted(String.join(" and no ", missing))));
+    }
+
+    /**
+     * Refuse a definition that cannot be read as a registered service, saying why. The serializer only logs the
+     * reason, so the definition is read once more to report it.
+     *
+     * @param serializer the serializer that could not read the definition
+     * @param body       the definition
+     * @return a bad request carrying the reason
+     */
+    private static ResponseEntity<Map<String, String>> unreadableService(final RegisteredServiceJsonSerializer serializer,
+                                                                         final String body) {
+        var reason = "The definition cannot be read as a registered service";
+        try {
+            serializer.getObjectMapper().readValue(body, RegisteredService.class);
+        } catch (final Exception e) {
+            reason = StringUtils.defaultIfBlank(e.getMessage(), e.getClass().getSimpleName());
+        }
+        return ResponseEntity.badRequest().body(Map.of("error", reason));
     }
 
     private ResponseEntity<RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
@@ -429,12 +498,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             return ResponseEntity.badRequest().build();
         }
 
-        return registeredServiceSerializers
-            .getObject()
-            .stream()
-            .map(serializer -> serializer.from(requestBody))
-            .filter(Objects::nonNull)
-            .findFirst()
+        return readRegisteredService(requestBody)
             .map(service -> {
                 LOGGER.trace("Storing registered service:\n[{}]", service);
                 return servicesManager.getObject().save(service);
@@ -447,24 +511,47 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    /**
+     * Read the definitions of an archive, each once, and save them. A definition is read by the serializer that
+     * recognizes it, so it is neither parsed nor saved twice when more than one serializer could read it.
+     *
+     * @param request the request carrying the archive
+     * @return the response
+     * @throws IOException if the archive cannot be read
+     */
     private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
-        var servicesToImport = Stream.<RegisteredService>empty();
+        val servicesToImport = new ArrayList<RegisteredService>();
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
              val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();
             while (entry != null) {
                 if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
                     val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
-                    servicesToImport = Stream.concat(servicesToImport, registeredServiceSerializers.getObject()
-                        .stream()
-                        .map(serializer -> serializer.from(requestBody))
-                        .filter(Objects::nonNull));
+                    readRegisteredService(requestBody).ifPresent(servicesToImport::add);
                 }
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
         }
-        servicesManager.getObject().save(servicesToImport);
+        LOGGER.debug("Importing [{}] registered services from the archive", servicesToImport.size());
+        servicesManager.getObject().save(servicesToImport.stream());
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Read one definition with the first serializer that recognizes its content, and only when none does, with the
+     * others in turn. Serializers that recognize nothing do not get to log a failed parse for every definition.
+     *
+     * @param content the definition
+     * @return the registered service, if a serializer could read it
+     */
+    private Optional<RegisteredService> readRegisteredService(final String content) {
+        val serializers = List.<StringSerializer<RegisteredService>>copyOf(registeredServiceSerializers.getObject());
+        return Stream.concat(
+                serializers.stream().filter(serializer -> serializer.supports(content)),
+                serializers.stream().filter(serializer -> !serializer.supports(content)))
+            .map(serializer -> serializer.from(content))
+            .filter(Objects::nonNull)
+            .findFirst();
     }
 }

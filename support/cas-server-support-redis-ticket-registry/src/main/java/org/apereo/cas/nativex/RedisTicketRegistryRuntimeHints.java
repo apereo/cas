@@ -11,6 +11,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.integration.support.locks.LockRegistry;
 
 /**
  * This is {@link RedisTicketRegistryRuntimeHints}.
@@ -38,5 +39,7 @@ public class RedisTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar
 
         registerReflectionHints(hints,
             findSubclassesInPackage(RedisTicketRegistryMessageListener.class, CentralAuthenticationService.NAMESPACE));
+
+        registerProxyHints(hints, LockRegistry.class);
     }
 }

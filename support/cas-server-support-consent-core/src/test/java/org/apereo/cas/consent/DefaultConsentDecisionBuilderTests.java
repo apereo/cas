@@ -57,8 +57,9 @@ class DefaultConsentDecisionBuilderTests {
         assertTrue(consentDecisionBuilder.getConsentableAttributesFrom(consentDecision).isEmpty());
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
             CollectionUtils.wrap("attr1", List.of("value1"))));
-        assertThrows(IllegalArgumentException.class,
+        val exception = assertThrows(IllegalArgumentException.class,
             () -> consentDecisionBuilder.update(consentDecision, null));
+        assertInstanceOf(NullPointerException.class, exception.getCause());
     }
 
     @Test

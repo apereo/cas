@@ -2,8 +2,10 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import module java.base;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.filter.EntityDescriptorCertificatesExpirationFilter;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
@@ -11,6 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.saml.metadata.resolver.filter.FilterException;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterContext;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -61,6 +67,16 @@ class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         service.setMetadataCriteriaPattern("https://GITLAB\\..+");
         val caseSensitiveResolver = resolver.resolve(service).iterator().next();
         assertNull(caseSensitiveResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://gitlab.com"))));
+    }
+
+    @Test
+    void verifyExpiredCertificateFailsFilterWithCause() throws Throwable {
+        val metadata = new ClassPathResource("sample-sp.xml").getContentAsString(StandardCharsets.UTF_8);
+        val entityDescriptor = SamlUtils.transformSamlObject(openSamlConfigBean, metadata, EntityDescriptor.class);
+        assertNotNull(entityDescriptor);
+        val exception = assertThrows(FilterException.class,
+            () -> new EntityDescriptorCertificatesExpirationFilter().filter(entityDescriptor, new MetadataFilterContext()));
+        assertInstanceOf(CertificateExpiredException.class, exception.getCause());
     }
 
     @Test

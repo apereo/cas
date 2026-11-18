@@ -1,7 +1,8 @@
 ---
 name: cas-ui
-description: "Change CAS views and presentation: Thymeleaf render path, theme resolution and theme sources, templates and escaping, the theme builder, account profile pages, .cas-hero cards, Palantir admin UI, previewing views without a running CAS. Use when touching templates, static CSS/JS, themes or Palantir."
+description: "Change CAS views and presentation: Thymeleaf render path, theme resolution and theme sources, templates and escaping, the theme builder and theme properties, account profile pages, .cas-hero cards, header panels, previewing views without a running CAS. Use when touching templates, static CSS/JS or themes; for the Palantir admin dashboard use cas-palantir."
 ---
+
 
 
 # CAS views, themes and Palantir
@@ -73,101 +74,7 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
   `<p>` before the existing ones and never remove a wrapping `div`: puppeteer asserts `#content div h2`, `#content h2`,
   first `#content p`, `#login h2/h3/p` and `#main-content h2`. Banner root cards turn neutral under `.cas-hero`. Login gets
   `.cas-login-card` (surface only).
-- Palantir's layout and themes live in `palantir-meridian.css` (loaded after `palantir.css`): `--palantir-*` tokens are defined
-  for light and for dark on `html.palantir-page[data-theme]`, and the shared `--cas-ui-*`/`--cas-theme-*` variables are pointed
-  at them inside Palantir. Color new rules with the tokens (`var(--palantir-surface, #fff)` in `palantir.css`), never a bare
-  light color; where the brand color sits behind white text, dark needs `--palantir-brand-fill`. The page head applies the
-  stored theme (`PalantirTheme` in localStorage: system, light, dark) before first paint; `palantir-theme.js` owns the toggle,
-  the settings choice, Chart.js defaults and the `palantir:theme-changed` event. Never set `Chart.defaults.borderColor` or
-  `backgroundColor`: Chart.js only applies its dataset palette while both keep their stock values; theme the grid through
-  `Chart.defaults.scale.grid.color` and `Chart.defaults.scale.border.color`.
-- Palantir forms: Enter submits through the form's primary button, which is `type="submit"` while the form keeps
-  `onsubmit="return false;"` (the button's click handler does the work); every dashboard form needs that attribute, since a
-  form with one text field and no handler reloads the page on Enter. Don't add per-input Enter key handlers.
-- The service wizard's fields are built on first open (`palantirWizardField` builders), after the Applications panel ran
-  `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
-  get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
-- The wizard's key/value fields (`createMappedInputField`) emit `java.util.TreeMap`, which sorts the keys; a map whose
-  order matters (MFA provider selection mappings, first match wins) passes `mapType: "java.util.LinkedHashMap"`.
-- A wizard field that several policy types share lists each type's simple class name in `cssClasses`
-  (`"hide TypeA TypeB"`); the type's change handler shows `.<Type>` and hides the rest. Fields of different types may share
-  a `paramName` (`attributeReleasePolicy.entityIds` is a string for one policy and a set for others): population fills
-  every input with that name, and generation skips the hidden ones.
-- Palantir date fields use the jQuery UI date picker: give the input the `jquery-datepicker` class and, for a format other
-  than the picker's default, a `dateFormat` data value (`createInputField({data: {dateFormat: "yy-mm-dd"}})`; quoted text is
-  literal, e.g. `yy-mm-dd'T'00:00:00` for a date-time field). `initializeDatePickers` attaches it and fires `input` on pick.
-  The picker's `#ui-datepicker-div` is raised above dialogs in `palantir-meridian.css`. Don't add another date library.
-- `generateServiceDefinition` leaves out fields whose container is switched off, judged by `isWizardContainerSwitchedOff`
-  (inline `display: none`, or the `hide` class with no inline display), since type handlers reveal fields with either
-  `showElements` or jQuery `show()`. Don't judge it by `:visible`: the wizard hides every section but the current one.
-- Palantir's navigation (`fragments/palantir/navigationsidebar.html`) is a top bar: Applications, grouped menus (Identity,
-  Sessions, Platform) and the theme, settings and sign-out buttons. Only destinations may be `<li>` (scripts treat every
-  `nav.sidebar-navigation ul li` as one and count them with `:visible`; polling also stops when a destination is not
-  `:visible`), so closed menus and the narrow-screen overlay hide with `visibility`, never `display: none`.
-  `visibility` is animatable: a `transition: all` on anything inside a menu (cas.css has one on sidebar items and icons)
-  keeps it on screen after the menu closes, so transitions there name their properties.
-  `updatePalantirNavigationGroups()` hides empty groups, marks the active one and writes the page heading.
-  A row of inner jQuery UI tabs with one visible tab is clipped out of sight, not hidden, for the same reason.
-  DataTables group header rows come from `palantirTableGroupRow(label, columns)` (palantir-utils.js); never inline-style them.
-- Palantir applications: the card view (`#applicationsCards`) is drawn from the DataTable's filtered current page on every
-  draw and when a row's class changes, so search, paging and the selected row apply to both views; card buttons call
-  `applicationActionHandler(key, context)`, the same handler as the row context menu, with `applicationRowContext(id)`.
-- Palantir's service wizard (`palantir-services-sections.js`) maps section groups to `STEPS` (Basics, Protocol,
-  Access & attributes, Policies) plus a review. Every available section keeps a tile with `data-section-key` even when its
-  step is not shown (the `palantir-login` scenario clicks them by key), and `activate(key)` leaves the review. The type is
-  chosen in `chooseRegisteredServiceType()` (SweetAlert with cards), not a select. Every Policies section is an
-  `advanced-option`: `advancedSectionsOf(step)` keeps that step clickable while advanced options are hidden, and
-  `showStep` turns them on through `#hideAdvancedOptionsButton`. Footer buttons are in DOM order (Cancel, Validate, Copy,
-  Save); don't reorder them with CSS `order`, which leaves the keyboard order behind.
-- Palantir's feature catalog (`palantir-cas-features.js`) groups `CasFeatureModule.<Feature>[.<module>]` names into one
-  card per feature; `CAS_FEATURE_TITLES` holds titles the casing can't split. `CAS_FEATURES` stays the flat name list
-  other scripts read.
-- A Palantir page is a `Tabs` entry (`PalantirDashboardTab(name, index, shortcut)`), a positional MDC tab button in
-  `dashboardtabs.html`, a panel `#attribute-tab-N`, a nav `<li data-tab-index=N>`, its scripts in
-  `casPalantirDashboardView.html` and lazy initializers through `registerDashboardTabInitializers`; hide it in
-  `processNavigationTabs()` when its endpoints are missing. The Users page (index 16, `palantir-users.js`) is a list of
-  `PalantirUserLookup.sources()` (key, title, icon, `available()`, `load(username)`, `render(records, username)`): add a
-  per-user source there, not a new page (cards are `<details>`; an empty source keeps a hidden card so a reload can
-  bring it back, and only the first non-empty card opens by default; a table is the standard `mdc-data-table__table` DataTable, rendered
-  empty and filled in the source's `afterRender`); reads go through `PalantirUserLookup.get` (404 means no records; the audit log
-  endpoint needs a form content type even on GET and matches its principal as a regex, so quote it).
-- Service history (`palantir-services-history.js`) is a jQuery UI dialog over the `entityHistory` endpoint: versions in
-  `#entityHistoryTable` (latest first, row data carries `serviceId`/`revisionId`/`index`), a side-by-side diff drawn with
-  the jsdiff webjar (global `Diff`) over JSON with sorted keys, the right side always the selected version; restore goes
-  through `PalantirServiceHistory.restore` from the footer and the row context menu.
-- A lookup panel inside a page (passwordless account, interrupt inquiry in `palantir-interrupts.js`) uses the
-  `passwordless-account-*` classes: search form, banner message, result card, detail/capability grids, chips, and a
-  DataTable per list; reveal its inner tab with `showElements($("#<id>").parent())` only when its endpoint exists.
-  The Users page links to it with `openInterruptInquiry(username)` (`data-user-navigate`, not `data-user-action`).
-- Markup that CAS sends to be shown as HTML (interrupt messages) goes through `sanitizePalantirHtml` (palantir-utils.js:
-  inert parse, allow-listed tags without attributes, http/https/mailto links only); use `palantirHtmlText` for plain-text
-  cells. Never put such markup in the page with `.html()` directly.
-- The wizard and the plain editor are guarded by `PalantirServiceEditGuard` (`palantir-services-guard.js`): each dialog's
-  `beforeClose` asks when its JSON differs from the settled baseline, drafts live in localStorage under
-  `PalantirServiceDraft:<wizard|editor>:<id|new:<class>>` as `{text, savedAt}` (drafts older than 30 days or without a
-  readable `savedAt` are dropped on read and swept by `initialize()`), and a successful save must call `saved(mode)` before closing.
-  Scripts and scenarios that cancel a dialog after changing fields must answer "Discard your changes?" (deny button).
-- Keyboard shortcuts are listed from `palantirShortcutGroups()` (palantir-hotkeys.js) for both the `?` overlay and the
-  Settings tab; add a new hotkey there too.
-- `initializeTableAndDialogAccessibility()` (palantir-utils.js) names every DataTable and its pagination, names icon-only
-  controls from their `title`, marks modal dialogs `aria-modal` and names jQuery UI select menus from their label (jQuery
-  UI points the label's `for` at the button). Tables with a row context menu get focusable rows (Enter clicks, Shift+F10
-  opens the menu) through `initializeDataTableContextMenu`. jQuery UI tabs still trip axe's nested-interactive rule.
-- The command palette (`palantir-command-palette.js`, Ctrl/⌘+K and `/`) reads its entries from the nav, the outer inner-tab
-  row of each panel, `registeredServicesById` and a few actions each time it opens, so a new page or inner tab shows up on its
-  own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K, `/` and `?` are one document keydown
-  handler in `initializeCommandPalette`: Ctrl+K works inside fields, `/` and `?` are matched on `event.key` (not
-  hotkeys key codes) so they work on any layout and the numeric keypad, and are ignored while typing in a field.
-- To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
-  OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
-  OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.
-- Palantir dialogs sit outside `#main-content`, so `applySharedDialogStyle()` (palantir-utils.js, called from
-  `initializePalantir`) adds `cas-ui palantir-dialog` on `dialogcreate`; style dialogs through those classes, qualified enough
-  to beat the Cupertino theme (`.ui-dialog.palantir-dialog …`). Use the `classes` option, not the deprecated `dialogClass`.
-  jQuery 4 dropped `isWindow`/`isFunction`, which the jQuery UI 1.12 position plugin shipped with contextMenu still calls and
-  which replaces jQuery UI's own position: `installJQueryCompatibility()` must run before any dialog, menu or tooltip opens.
-  Tom Select wrappers carry `z-index: 10000`; open select menus are raised above them.
-- Palantir's CAS login entry point: see the `cas-web-security` skill.
+- Palantir, the admin dashboard: see the `cas-palantir` skill.
 - Header panels (`fragments/header.html`, `fragments/logindrawer.html`) carry `.cas-ui` and serve both themes: MDC
   (`MDCDialog`, modal `MDCDrawer` with its `.mdc-drawer-scrim` as the next sibling) and Bootstrap (`modal`, `offcanvas`), so
   keep both class sets. The notification count is the number of `.cas-notification-message` items not `[hidden]`; an item

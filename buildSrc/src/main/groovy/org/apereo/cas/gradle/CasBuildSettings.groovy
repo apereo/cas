@@ -2,12 +2,13 @@ package org.apereo.cas.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.provider.Provider
+import org.gradle.plugins.signing.SigningExtension
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Matcher
 
 final class CasBuildSettings {
-    private static final String ARCH_ADJUSTED_KEY = 'build.archAdjusted'
     private static final Map<String, List<String>> INCLUDED_PROJECT_PATHS = new ConcurrentHashMap<>()
     private static final Map<String, Boolean> JAVADOC_ENABLED = new ConcurrentHashMap<>()
     private static final Map<String, Map<String, Object>> MODULE_METADATA = new ConcurrentHashMap<>()
@@ -31,8 +32,62 @@ final class CasBuildSettings {
     private CasBuildSettings() {
     }
 
+    /**
+     * Look up a build setting, first as a system property ({@code -Dname=value}) and then as an environment
+     * variable named after it in upper snake case, so {@code generateGitProperties} may also be supplied as
+     * {@code GENERATE_GIT_PROPERTIES}. The system property wins when both are defined. An environment variable
+     * with a blank value counts as undefined, while {@code -Dname} with no value is defined and empty.
+     *
+     * @param project the project whose providers track the lookup as a build input
+     * @param name the system property name of the setting
+     * @return the provider of the setting value
+     */
+    static Provider<String> buildProperty(final Project project, final String name) {
+        project.providers.systemProperty(name)
+            .orElse(project.providers.environmentVariable(environmentVariableName(name)).filter { value -> !value.isBlank() })
+    }
+
+    /**
+     * Translate a build setting name into its environment variable name, i.e. camel case to upper snake case.
+     * Names that are already upper case, such as {@code PTS_ENABLED}, are returned unchanged.
+     *
+     * @param name the system property name of the setting
+     * @return the environment variable name
+     */
+    static String environmentVariableName(final String name) {
+        name.replaceAll(/([a-z0-9])([A-Z])/, '$1_$2').toUpperCase(Locale.ROOT)
+    }
+
+    /**
+     * Read a boolean build setting. An undefined setting yields the given default; a setting defined with an empty
+     * value ({@code -Dname}) or with {@code true} in any case is on, and any other value is off.
+     *
+     * @param project the project whose providers track the lookup as a build input
+     * @param name the system property name of the setting
+     * @param defaultValue the value used when the setting is not defined
+     * @return whether the setting is on
+     */
+    static boolean isFlagEnabled(final Project project, final String name, final boolean defaultValue = false) {
+        buildProperty(project, name)
+            .map { value -> value.isBlank() || value.equalsIgnoreCase('true') }
+            .getOrElse(defaultValue)
+    }
+
+    /**
+     * Read a build setting as a string. A setting defined with a blank value yields the default.
+     *
+     * @param project the project whose providers track the lookup as a build input
+     * @param name the system property name of the setting
+     * @param defaultValue the value used when the setting is not defined or blank
+     * @return the setting value, or the default
+     */
+    static String stringProperty(final Project project, final String name, final String defaultValue = null) {
+        def value = buildProperty(project, name).getOrNull()
+        value != null && !value.isBlank() ? value : defaultValue
+    }
+
     static boolean isCi(final Project project) {
-        System.getenv('CI') != null || project.providers.systemProperty('CI').present
+        buildProperty(project, 'CI').present
     }
 
     static boolean isSnapshotVersion(final Project project) {
@@ -40,11 +95,11 @@ final class CasBuildSettings {
     }
 
     static boolean isPublishSnapshots(final Project project) {
-        project.providers.systemProperty('publishSnapshots').present && isSnapshotVersion(project)
+        isFlagEnabled(project, 'publishSnapshots') && isSnapshotVersion(project)
     }
 
     static boolean isPublishReleases(final Project project) {
-        project.providers.systemProperty('publishReleases').present && !isSnapshotVersion(project)
+        isFlagEnabled(project, 'publishReleases') && !isSnapshotVersion(project)
     }
 
     static boolean isPublishFlag(final Project project) {
@@ -52,39 +107,43 @@ final class CasBuildSettings {
     }
 
     static boolean isPublishMinimalArtifacts(final Project project) {
-        project.providers.systemProperty('publishMinimalArtifacts').present
+        isFlagEnabled(project, 'publishMinimalArtifacts')
+    }
+
+    static String publishingType(final Project project) {
+        stringProperty(project, 'publishingType', 'AUTOMATIC')
     }
 
     static boolean isSkipBootifulArtifact(final Project project) {
-        project.providers.systemProperty('skipBootifulArtifact').present
+        isFlagEnabled(project, 'skipBootifulArtifact')
     }
 
     static boolean isSkipErrorProneCompiler(final Project project) {
-        project.providers.systemProperty('skipErrorProneCompiler').present
+        isFlagEnabled(project, 'skipErrorProneCompiler')
     }
 
     static boolean isSkipSpringBootDevTools(final Project project) {
-        project.providers.systemProperty('skipSpringBootDevTools').present
+        isFlagEnabled(project, 'skipSpringBootDevTools')
     }
 
     static boolean isSkipArtifactSigning(final Project project) {
-        project.providers.systemProperty('skipArtifactSigning').present
+        isFlagEnabled(project, 'skipArtifactSigning')
     }
 
     static boolean isTerminateCompilerOnWarning(final Project project) {
-        project.providers.systemProperty('terminateCompilerOnWarning').getOrElse('true') == 'true'
+        isFlagEnabled(project, 'terminateCompilerOnWarning', true)
     }
 
     static boolean isSkipNullAway(final Project project) {
-        project.providers.systemProperty('skipNullAway').getOrElse('false') == 'true'
+        isFlagEnabled(project, 'skipNullAway')
     }
 
     static boolean isSkipHotSwapAgent(final Project project) {
-        project.providers.systemProperty('skipHotSwapAgent').getOrElse('false') == 'true'
+        isFlagEnabled(project, 'skipHotSwapAgent')
     }
 
     static boolean isEnableRemoteDebugging(final Project project) {
-        project.providers.systemProperty('enableRemoteDebugging').present
+        isFlagEnabled(project, 'enableRemoteDebugging')
     }
 
     static String projectGroup(final Project project) {
@@ -96,31 +155,103 @@ final class CasBuildSettings {
     }
 
     static String remoteDebuggingSuspend(final Project project) {
-        project.providers.systemProperty('remoteDebuggingSuspend').getOrElse('false') == 'true' ? 'y' : 'n'
+        isFlagEnabled(project, 'remoteDebuggingSuspend') ? 'y' : 'n'
     }
 
     static boolean isGenerateGitProperties(final Project project) {
-        isPublishFlag(project) || project.providers.systemProperty('generateGitProperties').present
+        isPublishFlag(project) || isFlagEnabled(project, 'generateGitProperties')
     }
 
     static boolean isGenerateTimestamps(final Project project) {
-        isPublishFlag(project) || project.providers.systemProperty('generateTimestamps').present
+        isPublishFlag(project) || isFlagEnabled(project, 'generateTimestamps')
     }
 
     static String repositoryUsername(final Project project) {
-        project.providers.systemProperty('repositoryUsername').getOrElse(System.getenv('REPOSITORY_USER'))
+        buildProperty(project, 'repositoryUsername')
+            .orElse(project.providers.environmentVariable('REPOSITORY_USER'))
+            .getOrNull()
     }
 
     static String repositoryPassword(final Project project) {
-        project.providers.systemProperty('repositoryPassword').getOrElse(System.getenv('REPOSITORY_PWD'))
+        buildProperty(project, 'repositoryPassword')
+            .orElse(project.providers.environmentVariable('REPOSITORY_PWD'))
+            .getOrNull()
+    }
+
+    /**
+     * The {@code mongoimport} executable used to upload module metadata; {@code ci/docs/publish.sh} names the same
+     * setting {@code CAS_MODULE_METADATA_MONGOIMPORT_EXECUTABLE}, which is accepted as well.
+     *
+     * @param project the project being configured
+     * @return the executable
+     */
+    static String mongoImportExecutable(final Project project) {
+        def publishScriptSetting = project.providers.environmentVariable('CAS_MODULE_METADATA_MONGOIMPORT_EXECUTABLE').getOrNull()
+        stringProperty(project, 'casModuleMetadataMongoImportExecutable',
+            publishScriptSetting?.trim() ? publishScriptSetting : 'mongoimport')
     }
 
     static boolean isPrivateRelease(final Project project) {
-        isPublishFlag(project) && project.providers.systemProperty('privateRelease')
-            .map { value -> Boolean.valueOf(value) }
-            .getOrElse(false)
+        isPublishFlag(project) && isFlagEnabled(project, 'privateRelease')
     }
-    
+
+    static boolean isIgnoreJavadocFailures(final Project project) {
+        isFlagEnabled(project, 'ignoreJavadocFailures')
+    }
+
+    /**
+     * Javadoc errors fail the build unless they are explicitly ignored or the build is publishing artifacts.
+     *
+     * @param project the project being configured
+     * @return whether javadoc tasks should fail on errors
+     */
+    static boolean isFailOnJavadocErrors(final Project project) {
+        !isPublishFlag(project) && !isIgnoreJavadocFailures(project)
+    }
+
+    /**
+     * Predictive test selection is on unless turned off via {@code PTS_ENABLED}; it never applies to releases.
+     *
+     * @param project the project being configured
+     * @return whether predictive test selection may be used
+     */
+    static boolean isPtsEnabled(final Project project) {
+        isFlagEnabled(project, 'PTS_ENABLED', true) && !isPublishReleases(project)
+    }
+
+    /**
+     * Resolve the {@code casModules} build setting, a comma-separated list of module names without their
+     * {@code cas-server-[core|support]-} prefix, into the paths of the matching projects other than the given one.
+     *
+     * @param project the project that pulls the modules in
+     * @return the matching project paths
+     */
+    static List<String> casModuleProjectPaths(final Project project) {
+        stringProperty(project, 'casModules', '')
+            .tokenize(',')
+            .collect { moduleName -> moduleName.trim() }
+            .findAll { moduleName -> !moduleName.isEmpty() }
+            .collectMany { moduleName -> matchingProjectPaths(project, moduleName) }
+            .findAll { projectPath -> projectPath != project.path }
+            .unique()
+    }
+
+    /**
+     * Require signatures for releases unless signing is skipped, and sign with the in-memory PGP key from
+     * {@code PGP_PRIVATE_KEY} and {@code PGP_PASSPHRASE} when both are available.
+     *
+     * @param project the project being configured
+     * @param signing the signing extension of the project
+     */
+    static void configureSigning(final Project project, final SigningExtension signing) {
+        signing.required = isPublishReleases(project) && !isSkipArtifactSigning(project)
+        def privateKey = project.providers.environmentVariable('PGP_PRIVATE_KEY').getOrNull()
+        def passphrase = project.providers.environmentVariable('PGP_PASSPHRASE').getOrNull()
+        if (privateKey && passphrase) {
+            signing.useInMemoryPgpKeys(privateKey, passphrase)
+        }
+    }
+
     static List<String> excludedFilesFromTestCoverage() {
         EXCLUDED_FILES_FROM_TEST_COVERAGE
     }
@@ -296,9 +427,3 @@ final class CasBuildSettings {
         project.gradle.startParameter.taskNames.any { it == taskName || it.endsWith(":${taskName}") }
     }
 }
-
-
-
-
-
-

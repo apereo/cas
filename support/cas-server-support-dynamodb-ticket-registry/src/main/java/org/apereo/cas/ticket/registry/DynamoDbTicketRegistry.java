@@ -169,6 +169,23 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
         return dbTableService.deleteTicketsFor(digestIdentifier(principalId));
     }
 
+    /**
+     * Count the tickets of each type through the prefix index of its table, without reading any ticket.
+     *
+     * @return the number of tickets per prefix
+     */
+    @Override
+    public Map<String, Long> countTicketsByType() {
+        val counts = new TreeMap<String, Long>();
+        ticketCatalog.findAll().forEach(definition -> {
+            val count = dbTableService.countTickets(definition);
+            if (count > 0) {
+                counts.put(definition.getPrefix(), count);
+            }
+        });
+        return counts;
+    }
+
     @Override
     public long sessionCount() {
         return dbTableService.countTickets(TicketGrantingTicket.class, TicketGrantingTicket.PREFIX);

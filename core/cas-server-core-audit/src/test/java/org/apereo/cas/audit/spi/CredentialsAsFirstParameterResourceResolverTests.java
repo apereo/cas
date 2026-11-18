@@ -3,6 +3,9 @@ package org.apereo.cas.audit.spi;
 import module java.base;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -60,5 +63,19 @@ class CredentialsAsFirstParameterResourceResolverTests {
             .newTransaction(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         when(jp.getArgs()).thenReturn(new Object[]{transaction});
         assertNotNull(credentialsAsFirstParameterResourceResolver.resolveFrom(jp, new Object()));
+    }
+
+    @Test
+    void verifyTargetIsTheApplication() {
+        val jp = mock(JoinPoint.class);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
+        val transaction = new DefaultAuthenticationTransaction(RegisteredServiceTestUtils.getService(), registeredService,
+            List.<Credential>of(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser")));
+        when(jp.getArgs()).thenReturn(new Object[]{transaction});
+        assertEquals(String.valueOf(registeredService.getId()), credentialsAsFirstParameterResourceResolver.resolveTarget(jp, new Object()));
+        assertEquals(String.valueOf(registeredService.getId()), credentialsAsFirstParameterResourceResolver.resolveTarget(jp, new AuthenticationException()));
+
+        when(jp.getArgs()).thenReturn(new Object[]{CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()});
+        assertNull(credentialsAsFirstParameterResourceResolver.resolveTarget(jp, new Object()));
     }
 }

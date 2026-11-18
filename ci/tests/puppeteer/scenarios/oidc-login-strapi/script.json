@@ -18,6 +18,7 @@
     "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
     
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.email_verified=true",
     "--cas.authn.attribute-repository.stub.id=STUB",
     
     "--cas.authn.oauth.core.user-profile-view-type=FLAT"

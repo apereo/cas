@@ -103,7 +103,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            throw new CertificateException(e.getMessage());
+            throw new CertificateException(e.getMessage(), e);
         }
     }
 

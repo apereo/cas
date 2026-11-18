@@ -111,6 +111,7 @@ class SurrogateAuthenticationPostProcessorTests {
         val principal = new SurrogatePrincipal(CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getPrincipal("something"));
         when(builder.build()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(principal));
-        assertThrows(AuthenticationException.class, () -> surrogateAuthenticationPostProcessor.process(builder, transaction));
+        val exception = assertThrows(AuthenticationException.class, () -> surrogateAuthenticationPostProcessor.process(builder, transaction));
+        assertNotNull(exception.getCause());
     }
 }

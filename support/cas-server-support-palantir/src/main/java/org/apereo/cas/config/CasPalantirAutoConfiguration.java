@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Palantir)
 @Import({
     CasPalantirWebMvcConfiguration.class,
+    CasPalantirServiceHistoryConfiguration.class,
     CasPalantirCasAuthenticationConfiguration.class
 })
 public class CasPalantirAutoConfiguration {

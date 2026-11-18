@@ -72,7 +72,7 @@ public class DefaultRegisteredServiceIndexService extends BaseRegisteredServiceI
             val staleServices = indexedRegisteredServices.stream()
                 .filter(service -> !serviceIds.contains(service.getId()))
                 .toList();
-            indexedRegisteredServices.removeAll(staleServices);
+            staleServices.forEach(indexedRegisteredServices::remove);
         }
     }
 

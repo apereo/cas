@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import jakarta.persistence.Column;
@@ -86,8 +87,9 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource);
-        assertThrows(AccountNotFoundException.class,
+        val exception = assertThrows(AccountNotFoundException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"), mock(Service.class)));
+        assertInstanceOf(IncorrectResultSizeDataAccessException.class, exception.getCause());
     }
 
     @Test
@@ -104,8 +106,9 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
         val properties = new QueryJdbcAuthenticationProperties().setSql(SQL).setFieldPassword(PASSWORD_FIELD);
         val handler = new QueryDatabaseAuthenticationHandler(properties, PrincipalFactoryUtils.newPrincipalFactory(),
             this.dataSource);
-        assertThrows(FailedLoginException.class,
+        val exception = assertThrows(FailedLoginException.class,
             () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"), mock(Service.class)));
+        assertInstanceOf(IncorrectResultSizeDataAccessException.class, exception.getCause());
     }
 
     @Test

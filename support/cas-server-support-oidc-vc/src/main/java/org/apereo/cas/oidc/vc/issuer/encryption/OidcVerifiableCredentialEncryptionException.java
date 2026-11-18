@@ -27,6 +27,11 @@ public class OidcVerifiableCredentialEncryptionException extends IllegalArgument
         this.error = error;
     }
 
+    public OidcVerifiableCredentialEncryptionException(final String error, final String message, final Throwable cause) {
+        super(message, cause);
+        this.error = error;
+    }
+
     /**
      * The encrypted credential request cannot be decrypted or read.
      *
@@ -38,6 +43,17 @@ public class OidcVerifiableCredentialEncryptionException extends IllegalArgument
     }
 
     /**
+     * The encrypted credential request cannot be decrypted or read.
+     *
+     * @param message the message
+     * @param cause   the failure that prevented it
+     * @return the exception
+     */
+    public static OidcVerifiableCredentialEncryptionException invalidRequest(final String message, final Throwable cause) {
+        return new OidcVerifiableCredentialEncryptionException(OidcConstants.VC_ERROR_INVALID_CREDENTIAL_REQUEST, message, cause);
+    }
+
+    /**
      * The {@code credential_response_encryption} parameters are invalid, or missing while required.
      *
      * @param message the message
@@ -45,5 +61,16 @@ public class OidcVerifiableCredentialEncryptionException extends IllegalArgument
      */
     public static OidcVerifiableCredentialEncryptionException invalidParameters(final String message) {
         return new OidcVerifiableCredentialEncryptionException(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS, message);
+    }
+
+    /**
+     * The {@code credential_response_encryption} parameters are invalid.
+     *
+     * @param message the message
+     * @param cause   the failure that prevented their use
+     * @return the exception
+     */
+    public static OidcVerifiableCredentialEncryptionException invalidParameters(final String message, final Throwable cause) {
+        return new OidcVerifiableCredentialEncryptionException(OidcConstants.VC_ERROR_INVALID_ENCRYPTION_PARAMETERS, message, cause);
     }
 }

@@ -1,7 +1,8 @@
 ---
 name: cas-actuators
-description: "Review and change CAS actuator endpoints: the security filter chain, access levels and IP access, REST actuator endpoints, exposure vs access, unmasked responses, request-path regexes, auditing and the actuator scenarios. Use when touching actuator endpoints or management security."
+description: "Review and change CAS actuator endpoints: the security filter chain, access levels and IP access, REST actuator endpoints, exposure vs access, unmasked responses, request-path regexes, auditing, configuration encryption ({cas-cipher}, casConfig encrypt/decrypt) and the actuator scenarios. Use when touching actuator endpoints, management security or encrypted configuration."
 ---
+
 
 # Actuator endpoints
 
@@ -53,6 +54,10 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   a `NONE` endpoint is usually refused by security before the missing mapping matters.
   `ActuatorEndpointAccessControlTests` covers all of it, with `releaseAttributes` beside
   `registeredServices` as the Boot operation endpoint that has always behaved this way.
+- Keep REST actuator handler beans in a private identity map; do not convert it with `Map.copyOf`.
+  HotswapAgent's Spring proxies delegate `equals` to their target, so `proxy.equals(proxy)` can be false;
+  `Map.copyOf` then returns null even for a key obtained from its own key set, aborting handler registration.
+  `RestActuatorEndpointDiscovererTests` uses a delegating CGLIB endpoint proxy and verifies GET access and POST refusal.
 - Before changing what an access level does to these endpoints, measure the blast radius rather
   than reasoning from the annotation: every REST actuator endpoint declares
   `defaultAccess = Access.NONE` and the web application ships `management.endpoints.access.default=NONE`,
@@ -106,3 +111,14 @@ description: "Review and change CAS actuator endpoints: the security filter chai
   `DateTimeUtils.zonedDateTimeOf(Instant)`; do not substitute the current time for a missing event timestamp.
 - `ThrottledSubmissionHandlerEndpoint` obtains entries from a raw `ThrottledSubmissionsStore`; declare the local
   `Stream<ThrottledSubmission>` explicitly so username-filter predicates receive submissions instead of `Object`.
+
+## Configuration encryption
+
+- `{cas-cipher}` values are decrypted while configuration files load (`BaseConfigurationPropertiesLoader`); dynamic
+  (`MutablePropertySource`) sources, also when wrapped in `BootstrapPropertySource`, are decrypted by
+  `CasConfigurationDecryptionInitializer` into the `casConfigurationDecryptedProperties` source, ahead of all others, at
+  startup (a bootstrap `ApplicationContextInitializer` ordered after Spring Cloud's property source bootstrap) and on every
+  `EnvironmentChangeEvent` before `ConfigurationPropertiesRebinder` rebinds. Decrypt nothing at bind time: a `BindHandler`
+  sees values after conversion, so a boolean would fail before it could be decrypted.
+- `casConfig` `/encrypt` and `/decrypt` answer 400 when the cipher fails; Palantir only offers encryption when the dashboard
+  model's `configurationEncryptionAvailable` is true.

@@ -263,6 +263,19 @@ public interface TicketRegistry {
     }
 
     /**
+     * Count the tickets of each type in one pass, keyed by ticket prefix, such as {@code TGT} or {@code ST}. Every
+     * kind of ticket the registry holds is counted, whichever module issues it. Registries that can count by type
+     * without reading every ticket should do so.
+     *
+     * @return the number of tickets per prefix
+     */
+    default Map<String, Long> countTicketsByType() {
+        try (var tickets = stream()) {
+            return tickets.collect(Collectors.groupingBy(ticket -> Objects.toString(ticket.getPrefix(), "UNKNOWN"), TreeMap::new, Collectors.counting()));
+        }
+    }
+
+    /**
      * Gets cipher executor.
      *
      * @return the cipher executor

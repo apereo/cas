@@ -15,3 +15,8 @@ If you intend to use a DynamoDb database for auditing functionality, enable the 
          
 {% include_cached casproperties.html properties="cas.audit.dynamo-db" %}
 
+Next to the records table, CAS keeps a second table, named after the first with `Summary` appended, that counts
+records per hour, per action and per target as they are written. Hourly summaries, such as the sign-in charts of the
+Palantir dashboard, read these counts instead of scanning the records, and the records table holds only records.
+
+

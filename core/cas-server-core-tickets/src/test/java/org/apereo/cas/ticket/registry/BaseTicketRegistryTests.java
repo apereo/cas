@@ -601,6 +601,25 @@ public abstract class BaseTicketRegistryTests {
     }
 
     /**
+     * The registry counts the tickets of each type by prefix, whichever way its store counts them.
+     */
+    @RepeatedTest(2)
+    void verifyCountTicketsByType() throws Throwable {
+        assumeTrue(canTicketRegistryIterate());
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+            RegisteredServiceTestUtils.getService(), NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        ticketRegistry.addTicket(ticketGrantingTicket);
+        ticketRegistry.addTicket(serviceTicket);
+        await().untilAsserted(() -> {
+            val counts = ticketRegistry.countTicketsByType();
+            assertTrue(counts.getOrDefault(TicketGrantingTicket.PREFIX, 0L) >= 1, () -> "Sessions are not counted: " + counts);
+            assertTrue(counts.getOrDefault(ServiceTicket.PREFIX, 0L) >= 1, () -> "Service tickets are not counted: " + counts);
+        });
+    }
+
+    /**
      * The counts the registry reports must match what was added. They are asked for by principal
      * and by service rather than for the registry as a whole, because a whole-registry count
      * answers for every test sharing it. A fresh principal and service are minted on each attempt

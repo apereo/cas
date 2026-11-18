@@ -38,6 +38,31 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
+    /**
+     * The application signed in to, by its id, when the authentication knows it.
+     *
+     * @param joinPoint   the join point
+     * @param returnValue the returned value
+     * @return the id of the registered service, or null
+     */
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint joinPoint, @Nullable final Object returnValue) {
+        return toTarget(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
+    }
+
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint joinPoint, final Exception exception) {
+        return toTarget(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
+    }
+
+    protected @Nullable String toTarget(final Object[] args) {
+        if (args.length > 0 && args[0] instanceof final RegisteredServiceAwareAuthenticationTransaction transaction) {
+            val registeredService = transaction.getRegisteredService();
+            return registeredService != null ? String.valueOf(registeredService.getId()) : null;
+        }
+        return null;
+    }
+
     protected String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof final AuthenticationTransaction transaction) {

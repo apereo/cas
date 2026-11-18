@@ -1,0 +1,20 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://partners\\.example\\.org/.*",
+  "name": "Sign in through an external identity provider",
+  "description": "Sends people straight to the named external identity provider instead of the CAS login form.",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy": {
+      "@class": "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "allowedProviders": [
+        "java.util.ArrayList",
+        [
+          "GitHub"
+        ]
+      ],
+      "permitUndefined": false,
+      "exclusive": true
+    }
+  }
+}

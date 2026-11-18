@@ -3,6 +3,7 @@ apply plugin: "org.apereo.cas.project-conventions"
 description = "Provides shared Thymeleaf template support for CAS views."
 dependencies {
     api libraries.thymeleaf
+    implementation libraries.jsoup
 
     compileOnly project(":core:cas-server-core-services")
 
