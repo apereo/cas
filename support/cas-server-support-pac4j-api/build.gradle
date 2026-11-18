@@ -5,6 +5,7 @@ dependencies {
     api libraries.pac4jcore
     
     implementation libraries.nimbus
+    implementation libraries.nimbusoidc
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")

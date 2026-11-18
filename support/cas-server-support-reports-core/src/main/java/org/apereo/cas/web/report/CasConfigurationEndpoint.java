@@ -42,7 +42,8 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     /**
-     * Encrypt value.
+     * Encrypt value. When the value cannot be encrypted, for example because configuration security is not set up,
+     * the answer is a bad request rather than an empty value.
      *
      * @param value the value
      * @return the response entity
@@ -53,11 +54,15 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Encrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to encrypt"))
     public ResponseEntity<String> encrypt(@RequestBody final String value) {
-        return ResponseEntity.ok(casConfigurationCipherExecutor.encode(value));
+        val encrypted = casConfigurationCipherExecutor.encode(value);
+        return StringUtils.isNotBlank(encrypted)
+            ? ResponseEntity.ok(encrypted)
+            : ResponseEntity.badRequest().body("The value could not be encrypted. Check that configuration security is set up.");
     }
 
     /**
-     * Decrypt value.
+     * Decrypt value. A value that is not encrypted is returned as it is; when an encrypted value cannot be decrypted,
+     * the answer is a bad request rather than an empty value.
      *
      * @param value the value
      * @return the response entity
@@ -68,7 +73,10 @@ public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Decrypt configuration value",
         parameters = @Parameter(name = "value", required = true, description = "The value to decrypt"))
     public ResponseEntity<String> decrypt(@RequestBody final String value) {
-        return ResponseEntity.ok(casConfigurationCipherExecutor.decode(value));
+        val decrypted = casConfigurationCipherExecutor.decode(value);
+        return decrypted != null
+            ? ResponseEntity.ok(decrypted)
+            : ResponseEntity.badRequest().body("The value could not be decrypted. Check that configuration security is set up with the key it was encrypted with.");
     }
 
 

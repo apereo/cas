@@ -2,12 +2,14 @@ package org.apereo.cas.audit;
 
 import module java.base;
 import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
-import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.audit.AuditActionCount;
+import org.apereo.inspektr.audit.AuditSummaryQuery;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -40,7 +42,7 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
     @Override
     public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDateTime) whereClause.get(WhereClauseFields.DATE);
-        val dt = DateTimeUtils.dateOf(localDate);
+        val dt = toStoredDate(Objects.requireNonNull(localDate));
         LOGGER.debug("Retrieving audit records since [{}] from [{}]", dt, this.collectionName);
         val query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));
         if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
@@ -50,6 +52,50 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
             query.limit(Long.valueOf(whereClause.get(WhereClauseFields.COUNT).toString()).intValue());
         }
         return new ArrayList<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
+    }
+
+    /**
+     * Counts records with one aggregation: the records of the period and actions are grouped by action and by the
+     * number of hours between the start of the period and the record, and by target when asked. The period is converted to dates the way records
+     * are written, so it lines up with them whatever the server's time zone.
+     *
+     * @param query the period and actions to count
+     * @return the counts
+     */
+    @Override
+    public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
+        val hours = query.hours();
+        if (hours.isEmpty() || query.actions().isEmpty()) {
+            return Optional.of(List.of());
+        }
+        val from = toStoredDate(query.from());
+        val criteria = new Document("whenActionWasPerformed",
+            new Document("$gte", from).append("$lt", toStoredDate(query.to())))
+            .append("actionPerformed", new Document("$in", List.copyOf(query.actions())));
+        val key = new Document("action", "$actionPerformed");
+        if (query.byTarget()) {
+            criteria.append("target", new Document("$ne", null));
+            key.append("target", "$target");
+        }
+        val match = new Document("$match", criteria);
+        val bucket = new Document("$floor", new Document("$divide",
+            List.of(new Document("$subtract", List.of("$whenActionWasPerformed", from)), AuditSummaryQuery.BUCKET.toMillis())));
+        val group = new Document("$group", new Document("_id", key.append("bucket", bucket))
+            .append("count", new Document("$sum", 1)));
+        val counts = new ArrayList<AuditActionCount>();
+        mongoTemplate.getCollection(collectionName).aggregate(List.of(match, group)).forEach(result -> {
+            val id = Objects.requireNonNull(result.get("_id", Document.class));
+            val index = ((Number) Objects.requireNonNull(id.get("bucket"))).intValue();
+            if (index >= 0 && index < hours.size()) {
+                counts.add(new AuditActionCount(hours.get(index), Objects.requireNonNull(id.getString("action")),
+                    ((Number) Objects.requireNonNull(result.get("count"))).longValue(), id.getString("target")));
+            }
+        });
+        return Optional.of(counts);
+    }
+
+    private Object toStoredDate(final LocalDateTime time) {
+        return Objects.requireNonNull(mongoTemplate.getConverter().convertToMongoType(time));
     }
 
     @Override

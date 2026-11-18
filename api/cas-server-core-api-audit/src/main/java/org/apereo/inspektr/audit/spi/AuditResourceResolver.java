@@ -34,6 +34,29 @@ public interface AuditResourceResolver {
     @Nullable String[] resolveFrom(JoinPoint target, Exception exception);
 
     /**
+     * Resolve what the action was for, when it is something that can be counted, such as the id of the application
+     * signed in to or the multifactor provider that was triggered. Stored apart from the resource.
+     *
+     * @param target      the join point that contains the arguments
+     * @param returnValue the returned value
+     * @return the target, or null
+     */
+    default @Nullable String resolveTarget(final JoinPoint target, @Nullable final Object returnValue) {
+        return null;
+    }
+
+    /**
+     * Resolve what an action that incurred an exception was for.
+     *
+     * @param target    the join point that contains the arguments
+     * @param exception the exception incurred when the join point proceeds
+     * @return the target, or null
+     */
+    default @Nullable String resolveTarget(final JoinPoint target, final Exception exception) {
+        return null;
+    }
+
+    /**
      * Sets audit format.
      *
      * @param auditFormat the audit format

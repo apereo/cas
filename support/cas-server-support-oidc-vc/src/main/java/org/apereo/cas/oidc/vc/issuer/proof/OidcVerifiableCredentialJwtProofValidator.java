@@ -95,7 +95,7 @@ public class OidcVerifiableCredentialJwtProofValidator implements OidcVerifiable
             throw e;
         } catch (final Exception e) {
             throw OidcVerifiableCredentialProofException.invalidProof(
-                StringUtils.defaultIfBlank(e.getMessage(), "Proof of possession could not be validated"));
+                StringUtils.defaultIfBlank(e.getMessage(), "Proof of possession could not be validated"), e);
         }
     }
 

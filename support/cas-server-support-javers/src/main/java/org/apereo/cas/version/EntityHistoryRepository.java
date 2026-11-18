@@ -32,4 +32,22 @@ public interface EntityHistoryRepository {
      * @return the string
      */
     String getChangelog(Object object);
+
+    /**
+     * Record that an entity was deleted, so its history ends with the deletion.
+     *
+     * @param object the deleted entity
+     */
+    default void delete(final Object object) {
+    }
+
+    /**
+     * The latest changes to any entity, newest first, as recorded in the shared history.
+     *
+     * @param limit how many changes to return at most
+     * @return the changes
+     */
+    default List<EntityChange> getRecentChanges(final int limit) {
+        return List.of();
+    }
 }

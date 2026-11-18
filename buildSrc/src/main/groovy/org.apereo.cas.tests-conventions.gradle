@@ -1,3 +1,4 @@
+import org.apereo.cas.gradle.CasBuildSettings
 import org.apereo.cas.gradle.TestCategories
 import org.apereo.cas.gradle.TestCategoryTagsValueSource
 import org.gradle.api.tasks.testing.Test
@@ -27,7 +28,7 @@ TestCategories.values().each { testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty('PTS_ENABLED') ?: 'true') && !publishReleases
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && CasBuildSettings.isPtsEnabled(project)
                 develocity.predictiveTestSelection {
                     enabled = ptsEnabled
                     mergeCodeCoverage = true
@@ -69,11 +70,11 @@ tasks.named('test') {
 
 tasks.withType(Test).configureEach {
     scanForTestClasses = false
-    ignoreFailures = providers.systemProperty('ignoreTestFailures').present
+    ignoreFailures = CasBuildSettings.isFlagEnabled(project, 'ignoreTestFailures')
     forkEvery = 500
 
     systemProperty('spring.test.context.cache.maxSize',
-        providers.systemProperty('testContextCacheSize').orElse('64').get())
+        CasBuildSettings.stringProperty(project, 'testContextCacheSize', '64'))
 
     def defaultParallelForks = Math.max(1, (Runtime.runtime.availableProcessors() / 2).intValue())
     maxParallelForks = project.ext.has('testMaxParallelForks')
@@ -148,12 +149,12 @@ tasks.withType(Test).configureEach {
     jvmArgs = list
 
     testLogging {
-        def testLoggingEvents = providers.systemProperty('testLoggingEvents')
-            .orElse('PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR').get().toUpperCase().split(',')
+        def testLoggingEvents = CasBuildSettings.stringProperty(project, 'testLoggingEvents', 'PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR')
+            .toUpperCase().split(',')
         events testLoggingEvents
         exceptionFormat = 'full'
 
-        def verbose = providers.systemProperty('verbose').present
+        def verbose = CasBuildSettings.isFlagEnabled(project, 'verbose')
 
         showStandardStreams = verbose && testLoggingEvents.contains('STANDARD_OUT')
         showExceptions = verbose && testLoggingEvents.contains('FAILED')
@@ -168,7 +169,7 @@ tasks.withType(Test).configureEach {
         }
     }
 
-    def skipRetry = providers.systemProperty('skipTestRetry').present
+    def skipRetry = CasBuildSettings.isFlagEnabled(project, 'skipTestRetry')
     if (!skipRetry) {
         develocity.testRetry {
             maxRetries = 3
@@ -189,10 +190,10 @@ def shouldTest(final String category) {
     if (!foundTest) {
         logger.debug "No tests with category ${category} found"
     }
-    !providers.systemProperty('skipTests').present && foundTest
+    !CasBuildSettings.isFlagEnabled(project, 'skipTests') && foundTest
 }
 
 def isCoverageEnabled() {
-    providers.systemProperty('enableJacocoAgent').orElse('false').get().toBoolean() ||
+    CasBuildSettings.isFlagEnabled(project, 'enableJacocoAgent') ||
         gradle.startParameter.taskNames.any { it.toLowerCase(Locale.ENGLISH).contains('jacoco') }
 }

@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://sp.example.org/saml",
+  "name": "eduPersonTargetedID",
+  "description": "Releases eduPersonTargetedID, an opaque identifier per user and service provider computed from uid and a salt.",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+    "salt": "replace-with-a-long-random-salt",
+    "attribute": "uid"
+  },
+  "metadataLocation": "https://sp.example.org/saml/metadata"
+}

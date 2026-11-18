@@ -24,4 +24,10 @@ public class OidcFederationResolveException extends Exception {
         this.status = status;
         this.error = error;
     }
+
+    public OidcFederationResolveException(final HttpStatus status, final String error, final String description, final Throwable cause) {
+        super(description, cause);
+        this.status = status;
+        this.error = error;
+    }
 }

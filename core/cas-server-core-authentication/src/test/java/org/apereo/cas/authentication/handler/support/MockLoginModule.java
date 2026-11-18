@@ -26,7 +26,7 @@ public class MockLoginModule implements LoginModule {
         try {
             this.callbackHandler.handle(callbacks);
         } catch (final Exception e) {
-            throw new LoginException();
+            throw (LoginException) new LoginException().initCause(e);
         }
 
         val userName = ((NameCallback) callbacks[0]).getName();

@@ -5,6 +5,44 @@
  * @param {number} columns the number of columns the row spans
  * @returns {jQuery} the row
  */
+/**
+ * The color of a health check by its status: green when up; amber when it reports a warning, is still running
+ * (SLOW, as Palantir's overview reports a check that has not answered in time) or is unknown; red only when it is
+ * down or out of service.
+ *
+ * @param {string} status the status of the check
+ * @returns {string} the color
+ */
+function palantirHealthColor(status) {
+    const value = String(status ?? "").toUpperCase();
+    if (value === "UP") {
+        return "rgb(5, 166, 31)";
+    }
+    if (value === "DOWN" || value === "OUT_OF_SERVICE") {
+        return "rgba(166, 45, 15)";
+    }
+    return value === "UNKNOWN" ? "rgb(128, 140, 152)" : "rgb(201, 154, 6)";
+}
+
+/**
+ * How a health check's status reads in a tooltip.
+ *
+ * @param {string} status the status of the check
+ * @param {number|undefined} millis how long the check took, when known
+ * @returns {string} the description
+ */
+function palantirHealthDescription(status, millis) {
+    const value = String(status ?? "").toUpperCase();
+    const took = Number.isFinite(Number(millis)) ? ` · ${Number(millis).toLocaleString()} ms` : "";
+    if (value === "SLOW") {
+        return `still running, no answer yet${took}`;
+    }
+    if (value === "WARN") {
+        return `warning${took}`;
+    }
+    return `${value.toLowerCase().replace(/_/g, " ")}${took}`;
+}
+
 function palantirTableGroupRow(label, columns) {
     return $("<tr>", {class: "palantir-table-group-row"})
         .append($("<td>", {colspan: columns}).text(label));
@@ -318,7 +356,319 @@ function closeAllDialogs() {
     $(".ui-dialog-content:visible").dialog("close");
 }
 
+const PALANTIR_READ_ONLY = "palantir-read-only";
+
+/**
+ * A modal progress dialog for work the operator has to wait for: a message saying what is happening, a bar that
+ * shows how far along it is or, when the server does not say, that it is busy, and how long it has taken so far.
+ */
+class PalantirProgress {
+    static timer = null;
+
+    static started = 0;
+
+    static detail = "";
+
+    /**
+     * Open the dialog.
+     *
+     * @param title what the work is
+     * @param message what is happening first
+     * @param detail what the work is about, such as a file name and size
+     * @param percent how far along the work starts, or null to show it busy until progress is reported
+     */
+    static open(title, message, detail = "", percent = null) {
+        PalantirProgress.stop();
+        PalantirProgress.started = Date.now();
+        PalantirProgress.detail = detail;
+        Swal.fire({
+            titleText: title,
+            html: `
+                <div class="palantir-progress">
+                    <p class="palantir-progress__message" aria-live="polite"></p>
+                    <div class="palantir-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <span class="palantir-progress__bar"></span>
+                    </div>
+                    <p class="palantir-progress__detail"></p>
+                </div>`,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: popup => {
+                $(popup).find(".palantir-progress__track").attr("aria-label", title);
+                PalantirProgress.update(message, percent);
+            }
+        });
+        PalantirProgress.timer = setInterval(() => PalantirProgress.tick(), 1000);
+    }
+
+    /**
+     * Say what is happening and how far along it is.
+     *
+     * @param message what is happening
+     * @param percent how far along it is, from 0 to 100, or null when only the server knows and it is busy
+     */
+    static update(message, percent = null) {
+        const progress = $(Swal.getHtmlContainer()).find(".palantir-progress");
+        if (progress.length === 0) {
+            return;
+        }
+        progress.find(".palantir-progress__message").text(message);
+        const track = progress.find(".palantir-progress__track");
+        if (percent === null) {
+            track.addClass("is-busy").removeAttr("aria-valuenow").attr("aria-valuetext", message);
+            track.find(".palantir-progress__bar").css("width", "");
+        } else {
+            const value = Math.max(0, Math.min(100, Math.round(percent)));
+            track.removeClass("is-busy").attr("aria-valuenow", value).attr("aria-valuetext", `${value}%`);
+            track.find(".palantir-progress__bar").css("width", `${value}%`);
+        }
+        PalantirProgress.tick();
+    }
+
+    /**
+     * Show how long the work has taken so far.
+     */
+    static tick() {
+        const seconds = Math.floor((Date.now() - PalantirProgress.started) / 1000);
+        const elapsed = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+        $(Swal.getHtmlContainer()).find(".palantir-progress__detail")
+            .text([PalantirProgress.detail, `Elapsed ${elapsed}`].filter(Boolean).join(" · "));
+    }
+
+    static stop() {
+        clearInterval(PalantirProgress.timer);
+        PalantirProgress.timer = null;
+    }
+
+    /**
+     * Close the dialog, if it is still the one open.
+     */
+    static close() {
+        PalantirProgress.stop();
+        if ($(Swal.getHtmlContainer()).find(".palantir-progress").length > 0) {
+            Swal.close();
+        }
+    }
+
+    /**
+     * Write a size in bytes the way people read it.
+     *
+     * @param bytes the size
+     * @returns {string} the size
+     */
+    static size(bytes) {
+        const units = ["bytes", "KB", "MB", "GB"];
+        let value = Number(bytes) || 0;
+        let unit = 0;
+        while (value >= 1024 && unit < units.length - 1) {
+            value /= 1024;
+            unit++;
+        }
+        return unit === 0 ? `${value} ${units[0]}` : `${value.toFixed(1)} ${units[unit]}`;
+    }
+}
+
+/**
+ * Let a SweetAlert opened over a modal jQuery UI dialog take focus. The dialog keeps focus inside itself and would
+ * otherwise pull it back from the alert's fields and buttons, which sit outside the dialog.
+ */
+function allowAlertsOverModalDialogs() {
+    if (!$.ui?.dialog || $.ui.dialog.prototype.palantirAllowsAlerts) {
+        return;
+    }
+    $.widget("ui.dialog", $.ui.dialog, {
+        palantirAllowsAlerts: true,
+        _allowInteraction(event) {
+            return $(event.target).closest(".swal2-container").length > 0 || this._super(event);
+        }
+    });
+}
+
+/**
+ * Explain why a change cannot be made from Palantir.
+ *
+ * @param name the endpoint id
+ * @returns {string} the explanation
+ */
+/**
+ * Read a date as the actuator endpoints answer it: an ISO date, possibly followed by a zone id in brackets, or a
+ * number of seconds or milliseconds since the epoch.
+ *
+ * @param value the date as answered
+ * @returns {Date|null} the date, or null when it cannot be read
+ */
+function palantirRecordDate(value) {
+    if (value === undefined || value === null || value === "") {
+        return null;
+    }
+    const date = typeof value === "number"
+        ? new Date(value < 1e12 ? value * 1000 : value)
+        : new Date(Date.parse(String(value).replace(/\[[^\]]*\]$/, "")));
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function palantirRecordAgo(date) {
+    if (!date) {
+        return "at an unknown time";
+    }
+    const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+    if (seconds < 45) {
+        return "just now";
+    }
+    const minutes = Math.round(seconds / 60);
+    if (minutes < 60) {
+        return `${minutes} min ago`;
+    }
+    const hours = Math.round(minutes / 60);
+    if (hours < 48) {
+        return `${hours} h ago`;
+    }
+    return `${Math.round(hours / 24)} days ago`;
+}
+
+function palantirRecordWhen(date) {
+    return date ? date.toLocaleString(undefined, {dateStyle: "medium", timeStyle: "short"}) : "Unknown";
+}
+
+/**
+ * Put a card view where a table sits, and show what to do before anything is searched.
+ *
+ * @param {string} tableId the table the cards stand in for
+ * @param {string} cardsId the element that holds the cards
+ * @param {string} prompt what to do before anything is searched
+ */
+function placePalantirRecordCards(tableId, cardsId, prompt) {
+    const tableRow = $(`#${tableId}`).closest(".dt-layout-row");
+    if (tableRow.length > 0) {
+        $(`#${cardsId}`).insertAfter(tableRow);
+    }
+    $(`#${cardsId}`).html(`<p class="palantir-empty-state">${escapePalantirMarkup(prompt)}</p>`);
+}
+
+/**
+ * Draw one card per row the table shows on its current page, once something was searched. A row carries the record
+ * its card is drawn from.
+ *
+ * @param {object} table the table the cards stand in for
+ * @param {string} cardsId the element that holds the cards
+ * @param {Function} card draws the card of one record
+ * @param {Function} emptyMessage what to say when the search found nothing, given what was searched for
+ */
+function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
+    const container = $(`#${cardsId}`);
+    if (container.length === 0 || container.data("searched") === undefined) {
+        return;
+    }
+    const cards = table.rows({page: "current", search: "applied"}).data().toArray()
+        .filter(row => row.record)
+        .map(row => card(row.record));
+    if (cards.length > 0) {
+        container.html(cards.join(""));
+        applyPalantirEndpointAccess(container[0]);
+    } else {
+        const message = table.search() === "" ? emptyMessage(container.data("searched")) : "Nothing matches that search.";
+        container.html(`<p class="palantir-empty-state">${escapePalantirMarkup(message)}</p>`);
+    }
+}
+
+/**
+ * A value shown as code in a table cell or a card: the value is escaped, so text that came from a request, such as a
+ * username, a user agent or an attribute value, is shown as written and never read as markup.
+ *
+ * @param value the value; null and undefined show as nothing
+ * @returns {string} the markup
+ */
+function palantirCode(value) {
+    const text = value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
+    return `<code>${text.replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character])}</code>`;
+}
+
+function palantirReadOnlyMessage(name) {
+    return `The ${name} endpoint is read-only on this CAS server, so this change cannot be made from Palantir.`;
+}
+
+/**
+ * Disable the controls that change something through a read-only endpoint, under the given element. Such a
+ * control names its endpoint in a data-palantir-write attribute.
+ *
+ * @param root the element to look under
+ */
+function applyPalantirEndpointAccess(root = document) {
+    $(root).find("[data-palantir-write]").addBack("[data-palantir-write]").each((index, element) => {
+        const name = element.dataset.palantirWrite;
+        if (CasActuatorEndpoints.writable(name)) {
+            return;
+        }
+        const message = palantirReadOnlyMessage(name);
+        if ("disabled" in element) {
+            element.disabled = true;
+        } else {
+            element.setAttribute("aria-disabled", "true");
+            element.setAttribute("tabindex", "-1");
+        }
+        element.classList.add("palantir-read-only");
+        element.title = message;
+    });
+}
+
+/**
+ * Hold back what a read-only endpoint refuses: disable the controls that would change something through it, also
+ * when they are drawn later, and refuse a request that would change something through it before it is sent.
+ */
+function initializePalantirEndpointAccess() {
+    if (!CasActuatorEndpoints.anyReadOnly()) {
+        return;
+    }
+    applyPalantirEndpointAccess();
+    new MutationObserver(mutations => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    applyPalantirEndpointAccess(node);
+                }
+            }
+        }
+    }).observe(document.body, {childList: true, subtree: true});
+    $.ajaxPrefilter((options, originalOptions, xhr) => {
+        const method = String(options.type ?? options.method ?? "GET").toUpperCase();
+        if (["GET", "HEAD", "OPTIONS"].includes(method)) {
+            return;
+        }
+        const name = CasActuatorEndpoints.endpointFor(options.url);
+        if (name && !CasActuatorEndpoints.writable(name)) {
+            xhr.abort(PALANTIR_READ_ONLY);
+            notyf.dismissAll();
+            notyf.error(palantirReadOnlyMessage(name));
+        }
+    });
+}
+
+/**
+ * A context menu item that changes something through a read-only endpoint is shown disabled. Such an item names
+ * its endpoint in its write property.
+ *
+ * @param item the menu item
+ * @returns {object} the item as the menu shows it
+ */
+function restrictContextMenuItem(item) {
+    if (item === null || typeof item !== "object" || !item.write) {
+        return item;
+    }
+    const menuItem = {...item};
+    delete menuItem.write;
+    if (!CasActuatorEndpoints.writable(item.write)) {
+        menuItem.disabled = true;
+    }
+    return menuItem;
+}
+
 function displayBanner(error) {
+    if (error?.statusText === PALANTIR_READ_ONLY || error?.statusText === "abort") {
+        return;
+    }
     let message = "";
     if (error.hasOwnProperty("status")) {
         switch (error.status) {
@@ -334,7 +684,9 @@ function displayBanner(error) {
             message = "Unable to process or accept the request. Check CAS server logs for details.";
             break;
         case 0:
-            message = "Unable to contact the CAS server. Are you sure the server is reachable?";
+            message = error.statusText === "timeout"
+                ? "The CAS server took too long to respond. Check CAS server logs for slow requests."
+                : "Unable to contact the CAS server. Are you sure the server is reachable?";
             break;
         default:
             message = `HTTP error: ${error.status}. `;
@@ -730,8 +1082,70 @@ function initializeDatePickers(root) {
     });
 }
 
+/**
+ * Close a tooltip whose element was removed from the page or hidden. Tooltips close when the pointer leaves their
+ * element or when jQuery removes it, but a part of the page redrawn by assigning its markup, or hidden with its
+ * dialog, takes its elements away without either, and their open tooltips would stay on the screen.
+ */
+function closeOrphanedTooltips() {
+    const targets = new Map();
+    $(document)
+        .off("tooltipopen.palantirOrphans tooltipclose.palantirOrphans")
+        .on("tooltipopen.palantirOrphans", (event, ui) => {
+            const id = ui.tooltip.attr("id");
+            const target = document.querySelector(`[aria-describedby~="${id}"]`);
+            if (target) {
+                targets.set(id, target);
+            }
+        })
+        .on("tooltipclose.palantirOrphans", (event, ui) => targets.delete(ui.tooltip.attr("id")));
+    new MutationObserver(() => {
+        for (const [id, target] of targets) {
+            if (!target.isConnected || target.getClientRects().length === 0) {
+                targets.delete(id);
+                $(document).tooltip("close", $.Event("mouseleave", {target: target, currentTarget: target}));
+                $(`#${id}`).remove();
+            }
+        }
+    }).observe(document.body, {childList: true, subtree: true, attributes: true, attributeFilter: ["style", "class", "hidden"]});
+}
+
+/**
+ * Show a document, such as metadata or a JSON response, read-only in a code editor inside a dialog sized to the window.
+ * The dialog is the element with the given id, holding an editor element whose id is the dialog's id followed by
+ * "Editor".
+ *
+ * @param dialogId the id of the dialog element
+ * @param title the dialog's title
+ * @param text the document
+ * @param mode the editor mode, such as json or xml
+ */
+function showPalantirCodeDialog(dialogId, title, text, mode = "json") {
+    const element = $(`#${dialogId}`);
+    if (!element.dialog("instance")) {
+        element.dialog({
+            autoOpen: false,
+            modal: true,
+            resizable: false,
+            classes: {"ui-dialog": "ui-corner-all palantir-code-dialog"}
+        });
+    }
+    element.dialog("option", {
+        title: title,
+        width: Math.min(1100, $(window).width() - 32),
+        height: Math.min(760, $(window).height() - 48),
+        position: {my: "center", at: "center", of: window}
+    });
+    element.dialog("open");
+    const editor = initializeAceEditor(`${dialogId}Editor`, mode, {useWorker: mode === "json"});
+    editor.setReadOnly(true);
+    editor.setValue(text, -1);
+    editor.resize(true);
+}
+
 function initializeTooltips() {
     $(function () {
+        closeOrphanedTooltips();
         $(document).tooltip({
             items: "[title]:not(a)",
             content: function () {
@@ -820,7 +1234,7 @@ function prepareContextMenuItems(items, context) {
             separator = null;
         }
 
-        const menuItem = {...item};
+        const menuItem = {...restrictContextMenuItem(item)};
         delete menuItem.visible;
         menuItems[key] = menuItem;
     }
@@ -853,6 +1267,80 @@ function applySharedDialogStyle() {
     $(document).on("dialogcreate", event => $(event.target).closest(".ui-dialog").addClass("cas-ui palantir-dialog"));
 }
 
+/**
+ * Keep dialogs and select menus inside the window on small screens. A dialog never grows wider or taller than
+ * the window: its content scrolls instead, and once it is open it is moved back into view whenever it grows or the
+ * window shrinks. Select menus open above their field when there is no room below, in the window or in the dialog
+ * that holds them, which clips what falls outside it, and scroll when they are long.
+ */
+function keepPalantirPopupsInView() {
+    const margin = 16;
+    if ($.ui?.selectmenu) {
+        $.ui.selectmenu.prototype.options.position = {my: "left top", at: "left bottom", collision: "flip fit"};
+    }
+    const fit = content => {
+        const element = $(content);
+        if (!element.hasClass("ui-dialog-content") || !element.dialog("isOpen")) {
+            return;
+        }
+        const widget = element.dialog("widget");
+        if (widget.outerWidth() > window.innerWidth - margin * 2) {
+            element.dialog("option", "width", window.innerWidth - margin * 2);
+        }
+        const bounds = widget[0].getBoundingClientRect();
+        if (bounds.top < margin || bounds.bottom > window.innerHeight - margin
+            || bounds.left < 0 || bounds.right > window.innerWidth) {
+            element.dialog("option", "position", {my: "center", at: "center", of: window, collision: "fit"});
+        }
+    };
+    const pending = new Set();
+    const observer = typeof ResizeObserver === "function"
+        ? new ResizeObserver(entries => {
+            entries.forEach(entry => pending.add(entry.target));
+            requestAnimationFrame(() => {
+                pending.forEach(widget => fit($(widget).find("> .ui-dialog-content")));
+                pending.clear();
+            });
+        })
+        : null;
+    $(document)
+        .off("dialogopen.palantirInView")
+        .on("dialogopen.palantirInView", event => {
+            const widget = $(event.target).closest(".ui-dialog");
+            fit(event.target);
+            observer?.observe(widget[0]);
+        })
+        .off("dialogclose.palantirInView")
+        .on("dialogclose.palantirInView", event => observer?.unobserve($(event.target).closest(".ui-dialog")[0]));
+    $(document)
+        .off("selectmenuopen.palantirInView")
+        .on("selectmenuopen.palantirInView", event => {
+            const menu = $(event.target).selectmenu("instance");
+            if (!menu) {
+                return;
+            }
+            const dialog = menu.menuWrap.closest(".ui-dialog");
+            const bounds = dialog.length > 0
+                ? dialog[0].getBoundingClientRect()
+                : {top: 0, bottom: window.innerHeight};
+            const button = menu.button[0].getBoundingClientRect();
+            const height = menu.menuWrap.outerHeight();
+            const below = Math.min(bounds.bottom, window.innerHeight) - button.bottom;
+            const above = button.top - Math.max(bounds.top, 0);
+            const upward = height > below && above > below;
+            menu.menuWrap.position({
+                my: upward ? "left bottom" : "left top",
+                at: upward ? "left top" : "left bottom",
+                of: menu.button,
+                collision: "fit",
+                within: dialog.length > 0 ? dialog : window
+            });
+        });
+    $(window)
+        .off("resize.palantirInView")
+        .on("resize.palantirInView", () => $(".ui-dialog-content").each((index, content) => fit(content)));
+}
+
 function initializeContextMenu({selector, callback, items, build, trigger = "right"}) {
     installJQueryCompatibility();
     $.contextMenu("destroy", selector);
@@ -871,7 +1359,9 @@ function initializeContextMenu({selector, callback, items, build, trigger = "rig
                 clearContextMenuRow(options);
             }
         },
-        items: items
+        items: typeof items === "function" || !items
+            ? items
+            : Object.fromEntries(Object.entries(items).map(([key, item]) => [key, restrictContextMenuItem(item)]))
     };
 
     if (build) {
@@ -1029,7 +1519,7 @@ function nameIconOnlyControls(root = document) {
  */
 function initializeTableAndDialogAccessibility() {
     $(document).off("init.dt.palantirA11y").on("init.dt.palantirA11y", (event, settings) => {
-        const table = event.target?.tagName === "TABLE" ? event.target : settings?.nTable;
+        const table = event.target?.tagName === "TABLE" ? event.target : settings && new $.fn.dataTable.Api(settings).table().node();
         if (!table) {
             return;
         }
@@ -1182,4 +1672,289 @@ function sanitizePalantirHtml(html) {
  */
 function palantirHtmlText(html) {
     return new DOMParser().parseFromString(`<!DOCTYPE html><body>${sanitizePalantirHtml(html)}</body>`, "text/html").body.textContent.trim();
+}
+
+/**
+ * Magnify a chart or a diagram in a dialog as large as the window. A button marked
+ * <code>data-palantir-magnify="target-id"</code>, or a click on a target marked
+ * <code>data-palantir-magnifiable</code>, opens it: a Chart.js canvas
+ * is drawn again at the dialog's size, and an SVG diagram, such as a Mermaid flow, can be zoomed with the wheel, the
+ * keyboard or the toolbar and moved by dragging.
+ */
+class PalantirMagnifier {
+    static MIN_SCALE = .2;
+
+    static MAX_SCALE = 8;
+
+    static initialized = false;
+
+    /**
+     * Listen for magnify buttons and double-clicks on magnifiable targets, once.
+     */
+    static initialize() {
+        if (PalantirMagnifier.initialized) {
+            return;
+        }
+        PalantirMagnifier.initialized = true;
+        $(document)
+            .on("click.palantirMagnifier", "[data-palantir-magnify]", event => {
+                event.preventDefault();
+                const button = event.currentTarget;
+                PalantirMagnifier.magnify(document.getElementById(button.dataset.palantirMagnify),
+                    button.dataset.palantirMagnifyTitle || button.getAttribute("aria-label") || "");
+            })
+            .on("click.palantirMagnifier", "[data-palantir-magnifiable]", event => {
+                if (PalantirMagnifier.opensOnClick(event)) {
+                    PalantirMagnifier.magnify(event.currentTarget, event.currentTarget.dataset.palantirMagnifiable || "");
+                }
+            })
+            .on("keydown.palantirMagnifier", "[data-palantir-magnifiable]", event => {
+                if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) {
+                    event.preventDefault();
+                    PalantirMagnifier.magnify(event.currentTarget, event.currentTarget.dataset.palantirMagnifiable || "");
+                }
+            });
+        PalantirMagnifier.markTargets();
+    }
+
+    /**
+     * Whether a click on a magnifiable target opens it: not when it lands on a control or a link inside it, on a
+     * chart's legend, which shows and hides series, or ends a text selection.
+     *
+     * @param event the click
+     * @returns {boolean} true to magnify
+     */
+    static opensOnClick(event) {
+        if ($(event.target).closest("a, button, input, select, textarea, [onclick], .clickable").length > 0
+            || String(window.getSelection?.() ?? "").length > 0) {
+            return false;
+        }
+        const canvas = event.currentTarget.tagName === "CANVAS" ? event.currentTarget : null;
+        const chart = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas) : null;
+        if (chart && typeof chart.config.options?.onClick === "function"
+            && chart.getElementsAtEventForMode(event, "nearest", {intersect: true}, false).length > 0) {
+            return false;
+        }
+        const legend = chart?.legend;
+        if (legend) {
+            const bounds = canvas.getBoundingClientRect();
+            const x = event.clientX - bounds.left;
+            const y = event.clientY - bounds.top;
+            if (x >= legend.left && x <= legend.right && y >= legend.top && y <= legend.bottom) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Let keyboard users open magnifiable targets as they would a link.
+     */
+    static markTargets() {
+        $("[data-palantir-magnifiable]").each((index, target) => {
+            target.setAttribute("tabindex", target.getAttribute("tabindex") ?? "0");
+            if (!target.getAttribute("title")) {
+                target.setAttribute("title", "Click to magnify");
+            }
+        });
+    }
+
+    /**
+     * Magnify what a target holds: a chart on a canvas, or an SVG diagram.
+     *
+     * @param target the canvas, or an element holding an SVG
+     * @param title the dialog title
+     */
+    static magnify(target, title) {
+        if (!target) {
+            return;
+        }
+        const canvas = target.tagName === "CANVAS" ? target : target.querySelector("canvas");
+        const chart = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas) : null;
+        if (chart) {
+            PalantirMagnifier.chart(chart, title);
+            return;
+        }
+        const svg = target.tagName.toLowerCase() === "svg" ? target : target.querySelector("svg");
+        if (svg) {
+            PalantirMagnifier.svg(svg, title);
+        }
+    }
+
+    /**
+     * Open the magnifier dialog and let a builder fill its stage.
+     *
+     * @param title the dialog title
+     * @param build called with the stage and the toolbar once the dialog is open; returns a function to call on close
+     */
+    static open(title, build) {
+        const dialog = $(`
+            <div class="palantir-magnifier">
+                <div class="palantir-magnifier__toolbar" role="toolbar" aria-label="Magnifier"></div>
+                <div class="palantir-magnifier__stage"></div>
+            </div>`).attr("title", title || "Magnified view").appendTo(document.body);
+        let cleanup = null;
+        dialog.dialog({
+            modal: true,
+            width: window.innerWidth - 48,
+            height: window.innerHeight - 48,
+            draggable: false,
+            resizable: false,
+            position: {my: "center", at: "center", of: window},
+            open: () => {
+                cleanup = build(dialog.find(".palantir-magnifier__stage")[0], dialog.find(".palantir-magnifier__toolbar"));
+            },
+            close: () => {
+                cleanup?.();
+                dialog.dialog("destroy").remove();
+            }
+        });
+    }
+
+    /**
+     * Draw a chart again, as large as the dialog, with the data it shows now.
+     *
+     * @param chart the Chart.js chart
+     * @param title the dialog title
+     */
+    static chart(chart, title) {
+        PalantirMagnifier.open(title, (stage, toolbar) => {
+            toolbar.remove();
+            const canvas = document.createElement("canvas");
+            canvas.setAttribute("role", "img");
+            canvas.setAttribute("aria-label", chart.canvas.getAttribute("aria-label") ?? title);
+            stage.classList.add("is-chart");
+            stage.append(canvas);
+            const options = chart.config.options ?? {};
+            const large = new Chart(canvas.getContext("2d"), {
+                type: chart.config.type,
+                data: typeof cloneChartValue === "function" ? cloneChartValue(chart.data) : JSON.parse(JSON.stringify(chart.data)),
+                options: {...options, responsive: true, maintainAspectRatio: false, animation: false},
+                plugins: chart.config.plugins ?? []
+            });
+            if (typeof followPalantirChart === "function") {
+                followPalantirChart(chart, large);
+            }
+            return () => {
+                if (typeof unfollowPalantirChart === "function") {
+                    unfollowPalantirChart(chart, large);
+                }
+                large.destroy();
+            };
+        });
+    }
+
+    /**
+     * Show a copy of an SVG diagram that can be zoomed and moved.
+     *
+     * @param svg the diagram
+     * @param title the dialog title
+     */
+    static svg(svg, title) {
+        PalantirMagnifier.open(title, (stage, toolbar) => {
+            const copy = svg.cloneNode(true);
+            const id = `palantirMagnified${Date.now()}`;
+            if (svg.id) {
+                copy.id = id;
+                copy.querySelectorAll("style").forEach(style => {
+                    style.textContent = style.textContent.split(`#${svg.id}`).join(`#${id}`);
+                });
+            }
+            const box = svg.viewBox?.baseVal;
+            const width = box?.width || svg.getBoundingClientRect().width || 800;
+            const height = box?.height || svg.getBoundingClientRect().height || 600;
+            copy.removeAttribute("style");
+            copy.setAttribute("width", String(width));
+            copy.setAttribute("height", String(height));
+            const layer = $("<div>", {class: "palantir-magnifier__layer"}).append(copy)[0];
+            stage.classList.add("is-diagram");
+            stage.tabIndex = 0;
+            stage.append(layer);
+
+            const view = {scale: 1, x: 0, y: 0};
+            const apply = () => {
+                layer.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+                toolbar.find("[data-zoom-level]").text(`${Math.round(view.scale * 100)}%`);
+            };
+            const fit = () => {
+                const bounds = stage.getBoundingClientRect();
+                view.scale = Math.min(PalantirMagnifier.MAX_SCALE, Math.max(PalantirMagnifier.MIN_SCALE,
+                    Math.min((bounds.width - 32) / width, (bounds.height - 32) / height)));
+                view.x = (bounds.width - width * view.scale) / 2;
+                view.y = (bounds.height - height * view.scale) / 2;
+                apply();
+            };
+            const zoom = (factor, originX, originY) => {
+                const bounds = stage.getBoundingClientRect();
+                const pointX = originX ?? bounds.width / 2;
+                const pointY = originY ?? bounds.height / 2;
+                const scale = Math.min(PalantirMagnifier.MAX_SCALE, Math.max(PalantirMagnifier.MIN_SCALE, view.scale * factor));
+                view.x = pointX - (pointX - view.x) * scale / view.scale;
+                view.y = pointY - (pointY - view.y) * scale / view.scale;
+                view.scale = scale;
+                apply();
+            };
+
+            toolbar.html(`
+                <button type="button" class="palantir-icon-button" data-zoom="out" title="Zoom out" aria-label="Zoom out"><i class="mdi mdi-magnify-minus-outline" aria-hidden="true"></i></button>
+                <span class="palantir-magnifier__level" data-zoom-level aria-live="polite"></span>
+                <button type="button" class="palantir-icon-button" data-zoom="in" title="Zoom in" aria-label="Zoom in"><i class="mdi mdi-magnify-plus-outline" aria-hidden="true"></i></button>
+                <button type="button" class="palantir-icon-button" data-zoom="fit" title="Fit to the window" aria-label="Fit to the window"><i class="mdi mdi-fit-to-screen-outline" aria-hidden="true"></i></button>
+                <span class="palantir-magnifier__hint">Scroll to zoom, drag to move</span>`);
+            toolbar.on("click", "[data-zoom]", event => {
+                const action = event.currentTarget.dataset.zoom;
+                if (action === "fit") {
+                    fit();
+                } else {
+                    zoom(action === "in" ? 1.25 : .8);
+                }
+            });
+            stage.addEventListener("wheel", event => {
+                event.preventDefault();
+                const bounds = stage.getBoundingClientRect();
+                zoom(Math.exp(-event.deltaY * .0015), event.clientX - bounds.left, event.clientY - bounds.top);
+            }, {passive: false});
+            let drag = null;
+            stage.addEventListener("pointerdown", event => {
+                drag = {x: event.clientX - view.x, y: event.clientY - view.y};
+                stage.setPointerCapture(event.pointerId);
+                stage.classList.add("is-dragging");
+            });
+            stage.addEventListener("pointermove", event => {
+                if (drag) {
+                    view.x = event.clientX - drag.x;
+                    view.y = event.clientY - drag.y;
+                    apply();
+                }
+            });
+            const release = () => {
+                drag = null;
+                stage.classList.remove("is-dragging");
+            };
+            stage.addEventListener("pointerup", release);
+            stage.addEventListener("pointercancel", release);
+            stage.addEventListener("keydown", event => {
+                const moves = {ArrowLeft: [40, 0], ArrowRight: [-40, 0], ArrowUp: [0, 40], ArrowDown: [0, -40]};
+                if (event.key === "+" || event.key === "=") {
+                    zoom(1.25);
+                } else if (event.key === "-") {
+                    zoom(.8);
+                } else if (event.key === "0") {
+                    fit();
+                } else if (moves[event.key]) {
+                    view.x += moves[event.key][0];
+                    view.y += moves[event.key][1];
+                    apply();
+                } else {
+                    return;
+                }
+                event.preventDefault();
+            });
+            requestAnimationFrame(() => {
+                fit();
+                stage.focus();
+            });
+            return null;
+        });
+    }
 }

@@ -1,0 +1,18 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "https://sp.example.org/saml",
+  "name": "Metadata from a URL",
+  "description": "Downloads the service provider's metadata from its URL, signs assertions as well as responses, and releases mail and eduPersonPrincipalName.",
+  "signAssertions": "TRUE",
+  "metadataLocation": "https://sp.example.org/saml/metadata",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "mail",
+        "eduPersonPrincipalName"
+      ]
+    ]
+  }
+}

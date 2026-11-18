@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.PseudoPlatformTransactionManager;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.session.SessionRepository;
 import org.springframework.session.jdbc.config.annotation.web.http.JdbcHttpSessionConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -61,7 +61,7 @@ class CasJdbcSessionConfigurationTests {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PlatformTransactionManager transactionManagerYubiKey() {
-            return new PseudoTransactionManager();
+            return new PseudoPlatformTransactionManager();
         }
     }
 }

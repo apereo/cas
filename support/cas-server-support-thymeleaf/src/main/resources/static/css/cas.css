@@ -1083,6 +1083,18 @@ select.palantir {
     vertical-align: sub;
 }
 
+#serviceui .cas-service-description {
+    margin-bottom: 1rem;
+}
+
+.cas-service-description p {
+    margin: 0;
+}
+
+.cas-service-description p + p {
+    margin-top: .25rem;
+}
+
 #fieldsLegend {
     font-size: 14px;
     font-style: italic;
@@ -1284,8 +1296,10 @@ pre code.hljs {
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.9);
 }
 
+/* The content does not keep the animation's last frame: a filter left in place, even blur(0), makes it a containing
+   block for fixed elements, which traps its dialogs and floating bars beneath the header. */
 .fade-in {
-    animation: appear 0.7s ease-in-out forwards;
+    animation: appear 0.7s ease-in-out backwards;
 }
 
 @keyframes appear {
@@ -2413,6 +2427,10 @@ pre code.hljs {
     margin: 0;
     color: var(--cas-ui-muted);
     font-size: 14px;
+}
+
+.cas-ui .cas-consent-lead p {
+    margin: 0;
 }
 
 .cas-ui .cas-consent-section {

@@ -57,7 +57,11 @@ When done, you may build the codebase via the following command:
 ./gradlew build --parallel -x test -x javadoc -x check --build-cache --configure-on-demand
 ```
 
-The following commandline boolean flags are supported by the build and can be passed in form of system properties via `-D`:
+The following commandline flags are supported by the build and can be passed in form of system properties via `-D`.
+Each flag may also be supplied as an environment variable named after the flag in upper snake case, such as
+`GENERATE_GIT_PROPERTIES` for `generateGitProperties`; the system property takes precedence when both are defined.
+A boolean flag is turned on when defined with no value (`-DskipCheckstyle`) or with `true`, and turned off with any other value.
+An environment variable with an empty value counts as not defined, and a flag that expects a value falls back to its default when given an empty one.
 
 | Flag                          | Description                                                                                          |
 |-------------------------------|------------------------------------------------------------------------------------------------------|
@@ -76,10 +80,9 @@ The following commandline boolean flags are supported by the build and can be pa
 | `skipAot`                     | Skip running AOT processes when building Graal VM native images.                                     |
 | `aotSpringActiveProfiles`     | List of spring active profiles to use when building Graal VM native images.                          |
 | `ignoreJavadocFailures`       | Ignore javadoc failures and let the build resume.                                                    |
-| `ignoreFindbugsFailures`      | Ignore Findbugs failures and let the build resume.                                                   |
 | `ignoreTestFailures`          | Ignore test failures and let the build resume.                                                       |
 | `casModules`                  | Build property; Comma separated list of modules without the `cas-server-[support/api/core]`          |
-| `buildScript`                 | Build fragment to include when building the project. Typically used by and during integration tests. |
+| `buildScript`                 | Build fragment to include when building the project; the build fails if the file does not exist.     |
 | `generateGitProperties`       | Include Git information in the final web application artifact.                                       |
 | `generateTimestamps`          | Include the build timestamp in the final web application artifact.                                   |
 | `terminateCompilerOnWarning`  | Decide whether the build process should fail, should any compiler warnings are found.                |

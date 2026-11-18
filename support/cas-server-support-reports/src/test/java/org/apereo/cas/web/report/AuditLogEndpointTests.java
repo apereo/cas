@@ -1,11 +1,15 @@
 package org.apereo.cas.web.report;
 
 import module java.base;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
+import org.apereo.inspektr.audit.AuditActionContext;
+import org.apereo.inspektr.common.spi.AuditActionDateProvider;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,5 +71,52 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
             .andReturn()
             .getResponse()
             .getContentAsString(), List.class).isEmpty());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifySummary() throws Throwable {
+        val action = "AUTHENTICATION_SUCCESS";
+        val plan = applicationContext.getBean(AuditTrailExecutionPlan.BEAN_NAME, AuditTrailExecutionPlan.class);
+        plan.record(new AuditActionContext("casuser", "resource", action, "CAS",
+            applicationContext.getBeanProvider(AuditActionDateProvider.class).getObject().get(), new ClientInfo("1.2.3.4", "1.2.3.4", "agent", "London")));
+        val summary = MAPPER.readValue(mockMvc.perform(get("/actuator/auditLog/summary")
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("interval", "PT2H")
+                .queryParam("actions", action, "AUTHENTICATION_FAILED"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), Map.class);
+        assertEquals(Boolean.TRUE, summary.get("supported"));
+        val counts = (List<Map<String, Object>>) summary.get("counts");
+        assertTrue(counts.stream().anyMatch(count -> action.equals(count.get("action"))));
+        assertTrue(counts.stream().allMatch(count -> ((Number) count.get("count")).longValue() > 0));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifySummaryByTarget() throws Throwable {
+        val plan = applicationContext.getBean(AuditTrailExecutionPlan.BEAN_NAME, AuditTrailExecutionPlan.class);
+        val now = applicationContext.getBeanProvider(AuditActionDateProvider.class).getObject().get();
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", "agent", "London");
+        plan.record(new AuditActionContext("casuser", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo, "mfa-duo"));
+        plan.record(new AuditActionContext("casuser2", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo, "mfa-duo"));
+        plan.record(new AuditActionContext("casuser", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo));
+        val summary = MAPPER.readValue(mockMvc.perform(get("/actuator/auditLog/summary")
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("interval", "PT2H")
+                .queryParam("actions", "AUTHENTICATION_EVENT_TRIGGERED")
+                .queryParam("groupBy", "target"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), Map.class);
+        assertEquals(Boolean.TRUE, summary.get("supported"));
+        assertEquals(Boolean.TRUE, ((Map<String, Object>) summary.get("query")).get("byTarget"));
+        val counts = (List<Map<String, Object>>) summary.get("counts");
+        assertEquals(2L, counts.stream().filter(count -> "mfa-duo".equals(count.get("target")))
+            .mapToLong(count -> ((Number) count.get("count")).longValue()).sum());
+        assertTrue(counts.stream().allMatch(count -> count.get("target") != null));
     }
 }

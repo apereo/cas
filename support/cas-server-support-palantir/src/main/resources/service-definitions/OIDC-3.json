@@ -1,0 +1,28 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "serviceId": "^https://spa\\.example\\.org/callback",
+  "name": "Public client with PKCE",
+  "description": "A single-page or mobile application without a client secret, which proves itself with PKCE.",
+  "tokenEndpointAuthenticationMethod": "none",
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "scopes": [
+    "java.util.HashSet",
+    [
+      "openid",
+      "profile",
+      "email"
+    ]
+  ]
+}

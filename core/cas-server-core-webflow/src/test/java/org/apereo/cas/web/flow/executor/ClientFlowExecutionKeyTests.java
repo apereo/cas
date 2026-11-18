@@ -29,7 +29,8 @@ class ClientFlowExecutionKeyTests {
     @Test
     void verifyBadKey() {
         assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad-key"));
-        assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad_key"));
+        val exception = assertThrows(BadlyFormattedFlowExecutionKeyException.class, () -> ClientFlowExecutionKey.parse("bad_key"));
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
 
     }
 }
