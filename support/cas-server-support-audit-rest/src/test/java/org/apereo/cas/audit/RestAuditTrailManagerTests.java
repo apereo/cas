@@ -119,6 +119,14 @@ class RestAuditTrailManagerTests {
             assertEquals(42, counts.getFirst().count());
             assertEquals(hour, counts.getFirst().hour());
         }
+        val byTarget = new AuditSummaryQuery(query.from(), query.to(), query.actions(), true);
+        val targets = "[{\"hour\":\"%s\",\"action\":\"AUTHENTICATION_SUCCESS\",\"count\":7,\"target\":\"1001\"}]".formatted(hour);
+        try (val webServer = new MockWebServer(new ByteArrayResource(targets.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
+            webServer.start();
+            val counts = managerFor(webServer).summarize(byTarget).orElseThrow();
+            assertEquals("1001", counts.getFirst().target());
+            assertEquals(7, counts.getFirst().count());
+        }
         val records = MAPPER.writeValueAsString(List.of(new AuditActionContext("casuser", "resource", "AUTHENTICATION_SUCCESS",
             "CAS", hour, new ClientInfo("1.2.3.4", "1.2.3.4", "GoogleChrome", "London"))));
         try (val webServer = new MockWebServer(new ByteArrayResource(records.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {

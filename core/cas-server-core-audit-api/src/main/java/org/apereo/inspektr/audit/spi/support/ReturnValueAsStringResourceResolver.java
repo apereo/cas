@@ -1,5 +1,7 @@
 package org.apereo.inspektr.audit.spi.support;
 
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import module java.base;
@@ -56,6 +58,33 @@ public class ReturnValueAsStringResourceResolver implements AuditResourceResolve
     }
 
     /**
+     * An application that was returned, such as one saved or deleted, names itself by its id.
+     *
+     * @param auditableTarget the join point
+     * @param returnValue     the returned value
+     * @return the id of the application, or null
+     */
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint auditableTarget, @Nullable final Object returnValue) {
+        return returnValue instanceof final RegisteredService registeredService ? toTarget(registeredService) : null;
+    }
+
+    /**
+     * An application that could not be saved or deleted names itself by its id, when it was given.
+     *
+     * @param auditableTarget the join point
+     * @param exception       the failure
+     * @return the id of the application, or null
+     */
+    @Override
+    public @Nullable String resolveTarget(final JoinPoint auditableTarget, final Exception exception) {
+        val args = auditableTarget.getArgs();
+        return args != null && args.length > 0 && args[0] instanceof final RegisteredService registeredService
+            ? toTarget(registeredService)
+            : null;
+    }
+
+    /**
      * To resource string.
      *
      * @param arg the arg
@@ -70,5 +99,11 @@ public class ReturnValueAsStringResourceResolver implements AuditResourceResolve
 
     protected String postProcess(final String value) {
         return resourcePostProcessor.apply(new String[]{value})[0];
+    }
+
+    private static @Nullable String toTarget(final RegisteredService registeredService) {
+        return registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE
+            ? null
+            : String.valueOf(registeredService.getId());
     }
 }

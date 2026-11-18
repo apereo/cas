@@ -38,11 +38,14 @@ public class MockAuditTrailManager implements AuditTrailManager {
             .stream()
             .filter(audit -> query.actions().contains(audit.getActionPerformed()))
             .filter(audit -> !audit.getWhenActionWasPerformed().isBefore(query.from()) && audit.getWhenActionWasPerformed().isBefore(query.to()))
-            .collect(Collectors.groupingBy(audit -> List.of(AuditSummaryQuery.hourOf(audit.getWhenActionWasPerformed()), audit.getActionPerformed()),
+            .filter(audit -> !query.byTarget() || audit.getTarget() != null)
+            .collect(Collectors.groupingBy(audit -> Arrays.asList(AuditSummaryQuery.hourOf(audit.getWhenActionWasPerformed()),
+                    audit.getActionPerformed(), query.byTarget() ? audit.getTarget() : null),
                 Collectors.counting()));
         return Optional.of(counts.entrySet()
             .stream()
-            .map(entry -> new AuditActionCount((LocalDateTime) entry.getKey().getFirst(), (String) entry.getKey().getLast(), entry.getValue()))
+            .map(entry -> new AuditActionCount((LocalDateTime) entry.getKey().get(0), (String) entry.getKey().get(1),
+                entry.getValue(), (String) entry.getKey().get(2)))
             .toList());
     }
 

@@ -47,7 +47,7 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager;
     private final ObjectProvider<AuditActionDateProvider> auditActionDateProvider;
 
-    private final AtomicReference<AuditSummary> lastSummary = new AtomicReference<>();
+    private final Map<AuditSummaryQuery, AuditSummary> summaries = new ConcurrentHashMap<>();
 
     public AuditLogEndpoint(final ObjectProvider<AuditTrailExecutionPlan> auditTrailManager,
                             final ConfigurableApplicationContext applicationContext,
@@ -121,34 +121,39 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     /**
-     * Count audit records per action and per hour, as the audit storage counts them. The answer is kept for a minute, so
-     * viewers asking for the same period share one count.
+     * Count audit records per action and per hour, and per target when asked, as the audit storage counts them. Each
+     * answer is kept for a minute, so viewers asking for the same period share one count.
      *
      * @param interval the period up to the current hour, at most a week
      * @param actions  the actions to count
+     * @param groupBy  {@code target} to count per target too
      * @return the summary
      */
     @GetMapping(path = "/summary", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Count audit records per action and per hour, when the audit storage can count them.",
         parameters = {
             @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT24H; at most a week"),
-            @Parameter(name = "actions", description = "The actions to count")
+            @Parameter(name = "actions", description = "The actions to count"),
+            @Parameter(name = "groupBy", description = "target, to count per target too: what each action was for")
         })
     public AuditSummary getAuditSummary(
         @RequestParam(required = false, defaultValue = "PT24H") final String interval,
-        @RequestParam(required = false, defaultValue = DEFAULT_SUMMARY_ACTIONS) final List<String> actions) {
+        @RequestParam(required = false, defaultValue = DEFAULT_SUMMARY_ACTIONS) final List<String> actions,
+        @RequestParam(required = false, defaultValue = "") final String groupBy) {
         val period = Beans.newDuration(interval);
         val length = period.isNegative() || period.isZero() || period.compareTo(MAX_SUMMARY_PERIOD) > 0 ? MAX_SUMMARY_PERIOD : period;
         val now = auditActionDateProvider.getObject().get();
         val to = AuditSummaryQuery.hourOf(now).plus(AuditSummaryQuery.BUCKET);
-        val query = new AuditSummaryQuery(to.minus(length), to, new LinkedHashSet<>(actions));
-        val cached = lastSummary.get();
-        if (cached != null && cached.query().equals(query) && cached.generated().plus(SUMMARY_KEPT_FOR).isAfter(Instant.now())) {
+        val query = new AuditSummaryQuery(to.minus(length), to, new LinkedHashSet<>(actions), "target".equalsIgnoreCase(groupBy));
+        val expired = Instant.now().minus(SUMMARY_KEPT_FOR);
+        summaries.values().removeIf(summary -> summary.generated().isBefore(expired));
+        val cached = summaries.get(query);
+        if (cached != null) {
             return cached;
         }
         val counts = auditTrailManager.getObject().summarize(query);
         val summary = new AuditSummary(query, counts.isPresent(), counts.orElseGet(List::of), Instant.now());
-        lastSummary.set(summary);
+        summaries.put(query, summary);
         return summary;
     }
 

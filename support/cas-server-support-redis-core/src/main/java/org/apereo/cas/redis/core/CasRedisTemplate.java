@@ -31,6 +31,16 @@ public interface CasRedisTemplate<K, V> extends RedisOperations<K, V> {
     }
 
     /**
+     * Every key that matches the pattern, read from Redis in large batches and streamed as they arrive, for counting
+     * and grouping over many keys. Keys are not kept to drop duplicates, so a key may, rarely, come twice while Redis
+     * resizes its keyspace.
+     *
+     * @param pattern the pattern
+     * @return the stream, to be closed once read
+     */
+    Stream<K> scanAll(String pattern);
+
+    /**
      * Count entries.
      *
      * @param pattern the pattern

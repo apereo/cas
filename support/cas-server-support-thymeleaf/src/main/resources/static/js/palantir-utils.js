@@ -1730,7 +1730,12 @@ class PalantirMagnifier {
             return false;
         }
         const canvas = event.currentTarget.tagName === "CANVAS" ? event.currentTarget : null;
-        const legend = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas)?.legend : null;
+        const chart = canvas && typeof Chart !== "undefined" ? Chart.getChart(canvas) : null;
+        if (chart && typeof chart.config.options?.onClick === "function"
+            && chart.getElementsAtEventForMode(event, "nearest", {intersect: true}, false).length > 0) {
+            return false;
+        }
+        const legend = chart?.legend;
         if (legend) {
             const bounds = canvas.getBoundingClientRect();
             const x = event.clientX - bounds.left;

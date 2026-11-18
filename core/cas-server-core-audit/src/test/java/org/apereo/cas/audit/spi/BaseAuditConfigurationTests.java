@@ -121,4 +121,28 @@ public abstract class BaseAuditConfigurationTests {
         assertTrue(counts.stream().allMatch(count -> count.hour().equals(AuditSummaryQuery.hourOf(now))));
         assertTrue(counts.stream().noneMatch(count -> "UNKNOWN".equals(count.action())));
     }
+
+    @RetryingTest(value = 3, suspendForMs = 3000)
+    void verifyAuditSummaryByTarget() {
+        val action = "SUMMARY_" + RandomUtils.randomAlphanumeric(8).toUpperCase(Locale.ENGLISH);
+        val now = LocalDateTime.now(Clock.systemUTC());
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", UUID.randomUUID().toString(), "London");
+        val manager = getAuditTrailManager();
+        manager.record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo, "1001"));
+        manager.record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo, "1001"));
+        manager.record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo, "mfa-duo"));
+        manager.record(new AuditActionContext(USER, "TEST", action, "CAS", now, clientInfo));
+        val query = new AuditSummaryQuery(now.minusHours(2), AuditSummaryQuery.hourOf(now).plusHours(1), Set.of(action), true);
+        val counts = manager.summarize(query).orElseThrow().stream()
+            .filter(count -> action.equals(count.action()))
+            .collect(Collectors.groupingBy(count -> String.valueOf(count.target()), Collectors.summingLong(AuditActionCount::count)));
+        assertEquals(Map.of("1001", 2L, "mfa-duo", 1L), counts);
+
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
+            AuditTrailManager.WhereClauseFields.DATE, now.minusMinutes(1),
+            AuditTrailManager.WhereClauseFields.COUNT, 100L,
+            AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
+        assertTrue(manager.getAuditRecords(criteria).stream()
+            .anyMatch(record -> action.equals(record.getActionPerformed()) && "mfa-duo".equals(record.getTarget())));
+    }
 }

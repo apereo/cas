@@ -13,6 +13,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.InetAddressUtils;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -176,7 +177,8 @@ class DashboardControllerTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.generated").exists())
             .andExpect(jsonPath("$.sections.server.version").exists())
-            .andExpect(jsonPath("$.sections.server.uptimeSeconds").isNumber());
+            .andExpect(jsonPath("$.sections.server.uptimeSeconds").isNumber())
+            .andExpect(jsonPath("$.sections.server.host").value(InetAddressUtils.getCasServerHostName()));
 
         val user = new UsernamePasswordAuthenticationToken("casuser", "password",
             List.of(new SimpleGrantedAuthority("ROLE_USER")));
@@ -202,7 +204,7 @@ class DashboardControllerTests {
                 .register(registry).record(Duration.ofMillis(millis)));
         Timer.builder("http.server.requests").tag("uri", "/login").tag("outcome", "SERVER_ERROR")
             .register(registry).record(Duration.ofMillis(800));
-        val overview = new PalantirOverview(applicationContext.getBean(CasConfigurationProperties.class), applicationContext,
+        val overview = new PalantirOverview(applicationContext,
             applicationContext.getBeanProvider(ServicesManager.class), applicationContext.getBeanProvider(TicketRegistry.class),
             new StaticListableBeanFactory(Map.of("meterRegistry", registry)).getBeanProvider(MeterRegistry.class),
             applicationContext.getBeanProvider(PalantirApplicationChanges.class));
@@ -246,6 +248,10 @@ class DashboardControllerTests {
             SecurityContextHolder.clearContext();
         }
         overview.onApplicationDeleted(new CasRegisteredServiceDeletedEvent(this, service, ClientInfoHolder.getClientInfo()));
+        val kept = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        kept.setName("Overview Kept");
+        val saved = Objects.requireNonNull(applicationContext.getBean(ServicesManager.BEAN_NAME, ServicesManager.class).save(kept));
+        overview.onApplicationSaved(new CasRegisteredServiceSavedEvent(this, saved, ClientInfoHolder.getClientInfo()));
 
         val sections = (Map<String, Object>) overview.summarize(Set.of("registeredServices"), true).get("sections");
         val recent = (List<Map<String, Object>>) ((Map<String, Object>) sections.get("changes")).get("recent");
@@ -255,6 +261,9 @@ class DashboardControllerTests {
         assertEquals("CAS", mine.getFirst().get("author"));
         assertEquals("saved", mine.getLast().get("action"));
         assertEquals("casadmin", mine.getLast().get("author"));
+        assertEquals(Boolean.FALSE, mine.getFirst().get("exists"));
+        assertTrue(recent.stream().anyMatch(change -> Objects.equals(change.get("id"), String.valueOf(saved.getId()))
+            && Boolean.TRUE.equals(change.get("exists"))));
         assertTrue(recent.stream().noneMatch(change -> Objects.equals(change.get("id"), String.valueOf(internal.getId()))));
         assertEquals("node", ((Map<String, Object>) sections.get("changes")).get("scope"));
     }

@@ -143,6 +143,7 @@ class PalantirHome {
         });
         $("#homeGrid").off("click dragstart dragover dragleave drop dragend")
             .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
+            .on("click", "[data-home-application]", event => openTopApplication(event.currentTarget.dataset.homeApplication))
             .on("click", "[data-home-page]", event => {
                 const page = PalantirHome.PAGES[event.currentTarget.dataset.homePage];
                 if (page) {
@@ -356,7 +357,8 @@ class PalantirHome {
         const restore = active && grid[0].contains(active)
             ? (active.dataset.homeAction
                 ? `[data-home-action="${active.dataset.homeAction}"][data-home-for="${active.dataset.homeFor}"]`
-                : active.dataset.homePage ? `[data-home-widget="${active.closest("[data-home-widget]")?.dataset.homeWidget}"] [data-home-page]` : null)
+                : active.dataset.homePage ? `[data-home-widget="${active.closest("[data-home-widget]")?.dataset.homeWidget}"] [data-home-page]`
+                    : active.dataset.homeApplication ? `[data-home-application="${CSS.escape(active.dataset.homeApplication)}"]` : null)
             : null;
         grid.empty();
         const shown = layout.order
@@ -444,7 +446,10 @@ class PalantirHome {
             return PalantirHome.muted("Still being worked out; it shows at the next refresh.");
         }
         if (section?.stale) {
-            return PalantirHome.muted(`As of ${PalantirHome.time(section.computed)}; the source is slow to answer.`);
+            const computed = new Date(section.computed);
+            return PalantirHome.muted(Number.isNaN(computed.getTime())
+                ? "Being counted again; the last count is shown."
+                : `Counted ${PalantirHome.ago(computed)}, at ${PalantirHome.time(section.computed)}; being counted again.`);
         }
         return null;
     }
@@ -458,24 +463,76 @@ class PalantirHome {
         return box.append(row).append($("<span>", {class: "palantir-home__kpi-note", text: note}));
     }
 
+    /**
+     * The server at a glance: a beacon in the color of its state, what CAS is and where it runs, and the health checks
+     * as one segment each, colored as the health chart colors them, with the checks that are not up named in tags. The
+     * host is the one the login page footer shows. CAS that is up while some checks are not reads as up with checks to
+     * look at, in amber.
+     *
+     * @param summary the summary
+     * @returns {jQuery} the card body
+     */
     static renderStatus(summary) {
         const server = summary.sections.server;
         const health = summary.sections.health;
-        const state = !health || health.unavailable ? "neutral" : health.pending ? "pending" : health.status === "UP" ? "up" : "down";
-        const label = {neutral: "CAS is running", pending: "Checking health...", up: "All systems up!", down: "Something is down"}[state];
+        const components = Array.isArray(health?.components) ? health.components : [];
+        const attention = components.filter(component => component.status !== "UP");
+        const state = !health || health.unavailable ? "neutral"
+            : health.pending ? "pending"
+                : health.status !== "UP" ? "down"
+                    : attention.length > 0 ? "attention" : "up";
+        const checks = attention.length === 1 ? "1 check" : `${attention.length} checks`;
+        const label = {
+            neutral: "CAS is running",
+            pending: "Checking health...",
+            up: "All systems healthy",
+            attention: `Up, with ${checks} to look at`,
+            down: "Something is down"
+        }[state];
+        const icon = {neutral: "mdi-server", pending: "mdi-timer-sand", up: "mdi-check-bold", attention: "mdi-exclamation-thick", down: "mdi-close-thick"}[state];
         const band = $("<div>", {class: `palantir-home__status is-${state}`, role: "status"})
-            .append($("<span>", {class: "palantir-home__pulse", "aria-hidden": "true"}))
-            .append($("<b>", {text: label}));
-        const facts = $("<span>", {class: "palantir-home__facts"});
-        [`CAS ${server.version}`, `up ${PalantirHome.duration(server.uptimeSeconds)}`, server.host ? `node ${server.host}` : null,
-            `Java ${server.java}`].filter(Boolean).forEach(fact => facts.append($("<span>", {text: fact})));
-        if (health?.components) {
-            const down = health.components.filter(component => component.status !== "UP");
-            facts.append($("<span>", {text: down.length === 0
-                ? `${health.components.length} health checks up`
-                : `${down.length} of ${health.components.length} health checks need attention`}));
+            .append($("<span>", {class: "palantir-home__beacon", "aria-hidden": "true"}).append($("<i>", {class: `mdi ${icon}`})));
+        const running = $("<p>", {class: "palantir-home__status-where"})
+            .append(document.createTextNode("Running for "))
+            .append($("<b>", {text: PalantirHome.duration(server.uptimeSeconds)}));
+        if (server.host) {
+            running.append(document.createTextNode(" on ")).append($("<code>", {text: server.host, title: "The host the login page footer shows"}));
         }
-        return band.append(facts);
+        const facts = $("<div>", {class: "palantir-home__facts"});
+        [["CAS", server.version], ["Java", server.java]].filter(([, value]) => value)
+            .forEach(([name, value]) => facts.append($("<span>", {class: "palantir-home__fact"})
+                .append($("<small>", {text: name})).append(document.createTextNode(value))));
+        band.append($("<div>", {class: "palantir-home__status-main"})
+            .append($("<b>", {class: "palantir-home__status-title", text: label}))
+            .append(running)
+            .append(facts));
+        if (attention.length > 0) {
+            const tags = $("<div>", {class: "palantir-home__check-tags", "aria-label": "Health checks to look at"});
+            attention.forEach(component => {
+                const status = String(component.status ?? "unknown").toUpperCase();
+                const failing = status === "DOWN" || status === "OUT_OF_SERVICE";
+                tags.append($("<span>", {
+                    class: `palantir-home__check-tag${failing ? " is-down" : ""}`,
+                    text: camelcaseToTitleCase(component.name),
+                    title: `${camelcaseToTitleCase(component.name)}: ${status.toLowerCase().replaceAll("_", " ")}`
+                }));
+            });
+            band.find(".palantir-home__status-main").append(tags);
+        }
+        if (components.length > 0 && !health.pending) {
+            const up = components.length - attention.length;
+            const segments = $("<div>", {class: "palantir-home__segments", role: "img",
+                "aria-label": `${up} of ${components.length} health checks up`});
+            components.forEach(component => segments.append($("<i>", {
+                style: `background: ${palantirHealthColor(component.status)}`,
+                title: `${camelcaseToTitleCase(component.name)}: ${String(component.status ?? "unknown").toLowerCase()}`
+            })));
+            band.append($("<div>", {class: "palantir-home__checks"})
+                .append($("<div>", {class: "palantir-home__checks-count"})
+                    .append($("<strong>", {text: up})).append($("<span>", {text: `/${components.length}`})))
+                .append(segments));
+        }
+        return band;
     }
 
     static renderSessions(summary) {
@@ -740,7 +797,7 @@ class PalantirHome {
                 .append($("<span>", {class: "palantir-home__change-icon", "aria-hidden": "true"})
                     .append($("<i>", {class: `mdi ${{created: "mdi-plus-circle-outline", deleted: "mdi-delete-outline"}[change.action] ?? "mdi-content-save-outline"}`})))
                 .append($("<span>", {class: "palantir-home__change-text"})
-                    .append($("<b>", {text: change.name}))
+                    .append(PalantirHome.changedApplication(change))
                     .append(document.createTextNode(` ${verbs[change.action] ?? change.action} by `))
                     .append($("<b>", {text: change.author}))
                     .append(change.type ? $("<small>", {text: change.type}) : null))
@@ -751,7 +808,23 @@ class PalantirHome {
             : "Changes made on this server since it started.")];
     }
 
-    static ago(date) {
+    /**
+     * The name of a changed application: a link that opens it in the editor while it still exists and Palantir can
+     * read applications, its name alone otherwise.
+     *
+     * @param change the change
+     * @returns {jQuery} the name
+     */
+    static changedApplication(change) {
+        const openable = change.exists !== false && change.action !== "deleted" && /^\d+$/.test(String(change.id ?? ""))
+            && Boolean(CasActuatorEndpoints.registeredServices()) && typeof openTopApplication === "function";
+        return openable
+            ? $("<button>", {type: "button", class: "palantir-home__change-link", "data-home-application": String(change.id),
+                text: change.name, title: `Open ${change.name}`})
+            : $("<b>", {text: change.name});
+    }
+
+        static ago(date) {
         const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
         if (seconds < 60) {
             return "just now";

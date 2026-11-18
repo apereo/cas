@@ -3,16 +3,18 @@ package org.apereo.inspektr.audit;
 import module java.base;
 
 /**
- * Asks an audit storage how many records it holds per action and per hour, between two times, for a set of actions.
- * Times are the times the records carry, cut to the hour.
+ * Asks an audit storage how many records it holds per action and per hour, between two times, for a set of actions,
+ * and when asked, per target too: what each action was for, such as an application or a multifactor provider; records
+ * without a target are then left out. Times are the times the records carry, cut to the hour.
  *
- * @param from    the first hour asked for
- * @param to      the end of the period, not included
- * @param actions the actions to count
  * @author Misagh Moayyed
+ * @param from     the first hour asked for
+ * @param to       the end of the period, not included
+ * @param actions  the actions to count
+ * @param byTarget whether to count per target as well
  * @since 8.1.0
  */
-public record AuditSummaryQuery(LocalDateTime from, LocalDateTime to, Set<String> actions) {
+public record AuditSummaryQuery(LocalDateTime from, LocalDateTime to, Set<String> actions, boolean byTarget) {
     /**
      * The length of one summary bucket.
      */
@@ -21,6 +23,10 @@ public record AuditSummaryQuery(LocalDateTime from, LocalDateTime to, Set<String
     public AuditSummaryQuery {
         from = from.truncatedTo(ChronoUnit.HOURS);
         actions = Set.copyOf(actions);
+    }
+
+    public AuditSummaryQuery(final LocalDateTime from, final LocalDateTime to, final Set<String> actions) {
+        this(from, to, actions, false);
     }
 
     /**

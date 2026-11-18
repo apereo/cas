@@ -9,6 +9,12 @@
 class PalantirCommandPalette {
     static MAX_RESULTS = 40;
 
+    static applications = [];
+
+    static applicationsRead = 0;
+
+    static applicationsPending = false;
+
     static CATEGORY_ORDER = ["Pages", "Actions"];
 
     /**
@@ -196,12 +202,37 @@ class PalantirCommandPalette {
         }
     }
 
+    /**
+     * Read the applications once a minute at most while the Applications page has not listed them, so they can be
+     * found before that page was opened; the search is run again when they arrive.
+     */
+    static readApplications() {
+        const listed = typeof registeredServicesById !== "undefined" && registeredServicesById.size > 0;
+        if (listed || PalantirCommandPalette.applicationsPending || !CasActuatorEndpoints.registeredServices()
+            || Date.now() - PalantirCommandPalette.applicationsRead < 60000) {
+            return;
+        }
+        PalantirCommandPalette.applicationsPending = true;
+        $.get(CasActuatorEndpoints.registeredServices())
+            .done(response => {
+                PalantirCommandPalette.applications = Array.isArray(response?.[1]) ? response[1] : [];
+                PalantirCommandPalette.applicationsRead = Date.now();
+                const input = $("#palantirCommandPaletteInput");
+                if (input.length > 0 && $("#palantirCommandPalette").dialog("isOpen")) {
+                    input.paletteautocomplete("search", input.val());
+                }
+            })
+            .always(() => PalantirCommandPalette.applicationsPending = false);
+    }
+
     static applicationEntries(navigation) {
-        if (!navigation.some(item => item.index === Tabs.APPLICATIONS.index)
-            || typeof registeredServicesById === "undefined") {
+        if (!navigation.some(item => item.index === Tabs.APPLICATIONS.index)) {
             return [];
         }
-        return [...registeredServicesById.values()].map(service => {
+        const listed = typeof registeredServicesById !== "undefined" && registeredServicesById.size > 0
+            ? [...registeredServicesById.values()]
+            : PalantirCommandPalette.applications;
+        return listed.map(service => {
             const name = service.name ?? String(service.id);
             return {
                 category: "Applications",
@@ -465,6 +496,7 @@ class PalantirCommandPalette {
     }
 
     static open() {
+        PalantirCommandPalette.readApplications();
         const dialog = PalantirCommandPalette.dialog();
         if (!dialog.dialog("isOpen")) {
             dialog.dialog("option", "width", Math.min(640, window.innerWidth - 32));

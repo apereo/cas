@@ -1275,6 +1275,56 @@ select + span[role="combobox"] {
     max-width: 100%;
 }
 
+.cas-vulnerabilities-loading {
+    display: none;
+    gap: .75rem;
+    max-width: 32rem;
+    margin: 2.5rem auto;
+    text-align: center;
+}
+
+.cas-vulnerabilities-loading p {
+    margin: 0;
+    color: var(--palantir-text-muted, #65717d);
+}
+
+#casvulnerabilities-tab.is-loading .cas-vulnerabilities-loading {
+    display: grid;
+}
+
+#casvulnerabilities-tab.is-loading .cas-vulnerabilities-table-wrap,
+#casvulnerabilities-tab.is-loading #casVulnerabilitiesSeverityBreakdown {
+    display: none !important;
+}
+
+.audit-events-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .75rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.audit-events-filters label {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.cas-ui .audit-events-filters .ui-selectmenu-button.ui-button {
+    margin: 0 !important;
+}
+
+.cas-ui .audit-events-filters .mdc-button {
+    height: 44px;
+    min-height: 44px;
+    margin: 0;
+}
+
 .http-exchanges-table-wrap {
     overflow-x: hidden;
     padding-right: 1rem;
@@ -2535,19 +2585,17 @@ select + span[role="combobox"] {
 
 
 .audit-action-tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 1.55rem;
-    padding: .12rem .55rem;
-    border-radius: 999px;
+    display: inline-block;
+    max-width: 100%;
+    padding: .2rem .55rem;
+    border-radius: .65rem;
     color: #fff;
-    font-size: .82rem;
-    font-weight: 800;
-    line-height: 1;
+    font-size: .76rem;
+    font-weight: 700;
+    line-height: 1.3;
     text-transform: uppercase;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 .audit-action-success {
@@ -2569,22 +2617,20 @@ select + span[role="combobox"] {
 
 .audit-events-table {
     width: 100% !important;
-    min-width: 76rem;
+    min-width: 89rem;
     table-layout: fixed;
 }
 
 .audit-events-table th,
 .audit-events-table td {
     vertical-align: middle;
+    white-space: normal;
 }
 
-.audit-events-table th:first-child,
-.audit-events-table td:first-child,
-.audit-events-table th:nth-child(5),
-.audit-events-table td:nth-child(5),
 .audit-events-table th:nth-child(6),
-.audit-events-table td:nth-child(6) {
-    white-space: normal;
+.audit-events-table td:nth-child(6),
+.audit-events-table th:nth-child(7),
+.audit-events-table td:nth-child(7) {
     overflow-wrap: anywhere;
     word-break: break-word;
 }
@@ -2603,8 +2649,48 @@ select + span[role="combobox"] {
 }
 
 .audit-principal-value code {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.audit-target-application {
+    display: inline-flex;
+    gap: .35rem;
+    align-items: center;
+    max-width: 100%;
+    padding: .2rem .55rem;
+    border: 1px solid var(--palantir-border, #d7e3eb);
+    border-radius: .65rem;
+    background: transparent;
+    color: var(--palantir-brand, #176fa5);
+    font: inherit;
+    font-size: .85rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.audit-target-application span {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+.audit-target-application:hover,
+.audit-target-application:focus-visible {
+    background: var(--palantir-tint, #eef5fa);
+    text-decoration: underline;
+}
+
+.audit-target-application.is-gone {
+    color: var(--palantir-text-muted, #65717d);
+    text-decoration: line-through;
+}
+
+.audit-target-value {
     overflow-wrap: anywhere;
-    word-break: break-word;
+}
+
+.audit-target-none {
+    color: var(--palantir-text-muted, #65717d);
 }
 
 .audit-resource-value,

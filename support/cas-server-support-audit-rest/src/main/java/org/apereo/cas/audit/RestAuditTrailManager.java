@@ -127,9 +127,9 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
 
     /**
      * Asks the audit service for its counts with a {@code GET} to the audit URL, passing {@code summary=hourly},
-     * {@code from} and {@code to} as ISO dates and {@code actions} as a comma-separated list. The service answers with a
-     * list of {@code hour}, {@code action} and {@code count}; a service that answers anything else does not support
-     * summaries.
+     * {@code from} and {@code to} as ISO dates, {@code actions} as a comma-separated list and, to count per target too,
+     * {@code groupBy=target}. The service answers with a list of {@code hour}, {@code action} and {@code count}, and
+     * {@code target} when grouped by target; a service that answers anything else does not support summaries.
      *
      * @param query the period and actions to count
      * @return the counts, or empty when the service does not summarize
@@ -143,6 +143,9 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 "from", query.from().toString(),
                 "to", query.to().toString(),
                 "actions", query.actions().stream().sorted().collect(Collectors.joining(",")));
+            if (query.byTarget()) {
+                parameters.put("groupBy", "target");
+            }
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -176,7 +179,8 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
                 return Optional.empty();
             }
             counts.add(new AuditActionCount(LocalDateTime.parse(node.path("hour").asString()),
-                node.path("action").asString(), node.path("count").asLong()));
+                node.path("action").asString(), node.path("count").asLong(),
+                node.hasNonNull("target") ? node.path("target").asString() : null));
         }
         return Optional.of(counts);
     }

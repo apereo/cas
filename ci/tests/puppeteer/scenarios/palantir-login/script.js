@@ -3,7 +3,8 @@
    activateDashboardTab, ace, currentActiveTab, registeredServicesById, PalantirUserLookup,
    PalantirServiceHistory, Swal, applicationActionHandler, applicationRowContext, fetchServices, notyf,
    PalantirSamlMetadataImport, PalantirApplicationAccess, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
-   PalantirCommandPalette, Chart, PalantirApplicationSelection, PalantirHome, PalantirModules */
+   PalantirCommandPalette, Chart, PalantirApplicationSelection, PalantirHome, PalantirModules, signInsChart,
+   topApplicationsChart */
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -201,7 +202,7 @@ async function verifyHome(page) {
         && $("#homeGrid > [data-home-widget='status']").length === 1, {timeout: 30000});
     const home = await page.evaluate(() => ({
         widgets: $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get(),
-        status: $("#homeGrid .palantir-home__status b").text(),
+        status: $("#homeGrid .palantir-home__status-title").text(),
         version: PalantirHome.summary.sections.server.version
     }));
     await cas.logg(`Home opens first with ${home.widgets.join(", ")}; ${home.status}; CAS ${home.version}`);
@@ -253,6 +254,26 @@ async function verifyRegisteredServices(page) {
     }));
     await cas.logg(`Card view shows ${views.cards} cards for ${views.rows} rows on the table's page`);
     assert(views.cards === views.rows);
+
+    await page.waitForFunction(() => /every minute|^No /.test($("#topApplicationsChartStatus").text()), {timeout: 30000});
+    const top = await page.evaluate(() => ({
+        status: $("#topApplicationsChartStatus").text(),
+        names: topApplicationsChart.data.labels,
+        shown: $("#topApplicationsChart").is(":visible"),
+        last: $("#applications-tab > *").filter(":visible").last().find("#topApplicationsChart").length === 1
+    }));
+    await cas.logg(`Top applications: ${top.status} ${top.names.join(", ")}; shown: ${top.shown}`);
+    assert(top.shown === top.names.length > 0, "The top applications chart is shown only when it has data");
+    assert(!top.shown || top.last, "The top applications chart is the last thing on the applications page");
+    const openable = await page.$("#topApplicationsList [data-top-application]:not(.is-gone)");
+    if (top.shown && openable !== null) {
+        await openable.click();
+        await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("instance") !== undefined
+            && $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
+        await cas.logg(`A top application opens: ${await page.evaluate(() => $("#editServiceWizardDialog").dialog("option", "title"))}`);
+        await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+        await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+    }
     await verifyApplicationTypeFilter(page);
 
     if (count > 0) {
@@ -1576,7 +1597,11 @@ async function verifySignIns(page) {
     const status = await page.evaluate(() => $("#signInsChartStatus").text());
     const counted = await page.evaluate(() => signInsChart.data.datasets.map((dataset) => dataset.data.length));
     await cas.logg(`Sign-ins chart: ${status}; hours per series ${counted.join(", ")}`);
-    assert(counted.every((hours) => hours === 8));
+    assert(counted.every((hours) => hours === 2));
+
+    await page.waitForFunction(() => /every minute|^No /.test($("#multifactorProvidersChartStatus").text()), {timeout: 30000});
+    await cas.logg(`Multifactor by provider: ${await page.evaluate(() => $("#multifactorProvidersChartStatus").text())}`);
+    assert(await page.$("#systemstatus-tab #topApplicationsChart") === null);
 }
 
 async function verifyThrottlesUsername(page) {

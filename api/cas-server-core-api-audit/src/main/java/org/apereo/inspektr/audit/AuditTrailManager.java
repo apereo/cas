@@ -72,7 +72,11 @@ public interface AuditTrailManager extends Cleanable {
         /**
          * Tenant information/id.
          */
-        TENANT
+        TENANT,
+        /**
+         * What the action was for, such as an application or a multifactor provider.
+         */
+        TARGET
     }
 
     /**

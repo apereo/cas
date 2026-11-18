@@ -67,7 +67,6 @@ class CasPalantirWebMvcConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "palantirOverview")
     public PalantirOverview palantirOverview(
-        final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ObjectProvider<ServicesManager> servicesManager,
@@ -76,7 +75,7 @@ class CasPalantirWebMvcConfiguration {
         final ObjectProvider<MeterRegistry> meterRegistry,
         @Qualifier("palantirApplicationChanges")
         final ObjectProvider<PalantirApplicationChanges> palantirApplicationChanges) {
-        return new PalantirOverview(casProperties, applicationContext, servicesManager, ticketRegistry,
+        return new PalantirOverview(applicationContext, servicesManager, ticketRegistry,
             meterRegistry, palantirApplicationChanges);
     }
 

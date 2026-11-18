@@ -169,6 +169,23 @@
                     </div>
                 </section>
 
+                <section class="palantir-chart-card" aria-labelledby="topApplicationsChartTitle" hidden>
+                    <header class="palantir-chart-card__header">
+                        <h3 id="topApplicationsChartTitle">Top applications</h3>
+                        <button type="button" class="palantir-icon-button" data-palantir-magnify="topApplicationsChart"
+                                data-palantir-magnify-title="Top applications"
+                                aria-label="Magnify the top applications chart" title="Magnify">
+                            <i class="mdi mdi-magnify-plus-outline" aria-hidden="true"></i>
+                        </button>
+                    </header>
+                    <p class="palantir-chart-status" id="topApplicationsChartStatus" aria-live="polite">Counting sign-ins per application…</p>
+                    <div class="palantir-sign-ins-chart">
+                        <canvas id="topApplicationsChart" role="img" aria-label="Applications with the most sign-ins over the last two hours"
+                                data-palantir-magnifiable="Top applications"></canvas>
+                    </div>
+                    <ul class="palantir-top-applications" id="topApplicationsList" aria-label="Open one of the top applications"></ul>
+                </section>
+
                 <!--/*
                     A jQuery UI dialog, like every other dialog in Palantir. The widget
                     supplies role=dialog, aria-modal, the focus trap, a real title bar and

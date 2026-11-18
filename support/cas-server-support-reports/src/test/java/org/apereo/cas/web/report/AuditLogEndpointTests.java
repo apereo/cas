@@ -93,4 +93,30 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
         assertTrue(counts.stream().anyMatch(count -> action.equals(count.get("action"))));
         assertTrue(counts.stream().allMatch(count -> ((Number) count.get("count")).longValue() > 0));
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifySummaryByTarget() throws Throwable {
+        val plan = applicationContext.getBean(AuditTrailExecutionPlan.BEAN_NAME, AuditTrailExecutionPlan.class);
+        val now = applicationContext.getBeanProvider(AuditActionDateProvider.class).getObject().get();
+        val clientInfo = new ClientInfo("1.2.3.4", "1.2.3.4", "agent", "London");
+        plan.record(new AuditActionContext("casuser", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo, "mfa-duo"));
+        plan.record(new AuditActionContext("casuser2", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo, "mfa-duo"));
+        plan.record(new AuditActionContext("casuser", "resource", "AUTHENTICATION_EVENT_TRIGGERED", "CAS", now, clientInfo));
+        val summary = MAPPER.readValue(mockMvc.perform(get("/actuator/auditLog/summary")
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("interval", "PT2H")
+                .queryParam("actions", "AUTHENTICATION_EVENT_TRIGGERED")
+                .queryParam("groupBy", "target"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), Map.class);
+        assertEquals(Boolean.TRUE, summary.get("supported"));
+        assertEquals(Boolean.TRUE, ((Map<String, Object>) summary.get("query")).get("byTarget"));
+        val counts = (List<Map<String, Object>>) summary.get("counts");
+        assertEquals(2L, counts.stream().filter(count -> "mfa-duo".equals(count.get("target")))
+            .mapToLong(count -> ((Number) count.get("count")).longValue()).sum());
+        assertTrue(counts.stream().allMatch(count -> count.get("target") != null));
+    }
 }

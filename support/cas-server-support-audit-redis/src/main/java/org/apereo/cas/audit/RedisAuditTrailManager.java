@@ -32,7 +32,8 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     public static final String CAS_AUDIT_CONTEXT_PREFIX = AuditActionContext.class.getSimpleName() + ':';
 
     /**
-     * Prefix of the keys that count records per hour, one field per action.
+     * Prefix of the keys that count records per hour, one field per action, and per hour and action, one field per
+     * target.
      */
     public static final String CAS_AUDIT_SUMMARY_PREFIX = "CasAuditSummary:";
 
@@ -130,6 +131,23 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     @Override
     public Optional<List<AuditActionCount>> summarize(final AuditSummaryQuery query) {
         val counts = new ArrayList<AuditActionCount>();
+        if (query.byTarget()) {
+            redisTemplate.execute((RedisCallback<Object>) connection -> {
+                query.hours().forEach(hour -> query.actions().forEach(action -> {
+                    val fields = connection.hashCommands().hGetAll(getSummaryKey(hour, action));
+                    if (fields != null) {
+                        fields.forEach((field, value) -> {
+                            val count = NumberUtils.toLong(new String(value, StandardCharsets.UTF_8));
+                            if (count > 0) {
+                                counts.add(new AuditActionCount(hour, action, count, new String(field, StandardCharsets.UTF_8)));
+                            }
+                        });
+                    }
+                }));
+                return null;
+            });
+            return Optional.of(counts);
+        }
         redisTemplate.execute((RedisCallback<Object>) connection -> {
             query.hours().forEach(hour -> {
                 val fields = connection.hashCommands().hGetAll(getSummaryKey(hour));
@@ -153,11 +171,25 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         return (CAS_AUDIT_SUMMARY_PREFIX + hour).getBytes(StandardCharsets.UTF_8);
     }
 
+    private static byte[] getSummaryKey(final LocalDateTime time, final String action) {
+        val hour = AuditSummaryQuery.hourOf(time).toEpochSecond(ZoneOffset.UTC);
+        return (CAS_AUDIT_SUMMARY_PREFIX + hour + ':' + action).getBytes(StandardCharsets.UTF_8);
+    }
+
     private void countAuditRecord(final RedisConnection connection, final AuditActionContext audit) {
         val key = getSummaryKey(audit.getWhenActionWasPerformed());
         connection.hashCommands().hIncrBy(key, audit.getActionPerformed().getBytes(StandardCharsets.UTF_8), 1);
-        if (maxAge != null && maxAge.isPositive()) {
+        val expires = maxAge != null && maxAge.isPositive();
+        if (expires) {
             connection.keyCommands().expire(key, maxAge.plus(AuditSummaryQuery.BUCKET).toSeconds());
+        }
+        val target = audit.getTarget();
+        if (target != null) {
+            val targetKey = getSummaryKey(audit.getWhenActionWasPerformed(), audit.getActionPerformed());
+            connection.hashCommands().hIncrBy(targetKey, target.getBytes(StandardCharsets.UTF_8), 1);
+            if (expires) {
+                connection.keyCommands().expire(targetKey, maxAge.plus(AuditSummaryQuery.BUCKET).toSeconds());
+            }
         }
     }
 

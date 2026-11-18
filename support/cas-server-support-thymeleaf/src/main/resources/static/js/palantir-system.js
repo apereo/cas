@@ -257,6 +257,45 @@ async function initializeSystemOperations() {
         }).always(() => slowestRequestPending = false);
     }
 
+    let providersRequestPending = false;
+    let providersCounted = 0;
+
+    /**
+     * Read multifactor authentication per provider over the last two hours, counted by the audit storage from the
+     * provider each triggered event names, refreshed once a minute. An audit storage that cannot count hides the chart;
+     * the sign-ins chart says why.
+     */
+    async function configureMultifactorProviders() {
+        if (!CasActuatorEndpoints.auditLog() || !multifactorProvidersChart) {
+            $("#multifactorProvidersChartCell").addClass("hide");
+            return;
+        }
+        if (providersRequestPending) {
+            return;
+        }
+        providersRequestPending = true;
+        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {
+            interval: "PT2H",
+            actions: "AUTHENTICATION_EVENT_TRIGGERED",
+            groupBy: "target"
+        }, response => {
+            providersCounted = Date.now();
+            if (!response?.supported) {
+                $("#multifactorProvidersChartCell").addClass("hide");
+                return;
+            }
+            $("#multifactorProvidersChartCell").removeClass("hide");
+            const counts = (response.counts ?? []).filter(count => count.target && count.action === "AUTHENTICATION_EVENT_TRIGGERED");
+            const top = drawPalantirCountsByTarget(multifactorProvidersChart, counts);
+            $("#multifactorProvidersChartStatus").text(top.length === 0
+                ? "No multifactor authentication in the last 2 hours."
+                : `Top ${top.length} of ${top.measured} · every minute`);
+        }).fail(() => {
+            providersCounted = Date.now();
+            $("#multifactorProvidersChartStatus").text("This could not be counted just now; trying again in a minute.");
+        }).always(() => providersRequestPending = false);
+    }
+
     let signInsRequestPending = false;
     let signInsCounted = 0;
     const SIGN_IN_SERIES = ["AUTHENTICATION_SUCCESS", "AUTHENTICATION_FAILED", "THROTTLED_LOGIN_ATTEMPT", "AUTHENTICATION_EVENT_TRIGGERED"];
@@ -278,7 +317,7 @@ async function initializeSystemOperations() {
     }
 
     /**
-     * Read sign-ins per hour over the last eight hours for the Sign-ins chart, as the audit storage counts them across the
+     * Read sign-ins per hour over the last two hours for the Sign-ins chart, as the audit storage counts them across the
      * cluster: succeeded, failed and throttled sign-ins stacked, and multifactor authentication triggered as a line.
      * Refreshed once a minute, which is as long as the server keeps a count. An audit storage that cannot count its
      * records says so in place of the chart.
@@ -292,7 +331,7 @@ async function initializeSystemOperations() {
             return;
         }
         signInsRequestPending = true;
-        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {interval: "PT8H", actions: SIGN_IN_SERIES.join(",")}, response => {
+        $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {interval: "PT2H", actions: SIGN_IN_SERIES.join(",")}, response => {
             signInsCounted = Date.now();
             const chartArea = $("#signInsChart").closest(".palantir-sign-ins-chart");
             if (!response?.supported) {
@@ -689,10 +728,8 @@ async function initializeSystemOperations() {
             hideVulnerabilitiesTab();
             return;
         }
-        $("#casVulnerabilitiesStatus")
-            .empty()
-            .append($("<i>", {class: "mdi mdi-loading mdi-spin", "aria-hidden": "true"}))
-            .append(document.createTextNode(" Checking the dependencies for vulnerabilities..."));
+        $("#casVulnerabilitiesStatus").empty();
+        $("#casvulnerabilities-tab").addClass("is-loading");
         $("#casVulnerabilitiesTable").closest(".dt-container, table").attr("aria-busy", "true");
         return new Promise(resolve => {
             $.get(endpoint, response => {
@@ -717,12 +754,15 @@ async function initializeSystemOperations() {
                 const errors = Array.isArray(response.errors) ? response.errors : [];
                 $("#casVulnerabilitiesStatus").text(errors.length > 0 ? errors.join("; ") : "");
                 vulnerabilitiesLoaded = true;
+                $("#casvulnerabilities-tab").removeClass("is-loading");
+                casVulnerabilitiesTable.columns.adjust();
                 $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 updateNavigationSidebar();
                 resolve();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching dependency vulnerability data:", error);
                 $("#casVulnerabilitiesStatus").empty();
+                $("#casvulnerabilities-tab").removeClass("is-loading");
                 $("#casVulnerabilitiesTable").closest(".dt-container, table").removeAttr("aria-busy");
                 hideVulnerabilitiesTab();
                 updateNavigationSidebar();
@@ -2850,6 +2890,9 @@ async function initializeSystemOperations() {
             if (Date.now() - slowestMeasured >= STATISTICS_REFRESH) {
                 configureSlowestEndpoints();
             }
+            if (Date.now() - providersCounted >= STATISTICS_REFRESH) {
+                configureMultifactorProviders();
+            }
         }
     }, palantirSettings().refreshInterval);
 
@@ -2863,6 +2906,7 @@ async function initializeSystemOperations() {
         configureStatistics(),
         configureSignIns(),
         configureSlowestEndpoints(),
+        configureMultifactorProviders(),
         configureHealthChart(),
         configureSystemInfo(),
         configureSystemMetrics()

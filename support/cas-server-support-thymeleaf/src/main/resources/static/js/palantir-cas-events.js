@@ -208,7 +208,57 @@ async function initializeAuditEventsOperations() {
 
         function renderAuditAction(action) {
             const type = auditActionType(action);
-            return `<span class="audit-action-tag audit-action-${type}">${escapeHtml(action || "N/A")}</span>`;
+            const text = action || "N/A";
+            return `<span class="audit-action-tag audit-action-${type}" title="${escapeHtml(text)}">`
+                + `${escapeHtml(text).replaceAll("_", "_<wbr>")}</span>`;
+        }
+
+        function renderAuditPrincipal(principal) {
+            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapeHtml(part));
+            return `<span class="audit-principal-value" title="${escapeHtml(principal)}">
+                        <i class="mdi mdi-account" aria-hidden="true"></i>
+                        <code>${parts.join("<wbr>")}</code>
+                    </span>`;
+        }
+
+        /**
+         * What an audit record was for: an application, by name, that opens its definition, or another target, such
+         * as a multifactor provider, as it is recorded.
+         *
+         * @param {string} target the target, or nothing
+         * @returns {string} the cell
+         */
+        function renderAuditTarget(target) {
+            if (!target) {
+                return `<span class="audit-target-none" aria-label="None">—</span>`;
+            }
+            if (/^\d+$/.test(target) && CasActuatorEndpoints.registeredServices()) {
+                const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(target)?.name : null;
+                return `<button type="button" class="audit-target-application" data-audit-application="${escapeHtml(target)}"
+                            title="Open application ${escapeHtml(target)}">
+                            <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                            <span>${escapeHtml(name ?? `Application ${target}`)}</span>
+                        </button>`;
+            }
+            return `<code class="audit-target-value">${escapeHtml(target)}</code>`;
+        }
+
+        /**
+         * Name the applications of the rows shown that Palantir has not listed yet, reading each once.
+         */
+        function nameAuditTargetApplications() {
+            if (typeof palantirApplicationName !== "function") {
+                return;
+            }
+            $("#auditEventsTable [data-audit-application]").each((index, button) => {
+                const id = button.dataset.auditApplication;
+                palantirApplicationName(id).then(name => {
+                    $(button).find("span").text(name);
+                    if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
+                        $(button).addClass("is-gone").attr("title", "This application no longer exists");
+                    }
+                });
+            });
         }
 
         function renderAuditResourceSummary(data, row) {
@@ -234,6 +284,7 @@ async function initializeAuditEventsOperations() {
                 resourceDetails,
                 action,
                 actionType: auditActionType(action),
+                target: entry?.target ? String(entry.target) : "",
                 date: entry?.whenActionWasPerformed ?? "N/A",
                 clientIpAddress: entry?.clientInfo?.clientIpAddress ?? "N/A",
                 userAgent: entry?.clientInfo?.userAgent ?? "N/A"
@@ -379,12 +430,8 @@ async function initializeAuditEventsOperations() {
             columns: [
                 {
                     data: "principal",
-                    width: "8rem",
-                    render: (data, type) => type === "display" ? `
-                        <span class="audit-principal-value">
-                            <i class="mdi mdi-account" aria-hidden="true"></i>
-                            ${palantirCode(data)}
-                        </span>` : data
+                    width: "10rem",
+                    render: (data, type) => type === "display" ? renderAuditPrincipal(data) : data
                 },
                 {
                     data: "resource",
@@ -395,6 +442,11 @@ async function initializeAuditEventsOperations() {
                     data: "action",
                     width: "15rem",
                     render: (data, type) => type === "display" ? renderAuditAction(data) : data
+                },
+                {
+                    data: "target",
+                    width: "11rem",
+                    render: (data, type) => type === "display" ? renderAuditTarget(data) : data
                 },
                 {
                     data: "date",
@@ -415,7 +467,17 @@ async function initializeAuditEventsOperations() {
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
+                nameAuditTargetApplications();
                 updateAuditActionsChart();
+            }
+        });
+        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", event => {
+            event.stopPropagation();
+            const id = event.currentTarget.dataset.auditApplication;
+            if (typeof openTopApplication === "function") {
+                openTopApplication(id);
+            } else if (typeof navigateToApplication === "function") {
+                navigateToApplication(id);
             }
         });
         updateAuditActionsChart();

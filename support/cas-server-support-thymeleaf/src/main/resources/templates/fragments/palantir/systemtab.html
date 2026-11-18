@@ -203,7 +203,14 @@
                             </div>
                         </div>
 
-                        <div id="casvulnerabilities-tab">
+                        <div id="casvulnerabilities-tab" class="is-loading">
+                            <div class="cas-vulnerabilities-loading" role="status">
+                                <p>Checking the dependencies for known vulnerabilities…</p>
+                                <div class="palantir-progress__track is-busy" role="progressbar"
+                                     aria-label="Checking the dependencies for known vulnerabilities">
+                                    <span class="palantir-progress__bar"></span>
+                                </div>
+                            </div>
                             <div id="casVulnerabilitiesSeverityBreakdown"
                                  class="cas-vulnerability-breakdown hide"></div>
                             <div class="cas-vulnerabilities-table-wrap">
@@ -259,7 +266,11 @@
                     <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart" role="img" aria-label="System health indicators"></canvas></div>
                     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="signInsChartCell">
                         <p class="palantir-chart-status" id="signInsChartStatus" aria-live="polite">Counting sign-ins…</p>
-                        <div class="palantir-sign-ins-chart"><canvas id="signInsChart" role="img" aria-label="Sign-ins per hour over the last eight hours"></canvas></div>
+                        <div class="palantir-sign-ins-chart"><canvas id="signInsChart" role="img" aria-label="Sign-ins per hour over the last two hours"></canvas></div>
+                    </div>
+                    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="multifactorProvidersChartCell">
+                        <p class="palantir-chart-status" id="multifactorProvidersChartStatus" aria-live="polite">Counting multifactor authentication…</p>
+                        <div class="palantir-sign-ins-chart"><canvas id="multifactorProvidersChart" role="img" aria-label="Multifactor authentication per provider over the last two hours"></canvas></div>
                     </div>
                     <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" id="slowestEndpointsChartCell">
                         <p class="palantir-chart-status" id="slowestEndpointsChartStatus" aria-live="polite">Measuring the slowest endpoints…</p>

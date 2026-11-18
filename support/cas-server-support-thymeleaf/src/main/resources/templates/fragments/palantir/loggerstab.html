@@ -78,8 +78,8 @@
             </div>
             <div id="auditevents-tab">
                 <p>The latest audit log statements from CAS application displayed and streamed here.</p>
-                <div class="d-flex">
-                    <label for="auditEventsIntervalFilter" class="pl-2">
+                <div class="audit-events-filters">
+                    <label for="auditEventsIntervalFilter">
                         Interval:
                         <select id="auditEventsIntervalFilter" class="jqueryui-selectmenu">
                             <option value="PT1M">Last Minute</option>
@@ -93,7 +93,7 @@
                             <option value="PT24H">Last 24 Hours</option>
                         </select>
                     </label>
-                    <label for="auditEventsCountFilter" class="pl-2">
+                    <label for="auditEventsCountFilter">
                         Entries:
                         <select id="auditEventsCountFilter" class="jqueryui-selectmenu">
                             <option value="5">Last 5 Entries</option>
@@ -106,7 +106,7 @@
                             <option value="500">Last 500 Entries</option>
                         </select>
                     </label>
-                    <label for="auditEventsActionFilter" class="pl-2">
+                    <label for="auditEventsActionFilter">
                         Action:
                         <select id="auditEventsActionFilter" class="jqueryui-selectmenu">
                             <option value="all" selected>All Actions</option>
@@ -117,7 +117,7 @@
                     </label>
                     <button type="button" id="refreshAuditEventsButton"
                             title="Refresh audit events"
-                            class="mdc-button mdc-button--raised ml-2 align-self-center">
+                            class="mdc-button mdc-button--raised">
                         <span class="mdc-button__label">
                             <i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>
                             Refresh
@@ -133,6 +133,7 @@
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Principal</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Action</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Target</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Date</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">IP Address</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">User Agent</th>

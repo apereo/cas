@@ -7,6 +7,8 @@ let statisticsChart = null;
 let systemHealthChart = null;
 let signInsChart = null;
 let slowestEndpointsChart = null;
+let topApplicationsChart = null;
+let multifactorProvidersChart = null;
 let jvmThreadsChart = null;
 let httpRequestResponsesChart = null;
 let httpRequestsByUrlChart = null;
@@ -328,6 +330,254 @@ async function initializeTasksCharts() {
 /**
  * Charts owned by the Applications tab.
  */
+/**
+ * A horizontal bar chart of counts per target, such as sign-ins per application or multifactor authentication per
+ * provider, longest bar first; the tooltip names the target in full. When a bar can be selected, clicking it calls
+ * back with the target, in the chart on the page and in its enlarged copy alike, the pointer shows it can be clicked,
+ * and the tooltip says what a click does.
+ *
+ * @param canvasId the canvas
+ * @param title the title drawn above the bars, or nothing when the page shows its own heading
+ * @param label what the bars count
+ * @param onSelect called with the target of a clicked bar; bars cannot be clicked without it
+ * @returns {Chart|null} the chart, or null when the canvas is not on the page
+ */
+function createPalantirCountsByTargetChart(canvasId, title, label, onSelect = null) {
+    const selection = typeof onSelect === "function"
+        ? {
+            onClick: (event, elements, chart) => {
+                const target = elements.length > 0 ? chart.data.targetIds?.[elements[0].index] : undefined;
+                if (target !== undefined) {
+                    onSelect(target);
+                }
+            },
+            onHover: (event, elements) => {
+                if (event.native?.target) {
+                    event.native.target.style.cursor = elements.length > 0 ? "pointer" : "";
+                }
+            }
+        }
+        : {};
+    return createPalantirChart(canvasId, {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [{
+                label,
+                data: []
+            }]
+        },
+        options: {
+            ...selection,
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        callback(value) {
+                            const text = String(this.getLabelForValue(value));
+                            return text.length > 32 ? `${text.slice(0, 31)}…` : text;
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: Boolean(title),
+                    text: title ?? ""
+                },
+                tooltip: {
+                    callbacks: {
+                        title: items => items[0]?.chart.data.targets?.[items[0].dataIndex] ?? items[0]?.label,
+                        footer: items => typeof onSelect === "function" && items.length > 0
+                            ? items[0].chart.data.hints?.[items[0].dataIndex] ?? ""
+                            : ""
+                    }
+                }
+            }
+        }
+    });
+}
+
+const palantirApplicationNames = new Map();
+const palantirMissingApplications = new Set();
+
+/**
+ * The name of an application by its id: from the applications Palantir already listed, or read once and kept.
+ *
+ * @param {string} id the id of the application
+ * @returns {Promise<string>} its name, or one made of its id when it is gone or cannot be read
+ */
+async function palantirApplicationName(id) {
+    const known = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(String(id))?.name : null;
+    if (known) {
+        return known;
+    }
+    if (!palantirApplicationNames.has(id)) {
+        palantirApplicationNames.set(id, new Promise(resolve => {
+            if (!CasActuatorEndpoints.registeredServices()) {
+                resolve(`Application ${id}`);
+                return;
+            }
+            $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`)
+                .done(service => resolve((Array.isArray(service) ? service[1]?.name : service?.name) || `Application ${id}`))
+                .fail(xhr => {
+                    if (xhr.status === 404) {
+                        palantirMissingApplications.add(String(id));
+                    }
+                    resolve(`Application ${id}`);
+                });
+        }));
+    }
+    return palantirApplicationNames.get(id);
+}
+
+/**
+ * Draw counts per target, the ten largest, with the names given for them.
+ *
+ * @param chart the chart
+ * @param counts the counts, each with a target and a count
+ * @param names the names of the targets, in the order drawn; the target itself when missing
+ * @returns {Array} the targets drawn and their totals
+ */
+function drawPalantirCountsByTarget(chart, counts, names = []) {
+    const totals = new Map();
+    counts.forEach(count => totals.set(count.target, (totals.get(count.target) ?? 0) + (Number(count.count) || 0)));
+    const top = [...totals.entries()].sort((first, second) => second[1] - first[1]).slice(0, 10);
+    chart.data.labels = top.map(([target], index) => names[index] ?? target);
+    chart.data.targetIds = top.map(([target]) => target);
+    chart.data.targets = top.map(([target], index) => names[index] && names[index] !== target ? `${names[index]} (${target})` : target);
+    chart.data.datasets[0].data = top.map(([, total]) => total);
+    chart.update();
+    top.measured = totals.size;
+    return top;
+}
+
+/**
+ * Whether an application counted in the audit trail is gone: the server no longer has it, or the applications
+ * Palantir listed do not include it.
+ *
+ * @param {string} id the id of the application
+ * @returns {boolean} true when it no longer exists
+ */
+function palantirApplicationIsGone(id) {
+    return palantirMissingApplications.has(String(id))
+        || (typeof registeredServicesById !== "undefined" && registeredServicesById.size > 0 && !registeredServicesById.has(String(id)));
+}
+
+/**
+ * Open the definition of an application, from the Top applications chart, its list or the audit log, in the
+ * application wizard, the way the Edit button of its card does, closing an enlarged copy of the chart first and
+ * getting the applications page ready when it was not opened yet. An application that is gone says so instead.
+ *
+ * @param {string} id the id of the application
+ */
+async function openTopApplication(id) {
+    if (!CasActuatorEndpoints.registeredServices()) {
+        return;
+    }
+    $(".palantir-magnifier.ui-dialog-content").dialog("close");
+    if (typeof applicationActionHandler !== "function" && typeof initializeDashboardTab === "function") {
+        await initializeDashboardTab(Tabs.APPLICATIONS);
+        const giveUpAt = Date.now() + 10000;
+        while (typeof applicationActionHandler !== "function" && Date.now() < giveUpAt) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+    }
+    if (palantirApplicationIsGone(id)) {
+        Swal.fire({
+            icon: "info",
+            title: "This application no longer exists",
+            text: `Application ${id} was deleted; what the audit log recorded about it is kept.`
+        });
+        return;
+    }
+    if (typeof applicationActionHandler === "function") {
+        applicationActionHandler("editWizard", {rowData: {serviceId: id}});
+    } else if (typeof navigateToApplication === "function") {
+        navigateToApplication(id);
+    }
+}
+
+/**
+ * The applications of the chart as a list of buttons under it, so they can be opened from the keyboard too, and the
+ * hint the chart's tooltips give for each bar.
+ *
+ * @param {Array} top the applications drawn and their sign-ins
+ * @param {string[]} names their names, in the same order; empty while they are being read
+ */
+function showTopApplications(top, names) {
+    topApplicationsChart.data.hints = top.map(([target]) => palantirApplicationIsGone(target)
+        ? "This application no longer exists"
+        : "Click to open the application");
+    const list = $("#topApplicationsList").empty();
+    top.forEach(([target, total], index) => {
+        const gone = palantirApplicationIsGone(target);
+        list.append($("<li>").append($("<button>", {
+            type: "button",
+            class: `palantir-top-applications__item${gone ? " is-gone" : ""}`,
+            "data-top-application": target,
+            title: gone ? "This application no longer exists" : "Open the application"
+        })
+            .append($("<span>", {text: names[index] ?? `Application ${target}`}))
+            .append($("<b>", {text: Number(total).toLocaleString()}))));
+    });
+}
+
+let topApplicationsRequestPending = false;
+let topApplicationsCounted = 0;
+
+/**
+ * Read sign-ins per application over the last two hours for the Top Applications chart on the applications page,
+ * counted by the audit storage from the application each sign-in names, and show the applications by name. Refreshed
+ * once a minute while the page is shown; hidden when the audit storage cannot count.
+ */
+function refreshTopApplications() {
+    const card = $("#topApplicationsChartTitle").closest(".palantir-chart-card");
+    if (!CasActuatorEndpoints.auditLog() || !topApplicationsChart) {
+        card.prop("hidden", true);
+        return;
+    }
+    if (topApplicationsRequestPending) {
+        return;
+    }
+    topApplicationsRequestPending = true;
+    $.get(`${CasActuatorEndpoints.auditLog()}/summary`, {interval: "PT2H", actions: "AUTHENTICATION_SUCCESS", groupBy: "target"}, response => {
+        topApplicationsCounted = Date.now();
+        if (!response?.supported) {
+            card.prop("hidden", true);
+            return;
+        }
+        card.prop("hidden", false);
+        const counts = (response.counts ?? []).filter(count => count.target && count.action === "AUTHENTICATION_SUCCESS");
+        const top = drawPalantirCountsByTarget(topApplicationsChart, counts);
+        $("#topApplicationsChartStatus").text(top.length === 0
+            ? "No sign-ins to a known application in the last 2 hours."
+            : `Sign-ins over the last 2 hours, top ${top.length} of ${top.measured} applications · every minute`);
+        showTopApplications(top, []);
+        Promise.all(top.map(([target]) => palantirApplicationName(target))).then(names => {
+            drawPalantirCountsByTarget(topApplicationsChart, counts, names);
+            showTopApplications(top, names);
+        });
+    }).fail(() => {
+        topApplicationsCounted = Date.now();
+        $("#topApplicationsChartStatus").text("Sign-ins could not be counted just now; trying again in a minute.");
+    }).always(() => topApplicationsRequestPending = false);
+}
+
 async function initializeApplicationsCharts() {
     servicesChart = createPalantirChart("servicesChart", {
         type: "bar",
@@ -361,6 +611,16 @@ async function initializeApplicationsCharts() {
             }
         }
     });
+
+    topApplicationsChart = createPalantirCountsByTargetChart("topApplicationsChart", null, "Sign-ins", openTopApplication);
+    $("#topApplicationsList").off("click").on("click", "[data-top-application]", event =>
+        openTopApplication(String(event.currentTarget.dataset.topApplication)));
+    refreshTopApplications();
+    setInterval(() => {
+        if (Date.now() - topApplicationsCounted >= 60000 && isPalantirPollingContextActive(Tabs.APPLICATIONS, "#applications-tab")) {
+            refreshTopApplications();
+        }
+    }, palantirSettings().refreshInterval);
 }
 
 /**
@@ -615,7 +875,7 @@ async function initializeSystemCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: "Sign-ins · last 8 hours"
+                    text: "Sign-ins · last 2 hours"
                 },
                 legend: {
                     labels: {
@@ -630,6 +890,8 @@ async function initializeSystemCharts() {
             }
         }
     });
+
+    multifactorProvidersChart = createPalantirCountsByTargetChart("multifactorProvidersChart", "Multifactor by Provider · last 2 hours", "Triggered");
 
     slowestEndpointsChart = createPalantirChart("slowestEndpointsChart", {
         type: "bar",
@@ -696,6 +958,7 @@ async function initializeSystemCharts() {
     makeSystemStatusChartClickable("memoryChart", () => memoryChart, "Memory");
     makeSystemStatusChartClickable("statisticsChart", () => statisticsChart, "Ticket Registry");
     makeSystemStatusChartClickable("systemHealthChart", () => systemHealthChart, "System Health");
+    makeSystemStatusChartClickable("multifactorProvidersChart", () => $("#multifactorProvidersChart").is(":visible") ? multifactorProvidersChart : null, "Multifactor by Provider");
     makeSystemStatusChartClickable("slowestEndpointsChart", () => $("#slowestEndpointsChart").is(":visible") ? slowestEndpointsChart : null, "Slowest Endpoints");
     makeSystemStatusChartClickable("signInsChart", () => $("#signInsChart").is(":visible") ? signInsChart : null, "Sign-ins");
     makeSystemStatusChartClickable("httpRequestResponsesChart", () => httpRequestResponsesChart, "HTTP Requests/Responses (Date)");
@@ -1174,6 +1437,37 @@ const palantirChartStylePlugin = {
     }
 };
 
+/**
+ * Whether a chart has anything to show: a value other than zero in any series. Points may be numbers or objects with
+ * an x and a y.
+ *
+ * @param chart the chart
+ * @returns {boolean} true when there is something to draw
+ */
+function palantirChartHasData(chart) {
+    return (chart.data.datasets ?? []).some(dataset => (dataset.data ?? []).some(point => {
+        const value = point !== null && typeof point === "object" ? point.y ?? point.x : point;
+        return Number.isFinite(Number(value)) && Number(value) !== 0;
+    }));
+}
+
+/**
+ * A chart on a page is shown only once it has data: until then the card or cell that holds it is hidden, and it
+ * comes back as soon as an update brings data. Enlarged copies, Prometheus charts, which are created from data, and
+ * the metric explorer and the cards of the home page, which decide for themselves, are left alone.
+ */
+const palantirChartVisibilityPlugin = {
+    id: "palantirChartVisibility",
+    afterUpdate(chart) {
+        const canvas = chart.canvas;
+        if (!canvas || canvas.closest("#prometheusChartsRow, .ui-dialog, [class*='palantir-magnifier'], [class*='palantir-metrics'], .palantir-home__widget")) {
+            return;
+        }
+        const holder = canvas.closest(".palantir-chart-card, .audit-actions-chart-card, .task-chart-cell, .mdc-layout-grid__cell");
+        holder?.classList.toggle("palantir-chart-empty", !palantirChartHasData(chart));
+    }
+};
+
 if (typeof Chart !== "undefined" && typeof Chart.register === "function") {
     Chart.defaults.elements.bar.borderWidth = 2;
     Chart.defaults.elements.bar.borderRadius = 4;
@@ -1181,5 +1475,5 @@ if (typeof Chart !== "undefined" && typeof Chart.register === "function") {
         id: "palantirChartAccessibility",
         afterUpdate: applyChartAccessibleDescription,
         afterRender: applyChartAccessibleDescription
-    }, palantirChartStylePlugin, palantirChartCopyPlugin);
+    }, palantirChartStylePlugin, palantirChartCopyPlugin, palantirChartVisibilityPlugin);
 }

@@ -90,6 +90,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         buildSingleAuditLineForField(AuditableFields.DEVICE_FINGERPRINT, clientInfo.getDeviceFingerprint(), builder);
         buildSingleAuditLineForField(AuditableFields.HEADERS, clientInfo.getHeaders(), builder);
         buildSingleAuditLineForField(AuditableFields.TENANT, clientInfo.getTenant(), builder);
+        buildSingleAuditLineForField(AuditableFields.TARGET, auditActionContext.getTarget(), builder);
 
         if (!useSingleLine) {
             builder.append("=============================================================");
@@ -146,6 +147,9 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         }
         if (isFieldAuditable(AuditableFields.TENANT) && StringUtils.isNotBlank(clientInfo.getTenant())) {
             map.put("tenant", readFieldValue(clientInfo.getTenant()));
+        }
+        if (isFieldAuditable(AuditableFields.TARGET) && StringUtils.isNotBlank(auditActionContext.getTarget())) {
+            map.put("target", auditActionContext.getTarget());
         }
         return map;
     }

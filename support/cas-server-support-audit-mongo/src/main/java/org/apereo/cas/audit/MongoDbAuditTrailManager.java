@@ -56,7 +56,7 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
     /**
      * Counts records with one aggregation: the records of the period and actions are grouped by action and by the
-     * number of hours between the start of the period and the record. The period is converted to dates the way records
+     * number of hours between the start of the period and the record, and by target when asked. The period is converted to dates the way records
      * are written, so it lines up with them whatever the server's time zone.
      *
      * @param query the period and actions to count
@@ -69,13 +69,18 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
             return Optional.of(List.of());
         }
         val from = toStoredDate(query.from());
-        val match = new Document("$match", new Document("whenActionWasPerformed",
+        val criteria = new Document("whenActionWasPerformed",
             new Document("$gte", from).append("$lt", toStoredDate(query.to())))
-            .append("actionPerformed", new Document("$in", List.copyOf(query.actions()))));
+            .append("actionPerformed", new Document("$in", List.copyOf(query.actions())));
+        val key = new Document("action", "$actionPerformed");
+        if (query.byTarget()) {
+            criteria.append("target", new Document("$ne", null));
+            key.append("target", "$target");
+        }
+        val match = new Document("$match", criteria);
         val bucket = new Document("$floor", new Document("$divide",
             List.of(new Document("$subtract", List.of("$whenActionWasPerformed", from)), AuditSummaryQuery.BUCKET.toMillis())));
-        val group = new Document("$group", new Document("_id",
-            new Document("action", "$actionPerformed").append("bucket", bucket))
+        val group = new Document("$group", new Document("_id", key.append("bucket", bucket))
             .append("count", new Document("$sum", 1)));
         val counts = new ArrayList<AuditActionCount>();
         mongoTemplate.getCollection(collectionName).aggregate(List.of(match, group)).forEach(result -> {
@@ -83,7 +88,7 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
             val index = ((Number) Objects.requireNonNull(id.get("bucket"))).intValue();
             if (index >= 0 && index < hours.size()) {
                 counts.add(new AuditActionCount(hours.get(index), Objects.requireNonNull(id.getString("action")),
-                    ((Number) Objects.requireNonNull(result.get("count"))).longValue()));
+                    ((Number) Objects.requireNonNull(result.get("count"))).longValue(), id.getString("target")));
             }
         });
         return Optional.of(counts);

@@ -1,7 +1,6 @@
 package org.apereo.cas.palantir.overview;
 
 import module java.base;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -10,6 +9,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.InetAddressUtils;
 import com.sun.management.OperatingSystemMXBean;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
@@ -69,8 +69,6 @@ public class PalantirOverview implements DisposableBean {
     private static final List<String> ENDPOINTS_LEFT_OUT = List.of("/actuator", "/palantir", "/webjars", "/js/", "/css/",
         "/images/", "/favicon", "/themes/");
 
-    private final CasConfigurationProperties casProperties;
-
     private final ConfigurableApplicationContext applicationContext;
 
     private final ObjectProvider<ServicesManager> servicesManager;
@@ -95,13 +93,11 @@ public class PalantirOverview implements DisposableBean {
 
     private final List<Section> sections;
 
-    public PalantirOverview(final CasConfigurationProperties casProperties,
-                            final ConfigurableApplicationContext applicationContext,
+    public PalantirOverview(final ConfigurableApplicationContext applicationContext,
                             final ObjectProvider<ServicesManager> servicesManager,
                             final ObjectProvider<TicketRegistry> ticketRegistry,
                             final ObjectProvider<MeterRegistry> meterRegistry,
                             final ObjectProvider<PalantirApplicationChanges> sharedChanges) {
-        this.casProperties = casProperties;
         this.applicationContext = applicationContext;
         this.servicesManager = servicesManager;
         this.ticketRegistry = ticketRegistry;
@@ -223,7 +219,7 @@ public class PalantirOverview implements DisposableBean {
         val runtime = ManagementFactory.getRuntimeMXBean();
         val server = new LinkedHashMap<String, Object>();
         server.put("version", StringUtils.defaultString(CasVersion.getVersion()));
-        server.put("host", StringUtils.defaultString(casProperties.getHost().getName()));
+        server.put("host", InetAddressUtils.getCasServerHostName());
         server.put("java", Runtime.version().toString());
         server.put("started", Instant.ofEpochMilli(runtime.getStartTime()).toString());
         server.put("uptimeSeconds", runtime.getUptime() / 1000);
@@ -494,6 +490,7 @@ public class PalantirOverview implements DisposableBean {
         entry.put("name", StringUtils.defaultIfBlank(change.name(), current != null ? current.getName() : change.id()));
         entry.put("type", current != null ? current.getFriendlyName() : friendlyType(change.type()));
         entry.put("author", change.author());
+        entry.put("exists", current != null);
         return Optional.of(entry);
     }
 

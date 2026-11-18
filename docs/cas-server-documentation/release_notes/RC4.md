@@ -404,8 +404,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   health indicator are kept for a few seconds, so callers in quick succession share one count. Ticket registries count
   tickets per kind the cheapest way their store allows, without reading the tickets: the in-memory registry and those
   built on it by type, JPA with one grouped query (unless tickets are encrypted), MongoDB by the estimated size of each
-  collection, Redis with one scan of the ticket keys, Hazelcast by map size, Ignite and Geode with a count per table or
-  region, DynamoDB through its prefix index and Firestore with a count query per collection. Other registries read their
+  collection, Redis with one scan of the ticket keys, asked for ten thousand keys at a time, Hazelcast by map size,
+  Ignite and Geode with a count per table or region, DynamoDB through its prefix index and Firestore with a count query
+  per collection; Redis also counts sessions and service tickets that way. Other registries read their
   tickets to count them. Palantir's ticket registry chart shows all tickets and a bar for every kind of ticket, refreshed
   once a minute, and its health chart reads the same timed health checks as the *Home* page.
 - {: .new data-area="ui"} The [audit log endpoint](../audits/Audits.html) can count audit records per action and per hour
@@ -413,15 +414,27 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   MongoDB with one aggregation, and Redis and DynamoDB from hourly counters kept as records are written. A
   [REST audit service](../audits/Audits-REST.html) is asked for its own counts. Other audit storages, such as files, logs
   or Amazon Firehose, report that they cannot count. Palantir's *System Status* page uses it for a sign-in chart:
-  succeeded, failed and throttled sign-ins per hour over the last eight hours, and multifactor authentication
+  succeeded, failed and throttled sign-ins per hour over the last two hours, and multifactor authentication
   triggered, refreshed once a minute. Database audit tables gain an index on the audit date. Every Palantir chart now
-  shares one look and color palette in light and dark themes, and an enlarged chart keeps its labels, colors and
-  tooltips and keeps updating while it is open.
+  shares one look and color palette in light and dark themes, appears only once it has data to show, and an enlarged
+  chart keeps its labels, colors and tooltips and keeps updating while it is open.
 - {: .new data-area="ui"} [Palantir](../installation/Admin-Dashboard.html) lists the URLs that answer slowest on
   average, with their longest time, requests and server errors, on *Home* and as a chart on *System Status*, from the
   request metrics the server already keeps. *Home* cards can be hidden, brought back or reset to the original layout,
   and the browser remembers the choice; Home asks the server only for what the shown cards need, so a card that is slow
   to fill can be hidden to take its work off the server.
+- {: .new data-area="ui"} Audit records name what an action was for in a field of their own, the *target*: the id of
+  the application signed in to, when CAS knows it, and the multifactor provider that was triggered. Every audit storage
+  keeps it, and the [audit log endpoint](../audits/Audits.html) can count records per target as well as per action and
+  hour: databases and MongoDB in their query, Redis and DynamoDB from counters kept as records are written, a
+  [REST audit service](../audits/Audits-REST.html) through its summary request. Palantir uses it for the applications
+  with the most sign-ins over the last two hours, by name, at the bottom of the *Applications* page, where a click on
+  an application opens it, and for multifactor authentication per provider on the *System Status* page. The audit
+  events table shows the target of each record and opens the application it names. Saving or deleting an application,
+  and checking access to one, record that application as well. Records written before this version have no target.
+- {: .action data-area="operations"} [Database audit storage](../audits/Audits-Database.html) adds the `AUD_TARGET`
+  column and an index on `AUD_DATE` and `AUD_ACTION` to the audit table. CAS adds them when it updates the schema
+  itself; otherwise add them to the existing table before upgrading, or recording audit events fails.
 - {: .fixed data-area="services"} Importing an archive of application definitions reads and saves each definition once;
   each one was read by every available format and could be saved twice, which doubled the time an import took.
 - {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
