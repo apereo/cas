@@ -483,22 +483,40 @@ async function initializeAuditEventsOperations() {
         updateAuditActionsChart();
 
         let auditEventsRequestInFlight = false;
+        let auditEventsRefreshWanted = false;
+        let auditEventsUsername = "";
         const auditEventsRefreshButton = $("#refreshAuditEventsButton");
 
+        function auditPrincipalPattern(username) {
+            return `^${username.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`;
+        }
+
+        function showAuditEventsUsername(count) {
+            $("#showAllAuditEventsButton").prop("hidden", auditEventsUsername === "");
+            $("#auditEventsUsernameHint").text(auditEventsUsername === ""
+                ? "The audit records of every username are shown; enter a username to see only that username's records, matched regardless of case."
+                : `${count} audit record${count === 1 ? "" : "s"} for ${auditEventsUsername} in the chosen interval and action.`);
+        }
+
         function updateAuditEventsTable() {
-            if (auditEventsRequestInFlight
-                || !isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
+            if (!isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
+                return;
+            }
+            if (auditEventsRequestInFlight) {
+                auditEventsRefreshWanted = true;
                 return;
             }
 
             const interval = $("#auditEventsIntervalFilter").val();
             const count = $("#auditEventsCountFilter").val();
             const actionFilter = $("#auditEventsActionFilter").val();
+            const username = auditEventsUsername;
+            const principal = username === "" ? "" : `&principal=${encodeURIComponent(auditPrincipalPattern(username))}`;
 
             auditEventsRequestInFlight = true;
             auditEventsRefreshButton.prop("disabled", true);
             $.ajax({
-                url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
+                url: `${CasActuatorEndpoints.auditLog()}?interval=${encodeURIComponent(interval)}&count=${encodeURIComponent(count)}${principal}`,
                 type: "GET",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -512,20 +530,40 @@ async function initializeAuditEventsOperations() {
                         console.error("Unable to parse audit events:", e);
                         return;
                     }
-                    auditEventsTable.clear();
-                    auditEvents
+                    if (username !== auditEventsUsername) {
+                        return;
+                    }
+                    const shown = auditEvents
                         .map(normalizeAuditEvent)
-                        .filter(entry => actionFilter === "all" || entry.actionType === actionFilter)
-                        .forEach(entry => auditEventsTable.row.add(entry));
+                        .filter(entry => actionFilter === "all" || entry.actionType === actionFilter);
+                    auditEventsTable.clear();
+                    shown.forEach(entry => auditEventsTable.row.add(entry));
                     auditEventsTable.draw();
+                    showAuditEventsUsername(shown.length);
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown),
                 complete: () => {
                     auditEventsRequestInFlight = false;
                     auditEventsRefreshButton.prop("disabled", false);
+                    if (auditEventsRefreshWanted) {
+                        auditEventsRefreshWanted = false;
+                        updateAuditEventsTable();
+                    }
                 }
             });
         }
+
+        $("#fmAuditEventsUsername").off("submit").on("submit", event => {
+            event.preventDefault();
+            auditEventsUsername = String($("#auditEventsUsername").val() ?? "").trim();
+            updateAuditEventsTable();
+        });
+        $("#showAllAuditEventsButton").off("click").on("click", () => {
+            $("#auditEventsUsername").val("").trigger("input");
+            auditEventsUsername = "";
+            updateAuditEventsTable();
+            $("#auditEventsUsername").trigger("focus");
+        });
 
         $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
             change: updateAuditEventsTable

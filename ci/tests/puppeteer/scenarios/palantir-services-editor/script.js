@@ -348,6 +348,38 @@ async function discardUnsavedChanges(page, name) {
 }
 
 /**
+ * A new application in the wizard starts by choosing its type: a single click on a card opens the wizard for that
+ * type, without a button to confirm the choice.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyTypePicker(page) {
+    await cas.separator();
+    const types = await page.evaluate(() => Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).length);
+    if (types < 2) {
+        await cas.logy("Only one application type is supported, so no type is chosen; skipping");
+        return;
+    }
+    await page.evaluate(() => {
+        openRegisteredServiceWizardDialog();
+    });
+    await page.waitForFunction(() => $(".palantir-type-card").length > 1, {timeout: 15000});
+    assert(await page.evaluate(() => !$(".swal2-confirm").is(":visible")));
+    const chosen = await page.evaluate(() => $(".palantir-type-card").eq(1).data("service-class"));
+    await page.click(".palantir-type-card:nth-of-type(2)");
+    await cas.sleep(500);
+    if (await page.evaluate(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Resume your draft?")) {
+        await page.click(".swal2-deny");
+    }
+    await page.waitForFunction((serviceClass) => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#editServiceWizardForm").data("service-class") === serviceClass, {timeout: 30000}, chosen);
+    await cas.logg(`One click on a card opens the wizard for ${chosen}`);
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Type picker");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
+/**
  * Exercise the service wizard for each service type it models.
  *
  * The wizard's fields are built when the dialog is first opened rather than while the page parses,
@@ -906,6 +938,7 @@ async function openNewApplicationMenu(page) {
     await openNewApplicationMenu(page);
     await verifyPlainEditorDialog(page);
     await verifyServiceWizard(page);
+    await verifyTypePicker(page);
     await verifyEditConflict(page);
     await verifyMultifactorPolicyRoundTrip(page);
     await verifyEditorHandoffs(page);

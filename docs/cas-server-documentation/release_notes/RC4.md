@@ -984,8 +984,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="authentication"} The `throttles` actuator endpoint of
   [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
   throttled records of one username, matched regardless of case, instead of every record. Palantir's throttles page
-  uses it to show the attempts of one username, and its consent page likewise shows the consent decisions of one
-  username.
+  uses it to show the attempts of one username, and its consent and audit pages likewise show the consent decisions
+  and the audit records of one username.
 - {: .fixed data-area="authentication"} Setting `cas.authn.x509.crl-unavailable-policy`{: .cas-setting} or
   `cas.authn.x509.crl-resource-unavailable-policy`{: .cas-setting} to `THRESHOLD`, which only applies to expired CRLs, now
   applies `DENY` with a warning instead of failing the login with an error.

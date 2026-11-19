@@ -288,6 +288,39 @@ async function verifyThrottlesUsername(page) {
 }
 
 /**
+ * Show the audit records of one username on the audit events page, then those of every username again. The admin
+ * who signed in has audit records, and every record shown must be one of theirs.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyAuditEventsUsername(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.auditLog()))) {
+        await cas.logy("Audit log endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.LOGGING.index}]`).trigger("click");
+        $("#auditEvents").trigger("click");
+    });
+    await page.waitForFunction(() => $("#auditEventsUsername").is(":visible"), {timeout: 30000});
+    await page.evaluate(() => $("#auditEventsUsername").val("CASADMIN"));
+    const [response] = await Promise.all([
+        page.waitForResponse((answer) => answer.url().includes("principal=%5ECASADMIN%24"), {timeout: 30000}),
+        page.click("#filterAuditEventsButton")
+    ]);
+    assert(response.status() === 200);
+    await page.waitForFunction(() => $("#auditEventsUsernameHint").text().includes("for CASADMIN")
+        && $("#showAllAuditEventsButton").is(":visible"), {timeout: 15000});
+    const principals = await page.evaluate(() => $("#auditEventsTable").DataTable().rows().data().toArray()
+        .map((entry) => String(entry.principal).toLowerCase()));
+    await cas.logg(`Audit records of one username: ${await page.evaluate(() => $("#auditEventsUsernameHint").text())}`);
+    assert(principals.every((principal) => principal === "casadmin"));
+    await page.click("#showAllAuditEventsButton");
+    await page.waitForFunction(() => $("#auditEventsUsername").val() === "" && !$("#showAllAuditEventsButton").is(":visible"), {timeout: 15000});
+}
+
+/**
  * Show the consent decisions of one username on the Consent page, then every decision again. The username has no
  * decisions, so the page asks for that username alone and says it found none.
  *
@@ -303,7 +336,7 @@ async function verifyConsentUsername(page) {
     await page.waitForFunction(() => $("#consentUsername").is(":visible"), {timeout: 30000});
     await page.evaluate(() => $("#consentUsername").val("PalantirNobody"));
     const [response] = await Promise.all([
-        page.waitForResponse((answer) => answer.url().endsWith("/attributeConsent/PalantirNobody"), {timeout: 30000}),
+        page.waitForResponse((answer) => answer.url().toLowerCase().endsWith("/attributeconsent/palantirnobody"), {timeout: 30000}),
         page.click("#filterConsentButton")
     ]);
     await page.waitForFunction(() => $("#consentUsernameHint").text().startsWith("0 consent decisions for PalantirNobody")
@@ -368,6 +401,7 @@ async function waitForApplications(page) {
     await verifyImpersonationAccounts(page);
     await verifyThrottlesUsername(page);
     await verifyConsentUsername(page);
+    await verifyAuditEventsUsername(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

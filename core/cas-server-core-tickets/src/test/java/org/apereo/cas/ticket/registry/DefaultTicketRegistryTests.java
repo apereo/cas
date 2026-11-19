@@ -113,7 +113,7 @@ class DefaultTicketRegistryTests {
             val serviceTicket = new MockServiceTicket("ST-654321", RegisteredServiceTestUtils.getService(), ticketGrantingTicket);
             val registry = mock(TicketRegistry.class);
             when(registry.getTickets(any())).thenAnswer(invocation -> {
-                final Predicate<Ticket> predicate = invocation.getArgument(0);
+                val predicate = (Predicate<Ticket>) invocation.getArgument(0);
                 return Stream.<Ticket>of(ticketGrantingTicket, serviceTicket).filter(predicate);
             });
             when(registry.query(any())).thenCallRealMethod();

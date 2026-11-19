@@ -26,6 +26,8 @@ class PalantirServiceEditGuard {
         editor: {dialog: "#editServiceDialog", editor: "serviceEditor"}
     };
 
+    static EDITABLE = "input, select, textarea, [role=switch], .ace_editor, .ts-wrapper, [contenteditable=true]";
+
     static state = {wizard: null, editor: null};
 
     static listening = new Set();
@@ -444,12 +446,27 @@ class PalantirServiceEditGuard {
     }
 
     /**
+     * Whether a key press changes text: a character typed, a deletion, or pasting, cutting or undoing; copying, moving
+     * around and other shortcuts do not.
+     *
+     * @param event the key press
+     * @returns {boolean} true when the key press edits
+     */
+    static edits(event) {
+        const key = String(event.key ?? "");
+        if ((event.ctrlKey || event.metaKey) && !event.altKey) {
+            return ["v", "x", "z", "y"].includes(key.toLowerCase());
+        }
+        return key.length === 1 || key === "Backspace" || key === "Delete";
+    }
+
+    /**
      * Start guarding a dialog that has just opened. The baseline is taken once the dialog settles: right away for
      * the editor, and for the wizard once it has finished filling its fields and its generated definition has stayed
      * the same for a moment, since the definition is generated again after the fields are filled. Someone may start
-     * editing before then, so the first key press or click in the dialog takes the baseline at once, from what the
-     * dialog holds before that edit reaches it, and the edit counts as unsaved. A resumed draft is unsaved by
-     * definition, so closing it asks until it is saved or discarded.
+     * editing before then, so the first key typed or click on a field in the dialog takes the baseline at once, from
+     * what the dialog holds before that edit reaches it, and the edit counts as unsaved. A resumed draft is unsaved
+     * by definition, so closing it asks until it is saved or discarded.
      *
      * @param mode wizard or editor
      * @param key the storage key of the application's draft
@@ -466,7 +483,10 @@ class PalantirServiceEditGuard {
                 return;
             }
             const populating = mode === "wizard" && typeof isPopulatingWizard !== "undefined" && isPopulatingWizard;
-            if (event.isTrusted && !populating) {
+            const editing = event.type === "keydown"
+                ? PalantirServiceEditGuard.edits(event)
+                : event.target instanceof Element && event.target.closest(PalantirServiceEditGuard.EDITABLE) !== null;
+            if (event.isTrusted && editing && !populating) {
                 state.baseline = PalantirServiceEditGuard.normalize(PalantirServiceEditGuard.value(mode));
                 watching.abort();
             }

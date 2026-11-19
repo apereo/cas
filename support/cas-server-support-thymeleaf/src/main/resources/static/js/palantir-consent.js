@@ -52,7 +52,10 @@ async function initializeConsentOperations() {
                             url: `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(principal)}/${encodeURIComponent(id)}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
-                            success: (response, status, xhr) => context.row.remove().draw(),
+                            success: (response, status, xhr) => {
+                                context.row.remove().draw();
+                                showConsentUsername(consentTable.rows().count());
+                            },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
                                 displayBanner(xhr);

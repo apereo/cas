@@ -640,7 +640,7 @@ class PalantirUserLookup {
         const failed = sources.filter(source => counts.has(source.key) && counts.get(source.key) === null);
         const unread = sources.filter(source => source.lazy && !counts.has(source.key));
         const parts = found.map(source => `${source.title} ${counts.get(source.key)}`);
-        const nothing = unread.length > 0 ? `Nothing else is recorded for ${username} so far.` : `Nothing is recorded for ${username}.`;
+        const nothing = unread.length > 0 ? `Nothing is recorded for ${username} so far.` : `Nothing is recorded for ${username}.`;
         const summary = [
             parts.length > 0 ? `${username}: ${parts.join(" · ")}` : nothing,
             failed.length > 0 ? `${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.` : "",

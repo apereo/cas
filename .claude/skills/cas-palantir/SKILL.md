@@ -102,6 +102,11 @@ General view, theme and template rules are in the `cas-ui` skill.
   resolution, `resolveSurrogateAccountAttributes` in `palantir-authn.js`): click the rail item, `await
   initializeDashboardTab(Tabs.X)`, select the inner jQuery UI tab, set the field and float its MDC label (the
   `--label-floating`, `--float-above` and `--notched` classes), then click the page's own lookup button.
+- A page that shows one username's records (Throttles, Consent, Audit Events) uses the same form: the
+  `passwordless-account-search throttles-username-search` form with a Username field, a filter button and a hidden
+  *Show All* button, and a `throttles-username-hint` line that says what is shown and, when filtered, how many records
+  the username has. Ask the endpoint for that username rather than filtering in the page, ignore a response that
+  belongs to an earlier filter, and keep the filter across polling.
 
 ## Escaping server values
 
