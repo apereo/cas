@@ -241,21 +241,9 @@ class PalantirCommandPalette {
                 icon: "mdi-application-outline",
                 keywords: [service.id, service.serviceId, service.clientId, describePalantirDescription(service.description)]
                     .filter(value => value !== undefined && value !== null).join(" "),
-                run: () => PalantirCommandPalette.showApplication(name)
+                run: () => navigateToApplication(service.id)
             };
         });
-    }
-
-    static async showApplication(name) {
-        await PalantirCommandPalette.goTo(Tabs.APPLICATIONS.index);
-        const tabs = $("#applications-tabs");
-        if (tabs.data("ui-tabs")) {
-            tabs.tabs("option", "active", 0);
-        }
-        if ($.fn.dataTable.isDataTable("#applicationsTable")) {
-            $("#applicationsTable").DataTable().search(name).draw();
-            $("#applications-tab .dt-search input").val(name);
-        }
     }
 
     static actionEntries(navigation) {

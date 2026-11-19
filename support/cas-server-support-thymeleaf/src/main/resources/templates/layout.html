@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#strings.replace(#locale.toString(), '_', '-')}">
+<html data-cas-autofocus="false" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" th:lang="${#strings.replace(#locale.toString(), '_', '-')}">
 
 <head>
     <meta charset="UTF-8" />
@@ -17,6 +17,7 @@
         </span>
     </span>
 
+    <link rel="stylesheet" th:href="@{/css/accessibility.css}" />
     <span th:remove="tag" th:each="file : ${#strings.setSplit(#cas.theme('cas.standard.css.file'), ',')}">
         <link rel="stylesheet" type="text/css" href="../static/css/cas.css" th:href="@{${file}}" />
     </span>
@@ -32,6 +33,9 @@
 <body>
     <script th:replace="~{fragments/scripts}"></script>
 
+    <a class="cas-skip-link" href="#main-content" onclick="document.getElementById('main-content').focus(); return false"
+       th:text="#{screen.skip.main}">Skip to main content</a>
+
     <div th:replace="~{fragments/header :: header}">
         <a href="fragments/header.html">Header</a> fragment will go here
     </div>
@@ -42,7 +46,7 @@
          th:with="contentPosition=${#strings.toLowerCase(#strings.replace(#strings.defaultString(#cas.theme('cas.main-content.position'), 'topcenter'), '-', ''))}"
          th:classappend="${(#strings.startsWith(contentPosition, 'middle') ? 'cas-content-middle ' : (#strings.startsWith(contentPosition, 'bottom') ? 'cas-content-bottom ' : ''))
                           + (#strings.endsWith(contentPosition, 'left') ? 'cas-content-left' : (#strings.endsWith(contentPosition, 'right') ? 'cas-content-right' : ''))}">
-        <main id="main-content" th:attr="class=*{mainContentClass ?: 'container-lg' + ' py-4'},role=main"
+        <main id="main-content" tabindex="-1" th:attr="class=*{mainContentClass ?: 'container-lg' + ' py-4'},role=main"
               th:classappend="'cas-ui'">
             <div layout:fragment="content" id="content">
                 CAS content will go here

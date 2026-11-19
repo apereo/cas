@@ -496,7 +496,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             : redisKeyGenerator.forPrefixAndId(queryCriteria.getType(), "*");
 
         if (queryCriteria.isDecode()) {
-            try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(redisTicketsKey, queryCriteria.getCount())) {
+            try (val scanResults = fetchKeysForTickets(redisTicketsKey)) {
                 return scanResults
                     .parallel()
                     .map(key -> {
@@ -522,6 +522,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         || (ticket instanceof final AuthenticationAwareTicket aat
                         && Strings.CI.equals(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
                     .filter(ticket -> !ticket.isExpired())
+                    .limit(queryCriteria.getCount() > 0 ? queryCriteria.getCount() : Long.MAX_VALUE)
                     .collect(Collectors.toList());
             }
         }
@@ -542,9 +543,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return fetchKeysForTickets(redisKey);
     }
 
+    /**
+     * The keys that match the pattern, asked for from Redis in large batches: the whole keyspace is walked to find
+     * them, and with the default batch of ten keys, a keyspace of many sessions and tickets takes a round trip for
+     * every ten keys, whatever few of them match.
+     *
+     * @param keyPattern the key pattern
+     * @return the keys, to be closed once read
+     */
     private Stream<String> fetchKeysForTickets(final String keyPattern) {
         LOGGER.debug("Loading keys for pattern [{}]", keyPattern);
-        return casRedisTemplates.getTicketsRedisTemplate().scan(keyPattern);
+        return casRedisTemplates.getTicketsRedisTemplate().scanAll(keyPattern).distinct();
     }
 
     protected RedisTicketDocument buildTicketAsDocument(final Ticket ticket) {

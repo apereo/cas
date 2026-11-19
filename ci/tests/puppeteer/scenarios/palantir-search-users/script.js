@@ -1,0 +1,381 @@
+/* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
+   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette */
+const assert = require("assert");
+const cas = require("../../cas.js");
+
+const DASHBOARD_URL = "https://localhost:8443/cas/palantir/dashboard";
+
+/**
+ * Record every uncaught error and console error for the whole run.
+ *
+ * Tabs, widgets and wizard sections are all built on demand now, and a builder that throws is
+ * caught and logged rather than surfaced, so the console is the only place a broken panel shows up.
+ *
+ * @param page the puppeteer page
+ * @returns {string[]} the live array failures are appended to
+ */
+function trackFailures(page) {
+    const failures = [];
+    page.on("pageerror", (error) => failures.push(`pageerror: ${error.message}`));
+    page.on("console", (message) => {
+        if (message.type() === "error") {
+            const url = message.location()?.url;
+            failures.push(url ? `console: ${message.text()} [${url}]` : `console: ${message.text()}`);
+        }
+    });
+    page.on("response", (response) => {
+        if (response.status() >= 400) {
+            failures.push(`response: ${response.status()} ${response.request().method()} ${response.url()}`);
+        }
+    });
+    return failures;
+}
+
+/**
+ * Wait until the dashboard has finished starting up.
+ *
+ * The rail is only populated once the feature catalog resolves, so a visible dashboard means
+ * initializePalantir got past the point where it decides which tabs exist.
+ *
+ * @param page the puppeteer page
+ */
+async function waitForDashboard(page) {
+    await page.waitForFunction(() => {
+        const dashboard = document.querySelector("#dashboard");
+        return dashboard !== null
+            && !dashboard.classList.contains("d-none")
+            && typeof CAS_FEATURES !== "undefined"
+            && typeof openRegisteredServiceWizardDialog === "function";
+    }, {timeout: 60000});
+    const features = await page.evaluate(() => CAS_FEATURES.length);
+    await cas.logg(`Dashboard ready with ${features} CAS features`);
+    assert(features > 0);
+}
+
+/**
+ * Wait for the command palette to open with its search field focused, then type a query.
+ *
+ * @param page the puppeteer page
+ * @param query what to type
+ */
+async function searchCommandPalette(page, query) {
+    try {
+        await page.waitForFunction(() => $("#palantirCommandPalette").dialog("instance") !== undefined
+            && $("#palantirCommandPalette").dialog("isOpen")
+            && document.activeElement?.id === "palantirCommandPaletteInput", {timeout: 10000});
+    } catch (error) {
+        const state = await page.evaluate(() => ({
+            open: $("#palantirCommandPalette").dialog("instance") !== undefined && $("#palantirCommandPalette").dialog("isOpen"),
+            focused: `${document.activeElement?.tagName}#${document.activeElement?.id}.${document.activeElement?.className}`,
+            dialogs: $(".ui-dialog:visible .ui-dialog-title").toArray().map((title) => title.textContent),
+            alert: $(".swal2-title:visible").text()
+        }));
+        await cas.logr(`The command palette did not open: ${JSON.stringify(state)}`);
+        throw error;
+    }
+    await page.type("#palantirCommandPaletteInput", query);
+    await page.waitForFunction((term) => $("#palantirCommandPaletteInput").paletteautocomplete("instance").term === term
+        && $(".palantir-command-palette__item.ui-state-active").length === 1, {timeout: 10000}, query);
+    return page.evaluate(() => $(".palantir-command-palette__item.ui-state-active .palantir-command-palette__label").text());
+}
+
+/**
+ * Open the command palette with Ctrl+K and with "/", and check that Enter goes to the chosen match: a page by its
+ * name, then the second of two applications with the same name, whose row alone is marked.
+ *
+ * The page opened first is never Users: that tab puts the focus in its username field once it has loaded,
+ * which can happen after the "/" below is pressed, and "/" typed in a field is a slash, not the shortcut.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyCommandPalette(page) {
+    await cas.separator();
+    const target = await page.evaluate(() => {
+        const item = $("nav.sidebar-navigation ul li[data-tab-index]").toArray()
+            .find((li) => Number(li.dataset.tabIndex) > 0 && Number(li.dataset.tabIndex) < 100
+                && li.id !== "usersTabButton" && $(li).is(":visible"));
+        return {index: Number(item.dataset.tabIndex), label: $(item).find(".sidebar-navigation-label").text().trim()};
+    });
+    await page.keyboard.down("Control");
+    await page.keyboard.press("k");
+    await page.keyboard.up("Control");
+    const first = await searchCommandPalette(page, target.label);
+    await cas.logg(`Command palette offers ${first} first for "${target.label}"`);
+    assert(first === target.label);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction((index) => currentActiveTab === index
+        && !$("#palantirCommandPalette").dialog("isOpen"), {timeout: 10000}, target.index);
+    await cas.logg(`Command palette opened ${target.label}`);
+
+    const application = "Portal";
+    await cas.sleep(1000);
+    await page.evaluate(() => document.activeElement?.blur());
+    await page.keyboard.press("/");
+    const match = await searchCommandPalette(page, application);
+    assert(match === application);
+    await page.keyboard.press("ArrowDown");
+    const chosen = await page.evaluate(() => $(".palantir-command-palette__item.ui-state-active .palantir-command-palette__detail")
+        .text().match(/#(\d+)/)?.[1]);
+    await cas.log(`Command palette chose the application ${application} with id ${chosen}`);
+    assert(chosen === "1" || chosen === "2");
+    await page.keyboard.press("Enter");
+    await page.waitForFunction((id) => {
+        const selected = $("#applicationsTable").DataTable().rows(".selected").data().toArray();
+        return currentActiveTab === 0 && selected.length === 1 && String(selected[0].serviceId) === id;
+    }, {timeout: 10000}, chosen);
+    await cas.logg(`Command palette marked the application ${application} with id ${chosen}, and only that one`);
+
+    const nested = await page.evaluate(() => PalantirCommandPalette.sectionEntries(PalantirCommandPalette.navigationItems())
+        .map((entry) => entry.label)
+        .find((label) => label.split(" › ").length > 2));
+    if (nested) {
+        await cas.sleep(1000);
+        await page.evaluate(() => document.activeElement?.blur());
+        await page.keyboard.press("/");
+        const match = await searchCommandPalette(page, nested.split(" › ").at(-1));
+        await cas.log(`Command palette offers ${match} for a section inside a section`);
+        await page.evaluate((label) => PalantirCommandPalette.search(label).find((entry) => entry.label === label).run(), nested);
+        await page.evaluate(() => $("#palantirCommandPalette").dialog("close"));
+        const tab = nested.split(" › ").at(-1);
+        await page.waitForFunction((name) => $(".jqueryui-tabs > ul > li.ui-tabs-active:visible").toArray()
+            .some((element) => $(element).find("a").first().text().replace(/\s+/g, " ").trim() === name), {timeout: 15000}, tab);
+        await cas.logg(`Command palette opened the nested section ${nested}`);
+    }
+    await cas.screenshot(page);
+}
+
+/**
+ * Look a user up from the command palette and check that every source the deployment enables draws
+ * a card that settles without an error.
+ *
+ * An endpoint that answers 404 has nothing for the user, which the page shows as an empty card, so
+ * those responses are not counted as browser errors.
+ *
+ * @param page the puppeteer page
+ * @param failures the failures recorded so far
+ */
+async function verifyUserLookup(page, failures) {
+    await cas.separator();
+    if (!await page.evaluate(() => $("#usersTabButton").is(":visible"))) {
+        await cas.logy("No per-user endpoint is enabled; skipping the user lookup");
+        return;
+    }
+    const before = failures.length;
+    await cas.click(page, "#palantirCommandPaletteButton");
+    const first = await searchCommandPalette(page, "casuser");
+    assert(first === "Look up user casuser", `First match was ${first}`);
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => currentActiveTab === 16
+        && $("#userLookupResults .palantir-user-card").length > 0
+        && $("#userLookupResults .palantir-user-card.is-loading").length === 0, {timeout: 60000});
+    const lookup = await page.evaluate(() => ({
+        sources: PalantirUserLookup.availableSources().length,
+        cards: $("#userLookupResults .palantir-user-card").toArray()
+            .map((card) => `${card.dataset.userSource}:${card.className.match(/is-(loaded|empty|error)/)?.[1]}`),
+        summary: $("#userLookupSummary").text()
+    }));
+    await cas.log(`User lookup: ${lookup.cards.join(", ")}`);
+    await cas.logg(lookup.summary);
+    assert(lookup.cards.length === lookup.sources);
+    assert(lookup.cards.every((card) => !card.endsWith(":error")), `Failed sources: ${lookup.cards.join(", ")}`);
+    const unexpected = failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
+        && !/status of 404/.test(failure));
+    failures.push(...unexpected);
+    await cas.screenshot(page);
+}
+
+/**
+ * Ask the Interrupts section of the Authentication page which interrupt a user would see, and check that it
+ * reports the resolved user and the answer of every interrupt source.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyInterruptInquiry(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.interrupts()))) {
+        await cas.logy("Interrupts endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $("#authenticationTabButton").trigger("click"));
+    await page.waitForFunction(() => $.fn.dataTable.isDataTable("#interruptInquirersTable"), {timeout: 30000});
+    await page.evaluate(() => {
+        const tabs = $("#authentication-tabs");
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#interrupts").parent()));
+    });
+    await page.waitForSelector("#interruptUsername", {visible: true});
+    await page.type("#interruptUsername", "casuser");
+    await page.keyboard.press("Enter");
+    await page.waitForFunction(() => $("#interruptInquiryResult").is(":visible")
+        || $("#interruptInquiryMessage").is(":visible"), {timeout: 30000});
+    const inquiry = await page.evaluate(() => ({
+        principal: $("#interruptInquiryPrincipal").text(),
+        status: $("#interruptInquiryStatus").text(),
+        sources: $("#interruptInquirersTable").DataTable().rows().count(),
+        message: $("#interruptInquiryMessage").is(":visible") ? $("#interruptInquiryMessage").text().trim() : ""
+    }));
+    await cas.logg(`Interrupt inquiry for ${inquiry.principal}: ${inquiry.status}, ${inquiry.sources} source(s)`);
+    assert(inquiry.message === "", inquiry.message);
+    assert(inquiry.principal === "casuser");
+    await cas.screenshot(page);
+}
+
+/**
+ * List the accounts casuser may impersonate on the Impersonation section of the Authentication page, which shows one
+ * card per account, then fetch the attributes of one of them, which opens attribute resolution on the person
+ * directory page with that account filled in and its attributes listed.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyImpersonationAccounts(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.impersonation()))) {
+        await cas.logy("Impersonation endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $("#authenticationTabButton").trigger("click"));
+    await page.waitForFunction(() => $("#authentication-tabs").data("ui-tabs") !== undefined, {timeout: 30000});
+    await page.evaluate(() => {
+        const tabs = $("#authentication-tabs");
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#surrogacy").parent()));
+    });
+    await page.waitForSelector("#surrogateUsername", {visible: true});
+    await page.type("#surrogateUsername", "casuser");
+    await page.click("#fetchSurrogateAccountsButton");
+    await page.waitForFunction(() => $("#surrogateAccountsCards [data-surrogate-account]").length === 2, {timeout: 30000});
+    const accounts = await page.evaluate(() => $("#surrogateAccountsCards [data-surrogate-account]").toArray()
+        .map((card) => card.dataset.surrogateAccount).sort());
+    await cas.logg(`${await page.evaluate(() => $("#surrogateAccountsSummary").text())} ${accounts.join(", ")}`);
+    assert(accounts.join(",") === "banderson,jsmith");
+    await cas.screenshot(page);
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.personDirectory()))) {
+        await cas.logy("Person directory endpoint is not available; skipping the attributes of an account");
+        return;
+    }
+    await page.click("#surrogateAccountsCards [data-surrogate-attributes='banderson']");
+    await page.waitForFunction(() => currentActiveTab === Tabs.PERSON_DIRECTORY.index
+        && $("#personUsername").val() === "banderson"
+        && $("#personDirectoryTable").DataTable().rows().count() > 0, {timeout: 30000});
+    const attributes = await page.evaluate(() => $("#personDirectoryTable").DataTable().rows().count());
+    await cas.logg(`Attribute resolution for banderson lists ${attributes} attribute(s)`);
+    await cas.screenshot(page);
+}
+
+/**
+ * Look up the throttled attempts of one username on the Throttles page, check the hint and the button that shows all
+ * attempts again, then show them all. The page needs the throttles endpoint, which the throttle module provides.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyThrottlesUsername(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.throttles()))) {
+        await cas.logy("Throttles endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.THROTTLES.index}]`).trigger("click"));
+    await page.waitForFunction(() => $("#throttlesUsername").is(":visible"), {timeout: 30000});
+    await page.evaluate(() => $("#throttlesUsername").val("PalantirNobody"));
+    const [response] = await Promise.all([
+        page.waitForResponse((answer) => answer.url().includes("/throttles?username=PalantirNobody"), {timeout: 30000}),
+        page.click("#filterThrottlesButton")
+    ]);
+    await page.waitForFunction(() => $("#throttlesUsernameHint").text().startsWith("0 throttled attempts for PalantirNobody")
+        && $("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
+    await cas.logg(`Throttled attempts of one username: ${response.status()}, ${await page.evaluate(() => $("#throttlesUsernameHint").text())}`);
+    assert(response.status() === 200);
+    await page.click("#showAllThrottlesButton");
+    await page.waitForFunction(() => $("#throttlesUsername").val() === "" && !$("#showAllThrottlesButton").is(":visible"), {timeout: 10000});
+}
+
+/**
+ * Show the consent decisions of one username on the Consent page, then every decision again. The username has no
+ * decisions, so the page asks for that username alone and says it found none.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyConsentUsername(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.attributeConsent()))) {
+        await cas.logy("Attribute consent endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.CONSENT.index}]`).trigger("click"));
+    await page.waitForFunction(() => $("#consentUsername").is(":visible"), {timeout: 30000});
+    await page.evaluate(() => $("#consentUsername").val("PalantirNobody"));
+    const [response] = await Promise.all([
+        page.waitForResponse((answer) => answer.url().endsWith("/attributeConsent/PalantirNobody"), {timeout: 30000}),
+        page.click("#filterConsentButton")
+    ]);
+    await page.waitForFunction(() => $("#consentUsernameHint").text().startsWith("0 consent decisions for PalantirNobody")
+        && $("#showAllConsentButton").is(":visible"), {timeout: 10000});
+    await cas.logg(`Consent decisions of one username: ${response.status()}, ${await page.evaluate(() => $("#consentUsernameHint").text())}`);
+    assert(response.status() === 200);
+    await page.click("#showAllConsentButton");
+    await page.waitForFunction(() => $("#consentUsername").val() === "" && !$("#showAllConsentButton").is(":visible"), {timeout: 10000});
+}
+
+/**
+ * Open the Applications page and wait until its table is built. A new visit lands on Home, and the applications
+ * steps of this scenario need the table, the cards and the applications loaded.
+ *
+ * @param page the puppeteer page
+ */
+async function openApplications(page) {
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).trigger("click"));
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index
+        && $.fn.dataTable.isDataTable("#applicationsTable"), {timeout: 30000});
+}
+
+/**
+ * Wait for the two applications of the scenario to be loaded, since the command palette finds an application among
+ * them. Both are named Portal, so going to one must mark it by its id rather than by its name.
+ *
+ * @param page the puppeteer page
+ */
+async function waitForApplications(page) {
+    await page.waitForFunction(() => [...registeredServicesById.values()].filter((service) => service.name === "Portal").length === 2,
+        {timeout: 30000});
+    await cas.logg("Both applications named Portal are loaded");
+}
+
+(async () => {
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.gotoLogout(page);
+
+    const failures = trackFailures(page);
+
+    await cas.goto(page, DASHBOARD_URL);
+    if (await cas.isVisible(page, "#username")) {
+        const login = await cas.loginWith(page, "casadmin", "password");
+        await cas.sleep(1000);
+        await cas.log(`${login.status()} ${login.statusText()}`);
+        assert(login.status() === 200);
+    }
+    await cas.screenshot(page);
+
+    await page.evaluate(() => window.localStorage.clear());
+    const response = await cas.goto(page, DASHBOARD_URL);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
+
+    await waitForDashboard(page);
+    await openApplications(page);
+    await waitForApplications(page);
+    await verifyCommandPalette(page);
+    await verifyUserLookup(page, failures);
+    await verifyInterruptInquiry(page);
+    await verifyImpersonationAccounts(page);
+    await verifyThrottlesUsername(page);
+    await verifyConsentUsername(page);
+
+    if (failures.length > 0) {
+        await cas.logr(`Browser reported ${failures.length} error(s):`);
+        for (const failure of failures) {
+            await cas.logr(`  ${failure}`);
+        }
+    }
+    assert(failures.length === 0, `Browser errors: ${failures.join(" | ")}`);
+    await cas.logg("Palantir search and user lookups verified with no browser errors");
+    await cas.closeBrowser(browser);
+})();

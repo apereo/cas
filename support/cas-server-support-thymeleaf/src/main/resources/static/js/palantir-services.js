@@ -114,11 +114,12 @@ function getEditServiceDialogInstance() {
                     }
                 }
                 const key = PalantirServiceEditGuard.key("editor", serviceId);
+                const carried = PalantirServiceEditor.pendingText !== null;
                 PalantirServiceEditGuard.offerDraft(key, text).then(draft => {
                     if (draft !== null) {
                         serviceEditorInstance.setValue(draft, -1);
                     }
-                    PalantirServiceEditGuard.watch("editor", key, draft !== null);
+                    PalantirServiceEditGuard.watch("editor", key, draft !== null || carried);
                     PalantirServiceEditor.opened(element.attr("newService") === "true", draft !== null);
                 });
             },
@@ -216,13 +217,7 @@ async function importServiceFile(file) {
         });
         await request;
         PalantirProgress.update("Refreshing the applications...");
-        await Promise.race([
-            new Promise(resolve => fetchServices(() => {
-                updateNavigationSidebar();
-                resolve();
-            })),
-            new Promise(resolve => setTimeout(resolve, 20000))
-        ]);
+        await PalantirApplicationSelection.reload();
         PalantirProgress.close();
         const id = request.getResponseHeader("id");
         Swal.fire({
@@ -319,7 +314,7 @@ async function initializeServiceButtons() {
         if (CasActuatorEndpoints.registeredServices()) {
             $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
                 if (wizard) {
-                    openRegisteredServiceWizardDialog(response);
+                    PalantirServiceEditor.openApplicationInWizard(response);
                     return;
                 }
                 const value = JSON.stringify(response, null, 4);
@@ -433,7 +428,7 @@ async function initializeServiceButtons() {
                     delete clone.clientSecretExpiration;
                     clone.clientSecret = generateRandom(48);
                 }
-                openRegisteredServiceWizardDialog(clone, {duplicate: true, original: response.name ?? String(serviceId)});
+                PalantirServiceEditor.openApplicationInWizard(clone, {duplicate: true, original: response.name ?? String(serviceId)});
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
@@ -468,6 +463,11 @@ async function initializeServiceButtons() {
                 icon: contextMenuIcon("mdi-heart-pulse"),
                 visible: context => PalantirSamlMetadataHealth.applies(registeredServicesById.get(String(context.rowData.serviceId)))
             },
+            releasePreview: {
+                name: "Preview Released Attributes",
+                icon: contextMenuIcon("mdi-account-eye"),
+                visible: () => PalantirAttributeRelease.available()
+            },
             history: {
                 name: "View Change History",
                 icon: contextMenuIcon("mdi-history"),
@@ -500,13 +500,21 @@ async function initializeServiceButtons() {
             viewEntityChangelog(serviceId);
         } else if (key === "samlMetadataHealth") {
             PalantirSamlMetadataHealth.open(serviceId);
+        } else if (key === "releasePreview") {
+            PalantirAttributeRelease.openForApplication(serviceId);
         }
     };
 }
 
+/**
+ * Read the registered services into the applications table.
+ *
+ * @param callback called with the table once it holds the services
+ * @returns {Promise<boolean>} resolved once the services are in the table, with true, or could not be read, with false
+ */
 async function fetchServices(callback) {
     if (CasActuatorEndpoints.registeredServices()) {
-        $.get(CasActuatorEndpoints.registeredServices(), response => {
+        return new Promise(resolve => $.get(CasActuatorEndpoints.registeredServices(), response => {
             let serviceCountByType = [0, 0, 0, 0, 0];
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
@@ -585,7 +593,7 @@ async function fetchServices(callback) {
             console.error("Error fetching data:", error);
             $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
             displayBanner(xhr);
-        });
+        }).done(() => resolve(true)).fail(() => resolve(false)));
     } else {
         $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", true);
     }
@@ -767,6 +775,38 @@ const APPLICATION_TYPES = [
 let applicationTypeFilter = storedApplicationTypeFilter();
 
 let applicationCardsSelection = "";
+
+/**
+ * Mark the one row of a registered service in the applications table and open the page it is on. When the search or
+ * the type filter hides it, both are cleared first.
+ *
+ * @param serviceId the numeric id of the registered service
+ * @returns {boolean} true when the service is in the table
+ */
+function revealApplicationRow(serviceId) {
+    const table = $("#applicationsTable").DataTable();
+    const index = table.rows((_, data) => String(data.serviceId) === serviceId).indexes()[0];
+    if (index === undefined) {
+        return false;
+    }
+    const position = () => table.rows({search: "applied", order: "applied"}).indexes().toArray().indexOf(index);
+    if (position() < 0) {
+        table.search("");
+        $("#applications-tab .dt-search input").val("");
+        if (applicationTypeFilter === "all") {
+            table.draw();
+        } else {
+            setApplicationTypeFilter("all");
+        }
+    }
+    const length = table.page.len();
+    table.page(length > 0 ? Math.floor(Math.max(position(), 0) / length) : 0).draw(false);
+    table.rows(".selected").nodes().to$().removeClass("selected");
+    const node = table.row(index).node();
+    node?.classList.add("selected");
+    node?.scrollIntoView({block: "center"});
+    return true;
+}
 
 /**
  * The ids of the selected rows on the table's current page, as one string.

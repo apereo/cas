@@ -147,6 +147,14 @@ class CasActuatorEndpoints {
         return this.endpoints().ssosessions || this.endpoints().ssoSessions;
     }
 
+    static releaseAttributes() {
+        return this.endpoints().releaseattributes || this.endpoints().releaseAttributes;
+    }
+
+    static oauthTokens() {
+        return this.endpoints().oauthtokens || this.endpoints().oauthTokens;
+    }
+
     static registeredServices() {
         return this.endpoints().registeredservices || this.endpoints().registeredServices;
     }

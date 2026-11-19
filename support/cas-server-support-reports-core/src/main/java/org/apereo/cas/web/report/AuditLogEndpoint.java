@@ -139,7 +139,7 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
     public AuditSummary getAuditSummary(
         @RequestParam(required = false, defaultValue = "PT24H") final String interval,
         @RequestParam(required = false, defaultValue = DEFAULT_SUMMARY_ACTIONS) final List<String> actions,
-        @RequestParam(required = false, defaultValue = "") final String groupBy) {
+        @RequestParam(required = false, defaultValue = StringUtils.EMPTY) final String groupBy) {
         val period = Beans.newDuration(interval);
         val length = period.isNegative() || period.isZero() || period.compareTo(MAX_SUMMARY_PERIOD) > 0 ? MAX_SUMMARY_PERIOD : period;
         val now = auditActionDateProvider.getObject().get();

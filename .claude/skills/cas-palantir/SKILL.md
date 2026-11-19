@@ -1,6 +1,6 @@
 ---
 name: cas-palantir
-description: "Change Palantir, the CAS admin dashboard (templates under palantir/, palantir-*.js and palantir-meridian.css): layout and themes, navigation, tabs and the command palette, dialogs and widgets (jQuery UI, MDC, DataTables, SweetAlert), the applications table and cards, the service wizard and JSON editor, edit guards, feature toggles, endpoint access levels and SAML2 metadata tools. Use when touching Palantir UI code or its scenarios."
+description: "Change Palantir, the CAS admin dashboard (templates under palantir/, palantir-*.js and palantir-meridian.css): layout and themes, navigation, tabs, the command palette and keyboard shortcuts, dialogs and widgets (jQuery UI, MDC, DataTables, SweetAlert), escaping server values into markup, the applications table and cards, the Home overview, system metrics, zen mode and the chart magnifier, the service wizard, JSON editor, drafts and edit guards, feature toggles, endpoint access levels and SAML2 metadata tools. Use when touching Palantir UI code, its overview controller or its scenarios."
 ---
 
 # Palantir admin dashboard
@@ -98,9 +98,61 @@ General view, theme and template rules are in the `cas-ui` skill.
   `passwordless-account-*` classes: search form, banner message, result card, detail/capability grids, chips, and a
   DataTable per list; reveal its inner tab with `showElements($("#<id>").parent())` only when its endpoint exists.
   The Users page links to it with `openInterruptInquiry(username)` (`data-user-navigate`, not `data-user-action`).
+- To send the user from one page to a lookup on another (an impersonation card's *Fetch Attributes* opening attribute
+  resolution, `resolveSurrogateAccountAttributes` in `palantir-authn.js`): click the rail item, `await
+  initializeDashboardTab(Tabs.X)`, select the inner jQuery UI tab, set the field and float its MDC label (the
+  `--label-floating`, `--float-above` and `--notched` classes), then click the page's own lookup button.
+
+## Escaping server values
+
 - Markup that CAS sends to be shown as HTML (interrupt messages) goes through `sanitizePalantirHtml` (palantir-utils.js:
   inert parse, allow-listed tags without attributes, http/https/mailto links only); use `palantirHtmlText` for plain-text
   cells. Never put such markup in the page with `.html()` directly.
+- Values from the server go into markup through `palantirCode(value)` (escaped `<code>`) or
+  `escapePalantirMarkup`; never `<code>${value}</code>`. User agents, principals and attribute values are
+  attacker-controlled.
+- Text that comes from the server or from users, such as log messages, logger names and metric tag values, is put in
+  the page with jQuery `text` or text nodes, or `escapePalantirMarkup` inside markup, never as raw HTML.
+
+- Uploading SAML2 metadata to a metadata manager goes through `PalantirSamlMetadataUpload` (in
+  `palantir-protocols.js`), shared by Protocols › SAML2 › Metadata Management and the wizard's Upload Metadata button
+  beside the metadata location. The dialog markup lives in `protocolstab.html`, which only administrators get, so the
+  wizard checks `PalantirSamlMetadataUpload.available()` before offering it. A managed application's metadata
+  location is its manager's source id, such as `mongodb://`. Manage Metadata, beside it under the same condition,
+  closes the wizard through its usual `beforeClose` question and calls `showSamlMetadataManager(sourceId)` on
+  `dialogclose`; Keep Editing triggers `palantir:closecancelled` on the dialog, which drops that pending handler.
+  `palantir-services-saml` covers both with a MongoDb metadata manager.
+  A manager's `store` must throw when the document was not stored; the metadata endpoint then answers 500 with the
+  reason and the wizard leaves the metadata location alone.
+- Old drafts are redacted at start-up (`removeExpiredDrafts`, marked `secretsLeftOut`), not only when written.
+
+### Switches and checkboxes
+
+- Every switch and checkbox in Palantir has one look: a pill track, `--palantir-toggle-off` grey and `--palantir-toggle-on`
+  green, with a white knob (`palantir-meridian.css`, end of file). MDC switches keep their markup and classes, since
+  scripts read and set `mdc-switch--selected` and `aria-checked`; only their drawing is overridden. Visible checkboxes
+  are drawn the same way with `appearance: none`; checkboxes marked `palantir-sr-only` and `role="switch"` inputs with
+  their own track are left alone. A new switch reuses the switchbutton fragment, an MDC switch or a checkbox, never a
+  look of its own.
+
+### Feature catalog
+
+- A feature with modules is managed in one dialog (`CasFeatureToggles.manage`): a switch for the feature itself and one
+  per module, each starting at what it will do after a restart. CAS reads a module's flag on its own
+  (`CasFeatureEnabledCondition`), so turning the feature itself off writes its own flag and every module's. Only the
+  flags that change are written. A module card and a feature without modules keep Turn On and Turn Off (`change`).
+
+### Users page
+
+- Each card is a source in `PalantirUserLookup.sources()`; a source with `counted: false` (the attribute release
+  preview) shows no count and is left out of the summary. Token ids are bearer tokens: the tokens card keeps them in
+  `PalantirUserLookup.tokens` and puts only an index and a masked id in the page.
+- `oauthTokens` takes an optional `username`; never list every token in the browser to filter them there. The tokens
+  card is `lazy`: it is read when opened, since the endpoint scans the ticket registry.
+- `PalantirAttributeRelease` previews `releaseAttributes` (a POST, so it needs the endpoint writable) on the Users page
+  and from an application's menu.
+
+### Home
 
 ## Applications table and cards
 
@@ -118,6 +170,33 @@ General view, theme and template rules are in the `cas-ui` skill.
   moved to `<body>` on initialization, since an ancestor would otherwise turn fixed into scrolling with the page, so
   style it outside `#dashboard` (its own selectors), hide it when the Applications page is not shown, and lift it
   above the CAS footer (`--palantir-selection-bar-offset`). Palantir scrolls an inner container, not the window.
+- Disabling applications (`PalantirApplicationAccess`, palantir-services-actions.js): only
+  `DefaultRegisteredServiceAccessStrategy` has `enabled` (serialized only when false, `NON_DEFAULT`); any other strategy
+  is combined in an AND `ChainingRegisteredServiceAccessStrategy` with a bare disabled default strategy, which enabling
+  removes (a chain left with one strategy is unwrapped). Disabled = default off, AND chain holding one, OR chain of only
+  those. Selection (`PalantirApplicationSelection`) is a set of ids shown through checkboxes in the type column and the
+  cards; their `change` events are taken in the capture phase, because the table's Material data-table component
+  treats any checkbox change inside it as its own row checkbox and throws. Bulk delete goes one DELETE per id with
+  `PalantirProgress`; Delete All is `DELETE registeredServices` (it removes stored definitions, so the Palantir
+  scenarios never run it).
+- `fetchServices` keeps the applications table's search when it reloads (it used to clear it, so disabling or deleting
+  while searching lost the search, and scenario steps that searched right after a reload raced the reset). Scenario
+  steps that rely on a row being drawn must search for it: the Palantir scenarios can have more applications than one page shows.
+- Import posts the chosen file to `registeredServices/import` with the content type of its extension (JSON, YAML, or
+  octet-stream for a zip, which the endpoint reads as a zip of JSON files); the file input's `change` handler is bound
+  once in `initializeServiceButtons` (namespaced) and the input is cleared, so never bind it inside the button's click.
+- Service history (`palantir-services-history.js`) is a jQuery UI dialog over the `entityHistory` endpoint: versions in
+  `#entityHistoryTable` (latest first, row data carries `serviceId`/`revisionId`/`index`), a side-by-side diff drawn with
+  the jsdiff webjar (global `Diff`) over JSON with sorted keys, the right side always the selected version; restore goes
+  through `PalantirServiceHistory.restore` from the footer and the row context menu.
+- `fetchServices` returns a promise that resolves with `true` once the table holds the applications, or `false` when
+  they could not be read; never race it against a timer. After a change, call `PalantirApplicationSelection.reload()`,
+  which tells the operator when the change was saved but the list could not be read again. Navigation to an application
+  goes through `navigateToApplication(id)`, which marks its one row by id via `revealApplicationRow`; never search the
+  table for an id or a name to find a row.
+
+## Home, metrics and settings
+
 - Home (tab 17, `PalantirHome`, palantir-home.js; `PalantirOverview` + `PalantirOverviewController` in the palantir
   module, `GET /palantir/dashboard/overview`): one summary, sections computed in parallel on virtual threads with a
   3 s budget, cached per section (stale value or `pending` when slow), only for exposed endpoints and for
@@ -131,40 +210,37 @@ General view, theme and template rules are in the `cas-ui` skill.
   `sessionStorage["PalantirSelectedTab"]`. Widgets can be reordered only (no hide/add/reset, Misagh's call).
   Widget buttons use `data-home-for`, never `data-home-widget` (that marks
   the widget); jQuery UI hijacks `draggable` in element props, so set it with `attr`.
-- Values from the server go into markup through `palantirCode(value)` (escaped `<code>`) or
-  `escapePalantirMarkup`; never `<code>${value}</code>`. User agents, principals and attribute values are
-  attacker-controlled.
-- Zen mode (`PalantirZenMode`, palantir-settings.js; `html[data-palantir-zen]`, set before paint from
-  `localStorage["PalantirZenMode"]`): the navigation is moved off screen, never `display: none`, because the page
-  shortcuts and the search find destinations with `nav.sidebar-navigation ul li[...]:visible`.
+- Home draws from `/palantir/dashboard/overview`, asking only for the sections its visible cards read. The Refresh
+  button and each card's refresh action pass `fresh=true`, which skips the server's cached sections. A refresh keeps the
+  cards that are already on the page and replaces only their bodies, and updates the health chart in place. The grid is
+  rebuilt only when the cards shown change.
+- The overview's health section lists health indicators and composite health contributors, one entry per bean, with the
+  worst status of a composite's checks in the health endpoint's configured status order (CAS puts `WARN` first).
+- The page and its cards read sections independently; `PalantirHome.apply` numbers each request and keeps a section only
+  from an answer newer than the one it last came from, so a slow page refresh never overwrites a card refreshed since.
+- The wizard check for settings it leaves out (`PalantirServiceEditor.paths`) follows lists item by item. Moving between
+  the wizard and the JSON editor goes through `PalantirServiceEditGuard.handOver`: the source dialog's draft is
+  removed only after the other dialog holds the edits, unsaved edits stay guarded there, and the saved definition the
+  edit started from (for the conflict check) moves with them. `PalantirServiceEditor.carry` starts from what the wizard
+  generated and adds back only settings no wizard field writes (`wizardSettings`); it goes inside parts whose type the
+  wizard only chooses, and takes maps the wizard edits as a whole (`wizardMaps`) from the wizard, so removals and
+  ordered maps stay.
+- The wizard turns numeric-looking text into numbers only for fields that are not text settings (`isWizardTextSetting`):
+  ids, names, secrets, keys and URLs stay strings. A numeric setting gets a `number` field.
+- Swal titles with names or other outside text use `titleText`, never `title`, which is markup.
+- Wizard contacts are built per contact tab (`wizardContactSlots`); contacts after the third are kept as they are.
 - System metrics (`PalantirMetrics`, palantir-metrics.js): the metrics endpoint answers current values only; trends
   are sampled by the page at the refresh interval (rates per minute from successive COUNTs), breakdowns ask
   `metrics/{name}?tag=k:v` once per tag value (first 15). Pins live in `localStorage["PalantirPinnedMetrics"]`. Class
   names: the toolbar is `__toolbar`; `__bar` is a breakdown row.
-- Disabling applications (`PalantirApplicationAccess`, palantir-services-actions.js): only
-  `DefaultRegisteredServiceAccessStrategy` has `enabled` (serialized only when false, `NON_DEFAULT`); any other strategy
-  is combined in an AND `ChainingRegisteredServiceAccessStrategy` with a bare disabled default strategy, which enabling
-  removes (a chain left with one strategy is unwrapped). Disabled = default off, AND chain holding one, OR chain of only
-  those. Selection (`PalantirApplicationSelection`) is a set of ids shown through checkboxes in the type column and the
-  cards; their `change` events are taken in the capture phase, because the table's Material data-table component
-  treats any checkbox change inside it as its own row checkbox and throws. Bulk delete goes one DELETE per id with
-  `PalantirProgress`; Delete All is `DELETE registeredServices` (it removes stored definitions, so palantir-login never
-  runs it).
-- `fetchServices` keeps the applications table's search when it reloads (it used to clear it, so disabling or deleting
-  while searching lost the search, and scenario steps that searched right after a reload raced the reset). Scenario
-  steps that rely on a row being drawn must search for it: palantir-login has more applications than one page shows.
-- Import posts the chosen file to `registeredServices/import` with the content type of its extension (JSON, YAML, or
-  octet-stream for a zip, which the endpoint reads as a zip of JSON files); the file input's `change` handler is bound
-  once in `initializeServiceButtons` (namespaced) and the input is cleared, so never bind it inside the button's click.
-- Service history (`palantir-services-history.js`) is a jQuery UI dialog over the `entityHistory` endpoint: versions in
-  `#entityHistoryTable` (latest first, row data carries `serviceId`/`revisionId`/`index`), a side-by-side diff drawn with
-  the jsdiff webjar (global `Diff`) over JSON with sorted keys, the right side always the selected version; restore goes
-  through `PalantirServiceHistory.restore` from the footer and the row context menu.
+- Zen mode (`PalantirZenMode`, palantir-settings.js; `html[data-palantir-zen]`, set before paint from
+  `localStorage["PalantirZenMode"]`): the navigation is moved off screen, never `display: none`, because the page
+  shortcuts and the search find destinations with `nav.sidebar-navigation ul li[...]:visible`.
 
 ## Service wizard and JSON editor
 
 - The service wizard's fields are built in the background once the applications are loaded and the browser is idle
-  (`prepareRegisteredServiceWizardWhenIdle`; palantir-login checks the `palantir-wizard-built` mark follows
+  (`prepareRegisteredServiceWizardWhenIdle`; palantir-services-editor checks the `palantir-wizard-built` mark follows
   `palantir-dashboard-shown`), or on first open if sooner (`palantirWizardField` builders), after the Applications panel ran
   `initializePalantirWidgets`; `buildRegisteredServiceWizardFields` initializes the form's widgets afterwards, so dropdowns
   get the change callback that runs their `data-change-handler` functions. A bare `.selectmenu()` has no such callback.
@@ -184,7 +260,7 @@ General view, theme and template rules are in the `cas-ui` skill.
   `showElements` or jQuery `show()`. Don't judge it by `:visible`: the wizard hides every section but the current one.
 - Palantir's service wizard (`palantir-services-sections.js`) maps section groups to `STEPS` (Basics, Protocol,
   Access & attributes, Policies) plus a review. Every available section keeps a tile with `data-section-key` even when its
-  step is not shown (the `palantir-login` scenario clicks them by key), and `activate(key)` leaves the review. The type is
+  step is not shown (the `palantir-services-editor` scenario clicks them by key), and `activate(key)` leaves the review. The type is
   chosen in `chooseRegisteredServiceType()` (SweetAlert with cards), not a select. Every Policies section is an
   `advanced-option`: `advancedSectionsOf(step)` keeps that step clickable while advanced options are hidden, and
   `showStep` turns them on through `#hideAdvancedOptionsButton`. Footer buttons are in DOM order (Cancel, Validate, Copy,
@@ -230,6 +306,15 @@ General view, theme and template rules are in the `cas-ui` skill.
   `PalantirServiceDraft:<wizard|editor>:<id|new:<class>>` as `{text, savedAt}` (drafts older than 30 days or without a
   readable `savedAt` are dropped on read and swept by `initialize()`), and a successful save must call `saved(mode)` before closing.
   Scripts and scenarios that cancel a dialog after changing fields must answer "Discard your changes?" (deny button).
+
+### Drafts, comparisons and navigation
+- Drafts of application definitions live in `localStorage` for up to thirty days, so they never hold secrets:
+  `PalantirServiceEditGuard.writeDraft` replaces the values of secret settings (client secrets, passwords, keys,
+  `jwks`) with a marker, also in text that is not valid JSON yet (`redactText`), and resuming a draft puts them back
+  from the definition the dialog opens with. A new setting
+  that carries a secret under a name the guard does not recognize needs adding to `SECRET_NAMES`.
+- Unsaved-change detection and the history diff share `PalantirServiceHistory.sortKeys`: keys are sorted except in
+  maps typed as ordered (`LinkedHashMap`), whose order is part of the definition.
 
 ## Features, endpoint access and SAML2 tools
 

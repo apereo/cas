@@ -445,7 +445,7 @@ class PalantirServiceEditor {
                     PalantirServiceEditor.startFrom(text);
                 }
             })
-            .catch(error => Swal.fire({icon: "error", title: `${file.name} could not be read`, text: String(error?.message ?? error)}));
+            .catch(error => Swal.fire({icon: "error", titleText: `${file.name} could not be read`, text: String(error?.message ?? error)}));
     }
 
     /**
@@ -718,14 +718,68 @@ class PalantirServiceEditor {
             return;
         }
         const isNew = PalantirServiceEditor.isNew;
-        const original = isNew ? null : PalantirServiceEditGuard.originals.get(PalantirServiceEditGuard.key("editor", definition.id)) ?? null;
-        PalantirServiceEditGuard.saved("editor");
+        const editorKey = PalantirServiceEditGuard.key("editor", isNew ? null : definition.id);
+        const original = isNew ? null : PalantirServiceEditGuard.originals.get(editorKey) ?? null;
+        const unsaved = PalantirServiceEditGuard.isDirty("editor");
+        const editorState = PalantirServiceEditGuard.handOver("editor");
         getEditServiceDialogInstance().close();
-        await openRegisteredServiceWizardDialog(definition, isNew ? {asNew: true} : {});
-        const dropped = await PalantirServiceEditor.droppedByWizard(definition);
-        if (original !== null) {
-            PalantirServiceEditGuard.originals.set(PalantirServiceEditGuard.key("wizard", definition.id), original);
+        await openRegisteredServiceWizardDialog(definition, {...(isNew ? {asNew: true} : {}), unsaved: unsaved});
+        if (editorState) {
+            PalantirServiceEditGuard.removeDraft(editorState.key);
         }
+        const wizardState = PalantirServiceEditGuard.state.wizard;
+        if (original !== null && wizardState && !wizardState.fromDraft) {
+            PalantirServiceEditGuard.originals.set(wizardState.key, original);
+        }
+        const dropped = await PalantirServiceEditor.droppedByWizard(definition);
+        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Back to the JSON editor", handed => {
+            PalantirServiceEditor.reopen(PalantirServiceEditor.carry(definition, handed.text, handed.modeled, handed.maps, handed.offered), isNew);
+            const kept = handed.original ?? original;
+            if (!isNew && kept !== null) {
+                PalantirServiceEditGuard.originals.set(editorKey, kept);
+            }
+        });
+    }
+
+    /**
+     * Open an application straight in the wizard, as from the applications table. The wizard does not have a field
+     * for every setting, so once it has filled itself in, any setting it left out is listed, with a way to continue
+     * in the JSON editor instead.
+     *
+     * @param definition the application as read from the server, or a copy of it to save as a new one
+     * @param options the wizard's options, such as duplicate for a copy
+     */
+    static async openApplicationInWizard(definition, options = {}) {
+        const isNew = options.duplicate === true || options.asNew === true;
+        await openRegisteredServiceWizardDialog(definition, options);
+        const dropped = await PalantirServiceEditor.droppedByWizard(definition);
+        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Continue in the JSON editor", handed => {
+            PalantirServiceEditor.reopen(PalantirServiceEditor.carry(definition, handed.text, handed.modeled, handed.maps, handed.offered), isNew);
+            if (!isNew) {
+                const editorKey = PalantirServiceEditGuard.key("editor", definition.id);
+                if (handed.original === null) {
+                    PalantirServiceEditGuard.remember(editorKey, definition);
+                } else {
+                    PalantirServiceEditGuard.originals.set(editorKey, handed.original);
+                }
+            }
+        });
+    }
+
+    /**
+     * List the settings the wizard left out, and offer to close the wizard and edit the JSON instead.
+     *
+     * What the wizard holds, a resumed draft included, goes to the JSON editor with the saved definition the edit
+     * started from, so saving it still notices a change someone else made since; the wizard's draft is removed only
+     * once the JSON editor has it, and the JSON editor then asks before closing without saving it.
+     *
+     * @param dropped the dotted paths of the settings the wizard left out
+     * @param confirmText the text of the button that goes to the JSON editor
+     * @param openJsonEditor opens the JSON editor once the wizard is closed, given the definition the wizard generated
+     * as text, the settings the wizard has fields for, and the saved definition the edit started from, if known
+     * @returns {Promise<void>} resolved once the operator chose
+     */
+    static async offerJsonEditorWhenDropped(dropped, confirmText, openJsonEditor) {
         if (dropped.length === 0) {
             return;
         }
@@ -734,21 +788,151 @@ class PalantirServiceEditor {
             icon: "warning",
             title: "The wizard does not cover every setting",
             html: `
-                <p class="palantir-json-editor__note">These settings from the JSON editor have no place in the wizard, and saving from the wizard leaves them out:</p>
+                <p class="palantir-json-editor__note">These settings have no place in the wizard, and saving from the wizard leaves them out:</p>
                 <ul class="palantir-json-editor__dropped">${shown.map(path => `<li>${palantirCode(path)}</li>`).join("")}</ul>
                 ${dropped.length > shown.length ? `<p class="palantir-json-editor__note">And ${dropped.length - shown.length} more.</p>` : ""}`,
             showDenyButton: true,
-            confirmButtonText: "Back to the JSON editor",
+            confirmButtonText: confirmText,
             denyButtonText: "Continue in the wizard"
         });
         if (result.isConfirmed) {
-            PalantirServiceEditGuard.saved("wizard");
+            const handed = {
+                text: PalantirServiceEditGuard.value("wizard"),
+                modeled: PalantirServiceEditor.wizardSettings(),
+                maps: PalantirServiceEditor.wizardMaps(),
+                offered: PalantirServiceEditor.wizardChoices(),
+                original: null
+            };
+            const state = PalantirServiceEditGuard.handOver("wizard");
+            if (state) {
+                handed.original = PalantirServiceEditGuard.originals.get(state.key) ?? null;
+            }
             editServiceWizardDialog?.close();
-            PalantirServiceEditor.reopen(text, isNew);
-            if (original !== null) {
-                PalantirServiceEditGuard.originals.set(PalantirServiceEditGuard.key("editor", definition.id), original);
+            openJsonEditor(handed);
+            if (state) {
+                PalantirServiceEditGuard.removeDraft(state.key);
             }
         }
+    }
+
+    /**
+     * The settings the wizard has fields for, for the type of application it holds, as the dotted paths its fields
+     * write to, such as <code>accessStrategy.enabled</code>.
+     *
+     * @returns {string[]} the paths
+     */
+    static wizardSettings() {
+        const className = $("#editServiceWizardForm").data("service-class-name");
+        return [...new Set($("#editServiceWizardForm [data-param-name]").toArray()
+            .filter(element => {
+                const scoped = $(element).closest("[class*='class-']");
+                return scoped.length === 0 || scoped.hasClass(`class-${className}`) || scoped.hasClass("always-show");
+            })
+            .map(PalantirServiceEditor.wizardPath)
+            .filter(Boolean))];
+    }
+
+    /**
+     * The dotted path a wizard field writes to. A switch names its path among its other settings rather than on its
+     * own, and the wizard reads it from there once it opens, so the path is taken the way the wizard itself reads it.
+     *
+     * @param element the field
+     * @returns {string} the path, or an empty text when the field writes nowhere
+     */
+    static wizardPath(element) {
+        return String($(element).data("param-name") ?? "");
+    }
+
+    /**
+     * The types the wizard offers for each part it chooses from a list, such as the kinds of access strategy, by the
+     * dotted path of that part.
+     *
+     * @returns {Object<string, string[]>} the values of the choices, by path
+     */
+    static wizardChoices() {
+        return $("#editServiceWizardForm select[data-param-name]").toArray()
+            .reduce((choices, element) => {
+                const path = PalantirServiceEditor.wizardPath(element);
+                if (path.length > 0) {
+                    choices[path] = [...(choices[path] ?? []), ...Array.from(element.options, option => option.value)];
+                }
+                return choices;
+            }, {});
+    }
+
+    /**
+     * The settings the wizard edits as a whole map, such as properties or required attributes: every entry of such a
+     * map comes from the wizard, so an entry removed there stays removed.
+     *
+     * @returns {string[]} the dotted paths of the maps
+     */
+    static wizardMaps() {
+        return [...new Set($("#editServiceWizardForm [id$='MapContainer'] [data-param-name]").toArray()
+            .map(PalantirServiceEditor.wizardPath)
+            .filter(Boolean))];
+    }
+
+    /**
+     * The definition to continue with in the JSON editor: what the wizard generated, in its order, with what it removed
+     * left out, plus the settings of the definition it was opened with that the wizard has no field for. A value the
+     * wizard has a field for is taken from the wizard alone, and so is a map the wizard edits as a whole and a part
+     * whose type the wizard changed, such as another kind of access strategy. A part whose type the wizard only
+     * chooses, such as the access strategy, keeps the settings inside it the wizard has no field for. A part the wizard
+     * leaves out altogether stays as it was, unless its type is one the wizard offers, in which case leaving it out
+     * was a choice made in the wizard.
+     *
+     * @param definition the definition the wizard was opened with
+     * @param wizardText the definition the wizard generated
+     * @param modeled the dotted paths the wizard's fields write to
+     * @param maps the dotted paths of the maps the wizard edits as a whole
+     * @param offered the types the wizard offers for each part it chooses from a list, by dotted path
+     * @returns {string} the definition as JSON
+     */
+    static carry(definition, wizardText, modeled = [], maps = [], offered = {}) {
+        let generated;
+        try {
+            generated = JSON.parse(wizardText);
+        } catch (error) {
+            return JSON.stringify(definition, null, 4);
+        }
+        const plain = value => value !== null && typeof value === "object" && !Array.isArray(value);
+        const owned = path => modeled.includes(path);
+        const within = path => modeled.some(name => name.startsWith(`${path}.`));
+        const whole = path => maps.includes(path);
+        const merge = (over, base, path) => {
+            if (!plain(base) || !plain(over) || (base["@class"] ?? null) !== (over["@class"] ?? null)) {
+                return over;
+            }
+            const merged = {...over};
+            Object.entries(over).forEach(([key, value]) => {
+                const nested = path === "" ? key : `${path}.${key}`;
+                if (plain(value) && plain(base[key]) && !whole(nested)) {
+                    merged[key] = merge(value, base[key], nested);
+                }
+            });
+            Object.entries(base).forEach(([key, value]) => {
+                const nested = path === "" ? key : `${path}.${key}`;
+                if (key in over || whole(nested)) {
+                    return;
+                }
+                if (owned(nested)) {
+                    if (plain(value) && !(offered[nested] ?? []).includes(value["@class"])) {
+                        merged[key] = value;
+                    }
+                    return;
+                }
+                if (!within(nested)) {
+                    merged[key] = value;
+                } else if (plain(value)) {
+                    const kept = merge(value["@class"] === undefined ? {} : {"@class": value["@class"]}, value, nested);
+                    if (Object.keys(kept).some(name => name !== "@class")) {
+                        merged[key] = kept;
+                    }
+                }
+            });
+            return merged;
+        };
+        return JSON.stringify(merge(generated, definition, ""), null, 4);
     }
 
     /**
@@ -775,14 +959,27 @@ class PalantirServiceEditor {
     }
 
     /**
-     * The dotted paths of every setting in a definition, without type markers.
+     * The dotted paths of every setting in a definition, without type markers or empty values. Lists are followed
+     * item by item, such as <code>contacts[3].email</code>, so a list the wizard shortens shows what it left out; the
+     * type CAS writes before the items of a collection is skipped.
      *
      * @param value a definition or part of one
      * @param prefix the path so far
      * @returns {string[]} the paths
      */
     static paths(value, prefix = "") {
-        if (!value || typeof value !== "object" || Array.isArray(value)) {
+        if (value === null || value === undefined || value === "") {
+            return [];
+        }
+        if (Array.isArray(value)) {
+            const typed = value.length === 2 && typeof value[0] === "string" && /^(java|org)\./.test(value[0]) && Array.isArray(value[1]);
+            const items = typed ? value[1] : value;
+            if (items.length === 0) {
+                return prefix === "" ? [] : [prefix];
+            }
+            return items.flatMap((item, index) => PalantirServiceEditor.paths(item, `${prefix}[${index}]`));
+        }
+        if (typeof value !== "object") {
             return prefix === "" ? [] : [prefix];
         }
         const entries = Object.entries(value).filter(([key]) => key !== "@class");

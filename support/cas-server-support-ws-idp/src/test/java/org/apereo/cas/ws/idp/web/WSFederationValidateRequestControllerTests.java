@@ -63,6 +63,22 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
+    void verifyLoginWithoutReply() throws Throwable {
+        val registeredService = getWsFederationRegisteredService();
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WCTX, UUID.randomUUID().toString(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        val rootCause = assertInstanceOf(UnauthorizedAuthenticationException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+        assertTrue(rootCause.getMessage().contains(WSFederationConstants.WREPLY.toUpperCase(Locale.ENGLISH)));
+        assertNull(result.getResponse().getRedirectedUrl());
+    }
+
+    @Test
     void verifyLogoutWithReply() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
         val result = performFederationRequest(

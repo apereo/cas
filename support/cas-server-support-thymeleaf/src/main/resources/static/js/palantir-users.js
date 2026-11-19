@@ -4,7 +4,8 @@
  * Each source reads one endpoint the dashboard already calls from its own tab and draws one card.
  * Sources load in parallel and independently, so a slow or failing endpoint leaves the other cards
  * usable. A source whose endpoint is not enabled has no card, and the page itself is hidden when no
- * source is available.
+ * source is available. A lazy source, such as the OAuth tokens that take a scan of the ticket registry, is read only
+ * once its card is opened.
  */
 class PalantirUserLookup {
 
@@ -14,8 +15,18 @@ class PalantirUserLookup {
 
     static firstCardOpened = 0;
 
+    static tokens = new Map();
+
+    static resolvedAttributes = null;
+
+    static counts = new Map();
+
+    static settled = 0;
+
     static ACTION_ENDPOINTS = {
         "end-session": "ssoSessions",
+        "revoke-token": "oauthTokens",
+        "revoke-all-tokens": "oauthTokens",
         "remove-mfa-device": "mfaDevices",
         "remove-trusted-device": "multifactorTrustedDevices",
         "remove-throttle": "throttles",
@@ -54,6 +65,39 @@ class PalantirUserLookup {
                     code: session.ticket_granting_ticket,
                     action: {name: "end-session", label: "End", data: {ticket: session.ticket_granting_ticket}}
                 })))
+            },
+            {
+                key: "oauthTokens",
+                title: "OAuth & OIDC Tokens",
+                icon: "mdi-key-chain",
+                lazy: true,
+                available: () => Boolean(CasActuatorEndpoints.oauthTokens()),
+                load: async username => {
+                    const tokens = await PalantirUserLookup.get(CasActuatorEndpoints.oauthTokens(), {username});
+                    return (Array.isArray(tokens) ? tokens : []).filter(token => typeof token?.id === "string");
+                },
+                render: tokens => {
+                    PalantirUserLookup.tokens = new Map(tokens.map((token, index) => [String(index), token.id]));
+                    if (tokens.length === 0) {
+                        return "<p class=\"palantir-user-card__note\">No access or refresh tokens are issued to this user.</p>";
+                    }
+                    const rows = tokens.map((token, index) => ({
+                        primary: `${PalantirUserLookup.tokenKind(token)} for ${token.clientId ?? "an unknown client"}`,
+                        secondary: [
+                            [].concat(token.scopes ?? []).join(" "),
+                            token.grantType ? String(token.grantType).toLowerCase().replaceAll("_", " ") : null,
+                            token.creationTime ? `issued ${PalantirUserLookup.when(token.creationTime)}` : null,
+                            token.lastTimeUsed ? `last used ${PalantirUserLookup.when(token.lastTimeUsed)}` : null
+                        ],
+                        code: PalantirUserLookup.maskToken(token.id),
+                        action: {name: "revoke-token", label: "Revoke", data: {token: String(index)}}
+                    }));
+                    return `${PalantirUserLookup.list(rows)}
+                        <button type="button" class="palantir-button palantir-user-card__bulk" data-user-action="revoke-all-tokens"
+                                data-palantir-write="oauthTokens">
+                            <i class="mdi mdi-key-remove" aria-hidden="true"></i>Revoke all ${tokens.length === 1 ? "" : `${tokens.length} `}tokens
+                        </button>`;
+                }
             },
             {
                 key: "mfaDevices",
@@ -111,9 +155,12 @@ class PalantirUserLookup {
                 title: "Attributes",
                 icon: "mdi-card-account-details",
                 available: () => Boolean(CasActuatorEndpoints.personDirectory()),
-                load: async username => {
+                load: async (username, sequence) => {
                     const response = await PalantirUserLookup.get(
                         `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`);
+                    if (sequence === PalantirUserLookup.lookupSequence) {
+                        PalantirUserLookup.resolvedAttributes = {username: username, attributes: response?.attributes ?? null};
+                    }
                     return Object.entries(response?.attributes ?? {});
                 },
                 render: () => `
@@ -143,6 +190,34 @@ class PalantirUserLookup {
                         });
                     }
                     table.draw();
+                }
+            },
+            {
+                key: "release",
+                title: "Attribute Release",
+                icon: "mdi-account-eye",
+                counted: false,
+                available: () => PalantirAttributeRelease.available(),
+                load: async () => [true],
+                render: () => `
+                    <div class="palantir-user-release">
+                        <p class="palantir-user-card__note">
+                            <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+                            Pick an application to see the attributes it would receive for this user.
+                        </p>
+                        <div class="palantir-control-row">
+                            <label for="userReleaseApplication">Application:</label>
+                            <select id="userReleaseApplication" class="palantir" aria-label="Application"></select>
+                            <button type="button" class="palantir-button" data-user-release>
+                                <i class="mdi mdi-account-eye" aria-hidden="true"></i>Preview
+                            </button>
+                        </div>
+                        <div id="userReleaseResult" aria-live="polite"></div>
+                    </div>`,
+                afterRender: async () => {
+                    const applications = await PalantirAttributeRelease.applications();
+                    $("#userReleaseApplication").empty().append(applications.map(service =>
+                        $("<option>", {value: service.id, text: `${service.name ?? service.serviceId} (#${service.id})`})));
                 }
             },
             {
@@ -271,6 +346,27 @@ class PalantirUserLookup {
                 }
             }
         ];
+    }
+
+    /**
+     * What kind of token a ticket is, from its id: CAS starts refresh token ids with RT- and access token ids with AT-.
+     *
+     * @param token the token
+     * @returns {string} the kind of token
+     */
+    static tokenKind(token) {
+        return /^RT-/.test(token.id) || /RefreshToken/.test(token["@class"] ?? "") ? "Refresh token" : "Access token";
+    }
+
+    /**
+     * Show a token by its first and last characters only: the id of an access or refresh token is the token itself,
+     * which anyone holding it can use.
+     *
+     * @param id the token id
+     * @returns {string} the masked id
+     */
+    static maskToken(id) {
+        return id.length > 16 ? `${id.slice(0, 10)}…${id.slice(-4)}` : `${id.slice(0, 4)}…`;
     }
 
     /**
@@ -433,7 +529,7 @@ class PalantirUserLookup {
      * card, so that reloading it after an action can bring it back.
      *
      * @param source the source the card belongs to
-     * @param state one of loading, empty, error or loaded
+     * @param state one of deferred (read when opened), loading, empty, error or loaded
      * @param content the records, or the error message for the failed state
      * @param username the user being looked up
      * @param open whether the card is expanded
@@ -443,8 +539,9 @@ class PalantirUserLookup {
         if (state === "empty") {
             return `<details class="palantir-user-card is-empty" data-user-source="${source.key}" hidden></details>`;
         }
-        const count = state === "loaded" ? content.length : null;
+        const count = state === "loaded" && source.counted !== false ? content.length : null;
         const body = {
+            deferred: "<p class=\"palantir-user-card__note\">Read when opened.</p>",
             loading: "<p class=\"palantir-user-card__note\">Loading…</p>",
             error: `<p class="palantir-user-card__note is-error"><i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>${escapePalantirMarkup(content)}</p>`,
             loaded: state === "loaded" ? source.render(content, username) : ""
@@ -474,7 +571,7 @@ class PalantirUserLookup {
             return;
         }
         for (const card of $("#userLookupResults .palantir-user-card").toArray()) {
-            if (card.classList.contains("is-empty")) {
+            if (card.classList.contains("is-empty") || card.classList.contains("is-deferred")) {
                 continue;
             }
             if (!card.classList.contains("is-loading")) {
@@ -507,14 +604,49 @@ class PalantirUserLookup {
                 PalantirUserLookup.openFirstCard(sequence);
             }
         };
+        const counted = count => {
+            if (sequence === PalantirUserLookup.lookupSequence) {
+                PalantirUserLookup.counts.set(source.key, count);
+                PalantirUserLookup.summarize(username, sequence);
+            }
+        };
         try {
-            const records = await source.load(username);
-            replace(records.length === 0 ? "empty" : "loaded", records);
+            const records = await source.load(username, sequence);
+            replace(records.length === 0 && !source.lazy ? "empty" : "loaded", records);
+            counted(records.length);
             return {source, count: records.length};
         } catch (error) {
             replace("error", error.message);
+            counted(null);
             return {source, count: null};
         }
+    }
+
+    /**
+     * Summarize what the cards of a lookup found, once every card that loads by itself has answered, and again
+     * whenever a card loads later, such as a card read only when opened or one reloaded after an action. A card read
+     * only when opened is named as not read yet rather than counted as having found nothing.
+     *
+     * @param username the user being looked up
+     * @param sequence the lookup the cards belong to
+     */
+    static summarize(username, sequence) {
+        if (sequence !== PalantirUserLookup.lookupSequence || PalantirUserLookup.settled !== sequence) {
+            return;
+        }
+        const sources = PalantirUserLookup.availableSources();
+        const counts = PalantirUserLookup.counts;
+        const found = sources.filter(source => counts.get(source.key) > 0 && source.counted !== false);
+        const failed = sources.filter(source => counts.has(source.key) && counts.get(source.key) === null);
+        const unread = sources.filter(source => source.lazy && !counts.has(source.key));
+        const parts = found.map(source => `${source.title} ${counts.get(source.key)}`);
+        const nothing = unread.length > 0 ? `Nothing else is recorded for ${username} so far.` : `Nothing is recorded for ${username}.`;
+        const summary = [
+            parts.length > 0 ? `${username}: ${parts.join(" · ")}` : nothing,
+            failed.length > 0 ? `${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.` : "",
+            unread.length > 0 ? `${unread.map(source => source.title).join(", ")} ${unread.length === 1 ? "is" : "are"} read when opened.` : ""
+        ].filter(Boolean).join(" ");
+        $("#userLookupSummary").text(summary);
     }
 
     /**
@@ -530,23 +662,22 @@ class PalantirUserLookup {
             return;
         }
         PalantirUserLookup.currentUsername = trimmed;
+        PalantirUserLookup.tokens = new Map();
+        PalantirUserLookup.resolvedAttributes = null;
+        PalantirUserLookup.counts = new Map();
         const sequence = ++PalantirUserLookup.lookupSequence;
         const sources = PalantirUserLookup.availableSources();
         $("#userLookupResults table").filter((index, table) => $.fn.dataTable.isDataTable(table))
             .each((index, table) => $(table).DataTable().destroy());
-        $("#userLookupResults").html(sources.map(source => PalantirUserLookup.card(source, "loading", null, trimmed)).join(""));
+        $("#userLookupResults").html(sources.map(source => PalantirUserLookup.card(source, source.lazy ? "deferred" : "loading", null, trimmed)).join(""));
         $("#userLookupSummary").text(`Looking up ${trimmed}…`);
-        const results = await Promise.all(sources.map(source => PalantirUserLookup.loadSource(source, trimmed, sequence)));
+        await Promise.all(sources.filter(source => !source.lazy)
+            .map(source => PalantirUserLookup.loadSource(source, trimmed, sequence)));
         if (sequence !== PalantirUserLookup.lookupSequence) {
             return;
         }
-        const found = results.filter(result => result.count > 0);
-        const failed = results.filter(result => result.count === null);
-        const parts = found.map(result => `${result.source.title} ${result.count}`);
-        const summary = parts.length > 0 ? `${trimmed}: ${parts.join(" · ")}` : `Nothing is recorded for ${trimmed}.`;
-        $("#userLookupSummary").text(failed.length > 0
-            ? `${summary} ${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.`
-            : summary);
+        PalantirUserLookup.settled = sequence;
+        PalantirUserLookup.summarize(trimmed, sequence);
     }
 
     /**
@@ -576,6 +707,18 @@ class PalantirUserLookup {
             "revoke-consent": {
                 title: "Revoke this consent decision?",
                 url: () => `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(data.principal)}/${encodeURIComponent(data.id)}`
+            },
+            "revoke-token": {
+                title: "Revoke this token?",
+                text: "The application can no longer use it, and has to ask the user again.",
+                urls: () => [PalantirUserLookup.tokens.get(data.token)].filter(Boolean)
+                    .map(token => `${CasActuatorEndpoints.oauthTokens()}/${encodeURIComponent(token)}`)
+            },
+            "revoke-all-tokens": {
+                title: `Revoke every token of ${PalantirUserLookup.currentUsername}?`,
+                text: "Their applications can no longer use these tokens, and have to ask the user again.",
+                urls: () => [...PalantirUserLookup.tokens.values()]
+                    .map(token => `${CasActuatorEndpoints.oauthTokens()}/${encodeURIComponent(token)}`)
             }
         };
         const action = actions[data.userAction];
@@ -585,22 +728,25 @@ class PalantirUserLookup {
             return;
         }
         Swal.fire({
-            title: action.title,
-            text: "This cannot be undone.",
+            titleText: action.title,
+            text: action.text ?? "This cannot be undone.",
             icon: "question",
             showConfirmButton: true,
             showDenyButton: true
-        }).then(result => {
+        }).then(async result => {
             if (!result.isConfirmed) {
                 return;
             }
-            $.ajax({
-                url: action.url(),
-                type: "DELETE",
-                contentType: "application/x-www-form-urlencoded",
-                success: () => PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, PalantirUserLookup.lookupSequence),
-                error: xhr => displayBanner(xhr)
-            });
+            const urls = action.urls ? action.urls() : [action.url()];
+            for (const url of urls) {
+                try {
+                    await $.ajax({url: url, type: "DELETE", contentType: "application/x-www-form-urlencoded"});
+                } catch (xhr) {
+                    displayBanner(xhr);
+                    break;
+                }
+            }
+            await PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, PalantirUserLookup.lookupSequence);
         });
     }
 }
@@ -640,4 +786,177 @@ async function initializeUserLookupOperations() {
     $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
         openInterruptInquiry(event.currentTarget.dataset.username);
     });
+    document.getElementById("userLookupResults")?.addEventListener("toggle", event => {
+        const card = event.target;
+        if (!card.open || !card.classList?.contains("is-deferred")) {
+            return;
+        }
+        const source = PalantirUserLookup.availableSources().find(entry => entry.key === card.dataset.userSource);
+        if (source) {
+            card.classList.replace("is-deferred", "is-loading");
+            card.querySelector(".palantir-user-card__body").innerHTML = "<p class=\"palantir-user-card__note\">Loading…</p>";
+            PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, PalantirUserLookup.lookupSequence);
+        }
+    }, true);
+    $("#userLookupResults").on("click", "[data-user-release]", async event => {
+        const button = $(event.currentTarget).prop("disabled", true);
+        const service = String($("#userReleaseApplication").val() ?? "");
+        const result = $("#userReleaseResult").html("<p class=\"palantir-user-card__note\">Working out the attributes…</p>");
+        try {
+            const released = await PalantirAttributeRelease.preview(PalantirUserLookup.currentUsername, service);
+            const resolved = PalantirUserLookup.resolvedAttributes;
+            result.html(PalantirAttributeRelease.render(released.attributes,
+                resolved?.username === PalantirUserLookup.currentUsername ? resolved.attributes : null));
+        } catch (error) {
+            result.html(`<p class="palantir-user-card__note is-error"><i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>${escapePalantirMarkup(error.message)}</p>`);
+        } finally {
+            button.prop("disabled", false);
+        }
+    });
+}
+
+/**
+ * The attributes an application would receive for a user, worked out by CAS with the application's attribute release
+ * policy, as on the Users page and from an application's menu. The user's attributes are resolved without a password,
+ * so attributes that only come from authenticating, such as those a login adds, are not part of the preview.
+ */
+class PalantirAttributeRelease {
+    /**
+     * Whether the preview can run: the release endpoint is enabled and accepts the POST it answers to.
+     *
+     * @returns {boolean} true when the preview can run
+     */
+    static available() {
+        return Boolean(CasActuatorEndpoints.releaseAttributes())
+            && Boolean(CasActuatorEndpoints.registeredServices())
+            && CasActuatorEndpoints.writable("releaseAttributes");
+    }
+
+    /**
+     * The applications to choose from, by name.
+     *
+     * @returns {Promise<object[]>} the applications
+     */
+    static async applications() {
+        let services = typeof registeredServicesById !== "undefined" ? [...registeredServicesById.values()] : [];
+        if (services.length === 0) {
+            try {
+                const response = await $.get(CasActuatorEndpoints.registeredServices());
+                services = Array.isArray(response?.[1]) ? response[1] : [];
+            } catch (error) {
+                console.debug("The applications could not be read for the attribute release preview", error);
+            }
+        }
+        return services.slice().sort((left, right) => String(left.name ?? "").localeCompare(String(right.name ?? "")));
+    }
+
+    /**
+     * Ask CAS for the attributes an application would receive for a user.
+     *
+     * @param username the user
+     * @param service the numeric id of the application
+     * @returns {Promise<{username: string, attributes: object}>} the released attributes
+     */
+    static async preview(username, service) {
+        try {
+            return await $.ajax({
+                url: CasActuatorEndpoints.releaseAttributes(),
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({username: username, service: String(service)})
+            });
+        } catch (xhr) {
+            const message = xhr?.responseJSON?.message ?? xhr?.responseJSON?.error;
+            throw new Error(message
+                ? `CAS could not work out the attributes: ${message}`
+                : "CAS could not work out the attributes for this user and application; the application may be disabled.");
+        }
+    }
+
+    /**
+     * Draw the released attributes, and the user's attributes that are not released under the same name.
+     *
+     * @param attributes the released attributes, by name
+     * @param resolved the user's attributes, by name, when known
+     * @returns {string} the markup
+     */
+    static render(attributes, resolved) {
+        const released = Object.entries(attributes ?? {}).sort(([left], [right]) => left.localeCompare(right));
+        const rows = released.map(([name, values]) => `
+            <tr class="mdc-data-table__row">
+                <td class="mdc-data-table__cell">${palantirCode(name)}</td>
+                <td class="mdc-data-table__cell">${palantirCode([].concat(values ?? []).join(", "))}</td>
+            </tr>`).join("");
+        const withheld = resolved
+            ? Object.keys(resolved).filter(name => !Object.hasOwn(attributes ?? {}, name)).sort()
+            : [];
+        return `
+            ${released.length === 0
+        ? "<p class=\"palantir-user-card__note\">The application would receive no attributes for this user.</p>"
+        : `<table class="mdc-data-table__table table table-striped noborder palantir-user-release__table">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" scope="col">Released as</th>
+                        <th class="mdc-data-table__header-cell" scope="col">Value(s)</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">${rows}</tbody>
+                </table>`}
+            ${withheld.length > 0 ? `
+                <p class="palantir-user-card__secondary">Not released under the same name:
+                    ${withheld.map(name => `<span class="palantir-tag">${escapePalantirMarkup(name)}</span>`).join(" ")}</p>` : ""}
+            <p class="palantir-user-card__note">
+                <i class="mdi mdi-information-outline" aria-hidden="true"></i>
+                Worked out by the application's attribute release policy without signing the user in; what a protocol adds
+                on top, such as SAML2 attribute name formats or OpenID Connect claims mapped from scopes, is not shown.
+            </p>`;
+    }
+
+    /**
+     * Preview the attributes an application would receive, from its menu: ask for the user, then show the attributes.
+     *
+     * @param serviceId the numeric id of the application
+     * @returns {Promise<void>} resolved once the preview is closed
+     */
+    static async openForApplication(serviceId) {
+        const service = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(String(serviceId)) : null;
+        const name = service?.name ?? `application ${serviceId}`;
+        const asked = await Swal.fire({
+            titleText: `Preview what ${name} receives`,
+            input: "text",
+            inputLabel: "Username",
+            inputValue: PalantirUserLookup.currentUsername,
+            inputAttributes: {autocapitalize: "off", autocomplete: "off"},
+            showCancelButton: true,
+            confirmButtonText: "Preview",
+            showLoaderOnConfirm: true,
+            inputValidator: value => String(value ?? "").trim() === "" ? "Enter a username." : null,
+            preConfirm: async value => {
+                try {
+                    return {username: String(value).trim(), released: await PalantirAttributeRelease.preview(String(value).trim(), serviceId)};
+                } catch (error) {
+                    Swal.showValidationMessage(error.message);
+                    return false;
+                }
+            }
+        });
+        if (!asked.isConfirmed) {
+            return;
+        }
+        let resolved = null;
+        if (CasActuatorEndpoints.personDirectory()) {
+            try {
+                resolved = (await $.get(`${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(asked.value.username)}`))?.attributes ?? null;
+            } catch (error) {
+                resolved = null;
+            }
+        }
+        await Swal.fire({
+            titleText: `What ${name} receives for ${asked.value.username}`,
+            html: `<div class="palantir-user-release is-dialog">${PalantirAttributeRelease.render(asked.value.released.attributes, resolved)}</div>`,
+            width: Math.min(900, $(window).width() - 32),
+            confirmButtonText: "Close"
+        });
+    }
 }

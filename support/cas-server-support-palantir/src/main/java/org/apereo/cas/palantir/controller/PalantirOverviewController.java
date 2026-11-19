@@ -41,18 +41,20 @@ public class PalantirOverviewController extends AbstractController {
      * are not computed.
      *
      * @param sections the sections the page shows; all when not given
+     * @param fresh    whether to compute the sections again rather than use the values kept from earlier
      * @return the summary
      */
     @GetMapping(path = "/dashboard/overview", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Summarize the server for the Palantir home page")
     public ResponseEntity<Map<String, Object>> overview(
-        @RequestParam(name = "sections", required = false) @Nullable final Set<String> sections) {
+        @RequestParam(name = "sections", required = false) @Nullable final Set<String> sections,
+        @RequestParam(name = "fresh", required = false, defaultValue = "false") final boolean fresh) {
         val authentication = SecurityContextHolder.getContext().getAuthentication();
         val administrator = authentication != null && authentication.getAuthorities().stream()
             .anyMatch(authority -> "ROLE_ADMIN".equals(authority.getAuthority()));
         val exposed = endpointLinksResolver.resolveLinks(webEndpointProperties.getBasePath()).keySet();
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noStore())
-            .body(overview.summarize(exposed, administrator, sections == null ? Set.of() : sections));
+            .body(overview.summarize(exposed, administrator, sections == null ? Set.of() : sections, fresh));
     }
 }

@@ -1913,15 +1913,12 @@ function createRegisteredServiceContacts(index) {
                 return ["java.util.ArrayList", []];
             })
             .data("beforeGenerate", function ($input, serviceDefinition) {
-                if (serviceDefinition["contacts"] && $input.val().length > 0) {
-                    let currentContact = serviceDefinition["contacts"][1][index - 1];
-                    if (!currentContact) {
-                        currentContact = {
-                            "@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"
-                        };
-                        serviceDefinition["contacts"][1].push(currentContact);
-                    }
-                    currentContact[detail] = $input.val();
+                if ($input.val().length > 0) {
+                    const slots = wizardContactSlots.get(serviceDefinition) ?? new Map();
+                    wizardContactSlots.set(serviceDefinition, slots);
+                    const contact = slots.get(index) ?? {"@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"};
+                    contact[detail] = $input.val();
+                    slots.set(index, contact);
                 }
             })
         ;
@@ -2532,6 +2529,23 @@ function isWizardContainerSwitchedOff(element) {
     return display === "none" || (element.classList.contains("hide") && display === "");
 }
 
+/**
+ * Whether a field holds text even when what is typed looks like a number, such as an OAuth client id, a service id, a
+ * name or a secret: turning such a value into a number would change its type and, for long digits, the value itself.
+ * Fields that hold numbers are number fields.
+ *
+ * @param $input the field
+ * @param paramName the setting the field writes
+ * @returns {boolean} true when the value is kept as text
+ */
+function isWizardTextSetting($input, paramName) {
+    if (String($input.attr("type") ?? "").toLowerCase() === "number") {
+        return false;
+    }
+    const setting = String(paramName ?? "").split(".").pop();
+    return setting !== "id" && /(id|ids|name|secret|key|url|uri|location|realm|issuer|audience|pattern)$/i.test(setting);
+}
+
 let generateServiceDefinitionTimer = null;
 
 /**
@@ -2647,16 +2661,14 @@ function generateServiceDefinition() {
                     } else {
                         const renderer = $input.data("renderer");
 
-                        if (value === "true") {
+                        if (typeof renderer === "function") {
+                            value = renderer(String(value), $input, serviceDefinition);
+                        } else if (value === "true") {
                             value = true;
                         } else if (value === "false") {
                             value = false;
-                        } else if (isNumeric(value)) {
+                        } else if (isNumeric(value) && !isWizardTextSetting($input, paramName)) {
                             value = Number(value);
-                        }
-
-                        if (typeof renderer === "function") {
-                            value = renderer(value, $input, serviceDefinition);
                         }
 
                         if (paramName.includes(".")) {
@@ -2705,6 +2717,14 @@ function generateServiceDefinition() {
                         beforeGenerate($input, serviceDefinition);
                     }
                 });
+
+            const contacts = [...(wizardContactSlots.get(serviceDefinition) ?? new Map()).entries()]
+                .sort(([left], [right]) => left - right)
+                .map(([, contact]) => contact)
+                .concat(wizardExtraContacts.map(contact => structuredClone(contact)));
+            if (contacts.length > 0) {
+                serviceDefinition.contacts = ["java.util.ArrayList", contacts];
+            }
 
             Object.keys(serviceDefinition).forEach(key => {
                 if (
@@ -4044,8 +4064,20 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
 }
 
 /**
+ * The contacts the wizard's three contact tabs hold while a definition is generated, by tab, so the details of one
+ * tab make one contact whichever tabs before it are empty.
+ */
+const wizardContactSlots = new WeakMap();
+
+/**
+ * The contacts after the third of the definition the wizard was filled from. The wizard has fields for three contacts;
+ * the others are kept as they are and added after the wizard's when it generates the definition.
+ */
+let wizardExtraContacts = [];
+
+/**
  * Fill the contact fields of the wizard from the contacts of a definition, which are a Java list of contact objects:
- * the first three, one per contact tab.
+ * the first three, one per contact tab. The others are kept to be saved as they are.
  *
  * @param serviceDefinition the definition
  * @param floatLabel floats the label of a filled text field
@@ -4056,6 +4088,7 @@ function populateRegisteredServiceContacts(serviceDefinition, floatLabel) {
     if (Array.isArray(contacts)) {
         list = contacts.length === 2 && typeof contacts[0] === "string" && Array.isArray(contacts[1]) ? contacts[1] : contacts;
     }
+    wizardExtraContacts = list.slice(3).filter(contact => contact !== null && typeof contact === "object");
     list.slice(0, 3).forEach((contact, position) => {
         ["name", "email", "phone", "department", "type"].forEach(detail => {
             const $input = $(`#registeredServiceContact${capitalize(detail)}${position + 1}`);
@@ -4140,6 +4173,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
     await buildRegisteredServiceWizardFields();
 
     async function openWizardDialog(serviceClass, serviceData = null) {
+        wizardExtraContacts = [];
         const isNewService = serviceData === null || options.duplicate === true || options.asNew === true;
         const draftKey = PalantirServiceEditGuard.key("wizard", isNewService ? null : serviceData.id, serviceClass);
         if (!isNewService) {
@@ -4238,7 +4272,8 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
         }
 
         editServiceWizardDialog["open"]();
-        PalantirServiceEditGuard.watch("wizard", draftKey, draftDefinition !== null);
+        PalantirServiceEditGuard.watch("wizard", draftKey, draftDefinition !== null || options.unsaved === true);
+        PalantirServiceEditGuard.state.wizard.fromDraft = draftDefinition !== null;
 
         const savedAdvancedOptionsPref = localStorage.getItem("hideAdvancedOptionsPreference") ?? "true";
         const currentAdvancedOptionsValue = $("#hideAdvancedOptions").val();
@@ -4305,7 +4340,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
 
     if (existingService !== null) {
         const serviceClass = existingService["@class"];
-        openWizardDialog(serviceClass, existingService);
+        await openWizardDialog(serviceClass, existingService);
     } else if (Object.keys(PalantirDashboardConfiguration.supportedServiceTypes()).length === 1) {
         openWizardDialog(Object.keys(PalantirDashboardConfiguration.supportedServiceTypes())[0]);
     } else {
@@ -4367,8 +4402,8 @@ async function chooseRegisteredServiceType(serviceTypes) {
             <p class="palantir-type-picker-intro">The type decides which protocol settings the wizard shows.</p>
             <div class="palantir-type-picker" role="radiogroup" aria-label="Application type">${cards}</div>`,
         width: 920,
+        showConfirmButton: false,
         showCancelButton: true,
-        confirmButtonText: "Continue",
         customClass: {popup: "palantir-type-picker-popup"},
         didOpen: popup => {
             const choose = card => {
@@ -4380,8 +4415,7 @@ async function chooseRegisteredServiceType(serviceTypes) {
             };
             const cards = [...popup.querySelectorAll(".palantir-type-card")];
             cards.forEach((card, index) => {
-                card.addEventListener("click", () => choose(card));
-                card.addEventListener("dblclick", () => {
+                card.addEventListener("click", () => {
                     choose(card);
                     Swal.clickConfirm();
                 });

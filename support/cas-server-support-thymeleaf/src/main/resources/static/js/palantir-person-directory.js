@@ -185,7 +185,7 @@ async function initializePersonDirectoryOperations() {
                     if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
-                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                             type: "DELETE",
                             contentType: "application/json",
                             error: (xhr, status, error) => {
@@ -207,7 +207,7 @@ async function initializePersonDirectoryOperations() {
             const username = $("#personUsername").val();
             personDirectoryTable.clear();
             $.ajax({
-                url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
@@ -1247,7 +1247,7 @@ function toggleAttrDefEditorVisibility() {
 
     if (showEditor === "true" || showEditor === true) {
         showElements($editorContainer);
-        $controlsPanel.css({"max-width": "520px"});
+        $controlsPanel.removeClass("is-wide");
         const editor = ace.edit("attrDefEditor");
         if (editor) {
             editor.resize();
@@ -1255,7 +1255,7 @@ function toggleAttrDefEditorVisibility() {
         }
     } else {
         hideElements($editorContainer);
-        $controlsPanel.css({"max-width": "none"});
+        $controlsPanel.addClass("is-wide");
     }
 }
 
@@ -1381,8 +1381,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
 
     const controlsPanel = $("<div>", {
         id: "attrDefControlsPanel",
-        class: "mr-2",
-        css: {"min-width": "450px", "max-width": "520px"}
+        class: "mr-2"
     });
 
     const editorContainer = $("<div>", {
@@ -1726,7 +1725,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
             const showEditor = localStorage.getItem("showAttrDefEditorPreference");
             if (showEditor === "false") {
                 hideElements($("#attrDefEditorContainer"));
-                $("#attrDefControlsPanel").css({"max-width": "none"});
+                $("#attrDefControlsPanel").addClass("is-wide");
             }
 
             $("#newAttributeDefinitionDialog .jqueryui-selectmenu").selectmenu({

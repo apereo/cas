@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://mdq-sp\\.example\\.org/unsigned.*$",
+  "name" : "MdqUnsigned",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataLocation" : "http://localhost:5614/entities/{0}",
+  "requireSignedRoot" : false,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

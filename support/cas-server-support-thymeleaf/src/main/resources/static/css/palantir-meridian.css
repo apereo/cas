@@ -1330,6 +1330,33 @@ html[data-palantir-pointer-focus] :focus-visible:not(input, textarea, select, [c
     flex: 1;
 }
 
+.palantir-surrogate-accounts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.palantir-surrogate-accounts__summary {
+    margin: 0;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-surrogate-account__avatar {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
 .palantir-applications-hint {
     display: flex;
     align-items: center;
@@ -2529,8 +2556,12 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup .swal2-title {
     font-size: 14px;
 }
 
+/* Switches beside the buttons of a dialog, such as Show Configuration and Show Advanced Options when adding an
+   authentication handler, share one size. */
 .registered-service-wizard__options label,
-.registered-service-wizard__options .mdc-switch + label {
+.registered-service-wizard__options .mdc-switch + label,
+[id^="show"][id$="EditorSwitchButtonPanel"] label,
+.ui-dialog-buttonpane [id$="SwitchButtonPanel"] label {
     font-size: 14px;
 }
 
@@ -2692,10 +2723,6 @@ html.palantir-page[data-theme="dark"] :is(.mdc-menu-surface, .mdc-select__menu) 
 html.palantir-page[data-theme="dark"] .mdc-chip {
     background-color: var(--palantir-tint-2);
     color: var(--palantir-text);
-}
-
-html.palantir-page[data-theme="dark"] .mdc-switch:enabled .mdc-switch__track::before {
-    background: var(--palantir-switch-off);
 }
 
 html.palantir-page[data-theme="dark"] .mdc-data-table,
@@ -4922,6 +4949,151 @@ body.palantir-has-selection-bar #attribute-tab-0 {
     text-align: start;
 }
 
+/* Managing a feature: a switch for the feature itself and one per module, each saying what happens after a restart */
+.palantir-feature-manage {
+    display: grid;
+    gap: 10px;
+    text-align: start;
+}
+
+.palantir-feature-manage__modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+}
+
+.palantir-feature-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 10px;
+    background: var(--palantir-surface);
+    cursor: pointer;
+}
+
+.palantir-feature-switch.is-feature {
+    padding: 12px 14px;
+    background: var(--palantir-hover);
+}
+
+.palantir-feature-switch.is-changed.is-off {
+    border-color: var(--palantir-danger-line);
+    background: var(--palantir-danger-bg);
+}
+
+.palantir-feature-switch.is-changed:not(.is-off) {
+    border-color: var(--palantir-success-line);
+    background: var(--palantir-success-bg);
+}
+
+.palantir-feature-switch:has(input:disabled) {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.palantir-feature-switch input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.palantir-feature-switch__track {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--palantir-toggle-off);
+    transition: background-color .15s ease;
+}
+
+.palantir-feature-switch__track::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+    transition: left .15s ease;
+}
+
+.palantir-feature-switch input:checked + .palantir-feature-switch__track {
+    background: var(--palantir-toggle-on);
+}
+
+.palantir-feature-switch input:checked + .palantir-feature-switch__track::after {
+    left: 19px;
+}
+
+.palantir-feature-switch input:focus-visible + .palantir-feature-switch__track {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-feature-switch__text {
+    display: grid;
+    min-width: 0;
+}
+
+.palantir-feature-switch__text strong {
+    overflow-wrap: anywhere;
+    color: var(--palantir-text);
+    font-weight: 600;
+}
+
+.palantir-feature-switch__text small {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-feature-manage__summary {
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 8px;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-feature-manage__summary.has-changes {
+    border-color: var(--palantir-warn);
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-feature-manage__source {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.palantir-feature-manage__flags summary {
+    color: var(--palantir-brand);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.palantir-feature-manage__flags .palantir-feature-toggle__flags {
+    margin-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-feature-switch__track,
+    .palantir-feature-switch__track::after {
+        transition: none;
+    }
+}
+
 /* A dialog never grows taller than the window, on screens with little height: its content scrolls instead, while
    the title bar and buttons stay in view. */
 .ui-dialog.palantir-dialog {
@@ -5717,6 +5889,40 @@ html.palantir-page[data-theme="dark"] .palantir-magnifier__stage.is-diagram {
     text-align: right;
 }
 
+#dashboard .palantir-metrics__bar.is-unavailable {
+    cursor: default;
+}
+
+#dashboard .palantir-metrics__bar.is-unavailable:hover {
+    background: transparent;
+}
+
+.palantir-metrics__bar-unavailable {
+    color: var(--palantir-text-muted);
+    font-style: italic;
+}
+
+#dashboard .palantir-metrics__bar-retry {
+    justify-self: end;
+    padding: 2px 8px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--palantir-brand);
+    font: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-metrics__bar-retry:hover {
+    background: var(--palantir-hover);
+}
+
+#dashboard .palantir-metrics__bar-retry:disabled {
+    opacity: .6;
+    cursor: progress;
+}
+
 @media (max-width: 960px) {
     .palantir-metrics__panels {
         grid-template-columns: minmax(0, 1fr);
@@ -5853,7 +6059,8 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
         align-items: flex-start;
     }
 
-    .palantir-home__customize {
+    .palantir-home__customize,
+    .palantir-home__refresh {
         margin-top: -56px;
     }
 }
@@ -5861,6 +6068,31 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
 .palantir-home__customize {
     position: relative;
     margin-left: auto;
+}
+
+.palantir-home__refresh {
+    margin-left: auto;
+}
+
+.palantir-home__refresh + .palantir-home__customize {
+    margin-left: 0;
+}
+
+#dashboard .palantir-home__refresh.is-refreshing .mdi-refresh,
+#dashboard .palantir-home__action.is-refreshing .mdi-refresh {
+    display: inline-block;
+    animation: palantir-home-refresh 0.9s linear infinite;
+}
+
+/* A card being refreshed keeps its refresh button in view, so the turning icon shows without hovering. */
+#dashboard .palantir-home__action.is-refreshing {
+    opacity: 1;
+}
+
+@keyframes palantir-home-refresh {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .palantir-home__customize-menu {
@@ -6413,6 +6645,11 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
     .palantir-home__widget,
     #dashboard .palantir-home__action {
         transition: none;
+    }
+
+    #dashboard .palantir-home__refresh.is-refreshing .mdi-refresh,
+    #dashboard .palantir-home__action.is-refreshing .mdi-refresh {
+        animation: none;
     }
 }
 
@@ -7611,4 +7848,198 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
     color: var(--palantir-text-muted);
     font-size: 12px;
     text-align: center;
+}
+
+/* ==========================================================================
+   Application wizard: a field with an action beside it, such as uploading SAML2 metadata next to its location
+   ========================================================================== */
+#editServiceWizardDialog .palantir-wizard-field--with-action {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+#editServiceWizardDialog .palantir-wizard-field--with-action > label {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#dashboard .palantir-wizard-field__action,
+#editServiceWizardDialog .palantir-wizard-field__action {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    gap: 6px;
+    height: var(--cas-ui-field-height, 52px);
+    margin-bottom: 0.5rem;
+    border-radius: var(--cas-ui-radius, 8px);
+    white-space: nowrap;
+}
+
+#editServiceWizardDialog .palantir-wizard-field__action[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Users: the attribute release preview and the token card's bulk action
+   ========================================================================== */
+.palantir-user-release {
+    display: grid;
+    gap: 10px;
+}
+
+.palantir-user-release .palantir-control-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.palantir-user-release select {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.palantir-user-release__table {
+    width: 100%;
+}
+
+.palantir-user-release.is-dialog {
+    text-align: start;
+}
+
+.palantir-user-card__bulk {
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   Switches and checkboxes: every one in Palantir looks like the feature catalog's switches, a pill track that is grey
+   when off and green when on, with a white knob. MDC switches keep their markup, so the scripts that read and set
+   them are unchanged; only how they are drawn changes.
+   ========================================================================== */
+html.palantir-page {
+    --palantir-toggle-off: var(--palantir-text-muted);
+    --palantir-toggle-on: var(--palantir-success-fill);
+}
+
+html.palantir-page[data-theme="dark"] {
+    --palantir-toggle-off: var(--palantir-switch-off);
+}
+
+html.palantir-page .mdc-switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    min-width: 38px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__track {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--palantir-toggle-off);
+    transition: background-color .15s ease;
+}
+
+html.palantir-page .mdc-switch.mdc-switch--selected .mdc-switch__track {
+    background: var(--palantir-toggle-on);
+}
+
+html.palantir-page .mdc-switch .mdc-switch__track::before,
+html.palantir-page .mdc-switch .mdc-switch__track::after,
+html.palantir-page .mdc-switch .mdc-switch__handle::before,
+html.palantir-page .mdc-switch .mdc-switch__handle::after,
+html.palantir-page .mdc-switch :is(.mdc-switch__shadow, .mdc-switch__ripple, .mdc-switch__icons, .mdc-switch__focus-ring-wrapper) {
+    display: none !important;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__handle-track {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+    pointer-events: none;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__handle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+    transform: none !important;
+    transition: left .15s ease;
+}
+
+html.palantir-page .mdc-switch.mdc-switch--selected .mdc-switch__handle {
+    left: 19px;
+}
+
+html.palantir-page .mdc-switch:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+html.palantir-page .mdc-switch:disabled :is(.mdc-switch__track, .mdc-switch__handle) {
+    opacity: 1 !important;
+}
+
+html.palantir-page .mdc-switch:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]) {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    margin: 0 8px 0 0;
+    border: 0;
+    border-radius: 999px;
+    background: radial-gradient(circle at 11px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-off);
+    box-shadow: none;
+    cursor: pointer;
+    vertical-align: middle;
+    appearance: none;
+    transition: background-color .15s ease;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):checked {
+    background: radial-gradient(circle at 27px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-on);
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):indeterminate {
+    background: radial-gradient(circle at 19px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-on);
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.palantir-page .mdc-switch :is(.mdc-switch__track, .mdc-switch__handle),
+    html.palantir-page input[type="checkbox"] {
+        transition: none;
+    }
 }

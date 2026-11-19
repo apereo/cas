@@ -41,7 +41,7 @@ function clusterTopologyAttributeValue(value) {
 
 function clusterTopologyResponseTime(value) {
     const responseTime = Number(value);
-    return Number.isFinite(responseTime) ? `${(responseTime * 1_000_000).toLocaleString()} ns` : "Not available";
+    return Number.isFinite(responseTime) && responseTime >= 0 ? `${responseTime.toLocaleString()} ms` : "Not available";
 }
 
 function clusterTabIsActive(tabIndex) {
@@ -163,7 +163,10 @@ function createClusterMemberCard(member) {
     card.append(header);
 
     if (member.description) {
-        card.append($("<p>", {class: "cluster-member-description"}).text(member.description));
+        const state = healthy ? "healthy" : "unhealthy";
+        card.append($("<p>", {class: `cluster-member-description cluster-member-description-state cluster-member-description-${state}`})
+            .append($("<i>", {class: `mdi ${healthy ? "mdi-check-circle-outline" : "mdi-alert-circle-outline"}`, "aria-hidden": "true"}))
+            .append($("<span>").text(member.description)));
     }
 
     const metadata = $("<div>", {class: "cluster-member-metadata"});

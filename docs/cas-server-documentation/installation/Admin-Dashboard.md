@@ -109,6 +109,9 @@ again, after a confirmation.
 The authentication section lists, under *Interrupts*, which [interrupt](../webflow/Webflow-Customization-Interrupt.html)
 a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt,
 whether it blocks the login, and what each interrupt source answered.
+Under *Impersonation*, it shows the accounts a user may [impersonate](../authentication/Surrogate-Authentication.html)
+as cards, or says that the user may impersonate any account or none. When attribute resolution is available, each card
+can fetch the attributes of its account, which opens attribute resolution with that account filled in.
 
 Writing a new application definition by hand starts from a template: CAS ships templates for the protocols the
 deployment supports, such as releasing selected attributes, requiring multifactor authentication, persistent SAML2
@@ -137,6 +140,11 @@ chosen as a file. When the metadata is an aggregate, the dashboard asks which se
 name, description, information and privacy URLs, logo, metadata location, a single declared NameID format, assertion
 signing, an attribute release policy for a research and scholarship category or for the attributes the provider
 requests, and its contacts are filled in for review before saving.
+
+When SAML2 service provider metadata management is available, *Upload Metadata* beside the metadata location stores
+the provider's metadata with a metadata manager and points the application at it, and *Manage Metadata* closes the
+wizard, asking first when it holds unsaved changes, and shows the entries of the application's metadata manager under
+*Protocols*.
 
 The applications chart and the authentication flow diagrams can be magnified to fill the window, with their
 magnify button or a click on them; a magnified diagram can be zoomed and moved.

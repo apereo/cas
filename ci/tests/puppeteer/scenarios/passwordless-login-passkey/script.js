@@ -56,8 +56,8 @@ async function loginWithPasskey(page) {
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
     await cas.click(page, "#auth-tab");
     await cas.sleep(1000);
-    await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
-    await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
+    await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", "[WebAuthnAuthenticationHandler]");
+    await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", "[WebAuthnCredential]");
     await cas.gotoLogout(page);
 }
 

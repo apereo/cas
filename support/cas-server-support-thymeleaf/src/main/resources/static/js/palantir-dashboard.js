@@ -518,11 +518,8 @@ function selectSidebarMenuTab(tab) {
 }
 
 /**
- * Select a registered service on the applications tab, revealing that tab first.
- *
- * The search is drawn before the match is marked: the table renders rows lazily, so a row that is
- * not on the current page has no node to mark, and a node created by the draw would not carry the
- * class anyway.
+ * Select a registered service on the applications tab, revealing that tab first. The applications are read again
+ * when the service is not among them yet, such as when it was just saved.
  *
  * @param serviceIdToFind the registered service id to look for
  */
@@ -530,15 +527,16 @@ async function navigateToApplication(serviceIdToFind) {
     activateDashboardTab(Tabs.APPLICATIONS.index);
     selectSidebarMenuTab(Tabs.APPLICATIONS.index);
     await initializeDashboardTab(Tabs.APPLICATIONS);
-
-    let applicationsTable = $("#applicationsTable").DataTable();
-    applicationsTable.search(String(serviceIdToFind)).draw();
-    const foundRows = applicationsTable.rows({search: "applied"}).count();
-    if (foundRows > 0) {
-        applicationsTable.rows({search: "applied", page: "current"}).nodes().to$().addClass("selected");
-    } else {
-        displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
-        applicationsTable.search("").draw();
+    const tabs = $("#applications-tabs");
+    if (tabs.data("ui-tabs")) {
+        tabs.tabs("option", "active", 0);
+    }
+    const id = String(serviceIdToFind);
+    if (!registeredServicesById.has(id)) {
+        await fetchServices();
+    }
+    if (!revealApplicationRow(id)) {
+        displayBanner(`Could not find a registered service with id ${id}`);
     }
 }
 

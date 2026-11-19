@@ -89,6 +89,9 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
     }
 
     private WebApplicationService createService(final WSFederationRequest fedRequest) {
+        if (StringUtils.isBlank(fedRequest.wreply())) {
+            throw new UnauthorizedAuthenticationException("Unable to determine the [WREPLY] parameter to locate the relying party", new HashMap<>());
+        }
         val targetService = getConfigContext().getWebApplicationServiceFactory().createService(fedRequest.wreply());
         targetService.getAttributes().put(WSFederationConstants.WREPLY, CollectionUtils.wrapList(fedRequest.wreply()));
         targetService.getAttributes().put(WSFederationConstants.WTREALM, CollectionUtils.wrapList(fedRequest.wtrealm()));

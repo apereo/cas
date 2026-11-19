@@ -9,9 +9,29 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--cas.service-registry.core.init-from-json=true",
-    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "variations": [
+    {
+      "name": "local",
+      "properties": [
+        "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services-local",
+
+        "--cas.authn.saml-idp.metadata.mdq.basic-authn-username=mdqclient",
+        "--cas.authn.saml-idp.metadata.mdq.basic-authn-password=Mdq-Secret-2026",
+        "--cas.authn.saml-idp.metadata.mdq.supported-content-type=application/samlmetadata+xml",
+
+        "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+        "--management.endpoints.web.exposure.include=samlIdPRegisteredServiceMetadataCache",
+        "--management.endpoints.access.default=UNRESTRICTED"
+      ]
+    },
+    {
+      "name": "incommon",
+      "properties": [
+        "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+      ]
+    }
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
-

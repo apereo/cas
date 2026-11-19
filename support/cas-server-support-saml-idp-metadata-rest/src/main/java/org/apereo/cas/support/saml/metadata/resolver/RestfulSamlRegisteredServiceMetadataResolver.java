@@ -117,9 +117,17 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         return "rest://";
     }
 
+    /**
+     * Store a metadata document with the REST service. A document the REST service refused, or that could not be sent,
+     * is reported rather than handed back as stored.
+     *
+     * @param document the document
+     * @return the document, once stored
+     */
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
         HttpResponse response = null;
+        var status = -1;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
             val headers = CollectionUtils.<String, String>wrap(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_XML_VALUE);
@@ -136,12 +144,19 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
                 .build();
             response = HttpUtils.execute(exec);
             if (response != null) {
-                LOGGER.debug("Uploaded etadata document [{}]. Status: [{}]", document.getName(), response.getCode());
+                status = response.getCode();
+                LOGGER.debug("Uploaded metadata document [{}]. Status: [{}]", document.getName(), status);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
+            throw new IllegalStateException("Unable to upload metadata document %s".formatted(document.getName()), e);
         } finally {
             HttpUtils.close(response);
+        }
+        val outcome = HttpStatus.resolve(status);
+        if (outcome == null || !outcome.is2xxSuccessful()) {
+            throw new IllegalStateException("The metadata service did not store metadata document %s; it answered with status %s"
+                .formatted(document.getName(), status));
         }
         return document;
     }

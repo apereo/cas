@@ -59,7 +59,7 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
             val uid = credentialCipherExecutor.encode(principalId);
             properties.put(SecurityConstants.PASSWORD, uid);
             LOGGER.debug("Requesting security token for principal [{}] and registered service [{}]", uid, rp);
-            return sts.requestSecurityToken(rp.getAppliesTo());
+            return sts.requestSecurityToken(rp.getAppliesToOrRealm());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new AuthenticationException(e.getMessage());

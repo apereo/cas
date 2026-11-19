@@ -33,6 +33,11 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     }
 
     @Override
+    protected Envelope buildSamlResponse(final SamlProfileBuilderContext context) throws Exception {
+        return buildResponse(Optional.empty(), context);
+    }
+
+    @Override
     protected Envelope buildResponse(final Optional<Assertion> assertion,
                                      final SamlProfileBuilderContext context)
             throws Exception {

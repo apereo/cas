@@ -51,7 +51,7 @@ function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const source = configPropertySourceName(propertySource);
         Swal.fire({
-            title: `Are you sure you want to delete this entry from ${source}?`,
+            titleText: `Are you sure you want to delete this entry from ${source}?`,
             text: "Once removed, you may not be able to revert this.",
             icon: "question",
             showConfirmButton: true,
@@ -352,7 +352,7 @@ function importConfigurationProperties(button) {
 
                         Swal.fire({
                             icon: "info",
-                            title: `${propertySource}: Importing Properties`,
+                            titleText: `${propertySource}: Importing Properties`,
                             text: "Please wait while the configuration properties are being imported...",
                             allowOutsideClick: false,
                             showConfirmButton: false,

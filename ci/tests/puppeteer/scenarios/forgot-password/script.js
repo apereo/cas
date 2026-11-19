@@ -1,7 +1,9 @@
 
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
+    const sms = await cas.mockSmsServer();
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -26,7 +28,12 @@ const cas = require("../../cas.js");
     await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
     const link = await cas.extractFromEmail(browser);
-    await cas.goto(page, link);
+    const message = await sms.waitForMessage("3477464665");
+    assert(message.from === "3477465300");
+    assert(message.text === `Reset:${link}`, `Unexpected SMS text ${message.text}`);
+    const smsLink = message.text.substring("Reset:".length);
+    await cas.log(`Following the reset link received by SMS: ${smsLink}`);
+    await cas.goto(page, smsLink);
     await cas.sleep(1000);
 
     await cas.assertInnerText(page, "#content h2", "Answer Security Questions");
@@ -51,6 +58,7 @@ const cas = require("../../cas.js");
     await cas.assertInnerText(page, "#content p", "Your account password is successfully updated.");
     await cas.assertAccessibility(page, "Password change successful");
     await cas.closeBrowser(browser);
+    await sms.close();
 })();
 
 async function typePassword(page, pswd, confirm) {

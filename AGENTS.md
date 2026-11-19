@@ -16,6 +16,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-actuators`](.claude/skills/cas-actuators/SKILL.md) | Actuator endpoints, management security |
 | [`cas-attribute-consent`](.claude/skills/cas-attribute-consent/SKILL.md) | `support/cas-server-support-consent*` |
 | [`cas-build-ci`](.claude/skills/cas-build-ci/SKILL.md) | Gradle build logic, `.github/workflows`, `ci/` scripts |
+| [`cas-dependencies`](.claude/skills/cas-dependencies/SKILL.md) | `gradle/dependencies.gradle`, `gradle/libs.versions.toml`, bundles, war contents and size |
 | [`cas-docs-site`](.claude/skills/cas-docs-site/SKILL.md) | `docs/**`, release notes, `ci/docs/**` |
 | [`cas-google-authenticator`](.claude/skills/cas-google-authenticator/SKILL.md) | `support/cas-server-support-gauth*` |
 | [`cas-groovy-scripting`](.claude/skills/cas-groovy-scripting/SKILL.md) | `core/cas-server-core-scripting`, Groovy scripts |
@@ -23,6 +24,7 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-heimdall-authzen`](.claude/skills/cas-heimdall-authzen/SKILL.md) | `support/cas-server-support-heimdall*` |
 | [`cas-import-pr`](.claude/skills/cas-import-pr/SKILL.md) | Bringing a contributor PR onto a local branch |
 | [`cas-interrupt-notifications`](.claude/skills/cas-interrupt-notifications/SKILL.md) | `support/cas-server-support-interrupt*` |
+| [`cas-java-style`](.claude/skills/cas-java-style/SKILL.md) | Writing or reviewing any Java: Lombok constructions, Checkstyle rules |
 | [`cas-jwt`](.claude/skills/cas-jwt/SKILL.md) | Issuing, reading, signing or encrypting JWTs in any module |
 | [`cas-ldap`](.claude/skills/cas-ldap/SKILL.md) | LDAP modules |
 | [`cas-mcp-server`](.claude/skills/cas-mcp-server/SKILL.md) | `support/cas-server-support-mcp` |
@@ -30,14 +32,14 @@ When you learn something new, record it in the skill that owns the area, or here
 | [`cas-oauth-oidc`](.claude/skills/cas-oauth-oidc/SKILL.md) | `support/cas-server-support-oauth*`, `support/cas-server-support-oidc*` |
 | [`cas-oid4vc`](.claude/skills/cas-oid4vc/SKILL.md) | `support/cas-server-support-oidc-vc*`, wallets, SD-JWT/mdoc |
 | [`cas-oidc-federation`](.claude/skills/cas-oidc-federation/SKILL.md) | `support/cas-server-support-oidc-federation`, OpenID Federation |
-| [`cas-palantir`](.claude/skills/cas-palantir/SKILL.md) | Palantir admin dashboard (`palantir/**` templates, `palantir-*.js`) |
+| [`cas-palantir`](.claude/skills/cas-palantir/SKILL.md) | Palantir admin dashboard (`palantir/**` templates, `palantir-*.js`, Home overview, metrics) |
 | [`cas-passwordless-webauthn`](.claude/skills/cas-passwordless-webauthn/SKILL.md) | `support/cas-server-support-passwordless*`, `support/cas-server-support-webauthn*` |
 | [`cas-protocol`](.claude/skills/cas-protocol/SKILL.md) | Service/proxy validation, SAML 1.1 |
 | [`cas-puppeteer-runner`](.claude/skills/cas-puppeteer-runner/SKILL.md) | `ci/tests/puppeteer/run.sh`, init scripts, scenario CI jobs, `ci/tests/**/run-*.sh` test servers |
 | [`cas-puppeteer-scenarios`](.claude/skills/cas-puppeteer-scenarios/SKILL.md) | `ci/tests/puppeteer/scenarios/**`, scenario cross-checks |
 | [`cas-saml`](.claude/skills/cas-saml/SKILL.md) | `support/cas-server-support-saml*` metadata, SAML2 IdP session store |
 | [`cas-sandbox-verification`](.claude/skills/cas-sandbox-verification/SKILL.md) | Gradle, JDK 25 or Maven Central unavailable; the device VM test runner |
-| [`cas-service-registries`](.claude/skills/cas-service-registries/SKILL.md) | `ServicesManager`, `support/cas-server-support-*-service-registry*` |
+| [`cas-service-registries`](.claude/skills/cas-service-registries/SKILL.md) | `ServicesManager`, service loading at startup and refresh, `support/cas-server-support-*-service-registry*` |
 | [`cas-session-stores`](.claude/skills/cas-session-stores/SKILL.md) | `CasSessionStore`, browser storage, the `BROWSER_STORAGE` cookie fallback |
 | [`cas-startup-performance`](.claude/skills/cas-startup-performance/SKILL.md) | Startup time, eager beans, classpath scanning |
 | [`cas-storage-backends`](.claude/skills/cas-storage-backends/SKILL.md) | MongoDB, Redis, JPA/Hibernate, DynamoDB modules |
@@ -79,6 +81,16 @@ When you learn something new, record it in the skill that owns the area, or here
   those checks accept `1.5`, `1e3`, `0x1F` or overflowing values and the parse then throws. `tryParse` rejects null, so
   guard nullable inputs first.
 - Consider using StringUtils.EMPTY instead of "" for empty strings, and StringUtils.isNotBlank() instead of != null && !isEmpty() for string checks.
+- Compare and trim case-insensitively through commons-lang `Strings.CI` (and `Strings.CS` for case-sensitive):
+  `Strings.CI.equals`, `Strings.CI.startsWith`, `Strings.CI.removeStart`, never `String.equalsIgnoreCase` or the
+  `StringUtils.*IgnoreCase` methods.
+- Name unused lambda parameters and caught exceptions `_`; prefer method references and `Function.identity()`,
+  `Predicate.not(...)`, `BinaryOperator.maxBy(...)` over the equivalent lambdas; use `computeIfAbsent` rather than
+  `putIfAbsent` with an eagerly built value; use Lombok `@RequiredArgsConstructor` instead of hand-written constructors (and Lombok
+  for every other generated construction, see the `cas-java-style` skill);
+  close executors with try-with-resources. Passed together to `Collectors.toMap`, `Function.identity()` and
+  `BinaryOperator.maxBy(Comparator.naturalOrder())` cannot be inferred: write `Function.<String>identity()` and
+  `BinaryOperator.<String>maxBy(...)`.
 - Keep overloaded methods (same name, any parameters or visibility) next to each other, with no other method between
   them; Checkstyle's `OverloadMethodsDeclarationOrder` fails the build otherwise. Check this when adding a method whose
   name already exists in the class or interface, including private helpers.

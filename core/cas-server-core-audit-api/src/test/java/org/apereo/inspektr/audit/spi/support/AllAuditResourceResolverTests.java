@@ -1,9 +1,9 @@
 package org.apereo.inspektr.audit.spi.support;
 
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import lombok.val;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import module java.base;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;

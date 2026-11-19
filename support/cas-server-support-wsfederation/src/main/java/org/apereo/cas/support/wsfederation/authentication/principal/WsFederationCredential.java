@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 /**
  * This class represents the basic elements of the WsFederation token.
@@ -56,11 +58,11 @@ public class WsFederationCredential extends AbstractCredential {
      * @return true if the credentials are valid, otherwise false
      */
     public boolean isValid(final String expectedAudience, final String expectedIssuer, final long timeDrift) {
-        if (!this.audience.equalsIgnoreCase(expectedAudience)) {
+        if (StringUtils.isBlank(this.audience) || !Strings.CI.equals(this.audience, expectedAudience)) {
             LOGGER.warn("Audience [{}] is invalid where the expected audience should be [{}]", this.audience, expectedAudience);
             return false;
         }
-        if (!this.issuer.equalsIgnoreCase(expectedIssuer)) {
+        if (StringUtils.isBlank(this.issuer) || !Strings.CI.equals(this.issuer, expectedIssuer)) {
             LOGGER.warn("Issuer [{}] is invalid since the expected issuer should be [{}]", this.issuer, expectedIssuer);
             return false;
         }

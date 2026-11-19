@@ -198,6 +198,7 @@ async function initializePalantir() {
         }
 
         registerPalantirTabInitializers();
+        PalantirServiceEditGuard.removeExpiredDrafts();
 
         await initializeHotKeyOperations();
         initializeCommandPalette();
