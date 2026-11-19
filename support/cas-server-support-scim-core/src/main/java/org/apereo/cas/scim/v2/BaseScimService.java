@@ -159,6 +159,8 @@ public abstract class BaseScimService<T extends ScimProperties> implements ScimS
 
     /**
      * Create or update groups.
+     * An existing group keeps its members as the SCIM server stored them, since member sub-attributes are immutable;
+     * a member of the given group is added only when no member with the same {@code value} is present yet.
      *
      * @param scimService the scim service
      * @param group       the group
@@ -172,14 +174,15 @@ public abstract class BaseScimService<T extends ScimProperties> implements ScimS
                 group.getDisplayName().ifPresent(existingGroup::setDisplayName);
                 group.getExternalId().ifPresent(existingGroup::setExternalId);
 
-                val memberIds = group.getMembers()
+                val memberIds = existingGroup.getMembers()
                     .stream()
                     .flatMap(member -> member.getValue().stream())
-                    .collect(Collectors.toSet());
-                val currentMembers = new ArrayList<>(existingGroup.getMembers());
-                currentMembers.removeIf(member -> member.getValue().filter(memberIds::contains).isPresent());
-                currentMembers.addAll(group.getMembers());
-                existingGroup.setMembers(currentMembers);
+                    .collect(Collectors.toCollection(HashSet::new));
+                for (val member : group.getMembers()) {
+                    if (member.getValue().map(memberIds::add).orElse(true)) {
+                        existingGroup.addMember(member);
+                    }
+                }
 
                 val groupServerResponse = scimService.update(Group.class, EndpointPaths.GROUPS, existingGroup.getId().orElseThrow())
                     .setResource(existingGroup)

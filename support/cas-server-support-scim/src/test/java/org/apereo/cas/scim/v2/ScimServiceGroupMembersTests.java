@@ -30,7 +30,7 @@ class ScimServiceGroupMembersTests {
     private static final String OTHER_USER_ID = "scim_user_02";
 
     @Test
-    void verifyExistingMemberIsNotDuplicated() throws Exception {
+    void verifyGroupUpdatePreservesExistingMembersAndAddsMissingMembers() throws Exception {
         val existingGroup = Group.builder()
             .id("scim_group_01")
             .displayName("Engineering")
@@ -70,25 +70,19 @@ class ScimServiceGroupMembersTests {
         try {
             val properties = new ScimProperties().setTarget("http://127.0.0.1:%s".formatted(server.getAddress().getPort()));
             val scimService = new DefaultScimService(properties);
+            val newMember = Member.builder().value("scim_user_03").type(ResourceTypeNames.USER).build();
             val group = Group.builder()
                 .displayName("Engineering")
-                .members(List.of(Member.builder().value(USER_ID).type(ResourceTypeNames.USER).build()))
+                .members(List.of(Member.builder().value(USER_ID).type(ResourceTypeNames.USER).build(), newMember, newMember))
                 .build();
             assertTrue(scimService.createOrUpdateGroups(scimService.getScimRequestBuilder(Optional.empty()), group));
 
             val members = JsonHelper.readJsonDocument(updatedGroup.get(), Group.class).getMembers();
-            assertEquals(2, members.size());
-            assertEquals(1, countMembers(members, USER_ID));
-            assertEquals(1, countMembers(members, OTHER_USER_ID));
+            assertTrue(members.containsAll(existingGroup.getMembers()), members::toString);
+            assertTrue(members.contains(newMember));
+            assertEquals(3, members.size());
         } finally {
             server.stop(0);
         }
-    }
-
-    private static long countMembers(final List<Member> members, final String userId) {
-        return members
-            .stream()
-            .filter(member -> member.getValue().filter(userId::equals).isPresent())
-            .count();
     }
 }

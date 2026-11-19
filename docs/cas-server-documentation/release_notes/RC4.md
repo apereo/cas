@@ -244,6 +244,11 @@ for more information on the changes and updates in this release.
 - {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
   follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
   and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
+- {: .action} [SCIM provisioning](../integration/SCIM-Provisioning.html) identifies the members of
+  a group by `value`, set to the id of the user; it used to send the id in `$ref` alone, which SCIM servers that require
+  `value` rejected. Updating a group keeps its existing members as the SCIM server stored them and adds each user once.
+  Members that an earlier version provisioned on a SCIM server that stored them without a `value` are no longer
+  recognized and should be removed there.
 - {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
   flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
   runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
