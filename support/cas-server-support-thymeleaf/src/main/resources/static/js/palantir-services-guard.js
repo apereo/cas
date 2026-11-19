@@ -17,6 +17,10 @@ class PalantirServiceEditGuard {
 
     static DRAFT_LIFETIME_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 
+    static REDACTED = "\u2022\u2022\u2022 kept out of the draft \u2022\u2022\u2022";
+
+    static SECRET_NAMES = /secret|password|passwd|passphrase|credential|privatekey|apikey|accesskey|signingkey|encryptionkey|^jwks$|^token$/i;
+
     static MODES = {
         wizard: {dialog: "#editServiceWizardDialog", editor: "wizardServiceEditor"},
         editor: {dialog: "#editServiceDialog", editor: "serviceEditor"}
@@ -42,23 +46,15 @@ class PalantirServiceEditGuard {
     }
 
     /**
-     * A form of the definition that ignores formatting and the order of properties, so only real edits count.
+     * A form of the definition that ignores formatting and the order of properties, so only real edits count. It is
+     * the comparison the history uses, so reordering a map whose order matters still counts as an edit.
      *
      * @param text the definition text
      * @returns {string} the normalized definition, or the trimmed text when it is not JSON
      */
     static normalize(text) {
-        const sort = value => {
-            if (Array.isArray(value)) {
-                return value.map(sort);
-            }
-            if (value !== null && typeof value === "object") {
-                return Object.keys(value).sort().reduce((sorted, key) => ({...sorted, [key]: sort(value[key])}), {});
-            }
-            return value;
-        };
         try {
-            return JSON.stringify(sort(JSON.parse(text)));
+            return JSON.stringify(PalantirServiceHistory.sortKeys(JSON.parse(text)));
         } catch (error) {
             return String(text ?? "").trim();
         }
@@ -104,7 +100,8 @@ class PalantirServiceEditGuard {
     }
 
     /**
-     * Drop every kept draft that has expired, or that can no longer be read.
+     * Drop every kept draft that has expired, or that can no longer be read, and leave the secrets out of a draft kept
+     * before drafts left them out, so no secret stays in the browser after an upgrade.
      */
     static removeExpiredDrafts() {
         try {
@@ -120,6 +117,17 @@ class PalantirServiceEditGuard {
                 }
                 if (!draft || PalantirServiceEditGuard.isExpired(draft)) {
                     storage.removeItem(key);
+                } else if (draft.secretsLeftOut !== true) {
+                    const kept = PalantirServiceEditGuard.withoutSecrets(String(draft.text ?? ""));
+                    storage.setItem(key, JSON.stringify({
+                        ...draft,
+                        text: kept.text,
+                        redacted: draft.redacted === true || kept.redacted,
+                        secretsLeftOut: true,
+                        original: draft.original?.text
+                            ? {...draft.original, text: PalantirServiceEditGuard.withoutSecrets(String(draft.original.text)).text}
+                            : draft.original ?? null
+                    }));
                 }
             }
         } catch (error) {
@@ -127,12 +135,154 @@ class PalantirServiceEditGuard {
         }
     }
 
+    /**
+     * Whether a setting holds a secret, judged by its name, such as a client secret, a password or a private key.
+     *
+     * @param name the name of the setting
+     * @returns {boolean} true when its values are kept out of drafts
+     */
+    static isSecret(name) {
+        return PalantirServiceEditGuard.SECRET_NAMES.test(String(name).replace(/[^a-z0-9]/gi, ""));
+    }
+
+    /**
+     * Copy a definition with the values of its secrets replaced by a marker, so a draft kept in the browser holds no
+     * secret. The type markers CAS writes, such as "@class" and the type before the items of a collection, are kept.
+     *
+     * @param value the definition or part of it
+     * @param secret whether the value sits under a secret setting
+     * @returns {*} the copy
+     */
+    static redact(value, secret = false) {
+        if (Array.isArray(value)) {
+            const typed = value.length === 2 && typeof value[0] === "string" && /^(java|org)\./.test(value[0]) && Array.isArray(value[1]);
+            return typed
+                ? [value[0], PalantirServiceEditGuard.redact(value[1], secret)]
+                : value.map(entry => PalantirServiceEditGuard.redact(entry, secret));
+        }
+        if (value !== null && typeof value === "object") {
+            return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, key === "@class"
+                ? entry
+                : PalantirServiceEditGuard.redact(entry, secret || PalantirServiceEditGuard.isSecret(key))]));
+        }
+        return secret && typeof value === "string" && value !== "" ? PalantirServiceEditGuard.REDACTED : value;
+    }
+
+    /**
+     * Put back the secrets a draft left out, from the same place in the definition the dialog opens with, such as the
+     * saved application; a secret it does not have is left empty.
+     *
+     * @param value the draft definition or part of it
+     * @param source the same part of the definition the dialog opens with
+     * @returns {*} the definition with its secrets
+     */
+    static restore(value, source) {
+        if (value === PalantirServiceEditGuard.REDACTED) {
+            return typeof source === "string" && source !== PalantirServiceEditGuard.REDACTED ? source : "";
+        }
+        if (Array.isArray(value)) {
+            return value.map((entry, index) => PalantirServiceEditGuard.restore(entry, Array.isArray(source) ? source[index] : undefined));
+        }
+        if (value !== null && typeof value === "object") {
+            const from = source !== null && typeof source === "object" && !Array.isArray(source) ? source : {};
+            return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, PalantirServiceEditGuard.restore(entry, from[key])]));
+        }
+        return value;
+    }
+
+    /**
+     * A definition as text with its secrets left out. A definition that is not valid JSON yet, such as one in the
+     * middle of being typed, is read string by string instead, keeping its layout.
+     *
+     * @param text the definition text
+     * @returns {{text: string, redacted: boolean}} the text to keep, and whether a secret was left out
+     */
+    static withoutSecrets(text) {
+        try {
+            const kept = JSON.stringify(PalantirServiceEditGuard.redact(JSON.parse(text)), null, 4);
+            return kept.includes(JSON.stringify(PalantirServiceEditGuard.REDACTED))
+                ? {text: kept, redacted: true}
+                : {text: String(text), redacted: false};
+        } catch (error) {
+            const kept = PalantirServiceEditGuard.redactText(String(text ?? ""));
+            return {text: kept, redacted: kept !== String(text ?? "")};
+        }
+    }
+
+    /**
+     * Leave the secrets out of definition text that may not be valid JSON, reading its strings and brackets the way
+     * JSON would: a string is a secret when it is the value of a secret setting, or sits anywhere inside one, apart
+     * from type markers. A string that is never closed is cut at the end of its line.
+     *
+     * @param text the definition text
+     * @returns {string} the text with each secret replaced by a marker
+     */
+    static redactText(text) {
+        const containers = [];
+        let result = "";
+        let key = null;
+        let position = 0;
+        const insideSecret = () => containers.at(-1)?.secret === true;
+        const nextSignificant = from => {
+            let index = from;
+            while (index < text.length && /\s/.test(text[index])) {
+                index++;
+            }
+            return text[index];
+        };
+        while (position < text.length) {
+            const character = text[position];
+            if (character === "\"") {
+                let end = position + 1;
+                while (end < text.length && text[end] !== "\"" && text[end] !== "\n") {
+                    end += text[end] === "\\" ? 2 : 1;
+                }
+                const closed = text[end] === "\"";
+                const value = text.slice(position + 1, Math.min(end, text.length));
+                const container = containers.at(-1);
+                const isKey = container?.type === "{" && closed && nextSignificant(end + 1) === ":";
+                if (isKey) {
+                    key = value;
+                    result += text.slice(position, end + 1);
+                } else {
+                    const secret = insideSecret() || (container?.type === "{" && key !== null && PalantirServiceEditGuard.isSecret(key));
+                    const marker = key === "@class" || /^(java|org)\./.test(value);
+                    result += secret && !marker && value !== ""
+                        ? JSON.stringify(PalantirServiceEditGuard.REDACTED)
+                        : text.slice(position, closed ? end + 1 : end);
+                }
+                position = closed ? end + 1 : end;
+                continue;
+            }
+            if (character === "{" || character === "[") {
+                const container = containers.at(-1);
+                containers.push({
+                    type: character,
+                    secret: insideSecret() || (container?.type === "{" && key !== null && PalantirServiceEditGuard.isSecret(key))
+                });
+                key = null;
+            } else if (character === "}" || character === "]") {
+                containers.pop();
+                key = null;
+            } else if (character === ",") {
+                key = containers.at(-1)?.type === "{" ? null : key;
+            }
+            result += character;
+            position++;
+        }
+        return result;
+    }
+
     static writeDraft(key, text) {
+        const original = PalantirServiceEditGuard.originals.get(key) ?? null;
+        const kept = PalantirServiceEditGuard.withoutSecrets(text);
         try {
             window.localStorage.setItem(PalantirServiceEditGuard.STORAGE_PREFIX + key, JSON.stringify({
-                text: text,
+                text: kept.text,
+                redacted: kept.redacted,
+                secretsLeftOut: true,
                 savedAt: new Date().toISOString(),
-                original: PalantirServiceEditGuard.originals.get(key) ?? null
+                original: original === null ? null : {...original, text: PalantirServiceEditGuard.withoutSecrets(original.text).text}
             }));
         } catch (error) {
             console.debug("Palantir could not keep a draft of the application", error);
@@ -155,10 +305,11 @@ class PalantirServiceEditGuard {
      * @returns {Promise<string|null>} the draft text to resume, or null
      */
     static async offerDraft(key, differsFrom = null) {
-        const draft = PalantirServiceEditGuard.readDraft(key);
-        if (!draft?.text) {
+        const stored = PalantirServiceEditGuard.readDraft(key);
+        if (!stored?.text) {
             return null;
         }
+        const draft = PalantirServiceEditGuard.withSecretsFrom(stored, differsFrom);
         if (differsFrom !== null && PalantirServiceEditGuard.normalize(draft.text) === PalantirServiceEditGuard.normalize(differsFrom)) {
             PalantirServiceEditGuard.removeDraft(key);
             return null;
@@ -166,7 +317,9 @@ class PalantirServiceEditGuard {
         const savedAt = new Date(draft.savedAt);
         const result = await Swal.fire({
             title: "Resume your draft?",
-            text: `Unsaved changes to this application were kept${Number.isNaN(savedAt.getTime()) ? "" : ` on ${savedAt.toLocaleString()}`}.`,
+            text: `Unsaved changes to this application were kept${Number.isNaN(savedAt.getTime()) ? "" : ` on ${savedAt.toLocaleString()}`}.`
+                + (stored.redacted ? " Drafts keep no secrets, such as client secrets or passwords: the saved application's are used, "
+                    + "and any you had changed need to be entered again." : ""),
             icon: "question",
             showDenyButton: true,
             confirmButtonText: "Resume draft",
@@ -182,6 +335,38 @@ class PalantirServiceEditGuard {
         }
         PalantirServiceEditGuard.removeDraft(key);
         return null;
+    }
+
+    /**
+     * A kept draft with the secrets it left out put back from the definition the dialog opens with.
+     *
+     * @param draft the draft as kept
+     * @param source the definition text the dialog opens with, or nothing
+     * @returns {object} the draft with its secrets
+     */
+    static withSecretsFrom(draft, source) {
+        const fill = text => {
+            try {
+                let from = null;
+                try {
+                    from = source === null || source === undefined ? null : JSON.parse(source);
+                } catch (error) {
+                    from = null;
+                }
+                return JSON.stringify(PalantirServiceEditGuard.restore(JSON.parse(text), from), null, 4);
+            } catch (error) {
+                return text;
+            }
+        };
+        const marked = text => String(text ?? "").includes(PalantirServiceEditGuard.REDACTED);
+        if (!marked(draft.text) && !marked(draft.original?.text)) {
+            return draft;
+        }
+        return {
+            ...draft,
+            text: fill(draft.text),
+            original: draft.original?.text ? {...draft.original, text: fill(draft.original.text)} : draft.original
+        };
     }
 
     /**
@@ -261,8 +446,10 @@ class PalantirServiceEditGuard {
     /**
      * Start guarding a dialog that has just opened. The baseline is taken once the dialog settles: right away for
      * the editor, and for the wizard once it has finished filling its fields and its generated definition has stayed
-     * the same for a moment, since the definition is generated again after the fields are filled. A resumed
-     * draft is unsaved by definition, so closing it asks until it is saved or discarded.
+     * the same for a moment, since the definition is generated again after the fields are filled. Someone may start
+     * editing before then, so the first key press or click in the dialog takes the baseline at once, from what the
+     * dialog holds before that edit reaches it, and the edit counts as unsaved. A resumed draft is unsaved by
+     * definition, so closing it asks until it is saved or discarded.
      *
      * @param mode wizard or editor
      * @param key the storage key of the application's draft
@@ -272,8 +459,23 @@ class PalantirServiceEditGuard {
         const state = {key: key, baseline: null, resumed: resumed, allowClose: false, keepDraft: false, timer: null};
         PalantirServiceEditGuard.state[mode] = state;
         PalantirServiceEditGuard.listen(mode);
+        const watching = new AbortController();
+        const claim = event => {
+            if (PalantirServiceEditGuard.state[mode] !== state || state.baseline !== null) {
+                watching.abort();
+                return;
+            }
+            const populating = mode === "wizard" && typeof isPopulatingWizard !== "undefined" && isPopulatingWizard;
+            if (event.isTrusted && !populating) {
+                state.baseline = PalantirServiceEditGuard.normalize(PalantirServiceEditGuard.value(mode));
+                watching.abort();
+            }
+        };
+        const dialog = document.querySelector(PalantirServiceEditGuard.MODES[mode].dialog);
+        ["pointerdown", "keydown"].forEach(type => dialog?.addEventListener(type, claim, {capture: true, signal: watching.signal}));
         const settle = (attempts = 0, previous = null, checks = 0) => {
-            if (PalantirServiceEditGuard.state[mode] !== state) {
+            if (PalantirServiceEditGuard.state[mode] !== state || state.baseline !== null) {
+                watching.abort();
                 return;
             }
             if (mode === "wizard" && typeof isPopulatingWizard !== "undefined" && isPopulatingWizard && attempts < 100) {
@@ -286,6 +488,7 @@ class PalantirServiceEditGuard {
                 return;
             }
             state.baseline = current;
+            watching.abort();
         };
         setTimeout(() => settle(), mode === "wizard" ? 500 : 0);
     }
@@ -315,17 +518,21 @@ class PalantirServiceEditGuard {
     }
 
     /**
-     * Whether a mode's dialog holds edits that are not saved.
+     * Whether a mode's dialog holds edits that are not saved. A resumed draft, or edits handed over from the other
+     * dialog, are unsaved from the moment the dialog opens, also while the wizard is still filling its fields.
      *
      * @param mode wizard or editor
      * @returns {boolean} true when closing would lose edits
      */
     static isDirty(mode) {
         const state = PalantirServiceEditGuard.state[mode];
-        if (!state || state.baseline === null) {
+        if (!state) {
             return false;
         }
-        return state.resumed || PalantirServiceEditGuard.normalize(PalantirServiceEditGuard.value(mode)) !== state.baseline;
+        if (state.resumed) {
+            return true;
+        }
+        return state.baseline !== null && PalantirServiceEditGuard.normalize(PalantirServiceEditGuard.value(mode)) !== state.baseline;
     }
 
     /**
@@ -346,6 +553,23 @@ class PalantirServiceEditGuard {
     }
 
     /**
+     * Let a dialog close because its edits move to the other dialog, such as from the JSON editor to the wizard. Its
+     * draft is kept for now, and the caller removes it once the other dialog holds the edits.
+     *
+     * @param mode wizard or editor
+     * @returns {object|null} the dialog's state, with the key of its draft, or null when it is not guarded
+     */
+    static handOver(mode) {
+        const state = PalantirServiceEditGuard.state[mode];
+        if (state) {
+            clearTimeout(state.timer);
+            state.allowClose = true;
+            state.keepDraft = true;
+        }
+        return state ?? null;
+    }
+
+    /**
      * The definition was saved: drop the draft and let the dialog close.
      *
      * @param mode wizard or editor
@@ -361,7 +585,8 @@ class PalantirServiceEditGuard {
 
     /**
      * Ask before a dialog with unsaved edits closes. Returning false keeps the dialog open while the question is
-     * asked; the answer closes it again when the edits are kept as a draft or discarded.
+     * asked; the answer closes it again when the edits are kept as a draft or discarded. Keep Editing leaves it open
+     * and triggers <code>palantir:closecancelled</code> on the dialog, for a caller that waits for the close.
      *
      * @param mode wizard or editor
      * @returns {boolean} whether the dialog may close now
@@ -383,11 +608,14 @@ class PalantirServiceEditGuard {
             focusCancel: true
         }).then(result => {
             if (result.isConfirmed) {
-                PalantirServiceEditGuard.writeDraft(state.key, PalantirServiceEditGuard.value(mode));
+                if (state.baseline !== null || PalantirServiceEditGuard.readDraft(state.key) === null) {
+                    PalantirServiceEditGuard.writeDraft(state.key, PalantirServiceEditGuard.value(mode));
+                }
                 state.keepDraft = true;
             } else if (result.isDenied) {
                 PalantirServiceEditGuard.removeDraft(state.key);
             } else {
+                $(PalantirServiceEditGuard.MODES[mode].dialog).trigger("palantir:closecancelled");
                 return;
             }
             clearTimeout(state.timer);

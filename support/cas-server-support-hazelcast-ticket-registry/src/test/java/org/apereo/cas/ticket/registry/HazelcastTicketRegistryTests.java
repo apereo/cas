@@ -186,6 +186,18 @@ class HazelcastTicketRegistryTests {
             assertEquals(7, registry.stream().count());
             assertEquals(3, registry.sessionCount());
 
+            val sessions = registry.query(TicketRegistryQueryCriteria.builder().type(TransientSessionTicket.PREFIX).decode(true).build());
+            assertEquals(4, sessions.size());
+            assertTrue(sessions.stream().allMatch(TransientSessionTicket.class::isInstance));
+            val principal = CoreAuthenticationTestUtils.getAuthentication().getPrincipal().getId();
+            assertEquals(3, registry.query(TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX)
+                .principal(principal.toUpperCase(Locale.ENGLISH)).decode(true).build()).size());
+            assertEquals(0, registry.query(TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX)
+                .principal("nobody").decode(true).build()).size());
+            val sessionId = ((Ticket) sessions.getFirst()).getId();
+            assertEquals(List.of(sessionId), registry.query(TicketRegistryQueryCriteria.builder().type(TransientSessionTicket.PREFIX)
+                .id(sessionId).decode(true).build()).stream().map(Ticket.class::cast).map(Ticket::getId).toList());
+
             assertEquals(7, registry.deleteAll());
             hazelcastInstance.getMap(ticketGrantingTicketDefinition.getProperties().getStorageName()).destroy();
             hazelcastInstance.getMap(transientTicketDefinition.getProperties().getStorageName()).destroy();

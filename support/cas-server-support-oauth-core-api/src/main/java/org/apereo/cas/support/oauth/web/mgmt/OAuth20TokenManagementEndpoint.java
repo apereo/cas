@@ -15,6 +15,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -51,18 +53,22 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Gets access tokens. Every ticket is scanned to find them, inside a ticket transaction, so that a registry backed
-     * by a database reads the rows a batch at a time instead of collecting every ticket in memory first.
+     * Gets access and refresh tokens, all of them or only those issued to a user. Every ticket is scanned to find them,
+     * inside a ticket transaction, so that a registry backed by a database reads the rows a batch at a time instead of
+     * collecting every ticket in memory first.
      *
-     * @return the access tokens
+     * @param username the user whose tokens to get, compared without regard to case; all tokens when blank
+     * @return the access and refresh tokens
      */
     @ReadOperation
-    @Operation(summary = "Get access and/or refresh tokens")
-    public Collection<Ticket> getTokens() {
+    @Operation(summary = "Get access and/or refresh tokens, optionally only those issued to a user",
+        parameters = @Parameter(name = "username", required = false, description = "Only the tokens issued to this user"))
+    public Collection<Ticket> getTokens(@Nullable final String username) {
         val tokens = ticketTransactionOperations.execute(_ -> {
             try (val found = ticketRegistry
                 .getObject()
-                .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())) {
+                .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken)
+                    && !ticket.isExpired() && issuedTo(ticket, username))) {
                 return found
                     .sorted(Comparator.comparing(Ticket::getId))
                     .<Ticket>map(Ticket.class::cast)
@@ -101,6 +107,15 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
         if (ticket instanceof OAuth20Token) {
             ticketRegistry.getObject().deleteTicket(ticket.getId());
         }
+    }
+
+    private static boolean issuedTo(final Ticket ticket, final @Nullable String username) {
+        if (StringUtils.isBlank(username)) {
+            return true;
+        }
+        return ticket instanceof final OAuth20Token token && Optional.ofNullable(token.getAuthentication())
+            .filter(authentication -> Strings.CI.equals(authentication.getPrincipal().getId(), username))
+            .isPresent();
     }
 
     protected @Nullable String extractAccessTokenFrom(final String token) {

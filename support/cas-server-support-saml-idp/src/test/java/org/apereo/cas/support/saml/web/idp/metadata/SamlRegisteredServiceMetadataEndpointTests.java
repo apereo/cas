@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 @Import(SamlRegisteredServiceMetadataEndpointTests.SamlRegisteredServiceMetadataTestConfiguration.class)
 class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
+    private static final String FAILING_MANAGER = "FailingMetadataManager";
+
     @Test
     void verifyManagers() throws Throwable {
         mockMvc.perform(
@@ -58,8 +60,27 @@ class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfiguratio
     }
     
     @Test
+    void verifyUploadMetadataRefused() throws Throwable {
+        mockMvc.perform(
+                post("/actuator/samlIdPRegisteredServiceMetadata/managers/" + FAILING_MANAGER)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(SamlMetadataDocument.builder()
+                        .name(UUID.randomUUID().toString())
+                        .value("metadata")
+                        .build()
+                        .toJson())
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.message").value("The metadata service refused the document"));
+    }
+
+    @Test
     void verifyUploadMetadata() throws Throwable {
-        val manager = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataManager.class).values().iterator().next();
+        val manager = applicationContext.getBeansOfType(SamlRegisteredServiceMetadataManager.class).values()
+            .stream()
+            .filter(candidate -> !FAILING_MANAGER.equals(candidate.getName()))
+            .findFirst()
+            .orElseThrow();
         val entry = SamlMetadataDocument.builder()
             .id(RandomUtils.nextLong())
             .name(UUID.randomUUID().toString())
@@ -104,6 +125,21 @@ class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfiguratio
         @Bean
         public SamlRegisteredServiceMetadataManager dummySamlRegisteredServiceMetadataManager() {
             return new InMemorySamlRegisteredServiceMetadataManager();
+        }
+
+        @Bean
+        public SamlRegisteredServiceMetadataManager failingSamlRegisteredServiceMetadataManager() {
+            return new InMemorySamlRegisteredServiceMetadataManager() {
+                @Override
+                public SamlMetadataDocument store(final SamlMetadataDocument document) {
+                    throw new IllegalStateException("The metadata service refused the document");
+                }
+
+                @Override
+                public String getName() {
+                    return FAILING_MANAGER;
+                }
+            };
         }
     }
 }

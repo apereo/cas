@@ -108,6 +108,185 @@ async function showSamlMetadataManager(sourceId) {
 }
 
 /**
+ * Upload SAML2 service provider metadata to a metadata manager: a name, the metadata XML file and, optionally, its
+ * signature, shown side by side once chosen. The same dialog serves the metadata management section under Protocols
+ * and the application wizard; when there are several managers to choose from, it asks which one.
+ */
+class PalantirSamlMetadataUpload {
+    static managers = null;
+
+    /**
+     * Whether metadata can be uploaded from this page: the metadata endpoint is exposed and can be written to, and its
+     * upload dialog is on the page.
+     *
+     * @returns {boolean} true when uploading is possible
+     */
+    static available() {
+        return Boolean(CasActuatorEndpoints.samlIdpRegisteredServiceMetadata())
+            && $("#saml2MetadataUploadDialog").length > 0
+            && CasActuatorEndpoints.writable("samlIdPRegisteredServiceMetadata");
+    }
+
+    /**
+     * The metadata managers registered with CAS, read once.
+     *
+     * @returns {Promise<{name: string, sourceId: string}[]>} the managers, or none when they cannot be read
+     */
+    static async loadManagers() {
+        if (PalantirSamlMetadataUpload.managers === null) {
+            try {
+                const managers = await $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers`);
+                PalantirSamlMetadataUpload.managers = Array.isArray(managers) ? managers : [];
+            } catch (error) {
+                console.debug("The SAML2 metadata managers could not be read", error);
+                return [];
+            }
+        }
+        return PalantirSamlMetadataUpload.managers;
+    }
+
+    /**
+     * Open the upload dialog.
+     *
+     * @param managers the metadata managers to upload to; the first is chosen, and a choice is offered when there are several
+     * @param name the name to start with
+     * @param onUploaded called with the manager and the uploaded document once the metadata is stored
+     */
+    static open({managers, name = "", onUploaded = () => {}}) {
+        hideBanner();
+        const dialog = $("#saml2MetadataUploadDialog");
+        const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml", {useWorker: false});
+        metadataXmlEditor.setReadOnly(true);
+        const signatureEditor = initializeAceEditor("saml2MetadataUploadSignatureEditor", "text");
+        signatureEditor.setReadOnly(true);
+
+        const managerSelect = $("#saml2MetadataUploadManager").empty();
+        managers.forEach((manager, index) => managerSelect.append($("<option>", {value: index, text: manager.name})));
+        $("#saml2MetadataUploadManagerRow").toggleClass("d-none", managers.length < 2);
+
+        const adjustUploadEditorLayout = () => {
+            const xmlVisible = !$("#saml2MetadataUploadXmlEditorContainer").hasClass("d-none");
+            const sigVisible = !$("#saml2MetadataUploadSignatureEditorContainer").hasClass("d-none");
+            if (xmlVisible && sigVisible) {
+                $("#saml2MetadataUploadXmlEditorContainer").css("width", "50%");
+                $("#saml2MetadataUploadSignatureEditorContainer").css("width", "50%");
+            } else if (xmlVisible) {
+                $("#saml2MetadataUploadXmlEditorContainer").css("width", "100%");
+            } else if (sigVisible) {
+                $("#saml2MetadataUploadSignatureEditorContainer").css("width", "100%");
+            }
+            metadataXmlEditor.resize();
+            signatureEditor.resize();
+        };
+        const reading = {count: 0, latest: new Map(), closed: false};
+        const current = (editor, read) => !reading.closed && reading.latest.get(editor) === read;
+        const uploadButton = () => dialog.closest(".ui-dialog").find(".ui-dialog-buttonpane button").first();
+        const readInto = (editor, container) => function () {
+            if (this.files.length === 0) {
+                return;
+            }
+            const read = Symbol("read");
+            reading.latest.set(editor, read);
+            reading.count++;
+            editor.setValue("");
+            uploadButton().prop("disabled", true);
+            this.files[0].text()
+                .then(content => {
+                    if (current(editor, read)) {
+                        editor.setValue(content);
+                        editor.gotoLine(1);
+                        showElements($(container));
+                        adjustUploadEditorLayout();
+                    }
+                })
+                .catch(error => {
+                    if (current(editor, read)) {
+                        Swal.fire({icon: "error", titleText: "The file could not be read", text: String(error?.message ?? error)});
+                    }
+                })
+                .finally(() => {
+                    reading.count--;
+                    if (!reading.closed) {
+                        uploadButton().prop("disabled", reading.count > 0);
+                    }
+                });
+        };
+        $("#saml2MetadataUploadXmlFileButton").off().on("click", () => $("#saml2MetadataUploadXmlFile").click());
+        $("#saml2MetadataUploadXmlFile").off().on("change", readInto(metadataXmlEditor, "#saml2MetadataUploadXmlEditorContainer"));
+        $("#saml2MetadataUploadSignatureFileButton").off().on("click", () => $("#saml2MetadataUploadSignatureFile").click());
+        $("#saml2MetadataUploadSignatureFile").off().on("change", readInto(signatureEditor, "#saml2MetadataUploadSignatureEditorContainer"));
+
+        dialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: Math.min(1150, $(window).width() - 32),
+            height: Math.min(880, $(window).height() - 32),
+            position: {my: "center", at: "center", of: window},
+            buttons: {
+                Upload: function () {
+                    if (reading.count > 0 || !$("#saml2MetadataUploadForm")[0].reportValidity()) {
+                        return;
+                    }
+                    const xmlText = metadataXmlEditor.getValue().trim();
+                    if (!xmlText) {
+                        Swal.fire({
+                            title: "Missing File",
+                            text: "Please select a metadata XML file to upload.",
+                            icon: "warning"
+                        });
+                        return;
+                    }
+                    const manager = managers[Number(managerSelect.val())] ?? managers[0];
+                    const payload = {
+                        name: $("#saml2MetadataUploadName").val(),
+                        value: xmlText,
+                        signature: signatureEditor.getValue().trim()
+                    };
+                    $.ajax({
+                        url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(manager.name)}`,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(payload),
+                        success: response => {
+                            dialog.dialog("close");
+                            Swal.fire({
+                                title: "Done!",
+                                text: "Metadata has been uploaded successfully.",
+                                icon: "success",
+                                timer: 2000
+                            });
+                            onUploaded(manager, response ?? payload);
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error uploading metadata:", error);
+                            displayBanner(xhr);
+                        }
+                    });
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            },
+            open: function () {
+                $("#saml2MetadataUploadName").val(name);
+                $("#saml2MetadataUploadXmlFile").val("");
+                $("#saml2MetadataUploadSignatureFile").val("");
+                metadataXmlEditor.setValue("");
+                signatureEditor.setValue("");
+                hideElements("#saml2MetadataUploadXmlEditorContainer");
+                hideElements("#saml2MetadataUploadSignatureEditorContainer");
+                $("#saml2MetadataUploadName").focus();
+            },
+            close: function () {
+                reading.closed = true;
+                $(this).dialog("destroy");
+            }
+        });
+        dialog.dialog("open");
+    }
+}
+
+/**
  * Select the metadata manager asked for by <code>showSamlMetadataManager</code> once its option exists.
  *
  * @returns {boolean} whether a manager was selected
@@ -901,123 +1080,11 @@ async function initializeSAML2ProtocolOperations() {
             }
 
             $("button[name=saml2MetadataUploadButton]").off().on("click", () => {
-                hideBanner();
-                const selectedManagerName = $("#saml2MetadataManagersSelect option:selected").text();
-
-                const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml", {useWorker: false});
-                metadataXmlEditor.setReadOnly(true);
-                const signatureEditor = initializeAceEditor("saml2MetadataUploadSignatureEditor", "text");
-                signatureEditor.setReadOnly(true);
-
-                function adjustUploadEditorLayout() {
-                    const xmlVisible = !$("#saml2MetadataUploadXmlEditorContainer").hasClass("d-none");
-                    const sigVisible = !$("#saml2MetadataUploadSignatureEditorContainer").hasClass("d-none");
-                    if (xmlVisible && sigVisible) {
-                        $("#saml2MetadataUploadXmlEditorContainer").css("width", "50%");
-                        $("#saml2MetadataUploadSignatureEditorContainer").css("width", "50%");
-                    } else if (xmlVisible) {
-                        $("#saml2MetadataUploadXmlEditorContainer").css("width", "100%");
-                    } else if (sigVisible) {
-                        $("#saml2MetadataUploadSignatureEditorContainer").css("width", "100%");
-                    }
-                    metadataXmlEditor.resize();
-                    signatureEditor.resize();
-                }
-
-                $("#saml2MetadataUploadXmlFileButton").off().on("click", () => {
-                    $("#saml2MetadataUploadXmlFile").click();
+                const selected = $("#saml2MetadataManagersSelect option:selected");
+                PalantirSamlMetadataUpload.open({
+                    managers: [{name: selected.text(), sourceId: selected.val()}],
+                    onUploaded: manager => fetchMetadataManagerEntries(manager.name)
                 });
-                $("#saml2MetadataUploadXmlFile").off().on("change", function () {
-                    if (this.files.length > 0) {
-                        this.files[0].text().then(content => {
-                            metadataXmlEditor.setValue(content);
-                            metadataXmlEditor.gotoLine(1);
-                            showElements($("#saml2MetadataUploadXmlEditorContainer"));
-                            adjustUploadEditorLayout();
-                        });
-                    }
-                });
-                $("#saml2MetadataUploadSignatureFileButton").off().on("click", () => {
-                    $("#saml2MetadataUploadSignatureFile").click();
-                });
-                $("#saml2MetadataUploadSignatureFile").off().on("change", function () {
-                    if (this.files.length > 0) {
-                        this.files[0].text().then(content => {
-                            signatureEditor.setValue(content);
-                            signatureEditor.gotoLine(1);
-                            showElements($("#saml2MetadataUploadSignatureEditorContainer"));
-                            adjustUploadEditorLayout();
-                        });
-                    }
-                });
-
-                $("#saml2MetadataUploadDialog").dialog({
-                    autoOpen: false,
-                    modal: true,
-                    width: 1150,
-                    height: 880,
-                    position: {
-                        my: "center top",
-                        at: "center top+200",
-                        of: window
-                    },
-                    buttons: {
-                        Upload: async function () {
-                            if (!$("#saml2MetadataUploadForm")[0].reportValidity()) {
-                                return;
-                            }
-                            const name = $("#saml2MetadataUploadName").val();
-                            const xmlText = metadataXmlEditor.getValue().trim();
-                            if (!xmlText) {
-                                Swal.fire({
-                                    title: "Missing File",
-                                    text: "Please select a metadata XML file to upload.",
-                                    icon: "warning"
-                                });
-                                return;
-                            }
-                            const sigText = signatureEditor.getValue().trim();
-                            const payload = {name: name, value: xmlText, signature: sigText};
-                            $.ajax({
-                                url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${selectedManagerName}`,
-                                type: "POST",
-                                contentType: "application/json",
-                                data: JSON.stringify(payload),
-                                success: (response) => {
-                                    $("#saml2MetadataUploadDialog").dialog("close");
-                                    Swal.fire({
-                                        title: "Done!",
-                                        text: "Metadata has been uploaded successfully.",
-                                        icon: "success",
-                                        timer: 2000
-                                    });
-                                    fetchMetadataManagerEntries(selectedManagerName);
-                                },
-                                error: (xhr, status, error) => {
-                                    console.error("Error uploading metadata:", error);
-                                    displayBanner(xhr);
-                                }
-                            });
-                        },
-                        Cancel: function () {
-                            $(this).dialog("close");
-                        }
-                    },
-                    open: function () {
-                        $("#saml2MetadataUploadName").val("");
-                        $("#saml2MetadataUploadXmlFile").val("");
-                        $("#saml2MetadataUploadSignatureFile").val("");
-                        metadataXmlEditor.setValue("");
-                        signatureEditor.setValue("");
-                        hideElements("#saml2MetadataUploadXmlEditorContainer");
-                        hideElements("#saml2MetadataUploadSignatureEditorContainer");
-                        $("#saml2MetadataUploadName").focus();
-                    },
-                    close: function () {
-                        $(this).dialog("destroy");
-                    }
-                });
-                $("#saml2MetadataUploadDialog").dialog("open");
             });
 
             $("#saml2MetadataManagersSelect").empty().selectmenu({

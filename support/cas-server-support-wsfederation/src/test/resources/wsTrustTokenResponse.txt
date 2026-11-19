@@ -1,0 +1,37 @@
+<RequestSecurityTokenResponseCollection xmlns="http://docs.oasis-open.org/ws-sx/ws-trust/200512" xmlns:ns2="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:ns4="http://www.w3.org/2005/08/addressing">
+    <RequestSecurityTokenResponse>
+        <TokenType>http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</TokenType>
+        <RequestedSecurityToken>
+            <saml1:Assertion xmlns:saml1="urn:oasis:names:tc:SAML:1.0:assertion" AssertionID="_8B4C0D2E6A0F4E11B9F6A2C3D4E5F601" IssueInstant="2026-11-18T10:15:30.000Z" Issuer="http://adfs.example.com/adfs/services/trust" MajorVersion="1" MinorVersion="1">
+                <saml1:Conditions NotBefore="2026-11-18T10:15:30.000Z" NotOnOrAfter="2026-11-18T10:45:30.000Z">
+                    <saml1:AudienceRestrictionCondition>
+                        <saml1:Audience>urn:federation:cas</saml1:Audience>
+                    </saml1:AudienceRestrictionCondition>
+                </saml1:Conditions>
+                <saml1:AttributeStatement>
+                    <saml1:Subject>
+                        <saml1:NameIdentifier Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">casuser</saml1:NameIdentifier>
+                        <saml1:SubjectConfirmation>
+                            <saml1:ConfirmationMethod>urn:oasis:names:tc:SAML:1.0:cm:bearer</saml1:ConfirmationMethod>
+                        </saml1:SubjectConfirmation>
+                    </saml1:Subject>
+                    <saml1:Attribute AttributeName="upn" AttributeNamespace="http://schemas.xmlsoap.org/ws/2005/05/identity/claims">
+                        <saml1:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">casuser</saml1:AttributeValue>
+                    </saml1:Attribute>
+                    <saml1:Attribute AttributeName="emailaddress" AttributeNamespace="http://schemas.xmlsoap.org/ws/2005/05/identity/claims">
+                        <saml1:AttributeValue xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">casuser@example.org</saml1:AttributeValue>
+                    </saml1:Attribute>
+                </saml1:AttributeStatement>
+            </saml1:Assertion>
+        </RequestedSecurityToken>
+        <Lifetime>
+            <ns2:Created>2026-11-18T10:15:30.000Z</ns2:Created>
+            <ns2:Expires>2026-11-18T10:45:30.000Z</ns2:Expires>
+        </Lifetime>
+        <AppliesTo xmlns="http://www.w3.org/ns/ws-policy">
+            <ns4:EndpointReference>
+                <ns4:Address>urn:federation:cas</ns4:Address>
+            </ns4:EndpointReference>
+        </AppliesTo>
+    </RequestSecurityTokenResponse>
+</RequestSecurityTokenResponseCollection>

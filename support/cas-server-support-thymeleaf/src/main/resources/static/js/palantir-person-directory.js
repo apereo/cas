@@ -185,7 +185,7 @@ async function initializePersonDirectoryOperations() {
                     if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
-                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                             type: "DELETE",
                             contentType: "application/json",
                             error: (xhr, status, error) => {
@@ -207,7 +207,7 @@ async function initializePersonDirectoryOperations() {
             const username = $("#personUsername").val();
             personDirectoryTable.clear();
             $.ajax({
-                url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {

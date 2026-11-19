@@ -319,6 +319,12 @@ class RedisServerTicketRegistryTests {
             for (var i = 0; i < 25; i++) {
                 assertEquals(criteria1.getCount(), getNewTicketRegistry().query(criteria1).size());
             }
+            val decodedCriteria = new TicketRegistryQueryCriteria()
+                .setCount(3L)
+                .setDecode(Boolean.TRUE)
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(authentication.getPrincipal().getId());
+            assertEquals(decodedCriteria.getCount(), getNewTicketRegistry().query(decodedCriteria).size());
 
             ((Cleanable) getNewTicketRegistry()).clean();
             val criteria2 = new TicketRegistryQueryCriteria()

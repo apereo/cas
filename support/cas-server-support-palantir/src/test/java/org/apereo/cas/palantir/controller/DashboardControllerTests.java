@@ -14,6 +14,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.InetAddressUtils;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -28,8 +29,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.contributor.CompositeHealthContributor;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -220,6 +227,101 @@ class DashboardControllerTests {
             assertTrue(user.isEmpty());
         } finally {
             overview.destroy();
+        }
+    }
+
+    /**
+     * The runtime section gives the warnings logged, the share of processor time spent collecting garbage, the live
+     * data left after a collection and the open files, each with its limit when the server records one.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewRuntimeMetrics() {
+        val registry = new SimpleMeterRegistry();
+        registry.counter("log4j2.events", "level", "warn").increment(3);
+        Gauge.builder("jvm.gc.overhead", () -> .05).register(registry);
+        Gauge.builder("jvm.gc.live.data.size", () -> 512).register(registry);
+        Gauge.builder("jvm.gc.max.data.size", () -> 1024).register(registry);
+        Gauge.builder("process.files.open", () -> 40).register(registry);
+        val overview = new PalantirOverview(applicationContext,
+            applicationContext.getBeanProvider(ServicesManager.class), applicationContext.getBeanProvider(TicketRegistry.class),
+            new StaticListableBeanFactory(Map.of("meterRegistry", registry)).getBeanProvider(MeterRegistry.class),
+            applicationContext.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            val sections = (Map<String, Object>) overview.summarize(Set.of("metrics"), true, Set.of("traffic")).get("sections");
+            val traffic = (Map<String, Object>) sections.get("traffic");
+            assertEquals(3.0, traffic.get("warningsLogged"));
+            assertEquals(.05, traffic.get("gcOverhead"));
+            assertEquals(Map.of("used", 512.0, "max", 1024.0), traffic.get("liveData"));
+            assertEquals(Map.of("used", 40.0), traffic.get("files"));
+        } finally {
+            overview.destroy();
+        }
+    }
+
+    /**
+     * A section kept from earlier is shown until it expires, unless the summary is asked for fresh, as when the
+     * operator refreshes the home page or one of its cards.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewFreshSummarySkipsKeptSections() {
+        val status = new AtomicReference<>(Health.up().build());
+        val context = new StaticApplicationContext();
+        context.getBeanFactory().registerSingleton("memoryHealthIndicator", (HealthIndicator) status::get);
+        context.refresh();
+        val overview = new PalantirOverview(context,
+            context.getBeanProvider(ServicesManager.class), context.getBeanProvider(TicketRegistry.class),
+            context.getBeanProvider(MeterRegistry.class), context.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            final Function<Boolean, Object> health = fresh -> ((Map<String, Object>) ((Map<String, Object>) overview
+                .summarize(Set.of("health"), true, Set.of("health"), fresh).get("sections")).get("health")).get("status");
+            assertEquals("UP", health.apply(false));
+            status.set(Health.down().build());
+            assertEquals("UP", health.apply(false));
+            assertEquals("DOWN", health.apply(true));
+        } finally {
+            overview.destroy();
+            context.close();
+        }
+    }
+
+    /**
+     * A health check made of several checks, such as one per LDAP server being monitored, is listed once with the
+     * worst status of its checks, in the order the health endpoint is told to use, where CAS puts WARN first; one with
+     * no checks in it is left out.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewHealthOfGroupedChecks() {
+        val context = new StaticApplicationContext();
+        context.getEnvironment().getPropertySources().addFirst(new MapPropertySource("health",
+            Map.of("management.endpoint.health.status.order", "WARN,DOWN,OUT_OF_SERVICE,UNKNOWN,UP")));
+        context.getBeanFactory().registerSingleton("warningHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of(
+                "Primary", () -> Health.up().build(),
+                "Secondary", () -> Health.status(new Status("WARN")).build())));
+        context.getBeanFactory().registerSingleton("pooledLdapConnectionFactoryHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of(
+                "Production LDAP", () -> Health.up().build(),
+                "Backup LDAP", () -> Health.down().build())));
+        context.getBeanFactory().registerSingleton("emptyHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of()));
+        context.getBeanFactory().registerSingleton("memoryHealthIndicator", (HealthIndicator) () -> Health.up().build());
+        context.refresh();
+        val overview = new PalantirOverview(context,
+            context.getBeanProvider(ServicesManager.class), context.getBeanProvider(TicketRegistry.class),
+            context.getBeanProvider(MeterRegistry.class), context.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            val sections = (Map<String, Object>) overview.summarize(Set.of("health"), true, Set.of("health")).get("sections");
+            val health = (Map<String, Object>) sections.get("health");
+            val components = ((List<Map<String, Object>>) health.get("components")).stream()
+                .collect(Collectors.toMap(component -> (String) component.get("name"), component -> component.get("status")));
+            assertEquals(Map.of("pooledLdapConnectionFactory", "DOWN", "memory", "UP", "warning", "WARN"), components);
+            assertEquals("DOWN", health.get("status"));
+        } finally {
+            overview.destroy();
+            context.close();
         }
     }
 

@@ -7,6 +7,7 @@ function createRegisteredServiceSaml2Fields() {
         containerId: "editServiceWizardSamlContainer",
         title: "Define the metadata location (URL, file path, etc) for the SAML2 service provider."
     });
+    createSamlMetadataUploadButton();
 
     createInputField({
         cssClasses: "advanced-option",
@@ -588,6 +589,87 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
 
 
 
+}
+
+/**
+ * Offer Upload Metadata and Manage Metadata buttons next to the metadata location, when SAML2 metadata management is
+ * available: its endpoint can be written to and at least one metadata manager is registered. Uploaded metadata goes to
+ * a metadata manager, the same way as from the metadata management section under Protocols, and the metadata location
+ * then names that manager's source, such as <code>mongodb://</code>; an empty entity id is taken from the uploaded
+ * metadata, asking which service provider the application is when the metadata holds several. Manage Metadata closes
+ * the wizard, asking first as usual when it holds unsaved changes, and opens that section with the manager of the
+ * metadata location, or the first manager, and its entries.
+ */
+function createSamlMetadataUploadButton() {
+    const container = $("#registeredServiceMetadataLocationFieldContainer");
+    if (container.length === 0 || $("#registeredServiceMetadataUpload").length > 0) {
+        return;
+    }
+    const button = $("<button>", {
+        type: "button",
+        id: "registeredServiceMetadataUpload",
+        class: "mdc-button mdc-button--outlined palantir-wizard-field__action",
+        title: "Upload the service provider's metadata to a SAML2 metadata manager",
+        "data-palantir-write": "samlIdPRegisteredServiceMetadata",
+        hidden: true
+    }).append($("<i>", {class: "mdi mdi-upload", "aria-hidden": "true"}))
+        .append($("<span>", {class: "mdc-button__label", text: "Upload Metadata"}));
+    const manage = $("<button>", {
+        type: "button",
+        id: "registeredServiceMetadataManage",
+        class: "mdc-button mdc-button--outlined palantir-wizard-field__action",
+        title: "Close the wizard and show the metadata entries of the SAML2 metadata managers",
+        hidden: true
+    }).append($("<i>", {class: "mdi mdi-database-cog-outline", "aria-hidden": "true"}))
+        .append($("<span>", {class: "mdc-button__label", text: "Manage Metadata"}));
+    container.addClass("palantir-wizard-field--with-action").append(button, manage);
+    if (!PalantirSamlMetadataUpload.available()) {
+        return;
+    }
+    PalantirSamlMetadataUpload.loadManagers().then(managers => button.add(manage).prop("hidden", managers.length === 0));
+    manage.on("click", async () => {
+        const managers = await PalantirSamlMetadataUpload.loadManagers();
+        const location = String($("#registeredServiceMetadataLocation").val() ?? "").trim();
+        const manager = managers.find(entry => location !== "" && location.startsWith(entry.sourceId)) ?? managers[0];
+        if (!manager) {
+            return;
+        }
+        const dialog = $("#editServiceWizardDialog");
+        dialog.off(".palantirManageMetadata")
+            .one("dialogclose.palantirManageMetadata", () => {
+                dialog.off(".palantirManageMetadata");
+                showSamlMetadataManager(manager.sourceId);
+            })
+            .one("palantir:closecancelled.palantirManageMetadata", () => dialog.off(".palantirManageMetadata"));
+        dialog.dialog("close");
+    });
+    button.on("click", async () => {
+        const managers = await PalantirSamlMetadataUpload.loadManagers();
+        const location = String($("#registeredServiceMetadataLocation").val() ?? "").trim();
+        const current = managers.filter(manager => location !== "" && location.startsWith(manager.sourceId));
+        PalantirSamlMetadataUpload.open({
+            managers: [...current, ...managers.filter(manager => !current.includes(manager))],
+            name: String($("#registeredServiceName").val() ?? "").trim(),
+            onUploaded: async (manager, document) => {
+                $("#registeredServiceMetadataLocation").val(manager.sourceId).trigger("input").trigger("blur");
+                if (String($("#registeredServiceId").val() ?? "").trim() !== "") {
+                    return;
+                }
+                let entityIds = [];
+                try {
+                    entityIds = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(document.value ?? ""))
+                        .map(provider => provider.getAttribute("entityID"))
+                        .filter(Boolean);
+                } catch (error) {
+                    console.debug("The entity ids could not be read from the uploaded metadata", error);
+                }
+                const entityId = entityIds.length > 1 ? await PalantirSamlMetadataImport.choose(entityIds) : entityIds[0];
+                if (entityId) {
+                    $("#registeredServiceId").val(entityId).trigger("input").trigger("blur");
+                }
+            }
+        });
+    });
 }
 
 /**

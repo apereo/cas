@@ -21,9 +21,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jspecify.annotations.Nullable;
+import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.health.contributor.CompositeHealthContributor;
+import org.springframework.boot.health.contributor.HealthContributor;
 import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -53,6 +59,9 @@ public class PalantirOverview implements DisposableBean {
     private static final Duration SECTION_TIMEOUT = Duration.ofSeconds(3);
 
     private static final Duration HEALTH_INDICATOR_TIMEOUT = Duration.ofMillis(2500);
+
+    private static final List<String> DEFAULT_HEALTH_STATUS_ORDER = List.of(Status.DOWN.getCode(), Status.OUT_OF_SERVICE.getCode(),
+        Status.UP.getCode(), Status.UNKNOWN.getCode());
 
     private static final int DEFAULT_LIFETIME = 30;
 
@@ -136,6 +145,22 @@ public class PalantirOverview implements DisposableBean {
      * @return the sections that apply and the moment they were put together
      */
     public Map<String, Object> summarize(final Set<String> exposedEndpoints, final boolean administrator, final Set<String> wanted) {
+        return summarize(exposedEndpoints, administrator, wanted, false);
+    }
+
+    /**
+     * Summarize the server for the home page, only the sections asked for. A fresh summary does not use the values
+     * kept from earlier, such as when the operator asks for a refresh; a section being computed already is waited for
+     * rather than computed again.
+     *
+     * @param exposedEndpoints the ids of the actuator endpoints this deployment exposes
+     * @param administrator    whether the person asking is an administrator; others see the server, its health and resources only
+     * @param wanted           the sections asked for; empty for every section
+     * @param fresh            whether to compute the sections again rather than use the values kept from earlier
+     * @return the sections that apply and the moment they were put together
+     */
+    public Map<String, Object> summarize(final Set<String> exposedEndpoints, final boolean administrator,
+                                         final Set<String> wanted, final boolean fresh) {
         val exposed = exposedEndpoints.stream().map(id -> id.toLowerCase(Locale.ENGLISH)).collect(Collectors.toSet());
         val applicable = sections.stream()
             .filter(section -> wanted.isEmpty() || wanted.contains(section.name()))
@@ -144,7 +169,7 @@ public class PalantirOverview implements DisposableBean {
                 || section.endpoints().stream().anyMatch(id -> exposed.contains(id.toLowerCase(Locale.ENGLISH))))
             .toList();
         val futures = new LinkedHashMap<String, CompletableFuture<Map<String, Object>>>();
-        applicable.forEach(section -> futures.put(section.name(), start(section)));
+        applicable.forEach(section -> futures.put(section.name(), start(section, fresh)));
         val deadline = System.nanoTime() + SECTION_TIMEOUT.toNanos();
         val result = new LinkedHashMap<String, Object>();
         futures.forEach((name, future) -> result.put(name, await(name, future, deadline)));
@@ -165,13 +190,14 @@ public class PalantirOverview implements DisposableBean {
      * application is saved, is computed again, so the change is not hidden until the cached value expires.
      *
      * @param section the section
+     * @param fresh   whether to compute it again even when a value kept from earlier is still current
      * @return the section's value, now or once computed
      */
-    private CompletableFuture<Map<String, Object>> start(final Section section) {
+    private CompletableFuture<Map<String, Object>> start(final Section section, final boolean fresh) {
         val name = section.name();
         val changedAt = invalidated.getOrDefault(name, Instant.MIN);
         val cached = cache.get(name);
-        if (cached != null && !section.lifetime().isZero()
+        if (!fresh && cached != null && !section.lifetime().isZero()
             && cached.started().isAfter(changedAt)
             && cached.computed().plus(section.lifetime()).isAfter(Instant.now())) {
             return CompletableFuture.completedFuture(cached.value());
@@ -227,14 +253,16 @@ public class PalantirOverview implements DisposableBean {
     }
 
     private Map<String, Object> health() {
-        val indicators = applicationContext.getBeansOfType(HealthIndicator.class);
         val checks = new TreeMap<String, HealthCheck>();
-        indicators.forEach((beanName, indicator) -> {
-            val name = Strings.CI.removeEnd(Strings.CI.removeEnd(beanName, "HealthIndicator"), "HealthContributor");
-            checks.put(name, healthChecks.compute(name, (key, previous) -> previous != null && !previous.result().isDone()
-                ? previous
-                : startHealthCheck(indicator)));
-        });
+        applicationContext.getBeansOfType(HealthIndicator.class).entrySet().stream()
+            .filter(entry -> !ScopedProxyUtils.isScopedTarget(entry.getKey()))
+            .forEach(entry -> checks.put(healthCheckName(entry.getKey()),
+                healthCheck(healthCheckName(entry.getKey()), () -> entry.getValue().health().getStatus().getCode())));
+        applicationContext.getBeansOfType(CompositeHealthContributor.class).entrySet().stream()
+            .filter(entry -> !ScopedProxyUtils.isScopedTarget(entry.getKey()))
+            .filter(entry -> entry.getValue().stream().findAny().isPresent())
+            .forEach(entry -> checks.put(healthCheckName(entry.getKey()),
+                healthCheck(healthCheckName(entry.getKey()), () -> statusOf(entry.getValue(), healthStatusOrder()))));
         val deadline = System.nanoTime() + HEALTH_INDICATOR_TIMEOUT.toNanos();
         val components = new ArrayList<Map<String, Object>>();
         checks.forEach((name, check) -> {
@@ -265,20 +293,73 @@ public class PalantirOverview implements DisposableBean {
         return health;
     }
 
+    private static String healthCheckName(final String beanName) {
+        return Strings.CI.removeEnd(Strings.CI.removeEnd(beanName, "HealthIndicator"), "HealthContributor");
+    }
+
     /**
      * Run one health check on its own thread, timing it there, so that its time is not stretched by the checks read
      * before it. A check that has not answered yet is reused rather than started again, so one that hangs does not
      * pile up threads.
      *
-     * @param indicator the health indicator
+     * @param name   the name of the check
+     * @param status reads the status of the check
      * @return the running check
      */
-    private HealthCheck startHealthCheck(final HealthIndicator indicator) {
-        val started = System.nanoTime();
-        return new HealthCheck(started, CompletableFuture.supplyAsync(() -> {
-            val status = indicator.health().getStatus().getCode();
-            return new HealthResult(status, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started));
-        }, executor));
+    private HealthCheck healthCheck(final String name, final Supplier<String> status) {
+        return healthChecks.compute(name, (_, previous) -> {
+            if (previous != null && !previous.result().isDone()) {
+                return previous;
+            }
+            val started = System.nanoTime();
+            return new HealthCheck(started, CompletableFuture.supplyAsync(
+                () -> new HealthResult(status.get(), TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started)), executor));
+        });
+    }
+
+    /**
+     * The order of health statuses, worst first, as the health endpoint is told to use it, such as CAS's own
+     * {@code WARN} ahead of {@code DOWN}; Spring Boot's order when none is given.
+     *
+     * @return the status codes, worst first
+     */
+    private List<String> healthStatusOrder() {
+        val order = Binder.get(applicationContext.getEnvironment())
+            .bind("management.endpoint.health.status.order", Bindable.listOf(String.class))
+            .orElseGet(List::of)
+            .stream()
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .map(code -> code.toUpperCase(Locale.ENGLISH))
+            .toList();
+        return order.isEmpty() ? DEFAULT_HEALTH_STATUS_ORDER : order;
+    }
+
+    /**
+     * The status of a health check made of several checks, such as one per LDAP server being monitored: the worst
+     * status of the checks in it, in the order the health endpoint uses. A status that order does not name counts as
+     * the least severe.
+     *
+     * @param contributor the health check made of several checks
+     * @param order       the status codes, worst first
+     * @return the status
+     */
+    private static String statusOf(final CompositeHealthContributor contributor, final List<String> order) {
+        val statuses = contributor.stream()
+            .map(entry -> statusOf(entry.contributor(), order))
+            .collect(Collectors.toSet());
+        return order.stream().filter(statuses::contains).findFirst()
+            .orElseGet(() -> statuses.stream().sorted().findFirst().orElse(Status.UNKNOWN.getCode()));
+    }
+
+    private static String statusOf(final HealthContributor contributor, final List<String> order) {
+        if (contributor instanceof final HealthIndicator indicator) {
+            return indicator.health().getStatus().getCode();
+        }
+        if (contributor instanceof final CompositeHealthContributor composite) {
+            return statusOf(composite, order);
+        }
+        return Status.UNKNOWN.getCode();
     }
 
     private static Map<String, Object> resources() {
@@ -330,18 +411,9 @@ public class PalantirOverview implements DisposableBean {
             .toList();
         val applications = new LinkedHashMap<String, Object>();
         applications.put("total", services.size());
-        applications.put("disabled", services.stream().filter(PalantirOverview::isDisabled).count());
         applications.put("byType", byType);
         applications.put("expiring", expiring);
         return applications;
-    }
-
-    private static boolean isDisabled(final RegisteredService service) {
-        try {
-            return service.getAccessStrategy() != null && !service.getAccessStrategy().isServiceAccessAllowed(service, null);
-        } catch (final Exception e) {
-            return false;
-        }
     }
 
     private static @Nullable ZonedDateTime expirationOf(final RegisteredService service) {
@@ -524,16 +596,45 @@ public class PalantirOverview implements DisposableBean {
             gc.put("maxSeconds", pauses.stream().mapToDouble(timer -> timer.max(TimeUnit.SECONDS)).max().orElse(0));
             traffic.put("gc", gc);
         }
-        Stream.of("log4j2.events", "logback.events")
-            .map(name -> registry.find(name).tag("level", "error").counters())
+        loggedEvents(registry, "error").ifPresent(count -> traffic.put("errorsLogged", count));
+        loggedEvents(registry, "warn").ifPresent(count -> traffic.put("warningsLogged", count));
+        gauge(registry, "system.load.average.1m").ifPresent(value -> traffic.put("loadAverage", value));
+        gauge(registry, "jvm.gc.overhead").ifPresent(value -> traffic.put("gcOverhead", value));
+        gauge(registry, "jvm.gc.live.data.size")
+            .ifPresent(used -> traffic.put("liveData", usage(used, gauge(registry, "jvm.gc.max.data.size").orElse(null))));
+        gauge(registry, "process.files.open")
+            .ifPresent(open -> traffic.put("files", usage(open, gauge(registry, "process.files.max").orElse(null))));
+        return traffic;
+    }
+
+    /**
+     * How many events of a level the logging framework logged since CAS started.
+     *
+     * @param registry the meter registry
+     * @param level    the level, such as error
+     * @return the count, when the logging framework records it
+     */
+    private static Optional<Double> loggedEvents(final MeterRegistry registry, final String level) {
+        return Stream.of("log4j2.events", "logback.events")
+            .map(name -> registry.find(name).tag("level", level).counters())
             .filter(Predicate.not(Collection::isEmpty))
             .findFirst()
-            .ifPresent(counters -> traffic.put("errorsLogged", counters.stream().mapToDouble(Counter::count).sum()));
-        Optional.ofNullable(registry.find("system.load.average.1m").gauge())
+            .map(counters -> counters.stream().mapToDouble(Counter::count).sum());
+    }
+
+    private static Optional<Double> gauge(final MeterRegistry registry, final String name) {
+        return Optional.ofNullable(registry.find(name).gauge())
             .map(Gauge::value)
-            .filter(value -> value >= 0)
-            .ifPresent(value -> traffic.put("loadAverage", value));
-        return traffic;
+            .filter(value -> Double.isFinite(value) && value >= 0);
+    }
+
+    private static Map<String, Object> usage(final double used, final @Nullable Double max) {
+        val usage = new LinkedHashMap<String, Object>();
+        usage.put("used", used);
+        if (max != null && max > 0) {
+            usage.put("max", max);
+        }
+        return usage;
     }
 
     /**

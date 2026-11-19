@@ -97,9 +97,11 @@ class PalantirApplicationAccess {
     }
 
     /**
-     * The access strategy that turns the application on again: default strategies are switched on, the disabled
+     * The access strategy that turns the application on again: a default strategy is switched on, the disabled
      * default strategy added when the application was disabled is removed, and a chain left with one strategy gives
-     * way to it.
+     * way to it. Inside a chain, only the strategies that keep the application off are turned on; a strategy that
+     * already lets people in, such as an OR chain with one branch switched off, is left as it was, so enabling never
+     * allows more than the strategy did before the application was disabled.
      *
      * @param strategy the current access strategy
      * @returns {object} the enabled access strategy
@@ -118,7 +120,7 @@ class PalantirApplicationAccess {
             && Object.keys(entry).every(key => key === "@class" || key === "enabled");
         const kept = PalantirApplicationAccess.entries(strategy.strategies)
             .filter(entry => !added(entry))
-            .map(entry => PalantirApplicationAccess.enable(entry));
+            .map(entry => PalantirApplicationAccess.isDisabled(entry) ? PalantirApplicationAccess.enable(entry) : entry);
         if (kept.length === 0) {
             return {"@class": PalantirApplicationAccess.DEFAULT, enabled: true};
         }
@@ -396,19 +398,18 @@ class PalantirApplicationSelection {
     }
 
     /**
-     * Reload the applications and wait for them, for a while at most.
+     * Read the applications again once they were changed, and wait for them. When they cannot be read, the change
+     * itself was still made: the operator is told the list may be out of date rather than kept waiting.
      *
-     * @returns {Promise<void>} resolved once the applications are reloaded
+     * @returns {Promise<boolean>} resolved once the applications are read again, with whether they could be
      */
     static async reload() {
-        await Promise.race([
-            new Promise(resolve => fetchServices(() => {
-                updateNavigationSidebar();
-                resolve();
-            })),
-            new Promise(resolve => setTimeout(resolve, 20000))
-        ]);
+        const refreshed = await fetchServices(() => updateNavigationSidebar());
         PalantirApplicationSelection.refresh();
+        if (refreshed === false) {
+            notyf.error("The change is saved, but the applications could not be read again; the list may be out of date.");
+        }
+        return refreshed !== false;
     }
 
     /**

@@ -121,6 +121,68 @@ function toggleAuthnHandlerEditorVisibility() {
     }
 }
 
+/**
+ * Show the accounts a user may impersonate as cards, with a line that says how many there are, or that the user may
+ * impersonate any account or none. When attribute resolution is available, each card can fetch the attributes of its
+ * account.
+ *
+ * @param username the user who impersonates
+ * @param accounts the accounts the impersonation endpoint answered with
+ */
+function renderSurrogateAccounts(username, accounts) {
+    const anyAccount = accounts.length === 1 && accounts[0] === "*";
+    const listed = anyAccount ? [] : accounts.map(String);
+    $("#surrogateAccountsSummary").text(anyAccount
+        ? `${username} may impersonate any account.`
+        : listed.length === 0
+            ? `${username} may not impersonate any account.`
+            : `${username} may impersonate ${listed.length} account${listed.length === 1 ? "" : "s"}.`);
+    const resolvable = Boolean(CasActuatorEndpoints.personDirectory());
+    const cards = $("#surrogateAccountsCards").empty();
+    listed.forEach(account => {
+        const card = $("<article>", {class: "palantir-application-card palantir-surrogate-account", "data-surrogate-account": account})
+            .append($("<header>", {class: "palantir-application-card-header"})
+                .append($("<span>", {class: "palantir-surrogate-account__avatar", "aria-hidden": "true", text: account.charAt(0).toUpperCase()}))
+                .append($("<div>", {class: "palantir-application-card-title"})
+                    .append($("<h4>", {text: account, title: account}))
+                    .append($("<p>", {text: `May be impersonated by ${username}`}))));
+        if (resolvable) {
+            card.append($("<footer>", {class: "palantir-application-card-actions"})
+                .append($("<button>", {
+                    type: "button",
+                    class: "palantir-button is-primary",
+                    "data-surrogate-attributes": account,
+                    title: `Open attribute resolution and fetch the attributes of ${account}`
+                })
+                    .append($("<i>", {class: "mdi mdi-account-search", "aria-hidden": "true"}))
+                    .append(document.createTextNode("Fetch Attributes"))));
+        }
+        cards.append(card);
+    });
+    showElements($("#surrogateAccountsContainer"));
+}
+
+/**
+ * Open attribute resolution on the person directory page and fetch the attributes of an account.
+ *
+ * @param account the username of the account
+ * @returns {Promise<void>} resolved once the lookup is asked for
+ */
+async function resolveSurrogateAccountAttributes(account) {
+    $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.PERSON_DIRECTORY.index}]`).trigger("click");
+    await initializeDashboardTab(Tabs.PERSON_DIRECTORY);
+    const tabs = $("#attributes-tab");
+    if (tabs.data("ui-tabs")) {
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#attributeResolutionTab").parent()));
+    }
+    const field = $("#personUsername").val(account).trigger("input").trigger("change");
+    const textField = field.closest(".mdc-text-field");
+    textField.addClass("mdc-text-field--label-floating");
+    textField.find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+    textField.find(".mdc-notched-outline").addClass("mdc-notched-outline--notched");
+    $("#personDirectoryButton").trigger("click");
+}
+
 function toggleAuthnHandlerAdvancedOptions() {
     const showAdvanced = $("#showAuthnHandlerAdvancedOptions").val();
     localStorage.setItem("showAuthnHandlerAdvancedOptionsPreference", showAdvanced);
@@ -1478,6 +1540,9 @@ async function initializeAuthenticationOperations() {
 
     if (CasActuatorEndpoints.impersonation()) {
         showElements($("#surrogacy").parent());
+        $("#surrogateAccountsCards").off("click").on("click", "[data-surrogate-attributes]", event => {
+            resolveSurrogateAccountAttributes(String($(event.currentTarget).attr("data-surrogate-attributes")));
+        });
 
         $("#fetchSurrogateAccountsButton").on("click", () => {
             const form = document.getElementById("fmSurrogateAccounts");
@@ -1489,22 +1554,10 @@ async function initializeAuthenticationOperations() {
                 url: `${CasActuatorEndpoints.impersonation()}/${encodeURIComponent(username)}`,
                 method: "GET",
                 contentType: "application/json",
-                success: accounts => {
-                    const $dropdown = $("#surrogateAccountsDropdown");
-                    $dropdown.empty();
-                    if (accounts.length > 0) {
-                        for (const account of accounts) {
-                            $dropdown.append($("<option>", {value: account, text: account}));
-                        }
-                        $dropdown.prop("selectedIndex", 0);
-                        $dropdown.selectmenu("refresh");
-                        showElements($("#surrogateAccountsContainer"));
-                    } else {
-                        hideElements($("#surrogateAccountsContainer"));
-                    }
-                },
+                success: accounts => renderSurrogateAccounts(username, Array.isArray(accounts) ? accounts : []),
                 error: (xhr) => {
                     console.error("Error fetching surrogate accounts:", xhr.responseText);
+                    hideElements($("#surrogateAccountsContainer"));
                     displayBanner(xhr);
                 }
             });

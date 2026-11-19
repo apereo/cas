@@ -5,11 +5,12 @@ const cas = require("../../cas.js");
 
 const ENTITY_PREFIX = "https://signing.example.org";
 const RSA_SHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
-const RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
 const RSA_SHA512 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
 const DIGEST_SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
 const DIGEST_SHA512 = "http://www.w3.org/2001/04/xmlenc#sha512";
 const C14N_EXCLUSIVE_WITH_COMMENTS = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
+const CALLBACK_URL = "https://localhost:8443/cas/idp/profile/SAML2/Callback";
+const HTTPBIN_URL = "https://localhost:9859/";
 
 function children(node, localName) {
     if (node === undefined || node === null || typeof node !== "object") {
@@ -45,9 +46,26 @@ function describeSignature(element) {
     };
 }
 
+async function textOf(page, selector) {
+    const element = await page.$(selector);
+    return element === null ? undefined : cas.innerText(page, selector);
+}
+
 async function fetchSamlResponse(browser, entityId) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
+    const callbackStatuses = [];
+    const httpbinRequests = [];
+    page.on("response", (response) => {
+        if (response.url().startsWith(CALLBACK_URL)) {
+            callbackStatuses.push(response.status());
+        }
+    });
+    page.on("request", (request) => {
+        if (request.url().startsWith(HTTPBIN_URL)) {
+            httpbinRequests.push(request.url());
+        }
+    });
     try {
         const url = `https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO?providerId=${encodeURIComponent(entityId)}`;
         await cas.log(`Navigating to ${url}`);
@@ -58,8 +76,14 @@ async function fetchSamlResponse(browser, entityId) {
         await cas.logPage(page);
         await cas.screenshot(page);
         const pageUrl = page.url();
-        if (!pageUrl.startsWith("https://localhost:9859/")) {
-            return {pageUrl};
+        if (!pageUrl.startsWith(HTTPBIN_URL)) {
+            return {
+                pageUrl,
+                callbackStatuses,
+                httpbinRequests,
+                errorHeader: await textOf(page, "#content h2"),
+                errorContent: await textOf(page, "#content")
+            };
         }
         const content = JSON.parse(await cas.innerText(page, "body"));
         assert(content.form.SAMLResponse !== undefined);
@@ -116,17 +140,15 @@ async function verifyGlobalAlgorithms(browser) {
 }
 
 async function verifyBlockedAlgorithm(browser) {
-    await cas.log("The only signature algorithm of the service is also blocked for it, so it must never be used");
+    await cas.log("The only signature algorithm of the service is also blocked for it, so signing is refused and no response is sent");
     const result = await fetchSamlResponse(browser, `${ENTITY_PREFIX}/sp-blocked`);
-    if (result.responseSignature === undefined && result.assertionSignature === undefined && result.pageUrl.startsWith("https://localhost:8443/")) {
-        await cas.log(`No SAML2 response is sent; the flow ends at ${result.pageUrl}`);
-        return;
-    }
-    const algorithms = [result.responseSignature, result.assertionSignature]
-        .filter((signature) => signature !== undefined)
-        .map((signature) => signature.signatureMethod);
-    await cas.log(`Signature algorithms found in the response: ${algorithms}`);
-    assert(!algorithms.includes(RSA_SHA256), "A blocked signature algorithm must not be used");
+    await cas.log(result);
+    assert(result.pageUrl.startsWith(CALLBACK_URL), `The flow must end at the SAML2 callback, not at ${result.pageUrl}`);
+    assert.equal(result.httpbinRequests.length, 0, "No SAML2 response may reach the service provider");
+    assert.equal(result.callbackStatuses.at(-1), 400, "The callback must answer with the error view status");
+    assert.equal(result.errorHeader, "Application Not Authorized to Use CAS");
+    assert(result.errorContent.includes("The SAML authentication request cannot be understood, accepted or validated by CAS"),
+        "The error view must carry the UNSATISFIED_SAML_REQUEST message of the SamlException");
 }
 
 (async () => {

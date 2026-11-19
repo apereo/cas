@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataManager;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -223,8 +225,18 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
             .stream()
             .filter(manager -> manager.getName().equals(name))
             .findFirst()
-            .map(manager -> ResponseEntity.ok(manager.store(document)))
+            .map(manager -> store(manager, document))
             .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private static ResponseEntity store(final SamlRegisteredServiceMetadataManager manager, final SamlMetadataDocument document) {
+        try {
+            return ResponseEntity.ok(manager.store(document));
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.internalServerError().body(Map.of("message",
+                StringUtils.defaultIfBlank(e.getMessage(), "The metadata document could not be stored")));
+        }
     }
 
     private record MetadataManagerEntity(String name, String sourceId) {

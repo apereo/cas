@@ -126,6 +126,24 @@ class DefaultRelyingPartyTokenProducerTests extends BaseCoreWsSecurityIdentityPr
         assertEquals("<SecurityToken id=\"abcdefgh123456\"/>", result);
     }
 
+    @Test
+    void verifyAppliesToDefaultsToRealm() throws Throwable {
+        val request = new MockHttpServletRequest();
+
+        val registeredService = new WSFederationRegisteredService();
+        registeredService.setRealm("CAS");
+        registeredService.setServiceId("http://app.example.org/wsfed-idp");
+        registeredService.setName("WSFED App");
+        registeredService.setId(100);
+        registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
+        servicesManager.save(registeredService);
+
+        val securityToken = mock(SecurityToken.class);
+        val result = wsFederationRelyingPartyTokenProducer.produce(securityToken, registeredService,
+            WSFederationRequest.of(request), request, getValidationResult());
+        assertEquals("<SecurityToken id=\"abcdefgh123456\"/>", result);
+    }
+
     @TestConfiguration(value = "DefaultRelyingPartyTokenProducerTestConfiguration", proxyBeanMethods = false)
     static class DefaultRelyingPartyTokenProducerTestConfiguration {
         @Bean

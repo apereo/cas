@@ -54,7 +54,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "618"
+    - value: "636"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -95,6 +95,31 @@ release:
       text: no longer receive the Spring Webflow request context; custom inquirers drop that parameter, and Groovy interrupt scripts receive the logger as their fifth argument.
       section: Authentication Interrupts
       area: ui
+    - type: action
+      title: SAML2 NameID formats
+      text: requested by a service provider's NameIDPolicy are now honored; a format the service provider metadata does not list is answered with InvalidNameIDPolicy. List the format in the metadata or set `requiredNameIdFormat` on the service.
+      section: SAML2
+      area: saml
+    - type: action
+      title: SAML2 signing
+      text: that is required but left with no usable algorithm by the allowed and blocked algorithm settings now fails with an error instead of sending the message unsigned.
+      section: SAML2
+      area: saml
+    - type: changed
+      title: WS-Federation delegated authentication
+      text: sends `wreply` set to the CAS login URL; make sure the passive endpoint of the ADFS relying party trust matches it.
+      section: Authentication and Session Security
+      area: authentication
+    - type: changed
+      title: Trusted device fingerprints
+      text: that use both the browser and the geolocation components with their default order now place geolocation before the browser; devices trusted before the upgrade are asked for multifactor authentication once more. Set `cas.authn.mfa.trusted.device-fingerprint.geolocation.order=6` to keep the previous fingerprint.
+      section: Multifactor Authentication
+      area: mfa
+    - type: changed
+      title: etcd configuration source
+      text: keeps the values it read at startup or at the last refresh and no longer defines an `etcdClient` bean; custom code that used that bean opens its own client.
+      section: Other Stuff
+      area: operations
   spotlight:
     section: Theme Properties
     kicker: User interface
@@ -142,7 +167,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `628` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `636` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
@@ -177,6 +202,15 @@ test coverage of the CAS codebase is approximately `94%`.
   algorithms, Active Directory and OpenLDAP password policy warnings, X.509 revocation through CRLs, the ticket registry
   cleaner, concurrent ticket validation across nodes, ticket encryption at rest in MongoDb, masking of tickets in logs, and
   strict audit failure handling (`cas.audit.engine.ignore-audit-failures`{: .cas-setting}).
+- {: .changed data-area="project"} Browser tests now cover entity id patterns in SAML2 entity attribute release policies,
+  requested NameID formats, encrypted settings kept in JDBC and REST configuration sources, SSO sessions read across nodes
+  of a JPA ticket registry on MySQL, and WS-Federation delegated authentication between two CAS servers. The Palantir
+  browser test is split into six scenarios, one per area of the dashboard.
+- {: .changed data-area="project"} Browser tests now cover SAML2 metadata queries (MDQ) against a local server with basic
+  authentication and signed answers, service provider metadata served from its backup file while the metadata server fails,
+  the OPA, Cerbos, Permify and OpenFGA access strategies when they allow, deny or fail, the CAS back-channel logout message,
+  SMS messages for single sign-on notifications, password reset, impersonation, passwordless and account registration, the
+  Google Cloud Firestore and Pub/Sub ticket registries, and the etcd configuration source.
 - {: .changed data-area="project"} The OpenTelemetry collector used by the tracing and metrics browser tests now logs only
   its warnings and errors instead of every batch CAS exports, and the test waits until the collector accepts data.
 
@@ -251,20 +285,24 @@ theme property.
 and runs common actions without leaving the keyboard. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
-such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
+such as ending a session, removing a device or releasing a throttled attempt. The page also lists the user's OAuth and OpenID Connect
+access and refresh tokens, which can be revoked one by one or all at once, and previews the attributes an application
+would receive for the user, a preview also offered from the application's menu. Only sources with something recorded for
 the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
 names who made each change, and compares any recorded version side by side with the current definition or the version before it, and restores the
 selected version from the same dialog. Under *Interrupts*, the authentication section shows which
 [interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
-source answered.
+source answered. Under *Impersonation*, the accounts a user may impersonate are shown as cards, each of which can
+open attribute resolution for its account.
 
 The JSON editor for application definitions is redesigned: a new definition starts from a gallery of templates, with
 many more templates for CAS, SAML2, OpenID Connect, OAuth and WS-Federation applications, filtered by protocol and
 searchable, and the editor checks the JSON as it is typed, shows problems on their line, follows the light or dark
 theme and can switch to the wizard. Templates of your own can be offered through a folder the dashboard reads. SAML2 applications whose metadata is held by a metadata
 manager, such as MongoDB, show that source and link to its management under protocols, and the settings dialog can
-reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog,
-which stores their feature flags in a chosen dynamic configuration source for the next start. System metrics open on a board of
+reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog, choosing in one dialog which modules of a feature run;
+their feature flags are stored in a chosen dynamic configuration source for the next start, and every switch and
+checkbox in Palantir shares one look. System metrics open on a board of
 pinned metrics with their current values, units and trends, flagged when usage runs high, and an explorer finds any
 metric by name and shows its statistics, a live trend and a breakdown by tag that narrows the metric with a click.
  Zen mode, on <kbd>Shift</kbd>+<kbd>Z</kbd>, puts away the header, navigation bar and footer, and the browser remembers it.
@@ -276,14 +314,22 @@ that give each definition's kind, the flags it turns on and the values it sets, 
 browser and device the user signed in, how often the session was used and the applications it reached, and so are
 Spring sessions, with a bar for how long each has left before it expires for being idle. Registered multifactor
 devices are cards as well, flagging the ones that expired. *System Info* lists the CAS modules the server runs, as
-cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day.
+cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day. *Home* can be
+refreshed as a whole or one card at a time without reloading the page, and the health charts include health checks made
+of several checks, such as one for each monitored LDAP server. The log stream shows every enabled log source together,
+in time order and marked with its source. The *Runtime* card also shows warnings logged, the share of processor time spent collecting
+garbage, the heap left after a collection and the open files.
 
 {% include imagegallery.html images=page.palantir_images gallery_id="palantir" %}
 
 Saving an application that someone else changed or deleted in the meantime shows what they changed and asks before
 overwriting it, and actions that would change something through a read-only endpoint are disabled with an explanation.
 The application wizard can fill a SAML2 service provider from its metadata, read from a URL, pasted, or chosen or
-dropped as a file, picking the provider out of an aggregate. The menu of a SAML2 application checks the health of its metadata:
+dropped as a file, picking the provider out of an aggregate. When SAML2 metadata management is available, the wizard can also upload a
+service provider's metadata to a metadata manager, the same way as under *Protocols*, and point the application at it,
+asking which service provider it is when the metadata is an aggregate, or close itself and show that manager's metadata
+entries under *Protocols*. A metadata manager backed by a REST service now
+reports an upload the service refused instead of treating it as stored. The menu of a SAML2 application checks the health of its metadata:
 whether it can be downloaded and holds the service provider, whether CAS resolves it, and when the metadata and the
 provider's certificates expire, showing the metadata it read; the separate list of SAML2 metadata sources is removed.
 Values held by dynamic configuration sources can be encrypted or decrypted in place from their menu when configuration
@@ -293,10 +339,10 @@ paragraph is saved as plain text. The applications chart, cards and search follo
 new ones, and the applications can be filtered by type, such as CAS, SAML2 or OpenID Connect, each listed with how many
 applications it has. The wizard keeps Save disabled, naming the required fields still missing, until they are filled in, and a definition without a name or service id is refused with the reason instead of failing on the server. Validating or saving an application definition that CAS cannot read is refused with the reason, rather than reported
 as valid, and the wizard keeps the principal attributes of a multifactor policy, with the policy's type, when it
-edits an application. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
+edits an application. It also keeps the contacts beyond the three it shows. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
 once after a confirmation. Importing applications accepts YAML definitions and exported zip files as well as JSON, and imports each chosen file
-once. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
-closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days. A keyboard shortcut overlay opens
+once. A new application in the wizard starts by choosing its type from described cards with a single click. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
+closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days; drafts keep no secrets, such as client secrets or passwords. A keyboard shortcut overlay opens
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
 
@@ -421,10 +467,17 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   read the whole service registry again.
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
+- {: .fixed data-area="services"} The [Permify access strategy](../services/Service-Access-Strategy-Permify.html) denies access
+  when the Permify server answers with an error status, instead of trusting the body of the response.
 
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
 
+- {: .changed data-area="tickets"} Finding a user's Spring sessions kept in the ticket registry reads only the
+  session tickets, instead of every ticket the registry holds, which made the lookup slow with many tickets. Ticket
+  registries that have no query of their own, such as Hazelcast before this change, now answer it by reading their
+  tickets, and Hazelcast answers it from the map of the asked ticket type. With Redis, the keys of those tickets are
+  now read from Redis in large batches rather than ten at a time, since finding them walks every key Redis holds.
 - {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in
   all and for every kind of ticket, such as sessions, service tickets or OAuth tokens, named after their definitions
   and counted in one pass, instead of reading every ticket and removing the expired ones on each call; expired tickets
@@ -520,6 +573,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [Redirecting logout to the service](../installation/Logout-Single-Signout.html#redirecting-logout-to-service) looks it
   up once more, and only when `cas.logout.follow-service-redirects`{: .cas-setting} is turned on. Logout requests that
   name unknown services, such as those sent by crawlers, cost far less.
+- {: .fixed data-area="tickets"} The [Google Cloud Pub/Sub ticket registry](../ticketing/GCP-PubSub-Ticket-Registry.html) finds its
+  topic by its exact name, so a node can no longer subscribe to the dead-letter topic by mistake and miss ticket changes.
 
 ### OAuth & OpenID Connect
 {: .changed data-area="oidc"}
@@ -871,6 +926,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Authentication and Session Security
 {: .changed data-area="authentication"}
 
+- {: .fixed data-area="authentication"} `ALLOW` and `DENY` work as the expired CRL policy of
+  [X.509 authentication](../authentication/X509-Authentication-CRL.html) (`cas.authn.x509.crl-expired-policy`{: .cas-setting},
+  `cas.authn.x509.crl-resource-expired-policy`{: .cas-setting}); `ALLOW` used to refuse the login.
+- {: .changed data-area="authentication"} [WS-Federation delegated authentication](../integration/ADFS-Integration.html)
+  sends `wreply` (the CAS login URL), URL-encodes its request parameters, reads typed SAML 1.1 attribute values and accepts
+  WS-Trust 1.3 token responses, so it works against identity providers built on Apache CXF, including CAS.
+- {: .fixed data-area="protocols"} The [WS-Federation identity provider](../protocol/WS-Federation-Protocol.html) refuses a
+  sign-in request without `wreply` with an error page instead of failing with an internal error.
 - {: .action data-area="general"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html),
   [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html), [UMA](../protocol/OAuth-UMA-Protocol.html),
   [Heimdall](../authorization/Heimdall-Authorization-Overview.html), [JWT authentication](../authentication/JWT-Authentication.html)
@@ -916,11 +979,32 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="authentication"} The `throttles` actuator endpoint of
   [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
   throttled records of one username, matched regardless of case, instead of every record. Palantir's throttles page
-  uses it to show the attempts of one username.
+  uses it to show the attempts of one username, and its consent page likewise shows the consent decisions of one
+  username.
+- {: .fixed data-area="authentication"} Setting `cas.authn.x509.crl-unavailable-policy`{: .cas-setting} or
+  `cas.authn.x509.crl-resource-unavailable-policy`{: .cas-setting} to `THRESHOLD`, which only applies to expired CRLs, now
+  applies `DENY` with a warning instead of failing the login with an error.
+- {: .fixed data-area="protocols"} [WS-Federation](../protocol/WS-Federation-Protocol.html) relying parties without `appliesTo`
+  receive tokens for their realm, as documented, and claim values that contain `&` or `<` reach them intact; the issued
+  token is no longer HTML-unescaped.
+- {: .fixed data-area="authentication"} [WS-Federation delegated authentication](../integration/ADFS-Integration.html) restores the
+  theme, locale and `method` saved before the redirect to the identity provider, and rejects a token that cannot be parsed,
+  or that has no audience or issuer, instead of failing with an error.
+- {: .fixed data-area="authentication"} [Surrogate authentication](../authentication/Surrogate-Authentication.html) SMS and email
+  notifications are sent when multitenancy is not in use.
 
 ### SAML2
 {: .changed data-area="saml"}
 
+- {: .action data-area="saml"} The SAML2 identity provider honors the NameID format requested by the `NameIDPolicy` of an
+  authentication request when the service provider supports it, and answers `InvalidNameIDPolicy` when it does not; a service's
+  `requiredNameIdFormat` still takes precedence.
+- {: .action data-area="saml"} When [signing](../installation/Configuring-SAML2-Security.html) is required but the allowed and
+  blocked algorithm settings leave no usable algorithm, digest method and credential, CAS refuses with an error instead of
+  sending the response, assertion or logout message unsigned.
+- {: .fixed data-area="saml"} `validateMetadataCertificates` now applies to
+  [metadata aggregates](../installation/SAML2-ServiceProvider-Metadata-Filtering.html): entities with expired or invalid
+  certificates are removed while the others stay usable, and the check runs after metadata signature validation.
 - {: .fixed data-area="saml"} The [ECP profile](../authentication/Configuring-SAML2-Authentication.html) answers a
   successful login with the SAML2 response in the SOAP envelope again, instead of a SOAP fault.
 - {: .fixed data-area="saml"} [Back-channel SAML2 logout](../installation/Configuring-SAML2-Logout.html) with the SOAP binding
@@ -984,6 +1068,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="saml"} A signed [SAML2 attribute query](../installation/Configuring-SAML2-AttributeQuery.html) is
   answered with the SOAP response alone. The identity provider also wrote the POST-binding form of the response before
   it, so the service provider received an HTML page and the SOAP response could not be sent.
+- {: .fixed data-area="saml"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html) downloaded
+  from a URL or an MDQ server that cannot be parsed, or that its filters refuse, no longer replaces the metadata backup file,
+  so CAS keeps falling back onto the last copy it trusted.
 
 ### Authentication Interrupts
 {: .changed data-area="ui"}
@@ -1048,6 +1135,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   are written to a temporary file that then replaces the JSON file in one step, so a failed or concurrent write no longer
   leaves a truncated file behind that stops CAS from starting; removing a single device no longer fails a change made
   at the same time.
+- {: .changed data-area="mfa"} The `browser` component of [trusted device fingerprints](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+  has its own settings with a default order of `5`, after geolocation, instead of sharing the geolocation settings.
 
 ### Documentation
 {: .changed data-area="docs"}
@@ -1078,5 +1167,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   startup and after a refresh; they used to be applied as they were stored, still encrypted. The `casConfig` endpoint
   answers a bad request when a value cannot be encrypted or decrypted, where it used to answer with an empty value, and
   a value that cannot be encrypted is no longer written to the logs in plain text.
+- {: .fixed data-area="operations"} The [etcd configuration source](../configuration/Configuration-Server-Management-SpringCloud-Etcd.html)
+  keeps working after a refresh: it keeps the values it read and opens its own client for each refresh or update, where
+  the shared client used to be closed with the bootstrap context after the first refresh.
 
 {% include release-footer.html %}

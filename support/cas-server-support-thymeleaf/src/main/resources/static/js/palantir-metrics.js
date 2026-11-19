@@ -684,7 +684,8 @@ class PalantirMetrics {
     }
 
     /**
-     * Ask for the selected metric once per value of the chosen tag and draw a bar for each, largest first.
+     * Ask for the selected metric once per value of the chosen tag and draw a bar for each, largest first. A value
+     * that cannot be read shows as unavailable, after the others and out of the ranking, with a way to read it again.
      *
      * @returns {Promise<void>} resolved once the bars are drawn
      */
@@ -699,38 +700,63 @@ class PalantirMetrics {
             return;
         }
         const values = tag.values.slice(0, PalantirMetrics.MAX_BREAKDOWN_VALUES);
-        bars.append($("<p>", {class: "palantir-metrics__muted", text: "Loading..."}));
-        const results = await Promise.all(values.map(async value => {
+        const stale = () => name !== PalantirMetrics.selected || tagName !== PalantirMetrics.breakdownTag
+            || filters.join() !== PalantirMetrics.filters.join();
+        const read = async value => {
             try {
                 const answer = await $.ajax({url: PalantirMetrics.url(name, [...filters, `${tagName}:${value}`]), dataType: "json"});
                 const amount = PalantirMetrics.statistic(answer, "COUNT") ?? PalantirMetrics.statistic(answer, "VALUE")
                     ?? answer.measurements?.[0]?.value;
                 return {value, amount: Number.isFinite(amount) ? amount : 0, unit: PalantirMetrics.statistic(answer, "COUNT") === undefined ? answer.baseUnit : null};
             } catch (xhr) {
-                return {value, amount: 0, unit: null};
+                return {value, amount: null, unit: null};
             }
-        }));
-        if (name !== PalantirMetrics.selected || tagName !== PalantirMetrics.breakdownTag
-            || filters.join() !== PalantirMetrics.filters.join()) {
+        };
+        bars.append($("<p>", {class: "palantir-metrics__muted", text: "Loading..."}));
+        const results = await Promise.all(values.map(read));
+        if (stale()) {
             return;
         }
-        bars.empty();
-        const max = Math.max(...results.map(result => result.amount), 0);
-        results.sort((left, right) => right.amount - left.amount).forEach(result => {
-            const share = max > 0 ? result.amount / max : 0;
-            const failure = tagName === "outcome" && /ERROR/.test(result.value) || tagName === "status" && /^5/.test(result.value);
-            bars.append($("<button>", {
-                type: "button",
-                class: `palantir-metrics__bar${failure ? " is-failure" : ""}`,
-                "data-metric-filter-add": `${tagName}:${result.value}`,
-                title: `Show only ${tagName} ${result.value}`
-            })
-                .append($("<span>", {class: "palantir-metrics__bar-label", text: result.value}))
-                .append($("<span>", {class: "palantir-metrics__bar-track"}).append($("<i>", {style: `width: ${Math.max(share * 100, result.amount > 0 ? 1 : 0)}%`})))
-                .append($("<span>", {class: "palantir-metrics__bar-value", text: PalantirMetrics.format(result.amount, result.unit, result.unit ? name : "")})));
-        });
-        if (tag.values.length > values.length) {
-            bars.append($("<p>", {class: "palantir-metrics__muted", text: `Showing the first ${values.length} of ${tag.values.length} values.`}));
-        }
+        const draw = () => {
+            bars.empty();
+            const measured = results.filter(result => result.amount !== null).sort((left, right) => right.amount - left.amount);
+            const max = Math.max(...measured.map(result => result.amount), 0);
+            measured.forEach(result => {
+                const share = max > 0 ? result.amount / max : 0;
+                const failure = tagName === "outcome" && /ERROR/.test(result.value) || tagName === "status" && /^5/.test(result.value);
+                bars.append($("<button>", {
+                    type: "button",
+                    class: `palantir-metrics__bar${failure ? " is-failure" : ""}`,
+                    "data-metric-filter-add": `${tagName}:${result.value}`,
+                    title: `Show only ${tagName} ${result.value}`
+                })
+                    .append($("<span>", {class: "palantir-metrics__bar-label", text: result.value}))
+                    .append($("<span>", {class: "palantir-metrics__bar-track"}).append($("<i>", {style: `width: ${Math.max(share * 100, result.amount > 0 ? 1 : 0)}%`})))
+                    .append($("<span>", {class: "palantir-metrics__bar-value", text: PalantirMetrics.format(result.amount, result.unit, result.unit ? name : "")})));
+            });
+            results.filter(result => result.amount === null).forEach(result => {
+                const retry = $("<button>", {
+                    type: "button",
+                    class: "palantir-metrics__bar-retry",
+                    title: `Read ${tagName} ${result.value} again`,
+                    text: "Retry"
+                }).on("click", async () => {
+                    retry.prop("disabled", true);
+                    const again = await read(result.value);
+                    if (!stale()) {
+                        results[results.indexOf(result)] = again;
+                        draw();
+                    }
+                });
+                bars.append($("<div>", {class: "palantir-metrics__bar is-unavailable"})
+                    .append($("<span>", {class: "palantir-metrics__bar-label", text: result.value}))
+                    .append($("<span>", {class: "palantir-metrics__bar-unavailable", text: "Unavailable"}))
+                    .append(retry));
+            });
+            if (tag.values.length > values.length) {
+                bars.append($("<p>", {class: "palantir-metrics__muted", text: `Showing the first ${values.length} of ${tag.values.length} values.`}));
+            }
+        };
+        draw();
     }
 }

@@ -23,6 +23,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import tools.jackson.databind.ObjectMapper;
 
@@ -94,12 +95,14 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
         try {
             LOGGER.debug("Submitting authorization request to [{}] for [{}]", permifyUrl, permifyRequest);
             response = HttpUtils.execute(exec);
-            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
-                val results = IOUtils.toString(content, StandardCharsets.UTF_8);
-                LOGGER.debug("Received response from endpoint [{}] as [{}]", url, results);
-                val payload = MAPPER.readValue(results, Map.class);
-                val result = (String) payload.get("can");
-                return "CHECK_RESULT_ALLOWED".equalsIgnoreCase(result);
+            if (response != null && HttpStatus.resolve(response.getCode()).is2xxSuccessful()) {
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val results = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    LOGGER.debug("Received response from endpoint [{}] as [{}]", url, results);
+                    val payload = MAPPER.readValue(results, Map.class);
+                    val result = (String) payload.get("can");
+                    return "CHECK_RESULT_ALLOWED".equalsIgnoreCase(result);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

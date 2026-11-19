@@ -38,9 +38,15 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
 
         context.setParameter(WsFederationCookieManager.WCTX, wctx);
         context.setRequestCookiesFromResponse();
+        val request = context.getHttpServletRequest();
+        request.removeAttribute("locale");
+        request.removeAttribute("theme");
         val service = wsFederationCookieManager.retrieve(context);
         assertNotNull(service);
         assertEquals(original.getId(), service.getId());
+        assertEquals("en", request.getAttribute("locale"));
+        assertEquals("custom", request.getAttribute("theme"));
+        assertEquals("POST", request.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
     }
 
     @Test

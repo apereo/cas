@@ -40,7 +40,7 @@ async function initializeConsentOperations() {
         function deleteConsent(context) {
             const {id, principal} = context.rowData.decision;
             Swal.fire({
-                title: `Are you sure you want to delete this entry for ${principal}?`,
+                titleText: `Are you sure you want to delete this entry for ${principal}?`,
                 text: "Once deleted, you may not be able to recover this entry.",
                 icon: "question",
                 showConfirmButton: true,
@@ -49,7 +49,7 @@ async function initializeConsentOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.attributeConsent()}/${principal}/${id}`,
+                            url: `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(principal)}/${encodeURIComponent(id)}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => context.row.remove().draw(),
@@ -78,27 +78,63 @@ async function initializeConsentOperations() {
             }
         });
 
-        $.get(CasActuatorEndpoints.attributeConsent(), response => {
-            for (const source of response) {
-                consentTable.row.add({
-                    0: `${palantirCode(source.decision.id)}`,
-                    1: `${palantirCode(source.decision.principal)}`,
-                    2: `${palantirCode(source.decision.service)}`,
-                    3: `<code></code>`,
-                    4: `${palantirCode(source.decision.createdDate)}`,
-                    5: `${palantirCode(source.decision.options)}`,
-                    6: palantirCode(`${source.decision.reminder} ${source.decision.reminderTimeUnit}`),
-                    decision: source.decision,
-                    attributes: source.attributes
-                });
-            }
-            consentTable.draw();
+        let consentUsername = "";
+        let consentLookup = 0;
 
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
+        function showConsentUsername(count) {
+            $("#showAllConsentButton").prop("hidden", consentUsername === "");
+            $("#consentUsernameHint").text(consentUsername === ""
+                ? "Every consent decision is shown; enter a username to see only the decisions of that username."
+                : `${count} consent decision${count === 1 ? "" : "s"} for ${consentUsername}. Export still includes every decision.`);
+        }
+
+        function fetchConsentDecisions() {
+            const lookup = ++consentLookup;
+            const url = consentUsername === ""
+                ? CasActuatorEndpoints.attributeConsent()
+                : `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(consentUsername)}`;
+            $.get(url, response => {
+                if (lookup !== consentLookup) {
+                    return;
+                }
+                consentTable.clear();
+                for (const source of response) {
+                    consentTable.row.add({
+                        0: `${palantirCode(source.decision.id)}`,
+                        1: `${palantirCode(source.decision.principal)}`,
+                        2: `${palantirCode(source.decision.service)}`,
+                        3: `<code></code>`,
+                        4: `${palantirCode(source.decision.createdDate)}`,
+                        5: `${palantirCode(source.decision.options)}`,
+                        6: palantirCode(`${source.decision.reminder} ${source.decision.reminderTimeUnit}`),
+                        decision: source.decision,
+                        attributes: source.attributes
+                    });
+                }
+                consentTable.draw();
+                showConsentUsername(response.length);
+            }).fail((xhr, status, error) => {
+                if (lookup !== consentLookup) {
+                    return;
+                }
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        }
+
+        fetchConsentDecisions();
+
+        $("#fmConsentUsername").off("submit").on("submit", event => {
+            event.preventDefault();
+            consentUsername = String($("#consentUsername").val() ?? "").trim();
+            fetchConsentDecisions();
         });
-
+        $("#showAllConsentButton").off("click").on("click", () => {
+            $("#consentUsername").val("").trigger("input");
+            consentUsername = "";
+            fetchConsentDecisions();
+            $("#consentUsername").trigger("focus");
+        });
 
         $("button[name=exportAllConsent]").off().on("click", () => {
             if (CasActuatorEndpoints.attributeConsent()) {

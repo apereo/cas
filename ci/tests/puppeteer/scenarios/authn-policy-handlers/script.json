@@ -1,21 +1,18 @@
 {
-  "dependencies": "generic",
+  "dependencies": "generic,scripting",
   "conditions": {
     "docker": "true"
   },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.json.name=JsonHandler",
-
     "--cas.authn.accept.enabled=true",
     "--cas.authn.accept.name=AcceptHandler",
-    "--cas.authn.accept.users=casuser::Mellon,bothuser::Mellon"
+    "--cas.authn.accept.users=casuser::Mellon,bothuser::Mellon,blocked::Mellon,locked::Mellon,broken::Mellon"
   ],
   "variations": [
     {
@@ -48,6 +45,20 @@
       "name": "notprevented",
       "properties": [
         "--cas.authn.policy.not-prevented.enabled=true"
+      ]
+    },
+    {
+      "name": "groovy",
+      "properties": [
+        "--cas.authn.policy.groovy[0].script=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/AuthenticationPolicy.groovy"
+      ]
+    },
+    {
+      "name": "rest",
+      "properties": [
+        "--cas.authn.policy.rest[0].url=http://localhost:5612/policy",
+        "--cas.authn.policy.rest[0].headers.x-policy-client=cas",
+        "--cas.authn.policy.rest[0].maximum-retry-attempts=0"
       ]
     }
   ],

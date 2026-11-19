@@ -53,6 +53,18 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()", Matchers.greaterThan(0)));
 
+        mockMvc.perform(get("/actuator/oauthTokens")
+                .queryParam("username", "CASUSER")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()", Matchers.greaterThan(0)));
+
+        mockMvc.perform(get("/actuator/oauthTokens")
+                .queryParam("username", "someone-else")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(0));
+
         mockMvc.perform(delete("/actuator/oauthTokens/{token}", at)
                 .with(csrf())
                 .accept(MediaType.APPLICATION_JSON))
@@ -94,7 +106,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
         };
         val endpoint = new OAuth20TokenManagementEndpoint(casProperties, new DirectObjectProvider<>(registry),
             new DirectObjectProvider<>(mock(JwtBuilder.class)), ticketTransactionOperations);
-        assertTrue(endpoint.getTokens().isEmpty());
+        assertTrue(endpoint.getTokens(null).isEmpty());
         assertEquals(List.of(true), scans);
     }
 

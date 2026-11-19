@@ -11,6 +11,11 @@
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",
     "--cas.authn.saml-idp.metadata.core.cache-expiration=PT1S",
     "--cas.authn.saml-idp.metadata.core.maximum-retry-attempts=0",
+    "--cas.authn.saml-idp.metadata.core.fail-fast=true",
+    "--cas.authn.saml-idp.metadata.core.require-valid-metadata=true",
+    "--cas.authn.saml-idp.metadata.http.force-metadata-refresh=true",
+    "--cas.authn.saml-idp.metadata.http.metadata-backup-location=file:${PWD}/ci/tests/puppeteer/overlay/${SCENARIO}",
+    "--cas.authn.saml-idp.metadata.http.metadata-backup-max-age=PT20S",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
