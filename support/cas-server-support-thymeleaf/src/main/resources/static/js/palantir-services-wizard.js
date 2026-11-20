@@ -1711,7 +1711,7 @@ function createRegisteredServiceAccessStrategy() {
                     }]
                     : []
             )
-        ],
+        ].filter(option => PalantirDashboardConfiguration.accessStrategyAvailable(option.value)),
         helpText: "Specifies the access strategy for the registered service.",
         changeEventHandlers: "handleAccessStrategyChange"
     }).data("renderer", function (value) {
@@ -3627,18 +3627,49 @@ function generateMappedFieldValue(sectionId, config) {
             if (groovyEditorTitle && /^groovy\s*\{[\s\S]*\}\s*$/.test(value.trim())) {
                 definition[key] = value.trim();
             } else if (multipleValues) {
-                const valueArray = value.split(",").filter(s => s.trim().length > 0);
+                const valueArray = value.split(",").filter(entry => entry.trim().length > 0);
                 if (unwrapSingleElement && valueArray.length === 1) {
                     definition[key] = value.trim();
                 } else {
                     definition[key] = [multipleValuesType, valueArray];
                 }
             } else {
-                definition[key] = value;
+                const given = $valueInput.attr("data-mapped-value-key") === key ? $valueInput.attr("data-mapped-value-type") : undefined;
+                definition[key] = mappedFieldValue(value, given);
             }
         }
     });
     return {"@class": mapType, ...definition};
+}
+
+/**
+ * The value of a mapped field as the definition held it: a number, a boolean, a list or an object the wizard was given
+ * goes back as one, so long as the text still reads as one and the row still has the key it was given with; a row
+ * cleared and filled in again starts as text.
+ *
+ * @param text the text of the field
+ * @param type the type of the value the field was given: number, boolean or json, when it was not text
+ * @returns {string|number|boolean|object|Array} the value
+ */
+function mappedFieldValue(text, type) {
+    const trimmed = text.trim();
+    if (type === "json") {
+        try {
+            const parsed = JSON.parse(trimmed);
+            if (parsed !== null && typeof parsed === "object") {
+                return parsed;
+            }
+        } catch (error) {
+            return text;
+        }
+    }
+    if (type === "boolean" && /^(true|false)$/i.test(trimmed)) {
+        return trimmed.toLowerCase() === "true";
+    }
+    if (type === "number" && trimmed.length > 0 && Number.isFinite(Number(trimmed))) {
+        return Number(trimmed);
+    }
+    return text;
 }
 
 /**
@@ -3748,6 +3779,7 @@ function createMappedInputField(config) {
                            data-param-name="${containerField}"
                            data-param-type="${containerType}"
                            data-mapped-field-role="value"
+                           ${!multipleValues && typeof valueFieldRenderer !== "function" ? "data-mapped-plain=\"true\"" : ""}
                            ${required ? "required" : ""}/>
                 </label>
 
@@ -3846,7 +3878,7 @@ function createMappedInputField(config) {
     });
     $(`button[name=${deleteAllButtonId}]`).off().on("click", () => {
         $(`#${sectionContainerId}ToAppend`).empty();
-        $(`#${sectionContainerId} input`).val("");
+        $(`#${sectionContainerId} input`).val("").removeAttr("data-mapped-value-type data-mapped-value-key");
         configureRemoveMapRowEventHandler();
         configureInputEventHandler();
         configureInputRenderer();
@@ -4503,7 +4535,16 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                     .each(function () {
                         const $input = $(this);
                         const role = $input.data("mapped-field-role");
-                        const valueStr = mapFieldValueToString(value, role);
+                        const structured = role === "value" && $input.attr("data-mapped-plain") === "true"
+                            && value !== null && typeof value === "object";
+                        const valueStr = structured ? JSON.stringify(value) : mapFieldValueToString(value, role);
+                        if (structured) {
+                            $input.attr({"data-mapped-value-type": "json", "data-mapped-value-key": key});
+                        } else if (role === "value" && (typeof value === "number" || typeof value === "boolean")) {
+                            $input.attr({"data-mapped-value-type": typeof value, "data-mapped-value-key": key});
+                        } else {
+                            $input.removeAttr("data-mapped-value-type data-mapped-value-key");
+                        }
                         $input.val(valueStr).trigger("input");
                         floatMdcTextFieldLabel($input);
                     });

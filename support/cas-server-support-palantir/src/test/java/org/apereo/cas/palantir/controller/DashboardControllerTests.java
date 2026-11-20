@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.overview.PalantirApplicationChanges;
 import org.apereo.cas.palantir.overview.PalantirOverview;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -145,6 +146,9 @@ class DashboardControllerTests {
         assertTrue(model.containsKey("actuatorEndpointAccess"));
         assertTrue(model.containsKey("serviceTemplates"));
         assertEquals(Boolean.FALSE, model.get("configurationEncryptionAvailable"));
+        val strategies = (Collection<?>) model.get("supportedAccessStrategies");
+        assertTrue(strategies.contains(DefaultRegisteredServiceAccessStrategy.class.getName()));
+        assertFalse(strategies.contains("org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy"));
 
         mvc.perform(get("/palantir/").with(authentication(authentication))).andExpect(status().isOk());
         mvc.perform(get("/palantir").with(authentication(authentication))).andExpect(status().isOk());

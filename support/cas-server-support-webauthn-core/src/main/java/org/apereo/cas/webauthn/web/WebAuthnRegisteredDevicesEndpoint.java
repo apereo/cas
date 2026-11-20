@@ -192,8 +192,9 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         try (val is = request.getInputStream()) {
-            importRecord(IOUtils.toString(is, StandardCharsets.UTF_8));
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return importRecordQuietly(IOUtils.toString(is, StandardCharsets.UTF_8))
+                ? ResponseEntity.status(HttpStatus.CREATED).build()
+                : ResponseEntity.badRequest().build();
         }
     }
 
@@ -209,17 +210,26 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
         try (val input = request.getInputStream()) {
-            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE);
-            records.forEach(Unchecked.consumer(this::importRecord));
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("imported", records.size()));
+            return importArchive(input, this::importRecordQuietly);
         }
     }
 
-    private void importRecord(final String json) throws Exception {
+    private boolean importRecord(final String json) throws Exception {
         LOGGER.trace("Submitted account: [{}]", json);
         val account = WebAuthnUtils.getObjectMapper().readValue(json, new TypeReference<CredentialRegistration>() {
         });
         LOGGER.trace("Storing account: [{}]", account);
-        registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
+        val storage = registrationStorage.getObject();
+        return storage.addRegistrationByUsername(account.getUsername(), account)
+            || storage.getRegistrationByUsernameAndCredentialId(account.getUsername(), account.getCredential().getCredentialId()).isPresent();
+    }
+
+    private boolean importRecordQuietly(final String json) {
+        try {
+            return importRecord(json);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to import a record: [{}]", e.getMessage());
+            return false;
+        }
     }
 }

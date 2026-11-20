@@ -160,8 +160,9 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request", required = true, description = "The request"))
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        importRecord(requestBody);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return importRecordQuietly(requestBody)
+            ? ResponseEntity.status(HttpStatus.CREATED).build()
+            : ResponseEntity.badRequest().build();
     }
 
     /**
@@ -176,18 +177,25 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @Operation(summary = "Import the accounts of an archive as the export writes it")
     public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
         try (val input = request.getInputStream()) {
-            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE);
-            records.forEach(this::importRecord);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("imported", records.size()));
+            return importArchive(input, this::importRecordQuietly);
         }
     }
 
-    private void importRecord(final String json) {
+    private boolean importRecord(final String json) {
         LOGGER.trace("Submitted account: [{}]", json);
         val serializer = new GoogleAuthenticatorAccountSerializer(applicationContext);
         val account = serializer.from(json);
         LOGGER.trace("Storing account: [{}]", account);
-        repository.getObject().save(account);
+        return account != null && repository.getObject().save(account) != null;
+    }
+
+    private boolean importRecordQuietly(final String json) {
+        try {
+            return importRecord(json);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to import a record: [{}]", e.getMessage());
+            return false;
+        }
     }
 
 }

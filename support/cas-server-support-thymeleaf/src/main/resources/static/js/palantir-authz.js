@@ -1270,71 +1270,806 @@ async function initializeHeimdallOperations() {
 
 }
 
+/**
+ * The access check: whether a user may access an application, and why, as the steps CAS goes through at sign-in.
+ *
+ * The application is chosen by name, URL, client id or entity id from the registered applications, which decides the
+ * identifier sent: the client id of an OAuth or OpenID Connect client, the entity id of a SAML2 service provider, or a
+ * URL the application answers. The answer is drawn as a verdict, the steps as a row of gates, the reasons behind each
+ * step, the user's attributes and the application's definition. The last checks are kept in the browser, without any
+ * password.
+ */
+class PalantirAccessCheck {
+    static STORAGE_KEY = "PalantirAccessChecks";
+
+    static MAX_RECENT = 8;
+
+    static WIZARD_SECTION = "editServiceWizardMenuItemAccessStrategy";
+
+    static selected = null;
+
+    static suggestionTotal = 0;
+
+    static suggestionTerm = "";
+
+    static sorted = null;
+
+    static definitionRequest = 0;
+
+    static attributesTable = null;
+
+    static editor = null;
+
+    static OUTCOMES = {
+        PASSED: {icon: "mdi-check-circle", style: "is-passed", label: "Passed"},
+        FAILED: {icon: "mdi-close-circle", style: "is-failed", label: "Failed"},
+        SKIPPED: {icon: "mdi-minus-circle", style: "is-skipped", label: "Not checked"},
+        INFO: {icon: "mdi-information", style: "is-info", label: "For information"}
+    };
+
+    /**
+     * The registered applications in the order CAS evaluates them: by evaluation order, then name, service id and id.
+     *
+     * @returns {object[]} the applications
+     */
+    static applications() {
+        const key = `${registeredServicesVersion}:${registeredServicesById.size}`;
+        if (PalantirAccessCheck.sorted?.key === key) {
+            return PalantirAccessCheck.sorted.list;
+        }
+        const text = value => String(value ?? "");
+        const list = [...registeredServicesById.values()].sort((left, right) =>
+            (Number(left.evaluationOrder ?? 0) - Number(right.evaluationOrder ?? 0))
+            || text(left.name).localeCompare(text(right.name), undefined, {sensitivity: "accent"})
+            || text(left.serviceId).localeCompare(text(right.serviceId))
+            || (Number(left.id) - Number(right.id)));
+        PalantirAccessCheck.sorted = {key, list};
+        return list;
+    }
+
+    static identifierOf(service) {
+        return service.clientId ? String(service.clientId) : String(service.serviceId ?? "");
+    }
+
+    /**
+     * Whether a service id names one URL rather than a pattern, once escaped dots are read as dots.
+     *
+     * @param pattern the service id
+     * @returns {boolean} true when it is one URL
+     */
+    static literal(pattern) {
+        return !/[\\^$*+?()[\]{}|]/.test(String(pattern ?? "").replace(/\\\./g, "."));
+    }
+
+    /**
+     * The start of a URL a pattern matches, to offer as the URL to check: the pattern up to its first special
+     * character, with escaped dots read as dots.
+     *
+     * @param pattern the service id
+     * @returns {string} the start of the URL, or nothing when the pattern does not start like one
+     */
+    static urlStart(pattern) {
+        const text = String(pattern ?? "").replace(/^\^/, "");
+        let start = "";
+        for (let index = 0; index < text.length; index++) {
+            const character = text[index];
+            if (character === "\\" && index + 1 < text.length) {
+                start += text[++index];
+            } else if (character === "." && /[*+?{]/.test(text[index + 1] ?? "")) {
+                break;
+            } else if ("^$*+?()[]{}|".includes(character)) {
+                break;
+            } else {
+                start += character;
+            }
+        }
+        return /^https?:\/\//i.test(start) ? start : "";
+    }
+
+    /**
+     * The registered application that answers a service URL, as CAS would match it: the first CAS application, in
+     * evaluation order, whose service id matches the whole URL. OAuth and OpenID Connect applications are only found by
+     * their client id, and SAML2 service providers by their entity id, however broad their service id.
+     *
+     * @param url the URL
+     * @returns {object|null} the application
+     */
+    static matching(url) {
+        return PalantirAccessCheck.applications().find(service => {
+            if (PalantirAccessCheck.protocolOf(service) !== "cas" || !service.serviceId) {
+                return false;
+            }
+            try {
+                return new RegExp(`^(?:${service.serviceId})$`).test(url);
+            } catch (error) {
+                return false;
+            }
+        }) ?? null;
+    }
+
+    static initials(name) {
+        const words = String(name ?? "").trim().split(/\s+/).filter(Boolean);
+        return (words.length > 1 ? words[0][0] + words[1][0] : String(name ?? "?").slice(0, 2)).toUpperCase();
+    }
+
+    static protocolOf(service) {
+        return applicationProtocolOf(service?.["@class"]).key;
+    }
+
+    /**
+     * Whether a registered application answers a value: its client id, its service id, or a URL or an entity id its
+     * service id matches.
+     *
+     * @param service the registered application
+     * @param value the value
+     * @returns {boolean} true when it answers the value
+     */
+    static answers(service, value) {
+        if (!service || value === "") {
+            return false;
+        }
+        if (String(service.clientId ?? "") === value || String(service.serviceId ?? "") === value) {
+            return true;
+        }
+        try {
+            return new RegExp(`^(?:${service.serviceId})$`).test(value);
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * What the application field names: the request parameter to send and the registered application CAS resolves it
+     * to: the client id of an OAuth or OpenID Connect client, the entity id of a SAML2 service provider, and otherwise a
+     * service URL, matched the way CAS matches it, in evaluation order.
+     *
+     * @param text the text of the field
+     * @returns {{parameter: object|null, service: object|null}} the parameter and the application, if any
+     */
+    static resolve(text) {
+        const value = String(text ?? "").trim();
+        if (value === "") {
+            return {parameter: null, service: null};
+        }
+        const services = PalantirAccessCheck.applications();
+        const client = services.find(service => ["oidc", "oauth"].includes(PalantirAccessCheck.protocolOf(service))
+            && String(service.clientId ?? "").toLowerCase() === value.toLowerCase());
+        if (client) {
+            return {parameter: {name: "client_id", value}, service: client};
+        }
+        const selected = PalantirAccessCheck.selected;
+        const providers = services.filter(service => PalantirAccessCheck.protocolOf(service) === "saml");
+        const provider = PalantirAccessCheck.protocolOf(selected) === "saml" && PalantirAccessCheck.answers(selected, value)
+            ? providers.find(service => PalantirAccessCheck.answers(service, value))
+            : providers.find(service => String(service.serviceId ?? "") === value);
+        if (provider) {
+            return {parameter: {name: "entityId", value}, service: provider};
+        }
+        return {parameter: {name: "service", value}, service: PalantirAccessCheck.matching(value)};
+    }
+
+    /**
+     * What to put in the application field for a registered application: its client id, its entity id or service URL
+     * when it names one, or else the start of a URL its pattern matches, for the operator to complete.
+     *
+     * @param service the registered application
+     * @returns {string} the value
+     */
+    static exactValueOf(service) {
+        const protocol = PalantirAccessCheck.protocolOf(service);
+        return ((protocol === "oidc" || protocol === "oauth") && Boolean(service.clientId)) || PalantirAccessCheck.literal(service.serviceId);
+    }
+
+    static valueOf(service) {
+        const protocol = PalantirAccessCheck.protocolOf(service);
+        if ((protocol === "oidc" || protocol === "oauth") && service.clientId) {
+            return String(service.clientId);
+        }
+        return PalantirAccessCheck.literal(service.serviceId)
+            ? String(service.serviceId).replace(/\\\./g, ".")
+            : PalantirAccessCheck.urlStart(service.serviceId)
+                || (/^\^?https?/i.test(String(service.serviceId ?? "")) ? "https://" : "");
+    }
+
+    /**
+     * Show, under the application field, the registered application the field resolves to, or what is still missing.
+     */
+    static update() {
+        const escape = escapePalantirMarkup;
+        const text = String($("#accessApplication").val() ?? "");
+        let selected = PalantirAccessCheck.selected;
+        const start = selected ? PalantirAccessCheck.valueOf(selected) : "";
+        if (selected && start !== "" && !text.trim().startsWith(start) && !PalantirAccessCheck.answers(selected, text.trim())) {
+            PalantirAccessCheck.selected = selected = null;
+        }
+        const {parameter, service} = PalantirAccessCheck.resolve(text);
+        $("#accessTargetField .palantir-access__target-clear").prop("hidden", text === "");
+        const hint = $("#accessTargetHint").removeClass("is-resolved is-pending is-shadowed");
+        const card = (entry, note) => {
+            const protocol = applicationProtocolOf(entry["@class"]);
+            return `
+                <span class="palantir-protocol-badge is-${escape(protocol.key)}" aria-hidden="true">${escape(PalantirAccessCheck.initials(entry.name))}</span>
+                <span class="palantir-access__hint-text">
+                    <strong title="${escape(entry.name ?? "")}">${escape(entry.name ?? "Application")}</strong>
+                    <small>${note}</small>
+                </span>`;
+        };
+        if (service && selected && service.id !== selected.id && PalantirAccessCheck.answers(selected, text.trim())) {
+            hint.addClass("is-resolved is-shadowed").html(card(service,
+                `CAS matches this first, before ${escape(selected.name ?? "the application you picked")}`));
+        } else if (selected && service?.id !== selected.id) {
+            hint.addClass("is-pending").html(`<i class="mdi mdi-pencil-outline" aria-hidden="true"></i>
+                <span class="palantir-access__hint-text"><span>${PalantirAccessCheck.protocolOf(selected) === "saml" ? "Enter an entity id" : "Complete a URL"}
+                that <strong>${escape(selected.name ?? "the application")}</strong> answers: it matches
+                <code>${escape(selected.serviceId ?? "")}</code></span></span>`);
+        } else if (service) {
+            const protocol = applicationProtocolOf(service["@class"]);
+            const sent = {client_id: "client id", entityId: "entity id", service: "service URL"}[parameter.name];
+            hint.addClass("is-resolved").html(card(service, `${escape(protocol.short)} · #${escape(service.id)} · checked by ${escape(sent)}`));
+        } else if (text.trim() !== "") {
+            hint.html(`<i class="mdi mdi-help-circle-outline" aria-hidden="true"></i>
+                <span class="palantir-access__hint-text"><span>No registered application answers this; CAS will say so.</span></span>`);
+        } else {
+            hint.text("Pick a registered application, or type what it sends to CAS.");
+        }
+    }
+
+    /**
+     * Pick a registered application: put what identifies it in the field, ready to check or, for a pattern, to complete.
+     *
+     * @param service the application, or null to pick none
+     * @param focus whether to move to the next field to fill in
+     */
+    static choose(service, focus = false) {
+        PalantirAccessCheck.selected = service;
+        const input = $("#accessApplication");
+        input.val(service ? PalantirAccessCheck.valueOf(service) : "");
+        PalantirAccessCheck.update();
+        if (focus) {
+            const complete = service && PalantirAccessCheck.exactValueOf(service)
+                && PalantirAccessCheck.answers(service, String(input.val()).trim());
+            const target = complete ? $("#accessUsername") : input;
+            target.trigger("focus");
+            if (!complete) {
+                const length = String(input.val()).length;
+                input[0].setSelectionRange(length, length);
+            }
+        }
+    }
+
+    /**
+     * Open the access check for a registered application, as the applications' menu does.
+     *
+     * @param serviceId the application id
+     * @returns {Promise<void>} resolved once the access check shows the application
+     */
+    static async openFor(serviceId) {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.ACCESS_STRATEGY.index}]`).trigger("click");
+        await initializeDashboardTab(Tabs.ACCESS_STRATEGY);
+        if ($("#accessstrategy-tabs").tabs("instance")) {
+            $("#accessstrategy-tabs").tabs("option", "active", 0);
+        }
+        await PalantirAccessCheck.loadApplications();
+        const service = registeredServicesById.get(String(serviceId));
+        if (service) {
+            PalantirAccessCheck.choose(service, true);
+        }
+    }
+
+    static problem(message) {
+        $("#accessFormProblem").text(message ?? "").prop("hidden", !message);
+    }
+
+    /**
+     * The request for the form: the application's parameter, the username and, when asked, the password.
+     *
+     * @returns {object|null} the request, or null when the form is not complete, with the problem shown
+     */
+    static request() {
+        const typed = String($("#accessApplication").val() ?? "").trim();
+        const username = String($("#accessUsername").val() ?? "").trim();
+        const password = String($("#accessPassword").val() ?? "");
+        const checkPassword = $("#accessCheckPassword").prop("checked") === true;
+        if (typed === "") {
+            PalantirAccessCheck.problem("Pick an application, or enter a service URL, a client id or an entity id.");
+            $("#accessApplication").trigger("focus");
+            return null;
+        }
+        const exact = PalantirAccessCheck.resolve(typed);
+        if (!/^https?:\/\//i.test(typed) && exact.parameter.name === "service") {
+            const named = PalantirAccessCheck.applications().find(entry => String(entry.name ?? "") === typed);
+            if (named) {
+                PalantirAccessCheck.choose(named);
+            }
+        }
+        const value = String($("#accessApplication").val() ?? "").trim();
+        const {parameter, service} = PalantirAccessCheck.resolve(value);
+        const selected = PalantirAccessCheck.selected;
+        if (selected && !PalantirAccessCheck.answers(selected, value) && service?.id !== selected.id) {
+            const wanted = PalantirAccessCheck.protocolOf(selected) === "saml" ? "an entity id" : "a URL";
+            PalantirAccessCheck.problem(`Enter ${wanted} ${selected.name ?? "the application"} answers: it matches ${selected.serviceId}.`);
+            $("#accessApplication").trigger("focus");
+            return null;
+        }
+        const label = service?.name ?? parameter.value;
+        if (username === "") {
+            PalantirAccessCheck.problem("Enter the username to check.");
+            $("#accessUsername").trigger("focus");
+            return null;
+        }
+        if (checkPassword && password === "") {
+            PalantirAccessCheck.problem("Enter the password to check, or turn off the password check.");
+            $("#accessPassword").trigger("focus");
+            return null;
+        }
+        PalantirAccessCheck.problem(null);
+        const data = {username, [parameter.name]: parameter.value};
+        if (checkPassword) {
+            data.password = password;
+        }
+        return {data, label, username, parameter, applicationId: service ? String(service.id) : null};
+    }
+
+    static async check() {
+        const request = PalantirAccessCheck.request();
+        if (request === null || !CasActuatorEndpoints.serviceAccess()) {
+            return;
+        }
+        hideBanner();
+        const button = $("#accessStrategyButton").prop("disabled", true);
+        $("#accessResult").html(`<div class="palantir-access__card palantir-access__empty"><i class="mdi mdi-loading mdi-spin" aria-hidden="true"></i>
+            <p>Checking whether ${escapePalantirMarkup(request.username)} may access ${escapePalantirMarkup(request.label)}…</p></div>`);
+        let answer;
+        let status;
+        try {
+            answer = await $.ajax({
+                url: CasActuatorEndpoints.serviceAccess(),
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded",
+                data: $.param(request.data),
+                dataType: "json",
+                headers: {"Accept": "application/json"}
+            });
+            status = 200;
+        } catch (xhr) {
+            status = xhr?.status ?? 0;
+            answer = xhr?.responseJSON ?? null;
+            if (xhr?.statusText === PALANTIR_READ_ONLY) {
+                button.prop("disabled", false);
+                return;
+            }
+        }
+        button.prop("disabled", false);
+        PalantirAccessCheck.show(request, status, answer);
+        if (PalantirAccessCheck.decided(status, answer)) {
+            PalantirAccessCheck.remember(request, status, answer);
+        }
+    }
+
+    /**
+     * Whether CAS answered with an explanation; a request it could not take, such as one the endpoint was not
+     * reachable for, has none and says nothing about access.
+     *
+     * @param answer what CAS answered
+     * @returns {boolean} true when it is an explanation
+     */
+    static explained(answer) {
+        return answer !== null && typeof answer === "object" && typeof answer.allowed === "boolean";
+    }
+
+    /**
+     * Whether CAS made a decision: an explanation with an answer it gives at sign-in, allowed, refused or not signed in,
+     * rather than a failure to check.
+     *
+     * @param status the status CAS answered
+     * @param answer what CAS answered
+     * @returns {boolean} true when it is a decision
+     */
+    static decided(status, answer) {
+        return [200, 401, 403].includes(status) && PalantirAccessCheck.explained(answer);
+    }
+
+    static verdict(request, status, answer) {
+        if (!PalantirAccessCheck.decided(status, answer)) {
+            return {style: "is-unavailable", icon: "mdi-lan-disconnect", title: "Access could not be checked"};
+        }
+        if (answer?.allowed === true) {
+            return {style: "is-allowed", icon: "mdi-shield-check-outline", title: `${request.username} may access ${answer.registeredService?.name ?? request.label}`};
+        }
+        if (status === 401) {
+            return {style: "is-unauthenticated", icon: "mdi-account-alert-outline", title: `${request.username} could not sign in`};
+        }
+        if (answer && !answer.registeredService) {
+            return {style: "is-denied", icon: "mdi-help-rhombus-outline", title: "No application matches"};
+        }
+        return {style: "is-denied", icon: "mdi-shield-off-outline", title: `${request.username} is denied`};
+    }
+
+    static gate(step) {
+        const escape = escapePalantirMarkup;
+        const outcome = PalantirAccessCheck.OUTCOMES[step.outcome] ?? PalantirAccessCheck.OUTCOMES.INFO;
+        return `
+            <li class="palantir-access__gate ${outcome.style}" title="${escape(`${step.title}: ${step.detail ?? ""}`)}">
+                <i class="mdi ${outcome.icon}" aria-hidden="true"></i>
+                <span class="palantir-access__gate-title">${escape(step.title)}</span>
+                <span class="palantir-access__gate-outcome">${escape(outcome.label)}</span>
+            </li>`;
+    }
+
+    static values(values, style) {
+        const list = (Array.isArray(values) ? values : [values]).filter(value => value !== null && value !== undefined && value !== "");
+        return list.length === 0
+            ? `<span class="palantir-access__none">nothing</span>`
+            : list.map(value => `<span class="palantir-access__value ${style}">${escapePalantirMarkup(String(value))}</span>`).join("");
+    }
+
+    static rule(step, rule) {
+        const escape = escapePalantirMarkup;
+        const rejected = step.id === "rejected";
+        const good = rejected ? !rule.matched : rule.matched;
+        return `
+            <li class="palantir-access__rule ${good ? "is-passed" : "is-failed"}">
+                <i class="mdi ${good ? "mdi-check" : "mdi-close"}" aria-hidden="true"></i>
+                <code>${escape(rule.attribute)}</code>
+                <span>${rejected ? "is refused when it has" : "needs"}</span>
+                ${PalantirAccessCheck.values(rule.values, good ? (rejected ? "" : "is-hit") : "is-miss")}
+                <span>· has</span>
+                ${PalantirAccessCheck.values(rule.actual, "")}
+            </li>`;
+    }
+
+    static reason(step) {
+        const escape = escapePalantirMarkup;
+        const outcome = PalantirAccessCheck.OUTCOMES[step.outcome] ?? PalantirAccessCheck.OUTCOMES.INFO;
+        const rules = (step.rules ?? []).map(rule => PalantirAccessCheck.rule(step, rule)).join("");
+        const inner = (step.steps ?? []).map(PalantirAccessCheck.reason).join("");
+        return `
+            <li class="palantir-access__reason ${outcome.style}">
+                <i class="mdi ${outcome.icon}" aria-hidden="true"></i>
+                <div>
+                    <strong>${escape(step.title)}</strong>
+                    <span>${escape(step.detail ?? "")}</span>
+                    ${rules ? `<ul class="palantir-access__rules">${rules}</ul>` : ""}
+                    ${inner ? `<ul class="palantir-access__reasons is-inner">${inner}</ul>` : ""}
+                </div>
+                <span class="palantir-access__chip ${outcome.style}">${escape(outcome.label)}</span>
+            </li>`;
+    }
+
+    /**
+     * Show the answer: the verdict and its actions, the steps as gates, the reasons behind each step, the user's
+     * attributes with those the rules name marked, and the application's definition.
+     *
+     * @param request the request that was sent
+     * @param status the status CAS answered
+     * @param answer the explanation CAS answered, if any
+     */
+    static show(request, status, answer) {
+        const escape = escapePalantirMarkup;
+        const steps = Array.isArray(answer?.steps) ? answer.steps : [];
+        const verdict = PalantirAccessCheck.verdict(request, status, answer);
+        const service = answer?.registeredService ?? null;
+        const reason = PalantirAccessCheck.explained(answer)
+            ? answer.reason
+            : status === 0 ? "CAS could not be reached." : `The service access endpoint answered ${status}, without a decision.`;
+        $("#accessResult").html(`
+            <section class="palantir-access__verdict ${verdict.style}" aria-label="Verdict">
+                <span class="palantir-access__verdict-icon" aria-hidden="true"><i class="mdi ${verdict.icon}"></i></span>
+                <div class="palantir-access__verdict-text">
+                    <h3>${escape(verdict.title)}</h3>
+                    <p>${escape(reason)}</p>
+                </div>
+                ${service?.id !== undefined ? `<div class="palantir-access__verdict-actions">
+                    <button type="button" class="palantir-button" data-access-action="open" data-service-id="${escape(service.id)}">
+                        <i class="mdi mdi-open-in-new" aria-hidden="true"></i>Open application</button>
+                    <button type="button" class="palantir-button" data-access-action="edit" data-service-id="${escape(service.id)}"
+                            data-palantir-write="registeredServices">
+                        <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>Edit access strategy</button>
+                </div>` : ""}
+            </section>
+            ${steps.length > 0 ? `
+            <section class="palantir-access__card" aria-label="Steps">
+                <p class="palantir-access__label">How CAS decided</p>
+                <ol class="palantir-access__flow">${steps.map(PalantirAccessCheck.gate).join("")}</ol>
+            </section>
+            <section class="palantir-access__card" aria-label="Why">
+                <p class="palantir-access__label">Why</p>
+                <ul class="palantir-access__reasons">${steps.map(PalantirAccessCheck.reason).join("")}</ul>
+            </section>` : ""}`);
+        applyPalantirEndpointAccess(document.getElementById("accessResult"));
+        PalantirAccessCheck.showAttributes(answer, steps);
+        PalantirAccessCheck.showDefinition(service);
+    }
+
+    static ruleAttributes(steps) {
+        return new Set(steps.flatMap(function names(step) {
+            return [...(step.rules ?? []).map(rule => rule.attribute), ...(step.steps ?? []).flatMap(names)];
+        }));
+    }
+
+    static showAttributes(answer, steps) {
+        const table = PalantirAccessCheck.attributesTable;
+        table.clear();
+        const principal = answer?.authentication?.principal;
+        const attributes = {...(answer?.authentication?.attributes ?? {}), ...(principal?.attributes ?? {})};
+        const named = PalantirAccessCheck.ruleAttributes(steps);
+        if (!principal) {
+            table.draw();
+            $("#accessStrategyAttributesContainer").prop("hidden", true);
+            return;
+        }
+        for (const [name, value] of Object.entries(attributes)) {
+            table.row.add({
+                0: `${palantirCode(name)}${named.has(name) ? ` <span class="palantir-access__chip is-info">In the rules</span>` : ""}`,
+                1: PalantirAccessCheck.values(value, "")
+            });
+        }
+        table.draw();
+        $("#accessStrategyAttributesTitle").text(`${principal.id}'s attributes · ${Object.keys(attributes).length}`);
+        $("#accessStrategyAttributesContainer").prop("hidden", false);
+    }
+
+    /**
+     * Show the application's definition. The access check names the application without its definition, so the
+     * definition comes from the registered applications, as the registered services endpoint gives them.
+     *
+     * @param service the application the check names
+     * @returns {Promise<void>} resolved once the definition is shown or hidden
+     */
+    static async showDefinition(service) {
+        const container = $("#accessStrategyEditorContainer");
+        const hide = () => {
+            container.prop("hidden", true);
+            PalantirAccessCheck.editor.setValue("");
+        };
+        const shown = ++PalantirAccessCheck.definitionRequest;
+        if (service?.id === undefined) {
+            hide();
+            return;
+        }
+        let definition = registeredServicesById.get(String(service.id));
+        if (!definition && CasActuatorEndpoints.registeredServices()) {
+            try {
+                definition = await $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(service.id)}`);
+            } catch (error) {
+                definition = null;
+            }
+        }
+        if (shown !== PalantirAccessCheck.definitionRequest) {
+            return;
+        }
+        if (!definition) {
+            hide();
+            return;
+        }
+        PalantirAccessCheck.editor.setValue(JSON.stringify(definition, null, 2));
+        PalantirAccessCheck.editor.gotoLine(1);
+        container.prop("hidden", false);
+    }
+
+    static recent() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(PalantirAccessCheck.STORAGE_KEY) ?? "[]");
+            return Array.isArray(stored) ? stored : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    static remember(request, status, answer) {
+        const outcome = answer?.allowed === true ? "allowed" : status === 401 ? "unauthenticated" : answer && !answer.registeredService ? "unmatched" : "denied";
+        const entry = {label: answer?.registeredService?.name ?? request.parameter?.value ?? request.label, username: request.username,
+            password: request.data.password !== undefined,
+            parameter: request.parameter, applicationId: answer?.registeredService?.id !== undefined ? String(answer.registeredService.id) : request.applicationId,
+            outcome, at: Date.now()};
+        const entries = [entry, ...PalantirAccessCheck.recent().filter(previous =>
+            !(previous.username === entry.username && previous.parameter?.value === entry.parameter?.value))]
+            .slice(0, PalantirAccessCheck.MAX_RECENT);
+        try {
+            localStorage.setItem(PalantirAccessCheck.STORAGE_KEY, JSON.stringify(entries));
+        } catch (error) {
+            console.debug("Palantir could not remember the access check", error);
+        }
+        PalantirAccessCheck.showRecent();
+    }
+
+    static showRecent() {
+        const escape = escapePalantirMarkup;
+        const entries = PalantirAccessCheck.recent();
+        const labels = {allowed: ["is-passed", "Allowed"], denied: ["is-failed", "Denied"],
+            unauthenticated: ["is-warn", "Not signed in"], unmatched: ["is-warn", "No match"]};
+        $("#accessRecentList").html(entries.map((entry, index) => {
+            const [style, text] = labels[entry.outcome] ?? labels.denied;
+            return `
+                <li><button type="button" class="palantir-access__recent-item" data-access-recent="${index}"
+                            title="Check ${escape(entry.username)} against ${escape(entry.parameter?.value ?? entry.label)} again">
+                    <span><strong>${escape(entry.username)}</strong> · ${escape(entry.label)}</span>
+                    <span class="palantir-access__chip ${style}">${escape(text)}</span>
+                </button></li>`;
+        }).join(""));
+        $("#accessRecentChecks").prop("hidden", entries.length === 0);
+    }
+
+    /**
+     * Fill the form from a recent check and run it again the way it ran: a check that also checked the password turns
+     * the password check on and asks for the password, and one that did not turns it off.
+     *
+     * @param entry the recent check
+     */
+    static repeat(entry) {
+        PalantirAccessCheck.selected = entry.applicationId ? registeredServicesById.get(String(entry.applicationId)) ?? null : null;
+        $("#accessApplication").val(entry.parameter?.value ?? entry.label);
+        PalantirAccessCheck.update();
+        $("#accessUsername").val(entry.username);
+        const withPassword = entry.password === true;
+        $("#accessCheckPassword").prop("checked", withPassword).trigger("change");
+        if (withPassword) {
+            PalantirAccessCheck.problem(`Enter ${entry.username}'s password to check it again: passwords are never kept.`);
+            $("#accessPassword").val("").trigger("focus");
+            return;
+        }
+        PalantirAccessCheck.check();
+    }
+
+    static async editAccessStrategy(serviceId) {
+        try {
+            const definition = await $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`);
+            const opening = PalantirServiceEditor.openApplicationInWizard(definition);
+            for (let attempt = 0; attempt < 50 && (typeof isPopulatingWizard === "undefined" || isPopulatingWizard
+                || !$("#editServiceWizardDialog").dialog("isOpen")); attempt++) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            RegisteredServiceSections.activate(PalantirAccessCheck.WIZARD_SECTION);
+            await opening;
+        } catch (xhr) {
+            displayBanner(xhr);
+        }
+    }
+
+    /**
+     * Read the registered applications to suggest, unless the applications page has read them already.
+     *
+     * @returns {Promise<void>} resolved once they are read or could not be
+     */
+    static async loadApplications() {
+        if (registeredServicesById.size > 0 || !CasActuatorEndpoints.registeredServices()) {
+            return;
+        }
+        try {
+            const response = await $.get(CasActuatorEndpoints.registeredServices());
+            (Array.isArray(response?.[1]) ? response[1] : []).forEach(service => registeredServicesById.set(String(service.id), service));
+            registeredServicesVersion++;
+        } catch (error) {
+            console.debug("Palantir could not read the registered applications for the access check", error);
+        }
+    }
+
+    /**
+     * The registered applications to suggest for what is typed: those whose name, ids or description hold it, and, for
+     * a URL, those whose service id matches it.
+     *
+     * @param term what is typed
+     * @returns {object[]} the applications
+     */
+    static suggestions(term) {
+        const text = String(term ?? "").trim();
+        const lower = text.toLowerCase();
+        return PalantirAccessCheck.applications().filter(service => text === ""
+            || [service.name, service.serviceId, service.clientId, service.id, service.description]
+                .some(value => String(value ?? "").toLowerCase().includes(lower))
+            || (/^https?:\/\//i.test(text) && PalantirAccessCheck.answers(service, text)));
+    }
+
+    static highlight(text, term) {
+        const escape = escapePalantirMarkup;
+        const value = String(text ?? "");
+        const index = term ? value.toLowerCase().indexOf(term.toLowerCase()) : -1;
+        return index < 0
+            ? escape(value)
+            : `${escape(value.slice(0, index))}<mark>${escape(value.slice(index, index + term.length))}</mark>${escape(value.slice(index + term.length))}`;
+    }
+
+    static bind() {
+        $("#accessApplication").autocomplete({
+            minLength: 0,
+            delay: 0,
+            position: {my: "left top+6", at: "left bottom", of: "#accessTargetField", collision: "flipfit"},
+            source: (request, response) => {
+                const term = String(request.term ?? "").trim();
+                const {parameter, service} = PalantirAccessCheck.resolve(term);
+                if (PalantirAccessCheck.selected || (service && (parameter.name !== "service" || /^https?:\/\//i.test(term)))) {
+                    response([]);
+                    return;
+                }
+                const found = PalantirAccessCheck.suggestions(request.term);
+                PalantirAccessCheck.suggestionTotal = found.length;
+                PalantirAccessCheck.suggestionTerm = String(request.term ?? "").trim();
+                response(found.slice(0, 50).map(service => ({label: service.name ?? PalantirAccessCheck.identifierOf(service),
+                    value: PalantirAccessCheck.valueOf(service), service})));
+            },
+            open: () => {
+                const menu = $("#accessApplication").autocomplete("widget");
+                menu.outerWidth($("#accessTargetField").outerWidth());
+            },
+            select: (event, ui) => {
+                event.preventDefault();
+                PalantirAccessCheck.choose(ui.item.service, true);
+            },
+            focus: event => event.preventDefault()
+        }).on("focus", async function () {
+            await PalantirAccessCheck.loadApplications();
+            if (!$(this).val() && !PalantirAccessCheck.selected) {
+                $(this).autocomplete("search", "");
+            }
+        }).on("input", () => PalantirAccessCheck.update());
+        const widget = $("#accessApplication").autocomplete("instance");
+        widget._renderMenu = function (list, items) {
+            const total = PalantirAccessCheck.suggestionTotal ?? items.length;
+            $("<li>").addClass("palantir-access__suggestions-header ui-state-disabled")
+                .text(total > items.length ? `${items.length} of ${total} applications` : `${total} ${total === 1 ? "application" : "applications"}`)
+                .appendTo(list);
+            items.forEach(item => this._renderItemData(list, item));
+        };
+        widget._renderItem = (list, item) => {
+            const escape = escapePalantirMarkup;
+            const term = PalantirAccessCheck.suggestionTerm;
+            const protocol = applicationProtocolOf(item.service["@class"]);
+            return $("<li>").append(`
+                <div class="palantir-access__suggestion">
+                    <span class="palantir-protocol-badge is-${escape(protocol.key)}" aria-hidden="true">${escape(PalantirAccessCheck.initials(item.service.name))}</span>
+                    <span class="palantir-access__suggestion-text">
+                        <strong>${PalantirAccessCheck.highlight(item.label, term)}</strong>
+                        <code>${PalantirAccessCheck.highlight(PalantirAccessCheck.identifierOf(item.service), term)}</code>
+                    </span>
+                    <span class="palantir-access__suggestion-meta">${escape(protocol.short)}<small>#${escape(item.service.id)}</small></span>
+                </div>`).appendTo(list);
+        };
+        widget.widget().addClass("palantir-access__suggestions");
+
+        $("#accessCheckPassword").off("change").on("change", function () {
+            $("#accessPasswordField").prop("hidden", !this.checked);
+            if (!this.checked) {
+                $("#accessPassword").val("");
+            }
+        });
+        $("#fmAccessStrategy").off("submit").on("submit", event => {
+            event.preventDefault();
+            PalantirAccessCheck.check();
+        });
+        $("#accessstrategy-tab").off("click.access")
+            .on("click.access", "[data-access-action]", event => {
+                const button = event.currentTarget;
+                const action = button.dataset.accessAction;
+                if (action === "clear") {
+                    PalantirAccessCheck.choose(null);
+                    $("#accessApplication").trigger("focus");
+                } else if (action === "open") {
+                    navigateToApplication(button.dataset.serviceId);
+                } else if (action === "edit") {
+                    PalantirAccessCheck.editAccessStrategy(button.dataset.serviceId);
+                }
+            })
+            .on("click.access", "[data-access-recent]", event => {
+                const entry = PalantirAccessCheck.recent()[Number(event.currentTarget.dataset.accessRecent)];
+                if (entry) {
+                    PalantirAccessCheck.repeat(entry);
+                }
+            });
+        $("#accessStrategyEditorContainer").off("toggle").on("toggle", () => PalantirAccessCheck.editor?.resize());
+    }
+}
+
 async function initializeAccessStrategyOperations() {
-
-    if (!CAS_FEATURES.includes("SAMLIdentityProvider")) {
-        hideElements("#accessEntityIdLabel");
-    }
-    if (!CAS_FEATURES.includes("OpenIDConnect") && !CAS_FEATURES.includes("OAuth")) {
-        hideElements("#accessClientIdLabel");
-    }
-
-    const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
-    accessStrategyEditor.setReadOnly(true);
-
-    const accessStrategyAttributesTable = $("#accessStrategyAttributesTable").DataTable({
+    PalantirAccessCheck.editor = initializeAceEditor("accessStrategyEditor");
+    PalantirAccessCheck.editor.setReadOnly(true);
+    PalantirAccessCheck.attributesTable = $("#accessStrategyAttributesTable").DataTable({
         pageLength: 10,
-        drawCallback: settings => {
+        drawCallback: () => {
             $("#accessStrategyAttributesTable tr").addClass("mdc-data-table__row");
             $("#accessStrategyAttributesTable td").addClass("mdc-data-table__cell");
         }
     });
-
-    $("button[name=accessStrategyButton]").off().on("click", () => {
-        if (CasActuatorEndpoints.serviceAccess()) {
-            hideBanner();
-            accessStrategyAttributesTable.clear();
-
-            const form = document.getElementById("fmAccessStrategy");
-            if (!form.reportValidity()) {
-                return false;
-            }
-
-            accessStrategyEditor.setValue("");
-            const formData = $(form).serializeArray();
-            const renamedData = formData.filter(item => item.value !== "").map(item => {
-                const newName = $(`[name="${item.name}"]`).data("param-name") || item.name;
-                return {name: newName, value: item.value};
-            });
-
-            $.ajax({
-                url: CasActuatorEndpoints.serviceAccess(),
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded",
-                data: $.param(renamedData),
-                success: (response, status, xhr) => {
-                    showElements("#accessStrategyEditorContainer");
-                    showElements("#accessStrategyAttributesContainer");
-
-                    accessStrategyEditor.setValue(JSON.stringify(response.registeredService, null, 2));
-                    accessStrategyEditor.gotoLine(1);
-
-                    for (const [key, value] of Object.entries(response.authentication.principal.attributes)) {
-                        accessStrategyAttributesTable.row.add({
-                            0: `${palantirCode(key)}`,
-                            1: `${palantirCode(value)}`
-                        });
-                    }
-                    accessStrategyAttributesTable.draw();
-                    updateNavigationSidebar();
-                    $("#authorizedServiceNavigation").off().on("click", () => navigateToApplication(response.registeredService.id));
-                },
-                error: (xhr, status, error) => {
-                    hideElements("#accessStrategyEditorContainer");
-                    hideElements("#accessStrategyAttributesContainer");
-                    displayBanner(`Status ${xhr.status}: Service is unauthorized.`);
-                }
-            });
-        }
-    });
+    PalantirAccessCheck.bind();
+    PalantirAccessCheck.showRecent();
+    await PalantirAccessCheck.loadApplications();
 }

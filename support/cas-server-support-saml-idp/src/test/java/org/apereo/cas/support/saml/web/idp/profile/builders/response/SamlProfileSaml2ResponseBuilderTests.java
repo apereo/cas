@@ -45,6 +45,11 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
 })
 class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
+    private static final List<String> RSA_SIGNATURE_ALGORITHMS = List.of(
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA384,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA512);
 
     @Test
     void verifySamlResponseAllSigned() throws Throwable {
@@ -259,7 +264,7 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
         service.setSigningSignatureAlgorithms(CollectionUtils.wrapArrayList(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
-        service.setSigningSignatureBlackListedAlgorithms(CollectionUtils.wrapArrayList(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
+        service.setSigningSignatureBlackListedAlgorithms(new ArrayList<>(RSA_SIGNATURE_ALGORITHMS));
 
         val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
             service, service.getServiceId()).orElseThrow();

@@ -144,8 +144,9 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         try (val is = request.getInputStream()) {
-            importRecord(IOUtils.toString(is, StandardCharsets.UTF_8));
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return importRecordQuietly(IOUtils.toString(is, StandardCharsets.UTF_8))
+                ? ResponseEntity.status(HttpStatus.CREATED).build()
+                : ResponseEntity.badRequest().build();
         }
     }
 
@@ -161,9 +162,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
         try (val input = request.getInputStream()) {
-            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE);
-            records.forEach(this::importRecord);
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("imported", records.size()));
+            return importArchive(input, this::importRecordQuietly);
         }
     }
 
@@ -174,8 +173,9 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
      * registered after its one-time password is validated, as when a user registers a device.
      *
      * @param json the record
+     * @return whether the registry stored it
      */
-    private void importRecord(final String json) {
+    private boolean importRecord(final String json) {
         LOGGER.trace("Submitted account: [{}]", json);
         val document = MAPPER.readTree(json);
         if (document instanceof final ObjectNode fields && fields.has(YubiKeyAccount.FIELD_DEVICES)) {
@@ -184,11 +184,19 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
             val accountRegistry = registry.getObject();
             account.getDevices().forEach(device -> device.setPublicId(accountRegistry.getCipherExecutor().encode(device.getPublicId())));
             LOGGER.trace("Storing account: [{}]", account);
-            accountRegistry.save(account);
-        } else {
-            val registration = MAPPER.readValue(json, YubiKeyDeviceRegistrationRequest.class);
-            LOGGER.trace("Registering device: [{}]", registration);
-            registry.getObject().registerAccountFor(registration);
+            return accountRegistry.save(account) != null;
+        }
+        val registration = MAPPER.readValue(json, YubiKeyDeviceRegistrationRequest.class);
+        LOGGER.trace("Registering device: [{}]", registration);
+        return registry.getObject().registerAccountFor(registration);
+    }
+
+    private boolean importRecordQuietly(final String json) {
+        try {
+            return importRecord(json);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to import a record: [{}]", e.getMessage());
+            return false;
         }
     }
 }

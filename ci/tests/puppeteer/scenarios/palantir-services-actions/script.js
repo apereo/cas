@@ -153,6 +153,10 @@ async function verifyServiceHistory(page) {
     }));
     await cas.logg(`${duplicate.title} opened as a new application`);
     assert(duplicate.newService === "true");
+    const strategies = await page.evaluate(() => $("#registeredServiceAccessStrategy option").map((_, option) => option.value).get());
+    await cas.logg(`Access strategies offered: ${strategies.length}`);
+    assert(strategies.includes("org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy"));
+    assert(!strategies.includes("org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy"));
     await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
     await discardUnsavedChanges(page, "Duplicate");
     await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});

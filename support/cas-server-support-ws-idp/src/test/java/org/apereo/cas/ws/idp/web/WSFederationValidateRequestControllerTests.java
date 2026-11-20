@@ -88,7 +88,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
             WSFederationConstants.WHR, "whr",
             WSFederationConstants.WREQ, "wreq");
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
-        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp", result.getResponse().getHeader("Location"));
+        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example55.org/wsfed-idp", result.getResponse().getHeader("Location"));
     }
 
     @Test
@@ -105,7 +105,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
     @Test
     void verifyUnauthzServicesWithMismatchedRealm() throws Throwable {
-        val registeredService = getWsFederationRegisteredService("custom-realm");
+        val registeredService = getWsFederationRegisteredService("custom-realm", "http://app.example6.org/wsfed-idp", 200);
         val result = performFederationRequest(
             WSFederationConstants.WTREALM, "custom-realm",
             WSFederationConstants.WREPLY, registeredService.getServiceId(),
@@ -228,11 +228,15 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     private WSFederationRegisteredService getWsFederationRegisteredService(final String realm) {
+        return getWsFederationRegisteredService(realm, "http://app.example55.org/wsfed-idp", 5500);
+    }
+
+    private WSFederationRegisteredService getWsFederationRegisteredService(final String realm, final String serviceId, final long id) {
         val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm(realm);
-        registeredService.setServiceId("http://app.example5.org/wsfed-idp");
+        registeredService.setServiceId(serviceId);
         registeredService.setName("WSFED App");
-        registeredService.setId(100);
+        registeredService.setId(id);
         registeredService.setAppliesTo("CAS");
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);

@@ -1214,7 +1214,8 @@ async function verifyWizardDraftToJsonEditor(page, id) {
 
 /**
  * Going back to the JSON editor keeps a policy the wizard left out when the wizard has no choice for its type, and
- * leaves it out when the wizard offers that type, since there leaving it out was chosen in the wizard.
+ * leaves it out when the wizard offers that type, since there leaving it out was chosen in the wizard; the default
+ * access strategy the wizard leaves out still keeps its order.
  *
  * @param page the puppeteer page
  */
@@ -1227,11 +1228,39 @@ async function verifyCarryOfOmittedPolicy(page) {
         const modeled = ["name", "expirationPolicy", "expirationPolicy.deleteWhenExpired"];
         const unoffered = JSON.parse(PalantirServiceEditor.carry(definition, generated, modeled, [], {expirationPolicy: ["", "org.example.OtherPolicy"]}));
         const offered = JSON.parse(PalantirServiceEditor.carry(definition, generated, modeled, [], {expirationPolicy: ["", policy["@class"]]}));
-        return {kept: JSON.stringify(unoffered.expirationPolicy) === JSON.stringify(policy), dropped: offered.expirationPolicy === undefined};
+        const strategies = ["org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy", "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy"];
+        const strategy = (type) => ({...definition, expirationPolicy: undefined, accessStrategy: {"@class": type, order: 3, enabled: true}});
+        const strategyModeled = ["name", "accessStrategy", "accessStrategy.enabled"];
+        const ordered = JSON.parse(PalantirServiceEditor.carry(strategy(strategies[0]), generated, strategyModeled, [], {accessStrategy: strategies}));
+        const switched = JSON.parse(PalantirServiceEditor.carry(strategy(strategies[1]), generated, strategyModeled, [], {accessStrategy: strategies}));
+        return {
+            kept: JSON.stringify(unoffered.expirationPolicy) === JSON.stringify(policy),
+            dropped: offered.expirationPolicy === undefined,
+            ordered: JSON.stringify(ordered.accessStrategy) === JSON.stringify({"@class": strategies[0], order: 3}),
+            switched: switched.accessStrategy === undefined
+        };
     });
     await cas.log(`A policy of a type the wizard cannot choose is kept: ${outcome.kept}; one it can choose stays out: ${outcome.dropped}`);
+    await cas.log(`An omitted default access strategy keeps its order: ${outcome.ordered}; a switched one stays out: ${outcome.switched}`);
     assert(outcome.kept);
     assert(outcome.dropped);
+    assert(outcome.ordered);
+    assert(outcome.switched);
+}
+
+/**
+ * A number, a boolean, a list or an object in a map the wizard edits, such as a policy's context, goes back as one.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyMappedValueTypes(page) {
+    const values = await page.evaluate(() => [
+        mappedFieldValue("5", "number"), mappedFieldValue("true", "boolean"), mappedFieldValue("5", undefined),
+        mappedFieldValue("five", "number"), mappedFieldValue("yes", "boolean"),
+        mappedFieldValue("{\"roles\":[\"admin\"]}", "json"), mappedFieldValue("[\"a\",\"b\"]", "json"), mappedFieldValue("{oops", "json")
+    ]);
+    await cas.log(`Mapped values keep their types: ${JSON.stringify(values)}`);
+    assert(JSON.stringify(values) === JSON.stringify([5, true, "5", "five", "yes", {roles: ["admin"]}, ["a", "b"], "{oops"]));
 }
 
 /**
@@ -1246,6 +1275,7 @@ async function verifyEditorHandoffs(page) {
     await verifyJsonEditorToWizard(page, id);
     await verifyWizardDraftToJsonEditor(page, id);
     await verifyCarryOfOmittedPolicy(page);
+    await verifyMappedValueTypes(page);
     await page.evaluate(async (serviceId) => {
         await fetch(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, {
             method: "DELETE",

@@ -879,7 +879,8 @@ class PalantirServiceEditor {
      * whose type the wizard changed, such as another kind of access strategy. A part whose type the wizard only
      * chooses, such as the access strategy, keeps the settings inside it the wizard has no field for. A part the wizard
      * leaves out altogether stays as it was, unless its type is one the wizard offers, in which case leaving it out
-     * was a choice made in the wizard.
+     * was a choice made in the wizard; when that type is the wizard's first choice, its settings the wizard has no
+     * field for, such as the order of the default access strategy, are kept.
      *
      * @param definition the definition the wizard was opened with
      * @param wizardText the definition the wizard generated
@@ -899,6 +900,10 @@ class PalantirServiceEditor {
         const owned = path => modeled.includes(path);
         const within = path => modeled.some(name => name.startsWith(`${path}.`));
         const whole = path => maps.includes(path);
+        const unmodeled = (value, path) => {
+            const kept = merge(value["@class"] === undefined ? {} : {"@class": value["@class"]}, value, path);
+            return Object.keys(kept).some(name => name !== "@class") ? kept : null;
+        };
         const merge = (over, base, path) => {
             if (!plain(base) || !plain(over) || (base["@class"] ?? null) !== (over["@class"] ?? null)) {
                 return over;
@@ -916,16 +921,22 @@ class PalantirServiceEditor {
                     return;
                 }
                 if (owned(nested)) {
-                    if (plain(value) && !(offered[nested] ?? []).includes(value["@class"])) {
+                    const choices = offered[nested] ?? [];
+                    if (plain(value) && !choices.includes(value["@class"])) {
                         merged[key] = value;
+                    } else if (plain(value) && choices[0] === value["@class"]) {
+                        const kept = unmodeled(value, nested);
+                        if (kept) {
+                            merged[key] = kept;
+                        }
                     }
                     return;
                 }
                 if (!within(nested)) {
                     merged[key] = value;
                 } else if (plain(value)) {
-                    const kept = merge(value["@class"] === undefined ? {} : {"@class": value["@class"]}, value, nested);
-                    if (Object.keys(kept).some(name => name !== "@class")) {
+                    const kept = unmodeled(value, nested);
+                    if (kept) {
                         merged[key] = kept;
                     }
                 }

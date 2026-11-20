@@ -25,6 +25,17 @@ class PalantirDashboardConfiguration {
         return this.all().supportedServiceTypes || {};
     }
 
+    /**
+     * Whether this deployment carries an access strategy, since some live in modules of their own.
+     *
+     * @param type the access strategy class name
+     * @returns {boolean} true when the strategy is present, or when CAS did not say which strategies are
+     */
+    static accessStrategyAvailable(type) {
+        const strategies = this.all().supportedAccessStrategies ?? [];
+        return strategies.length === 0 || strategies.includes(type);
+    }
+
     static serviceProperties() {
         return this.all().serviceProperties || {};
     }

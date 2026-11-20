@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.ReflectionUtils;
@@ -63,6 +64,14 @@ public class DashboardController extends AbstractController {
      */
     private static final Supplier<Map<String, String>> SUPPORTED_SERVICE_DEFINITIONS =
         memoize(DashboardController::scanSupportedServiceDefinitions);
+
+    /**
+     * Access strategies live in optional modules as well as in core, so the wizard offers only those whose module is
+     * present; like the service types, the answer comes from a scan that runs once. When the scan fails, the set is
+     * empty and the wizard offers every strategy it knows.
+     */
+    private static final Supplier<Set<String>> SUPPORTED_ACCESS_STRATEGIES =
+        memoize(DashboardController::scanSupportedAccessStrategies);
 
     /**
      * Service properties are the constants of an enum; resolving them once avoids rebuilding the
@@ -136,6 +145,7 @@ public class DashboardController extends AbstractController {
         mav.addObject("actuatorEndpoints", actuatorEndpoints);
         mav.addObject("actuatorEndpointAccess", resolveEndpointAccess());
         mav.addObject("supportedServiceTypes", SUPPORTED_SERVICE_DEFINITIONS.get());
+        mav.addObject("supportedAccessStrategies", SUPPORTED_ACCESS_STRATEGIES.get());
         mav.addObject("serviceTemplates", collectServiceTemplates());
         mav.addObject("availableMultifactorProviders", MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).keySet());
         mav.addObject("scriptFactoryAvailable", CasRuntimeHintsRegistrar.notInNativeImage()
@@ -184,6 +194,19 @@ public class DashboardController extends AbstractController {
     private static <T> Supplier<T> memoize(final Supplier<T> delegate) {
         val holder = new AtomicReference<T>();
         return () -> holder.updateAndGet(cached -> cached != null ? cached : delegate.get());
+    }
+
+    private static Set<String> scanSupportedAccessStrategies() {
+        try {
+            return ReflectionUtils.findSubclassesInPackage(RegisteredServiceAccessStrategy.class, CentralAuthenticationService.NAMESPACE)
+                .stream()
+                .filter(type -> !type.isInterface() && !type.isAnonymousClass() && !Modifier.isAbstract(type.getModifiers()))
+                .map(Class::getName)
+                .collect(Collectors.toCollection(TreeSet::new));
+        } catch (final Throwable e) {
+            LOGGER.debug("Unable to find the access strategies of this deployment, so all are offered: [{}]", e.getMessage());
+            return new TreeSet<>();
+        }
     }
 
     private static Map<String, String> scanSupportedServiceDefinitions() {

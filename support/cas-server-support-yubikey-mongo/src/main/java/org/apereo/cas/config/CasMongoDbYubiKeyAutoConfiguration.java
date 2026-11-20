@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import module java.base;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
@@ -18,8 +19,10 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.Index;
 
 /**
  * This is {@link CasMongoDbYubiKeyAutoConfiguration}.
@@ -48,7 +51,10 @@ public class CasMongoDbYubiKeyAutoConfiguration {
         val factory = new MongoDbConnectionFactory(casSslContext.getSslContext());
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         MongoDbConnectionFactory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        return mongoTemplate.asMongoTemplate();
+        val template = mongoTemplate.asMongoTemplate();
+        MongoDbConnectionFactory.createOrUpdateIndexes(template, template.getCollection(mongo.getCollection()),
+            List.of(new Index(YubiKeyAccount.FIELD_USERNAME, Sort.Direction.ASC).unique()));
+        return template;
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

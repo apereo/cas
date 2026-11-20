@@ -83,28 +83,66 @@ class PalantirMfaProviders {
 
     static SENSITIVE = /(secret|password|private-key|encryption\.key|signing\.key|token|credential|-key$)/i;
 
-    static REPOSITORIES = {
-        "mfa-gauth": "gauthCredentialRepository",
-        "mfa-webauthn": "webAuthnDevices",
-        "mfa-yubikey": "yubikeyAccountRepository"
+    static TYPES = {
+        "gauth": {id: "mfa-gauth", name: "Google Authenticator", repository: "gauthCredentialRepository"},
+        "web-authn": {id: "mfa-webauthn", name: "WebAuthn", repository: "webAuthnDevices"},
+        "yubikey": {id: "mfa-yubikey", name: "YubiKey", repository: "yubikeyAccountRepository"},
+        "duo": {id: "mfa-duo", name: "Duo Security"},
+        "radius": {id: "mfa-radius", name: "RADIUS (RSA,WiKID,etc)"},
+        "simple": {id: "mfa-simple", name: "CAS Simple Multifactor Authentication"},
+        "twilio": {id: "mfa-twilio", name: "CAS Twilio Multifactor Authentication"},
+        "inwebo": {id: "mfa-inwebo", name: "Inwebo"}
     };
 
     /**
-     * The prefix of a provider's settings: Duo Security providers are a list, and the entry is the one whose id or name
-     * is the provider's.
+     * The type of a provider, from the setting that gives it its id, else from its fixed name or its default id.
      *
      * @param id the provider id
-     * @returns {string} the prefix, such as cas.authn.mfa.gauth
+     * @param name the provider name
+     * @param identifiers the provider ids the settings give, keyed by type
+     * @returns {string|null} the type, such as gauth or duo
      */
-    static namespace(id) {
-        if (PalantirMfaProviders.isDuo(id)) {
-            return "cas.authn.mfa.duo";
-        }
-        return `cas.authn.mfa.${id.replace(/^mfa-/, "").replace("webauthn", "web-authn")}`;
+    static typeOf(id, name, identifiers = new Map()) {
+        const types = Object.entries(PalantirMfaProviders.TYPES);
+        return [...identifiers.entries()].find(([, ids]) => ids.includes(id))?.[0]
+            ?? types.find(([type, entry]) => type !== "duo" && entry.name === name)?.[0]
+            ?? types.find(([, entry]) => entry.id === id)?.[0]
+            ?? (/duo/i.test(id) ? "duo" : null);
     }
 
-    static isDuo(id) {
-        return id.includes("duo");
+    /**
+     * The provider ids that the settings give, keyed by type, so a provider with an id of its own still finds its
+     * settings.
+     *
+     * @returns {Promise<Map<string, string[]>>} the ids per type
+     */
+    static async identifiers() {
+        const identifiers = new Map();
+        if (!CasActuatorEndpoints.env()) {
+            return identifiers;
+        }
+        try {
+            const response = await $.get(`${CasActuatorEndpoints.env()}?pattern=${encodeURIComponent("^cas\\.authn\\.mfa\\.[a-z-]+(\\[\\d+\\])?\\.id$")}`);
+            (response?.propertySources ?? []).forEach(source => Object.entries(source.properties ?? {}).forEach(([name, entry]) => {
+                const type = name.match(/^cas\.authn\.mfa\.([a-z-]+)(\[\d+\])?\.id$/)?.[1];
+                if (type && PalantirMfaProviders.TYPES[type] && entry?.value !== undefined) {
+                    identifiers.set(type, [...identifiers.get(type) ?? [], String(entry.value)]);
+                }
+            }));
+        } catch (xhr) {
+            console.warn("The multifactor provider ids could not be read", xhr);
+        }
+        return identifiers;
+    }
+
+    static type(provider, type) {
+        provider.type = type;
+        provider.prefix = type ? `cas.authn.mfa.${type}` : `cas.authn.mfa.${provider.id.replace(/^mfa-/, "")}`;
+        provider.repository = PalantirMfaProviders.TYPES[type]?.repository ?? null;
+    }
+
+    static isDuo(provider) {
+        return provider?.type === "duo";
     }
 
     static initials(name) {
@@ -113,13 +151,17 @@ class PalantirMfaProviders {
 
     static async initialize() {
         PalantirMfaProviders.providers = Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders())
-            .map(([id, name]) => ({id, name: String(name), settings: [], metadata: new Map(), prefix: PalantirMfaProviders.namespace(id),
-                status: null, summary: null, loaded: false}));
+            .map(([id, name]) => ({id, name: String(name), settings: [], metadata: new Map(), status: null, summary: null, loaded: false}));
+        PalantirMfaProviders.providers.forEach(provider => PalantirMfaProviders.type(provider,
+            PalantirMfaProviders.typeOf(provider.id, provider.name)));
         PalantirMfaProviders.selected = PalantirMfaProviders.providers[0]?.id ?? null;
         PalantirMfaProviders.chosen = false;
         PalantirMfaProviders.bind();
         PalantirMfaProviders.renderList();
         PalantirMfaProviders.renderDetail();
+        const identifiers = await PalantirMfaProviders.identifiers();
+        PalantirMfaProviders.providers.forEach(provider => PalantirMfaProviders.type(provider,
+            PalantirMfaProviders.typeOf(provider.id, provider.name, identifiers)));
         await Promise.all(PalantirMfaProviders.providers.map(provider => PalantirMfaProviders.load(provider).then(() => {
             PalantirMfaProviders.renderList();
             if (provider.id === PalantirMfaProviders.selected) {
@@ -243,7 +285,7 @@ class PalantirMfaProviders {
                 });
             });
             let settings = [...seen.values()];
-            if (PalantirMfaProviders.isDuo(provider.id)) {
+            if (PalantirMfaProviders.isDuo(provider)) {
                 const own = settings.find(setting => /\]\.(id|name)$/.test(setting.name)
                     && (setting.value === provider.id || setting.value === provider.name));
                 const entry = own ? own.name.replace(/\.(id|name)$/, "") : `${provider.prefix}[0]`;
@@ -275,13 +317,12 @@ class PalantirMfaProviders {
     }
 
     static async loadSummary(provider) {
-        const key = PalantirMfaProviders.REPOSITORIES[provider.id];
-        const endpoint = key ? CasActuatorEndpoints[key]?.() : null;
-        if (!endpoint) {
+        const repository = provider.repository ? PalantirCredentialRepositories.repository(provider.repository) : null;
+        if (!repository) {
             return;
         }
         try {
-            const summary = await $.ajax({url: `${endpoint}?summary=true`, dataType: "json", headers: {"Accept": "application/json"}});
+            const summary = await PalantirCredentialRepositories.summary(repository);
             provider.summary = {users: Number(summary?.users ?? 0), records: Number(summary?.records ?? 0)};
         } catch (xhr) {
             provider.summary = null;
@@ -296,7 +337,7 @@ class PalantirMfaProviders {
      * @returns {Promise<void>} resolved once Duo answered or the request failed
      */
     static async ping(provider, redraw) {
-        if (!provider || !PalantirMfaProviders.isDuo(provider.id) || !CasActuatorEndpoints.duoPing()) {
+        if (!provider || !PalantirMfaProviders.isDuo(provider) || !CasActuatorEndpoints.duoPing()) {
             return;
         }
         provider.status = {state: "checking"};
@@ -590,8 +631,8 @@ class PalantirMfaProviders {
         const changedCount = provider.settings.filter(setting => PalantirMfaProviders.changed(provider, setting)).length;
         const total = Math.max(provider.metadata.size, provider.settings.length);
         const status = PalantirMfaProviders.statusOf(provider);
-        const isDuo = PalantirMfaProviders.isDuo(provider.id);
-        const repository = PalantirMfaProviders.REPOSITORIES[provider.id];
+        const isDuo = PalantirMfaProviders.isDuo(provider);
+        const repository = provider.repository;
         const facts = [
             PalantirMfaProviders.fact("Rank", PalantirMfaProviders.rank(provider)),
             PalantirMfaProviders.fact("Failure mode", PalantirMfaProviders.failureMode(provider), "What happens when the provider cannot be reached"),
@@ -1261,6 +1302,28 @@ class PalantirCredentialRepositories {
 
     static importing = null;
 
+    static summaries = new Map();
+
+    /**
+     * What one repository holds, read once and shared by the provider overview and the repository card.
+     *
+     * @param repository the repository
+     * @param fresh whether to ask CAS again rather than reuse the last answer
+     * @returns {Promise<object>} the summary
+     */
+    static summary(repository, fresh = false) {
+        if (fresh || !PalantirCredentialRepositories.summaries.has(repository.key)) {
+            const request = Promise.resolve($.ajax({
+                url: `${repository.endpoint()}?summary=true`,
+                dataType: "json",
+                headers: {"Accept": "application/json"}
+            }));
+            request.catch(() => PalantirCredentialRepositories.summaries.delete(repository.key));
+            PalantirCredentialRepositories.summaries.set(repository.key, request);
+        }
+        return PalantirCredentialRepositories.summaries.get(repository.key);
+    }
+
     /**
      * The repositories whose actuator endpoint is enabled.
      *
@@ -1340,16 +1403,17 @@ class PalantirCredentialRepositories {
      * Read what one repository holds and redraw its card.
      *
      * @param repository the repository
+     * @param fresh whether to ask CAS again rather than reuse what the provider overview read
      * @returns {Promise<void>} resolved once the card is drawn
      */
-    static async refresh(repository) {
+    static async refresh(repository, fresh = true) {
         PalantirCredentialRepositories.draw(repository, null);
         try {
-            const summary = await $.ajax({
-                url: `${repository.endpoint()}?summary=true`,
-                dataType: "json",
-                headers: {"Accept": "application/json"}
-            });
+            const summary = await PalantirCredentialRepositories.summary(repository, fresh);
+            (PalantirMfaProviders.providers ?? []).filter(provider => provider.repository === repository.key)
+                .forEach(provider => {
+                    provider.summary = {users: Number(summary?.users ?? 0), records: Number(summary?.records ?? 0)};
+                });
             PalantirCredentialRepositories.draw(repository, {
                 records: Number(summary?.records ?? 0),
                 users: Number(summary?.users ?? 0),
@@ -1387,6 +1451,46 @@ class PalantirCredentialRepositories {
     }
 
     /**
+     * Tell the operator how many records CAS accepted and how many it skipped.
+     *
+     * @param repository the repository
+     * @param file the imported file
+     * @param response the body CAS answered with
+     */
+    static reportImport(repository, file, response) {
+        let counts = {};
+        try {
+            counts = JSON.parse(response || "{}") ?? {};
+        } catch (e) {
+            counts = {};
+        }
+        const imported = Number(counts.imported ?? 0);
+        const skipped = Number(counts.skipped ?? 0);
+        const records = repository.records;
+        if (imported === 0) {
+            Swal.fire({
+                icon: "error",
+                titleText: "Nothing imported",
+                text: skipped > 0
+                    ? `CAS refused all ${PalantirCredentialRepositories.count(skipped, records)} in ${file.name}.`
+                    : `${file.name} holds no ${repository.title} records.`
+            });
+        } else if (skipped > 0) {
+            Swal.fire({
+                icon: "warning",
+                titleText: "Partly imported",
+                text: `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}; CAS refused ${PalantirCredentialRepositories.count(skipped, records)}.`
+            });
+        } else {
+            Swal.fire({
+                icon: "success",
+                titleText: "Imported",
+                text: `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}.`
+            });
+        }
+    }
+
+    /**
      * Import a zip of records, as the export writes it, or one JSON record, after the operator confirms.
      *
      * @param repository the repository
@@ -1419,19 +1523,18 @@ class PalantirCredentialRepositories {
                 dataType: "text"
             });
             PalantirProgress.close();
-            const imported = archive ? Number(JSON.parse(response || "{}").imported ?? 0) : 1;
-            Swal.fire({
-                icon: "success",
-                titleText: "Imported",
-                text: `${PalantirCredentialRepositories.count(imported, repository.records)} imported into ${repository.title}.`
-            });
+            PalantirCredentialRepositories.reportImport(repository, file, archive ? response : "{\"imported\":1}");
         } catch (xhr) {
             PalantirProgress.close();
-            if (xhr?.statusText !== PALANTIR_READ_ONLY) {
+            if (xhr?.status === 422) {
+                PalantirCredentialRepositories.reportImport(repository, file, xhr.responseText);
+            } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
                 Swal.fire({
                     icon: "error",
                     titleText: "Nothing imported",
-                    text: `CAS could not import ${file.name} into ${repository.title}${xhr?.status ? ` (it answered ${xhr.status})` : ""}.`
+                    text: xhr?.status === 413
+                        ? `${file.name} is too large to import: a record, or the records together, exceed what CAS accepts.`
+                        : `CAS could not import ${file.name} into ${repository.title}${xhr?.status ? ` (it answered ${xhr.status})` : ""}.`
                 });
             }
         }
@@ -1472,7 +1575,7 @@ class PalantirCredentialRepositories {
     static initialize() {
         const repositories = PalantirCredentialRepositories.available();
         $("#mfaRepositoriesCards").empty();
-        repositories.forEach(repository => PalantirCredentialRepositories.refresh(repository));
+        repositories.forEach(repository => PalantirCredentialRepositories.refresh(repository, false));
         $("#mfaRepositoriesCards").off("click").on("click", "[data-mfa-repository-action]", event => {
             const button = event.currentTarget;
             const repository = PalantirCredentialRepositories.repository(button.closest("[data-mfa-repository]")?.dataset.mfaRepository);

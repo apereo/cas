@@ -119,6 +119,29 @@ General view, theme and template rules are in the `cas-ui` skill.
   border color. A new search wrapper needs its own `:focus-within` rule.
 - MFA provider settings are the standard DataTable (`#mfaProviderSettingsTable`, hidden group column with group rows
   like the configuration table), rebuilt by `renderDetail`, which destroys the previous instance first.
+- Access Check (`PalantirAccessCheck`, palantir-authz.js; access tab): the `serviceAccess` endpoint answers
+  `{allowed, reason, steps, service, registeredService, authentication}` for 200, 401 and 403 alike; steps are
+  private `AccessStep` records of the endpoint (`id`, `title`, `outcome` PASSED/FAILED/SKIPPED/INFO, `detail`, `rules`, inner
+  `steps`) built by its private `AccessExplainer`. The application field sends `client_id` (OAuth/OIDC),
+  `entityId` (SAML2) or `service` from one field (`#accessApplication`); `PalantirAccessCheck.resolve` mirrors how
+  CAS finds the application: OAuth/OIDC only by client id (case-insensitive), SAML2 only by entity id, and a plain
+  service URL only among CAS applications, each in evaluation order, so a catch-all of one protocol never captures
+  another's requests and `update()` shows it under
+  the field. Suggestions are hidden once the value resolves. `PalantirAccessCheck.openFor(id)` backs the applications'
+  *Check Access* menu item. The endpoint runs the enforcer once and then explains; strategies that call out or run
+  scripts are never invoked again to explain. Every check returns only a summary of the application (no definition; the UI reads the definition from
+  `registeredServices`), a failure to check answers 500 and is not a decision;
+  `client_id` or `entityId` alone is enough to name an application. The sorted application list is cached per
+  `registeredServicesVersion`; bump it after changing `registeredServicesById`. Recent checks live in
+  `localStorage["PalantirAccessChecks"]`, never with passwords.
+- Wizard option lists of types that live in optional modules filter on what the deployment carries: access strategies
+  use `PalantirDashboardConfiguration.accessStrategyAvailable(className)`, fed by the dashboard model's
+  `supportedAccessStrategies` scan; do not hard-code a module's strategy as always present.
+- MFA providers resolve their type (`PalantirMfaProviders.typeOf`) from the `cas.authn.mfa.*.id` settings, then the
+  fixed friendly name, then the default id; never derive a settings prefix or repository from the provider id alone.
+  Repository summaries go through `PalantirCredentialRepositories.summary(repository, fresh)`, shared by the provider
+  overview and the repository cards. Archive imports go through `BaseCasRestActuatorEndpoint.importArchive` and answer
+  `{imported, skipped}`, with 422 when nothing was stored and 413 when the archive is too large.
 - Duo account tools (MFA › Providers, Duo only): `duoAccountStatus` (selector-only, so its link may be listed as
   `duoAccountStatus-username`; `CasActuatorEndpoints.duoAccountStatus()` strips the template) and `duoAdmin` (GET user,
   POST `bypassCodes`, PUT user with status, firstName, lastName, email; writes carry `data-palantir-write="duoAdmin"`).

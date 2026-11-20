@@ -219,6 +219,17 @@ those the search and type filter show at once, and the selection exported,
 as a zip of their definitions that *Import* accepts, disabled or enabled together (those already in that state are
 left alone), or deleted together; *Delete All* removes every application from the service registry after the operator confirms.
 
+*Access Check*, under the access pages, tells whether a user may access an application and why, the way CAS decides
+at sign-in. The application field takes a service URL, a client id or an entity id, and suggests registered
+applications by name or identifier; under the field, the application CAS resolves the value to is shown, matched in
+evaluation order, with a warning when another application is matched before the one picked. The applications' menu
+offers *Check Access* to open the check for an application. The password is checked only on request. The answer shows a verdict with its reason, the steps CAS
+went through as a row of passed and failed steps (whether the application is enabled and has not expired, whether the
+user signed in, and the access strategy's activation and required and rejected attributes, or the answer of a strategy
+that decides by other means), each required or rejected attribute with the values it names next to the user's values,
+the user's attributes and the application's definition, with links to open the application or edit its access
+strategy. The last checks are kept in the browser, without passwords.
+
 *Duplicate Application* opens a copy of an application in the wizard as a new application, named after the original,
 with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the
 definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or

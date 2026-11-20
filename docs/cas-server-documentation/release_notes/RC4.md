@@ -288,7 +288,13 @@ theme property.
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
 (`⌘K` on macOS) or `/`, that goes to any page or section, finds a registered application by name, identifier or service id,
-and runs common actions without leaving the keyboard; it reopens with the last search and the last match chosen. A new *Users* page looks up one user and gathers in one place their
+and runs common actions without leaving the keyboard; it reopens with the last search and the last match chosen. The access
+page's check now explains its answer: a verdict with its reason, the steps CAS went through, from finding the application
+to its required and rejected attributes, the values each rule names next to the user's, and links to the application
+and its access strategy, with the last checks kept in the browser. One field takes the application, shows which
+registered application CAS resolves it to, and each application's menu can open the check for it; the service access endpoint returns the same
+explanation, also when access is refused, naming the application without its definition, and asks an external
+authorization service or a script once. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. The page also lists the user's OAuth and OpenID Connect
@@ -1007,7 +1013,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="mfa"} The actuator endpoints of the [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html),
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) and [YubiKey](../mfa/YubiKey-Authentication.html)
   repositories import the zip their export writes, so registrations move between servers or repositories, and report
-  how many records they hold and for how many users without returning the records. The WebAuthn endpoint can also list
+  how many records they hold and for how many users without returning the records. An import reports how many records
+  the repository accepted and how many it refused, refuses an archive none of whose records could be stored, and limits
+  how large an archive may grow once decompressed. The WebAuthn endpoint can also list
   and remove every registration, and the YubiKey endpoint imports an exported account as it is, which before needed a
   one-time password from the device. Palantir's multifactor section offers export, import and removal of every record
   for each of these repositories.
@@ -1200,6 +1208,17 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   catalogs and also published as JSON.
 
 ## Other Stuff
+
+- {: .fixed data-area="mfa"} Importing a YubiKey account into a [MongoDb repository](../mfa/YubiKey-Authentication-Registration-MongoDb.html)
+  no longer replaces another user's account that happens to have the same identifier; the imported account gets an
+  identifier of its own.
+- {: .fixed data-area="services"} With applications [defined in memory](../services/InMemory-Service-Management.html),
+  deleting every application no longer fails, and deleting an application removes it even when the definition given
+  differs from the stored one, where it used to report success and keep it.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html)'s application wizard offers only the
+  access strategies this deployment carries, keeps the order of a default access strategy it leaves out when going back to
+  the JSON editor, and keeps numbers and booleans in the maps it edits, such as a policy's context. Multifactor settings
+  are found for providers given an id of their own, and the credential repositories are read once when the page opens.
 
 - {: .fixed data-area="services"} When CAS runs as an executable web application, the initial load of
   [registered services](../services/Service-Management.html) after startup no longer fails intermittently with a

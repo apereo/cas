@@ -189,7 +189,7 @@ class TicketRegistrySessionRepositoryTests {
 
         when(registry.query(any())).thenAnswer(_ -> captor.getAllValues());
         val found = repository.findByPrincipalName("casuser");
-        assertEquals(Set.of(session.getId()), found.keySet());
+        assertEquals(Set.of(TransientSessionTicketFactory.normalizeTicketId(session.getId())), found.keySet());
         verify(registry, never()).getTickets(any());
         verify(registry).query(argThat(criteria -> TransientSessionTicket.PREFIX.equals(criteria.getType()) && criteria.isDecode()));
     }

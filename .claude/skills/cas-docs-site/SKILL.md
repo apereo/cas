@@ -101,3 +101,6 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
   durations such as `10000` and `PT10S` are not a change) and writes `assets/data/<version>/settings-changes.json` and
   `_data/<data dir>/settings-changes.json`, which `configuration/Configuration-Properties-Changes.md` renders through
   `_includes_site/settings-changes.html`.
+- Includes that emit raw HTML into a Markdown page wrap it in `{::nomarkdown}` / `{:/nomarkdown}`, and each marker must
+  stay on a line of its own in the rendered output: no `{%-` right after the opening marker and no `-%}` right before the
+  closing one, or kramdown treats the HTML as text and indented lines as code blocks.

@@ -8612,3 +8612,733 @@ html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.u
     }
 
 }
+
+/* ==========================================================================
+   Access check: the verdict, the steps as gates and the reasons behind them
+   ========================================================================== */
+#accessstrategy-tab [hidden] {
+    display: none !important;
+}
+
+.palantir-access {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.palantir-access__side,
+.palantir-access__main {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+}
+
+.palantir-access__side > *,
+.palantir-access__main > * {
+    min-width: 0;
+}
+
+.palantir-access__card {
+    padding: 18px 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+.palantir-access__label {
+    margin: 0 0 8px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.palantir-access__form {
+    display: grid;
+    gap: 10px;
+}
+
+.palantir-access__form .palantir-access__label:not(:first-child) {
+    margin-top: 8px;
+}
+
+.palantir-access__field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__field:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+.palantir-access__field .mdi::before {
+    font-size: 19px;
+}
+
+#accessstrategy-tab .palantir-access__field input {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.palantir-access__target-clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--palantir-text-muted);
+    cursor: pointer;
+}
+
+.palantir-access__target-clear[hidden] {
+    display: none;
+}
+
+.palantir-access__target-clear:hover {
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text);
+}
+
+.palantir-access__target-clear .mdi::before {
+    font-size: 17px;
+}
+
+.palantir-access__hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 22px;
+    margin: -2px 2px 0;
+    color: var(--palantir-text-muted);
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+.palantir-access__hint > .mdi::before {
+    font-size: 16px;
+}
+
+.palantir-access__hint.is-resolved {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-access__hint.is-shadowed {
+    background: var(--palantir-warn-bg);
+}
+
+.palantir-access__hint.is-shadowed small {
+    color: var(--palantir-warn);
+}
+
+.palantir-access__hint.is-pending {
+    align-items: flex-start;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+}
+
+.palantir-access__hint.is-pending > .mdi {
+    margin-top: 1px;
+}
+
+.palantir-access__hint .palantir-protocol-badge {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.palantir-access__hint-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+}
+
+.palantir-access__hint-text :is(strong, small) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__hint-text strong {
+    color: var(--palantir-text);
+    font-size: 13px;
+}
+
+.palantir-access__hint-text code {
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+
+.palantir-access__chip {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.palantir-access__chip.is-passed {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-access__chip.is-failed {
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-access__chip.is-warn {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-access__chip.is-skipped {
+    border: 1px solid var(--palantir-border);
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__chip.is-info {
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+}
+
+.palantir-access__switch {
+    margin-top: 4px;
+}
+
+.palantir-access__switch .palantir-feature-switch__text strong {
+    font-size: 14px;
+}
+
+.palantir-access__switch .palantir-feature-switch__text small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.palantir-access__problem {
+    margin: 0;
+    color: var(--palantir-danger);
+    font-size: 13px;
+}
+
+.palantir-access__submit {
+    display: flex;
+    margin-top: 6px;
+}
+
+.palantir-access__recent {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__recent > li {
+    min-width: 0;
+    margin: 0;
+}
+
+.palantir-access__recent > li + li {
+    border-top: 1px solid var(--palantir-divider);
+}
+
+#accessstrategy-tab .palantir-access__recent-item {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 9px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#accessstrategy-tab .palantir-access__recent-item:hover {
+    background: var(--palantir-hover);
+}
+
+#accessstrategy-tab .palantir-access__recent-item > span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__empty {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__empty .mdi::before {
+    color: var(--palantir-brand);
+    font-size: 40px;
+}
+
+.palantir-access__empty p {
+    margin: 0;
+}
+
+.palantir-access__verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+}
+
+.palantir-access__verdict.is-allowed {
+    border-color: var(--palantir-success-line);
+    background: linear-gradient(135deg, var(--palantir-success-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-denied {
+    border-color: var(--palantir-danger-line);
+    background: linear-gradient(135deg, var(--palantir-danger-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-unauthenticated {
+    border-color: color-mix(in srgb, var(--palantir-warn) 40%, transparent);
+    background: linear-gradient(135deg, var(--palantir-warn-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-unavailable {
+    border-color: var(--palantir-border-strong);
+    background: linear-gradient(135deg, var(--palantir-surface-2), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--palantir-brand-fill);
+    color: var(--palantir-on-brand);
+}
+
+.palantir-access__verdict-icon .mdi::before {
+    font-size: 30px;
+}
+
+.is-allowed .palantir-access__verdict-icon {
+    background: var(--palantir-success-fill);
+}
+
+.is-denied .palantir-access__verdict-icon {
+    background: var(--palantir-danger-line);
+}
+
+.is-unauthenticated .palantir-access__verdict-icon {
+    background: #b07b00;
+}
+
+.is-unavailable .palantir-access__verdict-icon {
+    background: var(--palantir-text-muted);
+}
+
+.palantir-access__verdict-text {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.palantir-access__verdict-text h3 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.is-allowed .palantir-access__verdict-text h3 {
+    color: var(--palantir-success-text);
+}
+
+.is-denied .palantir-access__verdict-text h3 {
+    color: var(--palantir-danger);
+}
+
+.palantir-access__verdict-text p {
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+    color: var(--palantir-text-2);
+}
+
+.palantir-access__verdict-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.palantir-access__flow {
+    display: flex;
+    gap: 22px;
+    margin: 0 -4px;
+    padding: 4px 4px 8px;
+    overflow-x: auto;
+    list-style: none;
+}
+
+.palantir-access__gate {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 88px;
+    padding: 12px 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-2);
+    text-align: center;
+}
+
+.palantir-access__gate:not(:last-child)::after {
+    content: "\F0142";
+    position: absolute;
+    top: 50%;
+    right: -19px;
+    color: var(--palantir-text-muted);
+    font-family: "Material Design Icons";
+    font-size: 18px;
+    transform: translateY(-50%);
+}
+
+.palantir-access__gate > .mdi::before {
+    font-size: 26px;
+}
+
+.palantir-access__gate-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.palantir-access__gate-outcome {
+    color: var(--palantir-text-muted);
+    font-size: 11.5px;
+}
+
+.palantir-access__gate.is-passed {
+    border-color: color-mix(in srgb, var(--palantir-success-line) 45%, transparent);
+    background: color-mix(in srgb, var(--palantir-success-bg) 60%, var(--palantir-surface));
+}
+
+.palantir-access__gate.is-passed .mdi,
+.palantir-access__reason.is-passed > .mdi,
+.palantir-access__rule.is-passed > .mdi {
+    color: var(--palantir-success-text);
+}
+
+.palantir-access__gate.is-failed {
+    border-color: var(--palantir-danger-line);
+    background: color-mix(in srgb, var(--palantir-danger-bg) 65%, var(--palantir-surface));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-danger-line) 14%, transparent);
+}
+
+.palantir-access__gate.is-failed .mdi,
+.palantir-access__reason.is-failed > .mdi,
+.palantir-access__rule.is-failed > .mdi {
+    color: var(--palantir-danger-line);
+}
+
+.palantir-access__gate.is-skipped {
+    opacity: .65;
+}
+
+.palantir-access__gate.is-skipped .mdi,
+.palantir-access__reason.is-skipped > .mdi {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__gate.is-info .mdi,
+.palantir-access__reason.is-info > .mdi {
+    color: var(--palantir-focus);
+}
+
+.palantir-access__reasons {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__reasons.is-inner {
+    margin-top: 8px;
+    padding-left: 4px;
+    border-left: 2px solid var(--palantir-divider);
+}
+
+.palantir-access__reason {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: start;
+    padding: 12px 0;
+    border-top: 1px solid var(--palantir-divider);
+}
+
+.palantir-access__reason:first-child {
+    border-top: 0;
+}
+
+.palantir-access__reason > .mdi::before {
+    font-size: 22px;
+}
+
+.palantir-access__reason strong {
+    display: block;
+}
+
+.palantir-access__reason > div > span {
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-access__rules {
+    display: grid;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    font-size: 13px;
+}
+
+.palantir-access__value {
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+}
+
+.palantir-access__value.is-hit {
+    border-color: color-mix(in srgb, var(--palantir-success-line) 45%, transparent);
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-access__value.is-miss {
+    border-color: color-mix(in srgb, var(--palantir-danger-line) 40%, transparent);
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-access__none {
+    color: var(--palantir-text-muted);
+    font-style: italic;
+}
+
+.palantir-access__attributes,
+.palantir-access__definition {
+    margin-top: 18px;
+}
+
+.palantir-access__definition summary {
+    color: var(--palantir-brand);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+html.palantir-page .ui-autocomplete.palantir-access__suggestions {
+    z-index: 1000;
+    max-height: 360px;
+    padding: 6px;
+    overflow-y: auto;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-raised, var(--palantir-surface)) !important;
+    color: var(--palantir-text);
+    font-size: 13px !important;
+    box-shadow: 0 18px 40px -16px rgba(15, 23, 42, .35), var(--palantir-shadow-soft);
+}
+
+.palantir-access__suggestions .palantir-access__suggestions-header {
+    margin: 2px 8px 6px;
+    padding: 0;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    opacity: 1;
+    cursor: default;
+}
+
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper {
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--palantir-text);
+}
+
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper.ui-state-active,
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper:hover {
+    margin: 0;
+    border: 0;
+    background: var(--palantir-selected, var(--palantir-surface-2));
+    color: var(--palantir-text);
+}
+
+html.palantir-page .palantir-access__suggestions .palantir-access__suggestions-header .ui-menu-item-wrapper {
+    padding: 0;
+    background: transparent;
+}
+
+.palantir-access__suggestion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.palantir-access__suggestion .palantir-protocol-badge {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.palantir-access__suggestion-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+}
+
+.palantir-access__suggestion-text :is(strong, code) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__suggestion-text strong {
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.palantir-access__suggestion-text code {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-access__suggestion mark {
+    padding: 0;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+    color: inherit;
+}
+
+.palantir-access__suggestion-meta {
+    display: grid;
+    flex: none;
+    justify-items: end;
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .03em;
+}
+
+.palantir-access__suggestion-meta small {
+    color: var(--palantir-text-muted);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+@media (max-width: 900px) {
+    .palantir-access {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-access__flow {
+        flex-direction: column;
+        gap: 18px;
+        overflow-x: visible;
+    }
+
+    .palantir-access__gate {
+        flex: none;
+        flex-direction: row;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .palantir-access__gate-outcome {
+        margin-left: auto;
+    }
+
+    .palantir-access__gate:not(:last-child)::after {
+        content: "\F0140";
+        top: auto;
+        right: auto;
+        bottom: -21px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

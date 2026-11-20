@@ -463,6 +463,12 @@ async function initializeServiceButtons() {
                 icon: contextMenuIcon("mdi-heart-pulse"),
                 visible: context => PalantirSamlMetadataHealth.applies(registeredServicesById.get(String(context.rowData.serviceId)))
             },
+            accessCheck: {
+                name: "Check Access",
+                icon: contextMenuIcon("mdi-shield-account-outline"),
+                write: "serviceAccess",
+                visible: () => Boolean(CasActuatorEndpoints.serviceAccess())
+            },
             releasePreview: {
                 name: "Preview Released Attributes",
                 icon: contextMenuIcon("mdi-account-eye"),
@@ -502,6 +508,8 @@ async function initializeServiceButtons() {
             PalantirSamlMetadataHealth.open(serviceId);
         } else if (key === "releasePreview") {
             PalantirAttributeRelease.openForApplication(serviceId);
+        } else if (key === "accessCheck") {
+            PalantirAccessCheck.openFor(serviceId);
         }
     };
 }
@@ -519,6 +527,7 @@ async function fetchServices(callback) {
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
             registeredServicesById.clear();
+            registeredServicesVersion++;
 
             for (const service of response[1]) {
                 registeredServicesById.set(String(service.id), service);
@@ -758,6 +767,12 @@ async function initializeFooterButtons() {
 let applicationActionHandler = null;
 
 const registeredServicesById = new Map();
+
+/**
+ * Bumped whenever the registered applications are read again, so views that derive from them, such as the access
+ * check's sorted list, know to derive it again.
+ */
+let registeredServicesVersion = 0;
 
 const APPLICATIONS_VIEW_STORAGE_KEY = "PalantirApplicationsView";
 

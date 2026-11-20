@@ -57,6 +57,14 @@ class CompressionUtilsTests {
         try (val input = resource.getInputStream()) {
             assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(input, 4));
         }
+        try (val input = resource.getInputStream()) {
+            val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
+            assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(input, 1024, total - 1));
+        }
+        try (val input = resource.getInputStream()) {
+            val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
+            assertEquals(records.size(), CompressionUtils.readZipEntries(input, 1024, total).size());
+        }
     }
 
     @Test

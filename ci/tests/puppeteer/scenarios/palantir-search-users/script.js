@@ -1,5 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
-   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, Swal */
+   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, PalantirAccessCheck,
+   Swal */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -419,6 +420,120 @@ async function verifyConsentUsername(page) {
 }
 
 /**
+ * Check access from the access page: a user without the group an application requires is denied, with the failed
+ * step and the missing value shown, and an application without rules lets the user in. Both checks are listed as
+ * recent checks.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyAccessCheck(page) {
+    await cas.separator();
+    await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.ACCESS_STRATEGY.index}]`).trigger("click"));
+    await page.waitForFunction(() => currentActiveTab === Tabs.ACCESS_STRATEGY.index
+        && typeof PalantirAccessCheck !== "undefined" && PalantirAccessCheck.editor !== null, {timeout: 30000});
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.serviceAccess()))) {
+        await cas.logy("The service access endpoint is not available; skipping the access check");
+        return;
+    }
+    await page.evaluate(() => localStorage.removeItem(PalantirAccessCheck.STORAGE_KEY));
+    await page.click("#accessApplication");
+    await page.type("#accessApplication", "Staff");
+    await page.waitForFunction(() => $(".palantir-access__suggestions:visible .palantir-access__suggestion").length > 0, {timeout: 10000});
+    const header = await page.evaluate(() => $(".palantir-access__suggestions:visible .palantir-access__suggestions-header").text().trim());
+    await cas.log(`Suggestions: ${header}`);
+    assert(header === "1 application");
+    await page.evaluate(() => $(".palantir-access__suggestions:visible .ui-menu-item:not(.palantir-access__suggestions-header)")
+        .first().trigger("mouseenter").trigger("click"));
+    await page.waitForFunction(() => PalantirAccessCheck.selected?.name === "Staff Portal", {timeout: 10000});
+    const prefilled = await page.evaluate(() => ({
+        value: $("#accessApplication").val(),
+        resolved: $("#accessTargetHint").hasClass("is-resolved"),
+        name: $("#accessTargetHint strong").text().trim()
+    }));
+    await cas.log(`Staff Portal is checked with ${prefilled.value}, resolved to ${prefilled.name}`);
+    assert(prefilled.value === "https://staff.example.org/" && prefilled.resolved && prefilled.name === "Staff Portal");
+    await page.evaluate(() => {
+        $("#accessApplication").val("https://staff.example.org/home");
+        PalantirAccessCheck.update();
+    });
+    await page.type("#accessUsername", "casuser");
+    await page.click("#accessStrategyButton");
+    await page.waitForFunction(() => $("#accessResult .palantir-access__verdict").length === 1, {timeout: 30000});
+    const denied = await page.evaluate(() => ({
+        verdict: $("#accessResult .palantir-access__verdict").attr("class"),
+        title: $("#accessResult .palantir-access__verdict h3").text().trim(),
+        reason: $("#accessResult .palantir-access__verdict p").text().trim(),
+        failed: $("#accessResult .palantir-access__gate.is-failed .palantir-access__gate-title").toArray().map((gate) => gate.textContent.trim()),
+        missing: $("#accessResult .palantir-access__rule.is-failed code").toArray().map((code) => code.textContent.trim())
+    }));
+    await cas.logg(`Access check for Staff Portal: ${JSON.stringify(denied)}`);
+    assert(denied.verdict.includes("is-denied") && denied.title === "casuser is denied");
+    assert(denied.failed.includes("Required attributes") && denied.missing.includes("memberOf"));
+    assert(denied.reason.includes("memberOf needs admins"));
+
+    await page.evaluate(() => $("#accessTargetField [data-access-action=clear]").trigger("click"));
+    assert(await page.evaluate(() => $("#accessApplication").val() === "" && PalantirAccessCheck.selected === null));
+    await page.type("#accessApplication", "https://portal.example.org/one/home");
+    await page.click("#accessStrategyButton");
+    await page.waitForFunction(() => $("#accessResult .palantir-access__verdict.is-allowed").length === 1, {timeout: 30000});
+    const allowed = await page.evaluate(() => ({
+        title: $("#accessResult .palantir-access__verdict h3").text().trim(),
+        gates: $("#accessResult .palantir-access__gate").length,
+        recent: $("#accessRecentList [data-access-recent]").length
+    }));
+    await cas.logg(`Access check for Portal: ${JSON.stringify(allowed)}`);
+    assert(allowed.title === "casuser may access Portal" && allowed.gates > 0 && allowed.recent === 2);
+
+    await page.evaluate(() => PalantirAccessCheck.openFor(3));
+    await page.waitForFunction(() => $("#accessApplication").val() === "https://staff.example.org/"
+        && PalantirAccessCheck.selected?.id === 3, {timeout: 10000});
+    await cas.log("The applications' Check Access action opens the access check with Staff Portal picked");
+
+    const protocols = await page.evaluate(() => {
+        const saved = new Map(registeredServicesById);
+        registeredServicesById.clear();
+        registeredServicesVersion++;
+        [
+            {"@class": "org.apereo.cas.support.saml.services.SamlRegisteredService", id: 91, name: "Every SP", serviceId: ".*", evaluationOrder: 0},
+            {"@class": "org.apereo.cas.services.OidcRegisteredService", id: 92, name: "Every RP", serviceId: "^http.*", clientId: "Client-One", evaluationOrder: 1},
+            {"@class": "org.apereo.cas.services.CasRegisteredService", id: 93, name: "Every Client", serviceId: "^http.*", evaluationOrder: 2}
+        ].forEach(service => registeredServicesById.set(String(service.id), service));
+        const resolved = value => {
+            const answer = PalantirAccessCheck.resolve(value);
+            return `${answer.parameter?.name}:${answer.service?.id}`;
+        };
+        PalantirAccessCheck.choose(null);
+        const url = resolved("https://app.example.org/");
+        const client = resolved("client-one");
+        PalantirAccessCheck.choose(registeredServicesById.get("91"));
+        const entity = resolved("https://sp.example.org/shibboleth");
+        PalantirAccessCheck.choose(null);
+        registeredServicesById.clear();
+        saved.forEach((service, id) => registeredServicesById.set(id, service));
+        registeredServicesVersion++;
+        return {url, client, entity};
+    });
+    const unavailable = await page.evaluate(() => [
+        PalantirAccessCheck.verdict({username: "casuser", label: "Portal"}, 404, null).style,
+        PalantirAccessCheck.verdict({username: "casuser", label: "Portal"}, 500, {allowed: false, reason: "broken", steps: []}).style
+    ]);
+    assert(unavailable.every(style => style === "is-unavailable"));
+    const repeated = await page.evaluate(() => {
+        $("#accessCheckPassword").prop("checked", false).trigger("change");
+        PalantirAccessCheck.repeat({label: "Portal", username: "casuser", password: true,
+            parameter: {name: "service", value: "https://portal.example.org/one/home"}, applicationId: "1"});
+        const asked = $("#accessCheckPassword").prop("checked") && !$("#accessPasswordField").prop("hidden")
+            && document.activeElement?.id === "accessPassword";
+        $("#accessCheckPassword").prop("checked", false).trigger("change");
+        return asked;
+    });
+    await cas.log(`Repeating a check that checked the password asks for it: ${repeated}`);
+    assert(repeated);
+    await cas.log(`With catch-all SAML, OIDC and CAS applications: ${JSON.stringify(protocols)}`);
+    assert(protocols.url === "service:93" && protocols.client === "client_id:92" && protocols.entity === "entityId:91");
+}
+
+/**
  * Open the Applications page and wait until its table is built. A new visit lands on Home, and the applications
  * steps of this scenario need the table, the cards and the applications loaded.
  *
@@ -474,6 +589,7 @@ async function waitForApplications(page) {
     await verifyConsentUsername(page);
     await verifyAuditEventsUsername(page);
     await verifyCredentialRepositories(page);
+    await verifyAccessCheck(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

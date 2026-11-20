@@ -193,4 +193,47 @@ class WebAuthnRegisteredDevicesEndpointTests {
         webAuthnCredentialRepository.addRegistrationByUsername(authn.getPrincipal().getId(), registration);
         return registration;
     }
+
+    @Test
+    void verifyArchiveImportCountsRefusedRecords() throws Throwable {
+        val content = WebAuthnUtils.getObjectMapper().writeValueAsString(
+            getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString())));
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType("application/zip")
+                .content(archiveOf(content, "not a record"))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.imported").value(1))
+            .andExpect(jsonPath("$.skipped").value(1));
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType("application/zip")
+                .content(archiveOf(content, "not a record"))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.imported").value(1))
+            .andExpect(jsonPath("$.skipped").value(1));
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType("application/zip")
+                .content(archiveOf("not a record", "[1, 2]"))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnprocessableContent())
+            .andExpect(jsonPath("$.imported").value(0))
+            .andExpect(jsonPath("$.skipped").value(2));
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("not a record"))
+            .andExpect(status().isBadRequest());
+    }
+
+    private static byte[] archiveOf(final String... records) throws Exception {
+        val bytes = new ByteArrayOutputStream();
+        try (val zip = new ZipOutputStream(bytes)) {
+            for (var index = 0; index < records.length; index++) {
+                zip.putNextEntry(new ZipEntry("record-%s.json".formatted(index)));
+                zip.write(records[index].getBytes(StandardCharsets.UTF_8));
+                zip.closeEntry();
+            }
+        }
+        return bytes.toByteArray();
+    }
 }

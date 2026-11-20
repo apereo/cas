@@ -32,6 +32,12 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=classpath:metadata/")
 class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
 
+    private static final List<String> RSA_SIGNATURE_ALGORITHMS = List.of(
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA384,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA512);
+
     @Test
     void findsSigningCredential() throws Exception {
         val samlRegisteredService = getSamlRegisteredServiceFor(true, true, false, "https://cassp.example.org");
@@ -57,7 +63,7 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
         samlRegisteredService.setId(1001);
         samlRegisteredService.setName("ObjectSignerBlockedTest");
         samlRegisteredService.setSigningSignatureAlgorithms(List.of(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
-        samlRegisteredService.setSigningSignatureBlackListedAlgorithms(List.of(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
+        samlRegisteredService.setSigningSignatureBlackListedAlgorithms(RSA_SIGNATURE_ALGORITHMS);
         verifySigningRefused(samlIdPObjectSigner, samlRegisteredService);
     }
 
@@ -66,7 +72,7 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
         val properties = new CasConfigurationProperties();
         properties.getAuthn().getSamlIdp().getAlgs()
             .setOverrideSignatureAlgorithms(List.of(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256))
-            .setOverrideBlockedSignatureSigningAlgorithms(List.of(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
+            .setOverrideBlockedSignatureSigningAlgorithms(RSA_SIGNATURE_ALGORITHMS);
         val signer = new DefaultSamlIdPObjectSigner(casSamlIdPMetadataResolver, properties, samlIdPMetadataLocator);
 
         val samlRegisteredService = getSamlRegisteredServiceFor(true, true, false, "https://cassp.example.org");

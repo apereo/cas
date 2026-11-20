@@ -260,13 +260,35 @@ public class CompressionUtils {
      * @throws IOException when the archive cannot be read
      */
     public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize) throws IOException {
+        return readZipEntries(input, maximumEntrySize, Long.MAX_VALUE);
+    }
+
+    /**
+     * The text of every file in a zip archive, in the order the archive holds them. A file larger than the given size
+     * is refused, and so is an archive whose files together, once decompressed, are larger than the given total, so a
+     * small archive that expands to many large files cannot exhaust its reader's memory.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, a file in the archive may have at most
+     * @param maximumTotalSize the size, in bytes, the files of the archive may have together at most
+     * @return the text of each file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize,
+                                              final long maximumTotalSize)
+            throws IOException {
         val entries = new ArrayList<String>();
+        var total = 0L;
         try (val zip = new ZipInputStream(input, StandardCharsets.UTF_8)) {
             for (var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
                 if (!entry.isDirectory()) {
                     val content = zip.readNBytes(maximumEntrySize + 1);
                     if (content.length > maximumEntrySize) {
                         throw new IllegalArgumentException("Archive entry %s is larger than %s bytes".formatted(entry.getName(), maximumEntrySize));
+                    }
+                    total += content.length;
+                    if (total > maximumTotalSize) {
+                        throw new IllegalArgumentException("Archive is larger than %s bytes once decompressed".formatted(maximumTotalSize));
                     }
                     entries.add(new String(content, StandardCharsets.UTF_8));
                 }
