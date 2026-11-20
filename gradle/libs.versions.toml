@@ -678,6 +678,7 @@ spring-boot-starter-validation = { module = "org.springframework.boot:spring-boo
 spring-boot-starter-web-sdk = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-starter-web-services = { module = "org.springframework.boot:spring-boot-starter-web-services", version.ref = "springBoot" }
 spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "springBoot" }
+spring-boot-starter-zipkin = { module = "org.springframework.boot:spring-boot-starter-zipkin", version.ref = "springBoot" }
 spring-cloud-azure-starter-actuator = { module = "com.azure.spring:spring-cloud-azure-starter-actuator", version.ref = "springCloudAzure" }
 spring-cloud-azure-starter-keyvault-sdk = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault", version.ref = "springCloudAzure" }
 spring-cloud-azure-starter-keyvault-secrets = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets", version.ref = "springCloudAzure" }

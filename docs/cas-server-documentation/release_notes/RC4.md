@@ -96,6 +96,11 @@ release:
       section: Authentication Interrupts
       area: ui
     - type: action
+      title: Forwarded headers
+      text: behind a proxy now follow Spring Boot 4.2; the `X-Forwarded-Prefix` header is ignored unless turned on, and the embedded Apache Tomcat applies it only with the `framework` strategy.
+      section: Spring Boot 4.2
+      area: operations
+    - type: action
       title: SAML2 NameID formats
       text: requested by a service provider's NameIDPolicy are now honored; a format the service provider metadata does not list is answered with InvalidNameIDPolicy. List the format in the metadata or set `requiredNameIdFormat` on the service.
       section: SAML2
@@ -237,7 +242,22 @@ Spring Cloud and Micrometer. This minor platform upgrade affects almost all aspe
 including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
-for more information on the changes and updates in this release.
+for more information on the changes and updates in this release. The changes most likely to affect a CAS deployment:
+
+- {: .action data-area="operations"} Behind a proxy or load balancer, `server.forward-headers-strategy`{: .cas-setting} gives way to
+  `server.request.header.forwarded.strategy`{: .cas-setting}, the `X-Forwarded-Prefix` header is ignored unless turned on, and the
+  embedded Apache Tomcat applies that header and the standard `Forwarded` header only with the `framework` strategy. See
+  [running behind a proxy](../installation/Configuring-Servlet-Container-Embedded.html#behind-a-proxy).
+- {: .changed data-area="operations"} The embedded Apache Tomcat sends relative redirects by default, and its servlet-specific
+  settings move under `server.tomcat.servlet`{: .cas-setting}.
+- {: .changed data-area="operations"} Spring Boot deprecates its [Apache Pulsar](../ticketing/Pulsar-Ticket-Registry.html)
+  support, now that Spring for Apache Pulsar has moved to the Apache Software Foundation, and its
+  [AppOptics](../monitoring/Configuring-Metrics-Storage-AppOptics.html) metrics export, since AppOptics has been retired.
+- {: .changed data-area="operations"} Spring Cloud moves to the `2026.0` release train, with Spring Cloud Config, Bus, Vault,
+  Consul, Kubernetes, Eureka and Zookeeper at `5.1`.
+- {: .fixed data-area="operations"} [Zipkin tracing](../monitoring/Configuring-Tracing-Zipkin.html) brings in Spring Boot's
+  Zipkin and Brave support, which Spring Boot 4 moved into modules of their own. Without them, traces were not reported to
+  Zipkin and the Zipkin settings were missing from the configuration catalog.
 
 ### Dependencies & Packaging
 {: .changed data-area="project"}
@@ -269,6 +289,9 @@ for more information on the changes and updates in this release.
   environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
   when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
   Javadoc errors fail the build unless that flag is set.
+- {: .changed data-area="project"} The [Spring Cloud Bus](../configuration/Configuration-Management-Clustered.html#actuator-endpoints)
+  trace endpoint, which reports bus events sent and the acknowledgments received from each instance, is now documented
+  with the other bus endpoints.
 - {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 ### Theme Builder
@@ -1206,6 +1229,17 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="docs"} The new [Configuration Properties Changes](../configuration/Configuration-Properties-Changes.html) page lists the
   CAS settings added, removed, replaced or given a new default since the previous version, generated from the configuration
   catalogs and also published as JSON.
+- {: .fixed data-area="docs"} Pages updated for Spring Boot 4.2 and Spring Cloud 2026.0 list the settings that apply today:
+  the [metrics storage](../monitoring/Configuring-Metrics-Storage.html) options, the MongoDb and Redis
+  [server-side sessions](../webflow/Webflow-Customization-Sessions-ServerSide.html), the
+  [embedded servlet container](../installation/Configuring-Servlet-Container-Embedded.html), the Kafka
+  [configuration bus](../configuration/Configuration-Management-Clustered-Kafka.html) and
+  [configuration encryption](../configuration/Configuration-Properties-Security-SpringCloud.html) used to show only renamed or
+  removed settings. The [Vault](../configuration/Configuration-Server-Management-SpringCloud-HashiCorpVault.html) page covers
+  AppRole authentication and the key-value backend instead of the AppId method and the generic backend, which Vault and
+  Spring Cloud Vault no longer offer.
+- {: .fixed data-area="docs"} Setting lists leave out third-party settings that Spring has removed and lists only so that
+  their use can be reported; the settings search still finds them, with their replacement where there is one.
 
 ## Other Stuff
 
