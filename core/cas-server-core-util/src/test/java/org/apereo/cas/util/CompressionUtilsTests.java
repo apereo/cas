@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import module java.base;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +40,22 @@ class CompressionUtilsTests {
             assertArrayEquals(content, CompressionUtils.inflate(prefixed, 3, raw));
             assertThrows(DataFormatException.class,
                 () -> CompressionUtils.inflate(Arrays.copyOf(deflated, deflated.length / 2), 0, raw));
+        }
+    }
+
+    @Test
+    void verifyZipEntriesReadBack() throws Throwable {
+        val records = List.of("{\"name\":\"first\"}", "{\"name\":\"second\"}");
+        val resource = CompressionUtils.toZipFile(records.stream(), Unchecked.function(entry -> {
+            val file = Files.createTempFile("record", ".json").toFile();
+            Files.writeString(file.toPath(), entry.toString());
+            return file;
+        }), "records");
+        try (val input = resource.getInputStream()) {
+            assertEquals(Set.copyOf(records), Set.copyOf(CompressionUtils.readZipEntries(input, 1024)));
+        }
+        try (val input = resource.getInputStream()) {
+            assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(input, 4));
         }
     }
 

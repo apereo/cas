@@ -396,6 +396,9 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.multifactorTrustedDevices() || PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#trustedMfaDevicesTab").parent());
     }
+    if (typeof PalantirCredentialRepositories === "undefined" || PalantirCredentialRepositories.available().length === 0) {
+        hideElements($("#mfaRepositoriesTab").parent());
+    }
     if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
         hideElements($("#tenantsTabButton"));
     }

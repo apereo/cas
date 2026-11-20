@@ -1,5 +1,5 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart */
+   activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -384,6 +384,80 @@ async function verifyZenMode(page) {
 }
 
 /**
+ * The multifactor providers page lists every provider CAS registers, ranked, and shows the selected one with its key
+ * facts and its settings, each once and with its source; Duo Security says whether Duo answers, from the Duo ping
+ * endpoint, and the filter narrows both the list and the settings.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyMfaProviders(page) {
+    await cas.separator();
+    const expected = await page.evaluate(() => Object.keys(CasDiscoveryProfile.multifactorAuthenticationProviders()));
+    if (expected.length === 0) {
+        await cas.logy("No multifactor provider is registered; skipping");
+        return;
+    }
+    await page.evaluate(() => {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.MFA.index}]`).trigger("click");
+        $("#mfaProvidersTab").trigger("click");
+    });
+    await page.waitForFunction((count) => $("#mfaProvidersList [data-mfa-provider-id]").length === count
+        && $("#mfaProviderDetail .palantir-mfa-providers__fact").length > 0
+        && !$("#mfaProvidersList .palantir-mfa-providers__chip").toArray().some((chip) => /…$/.test(chip.textContent.trim())),
+    {timeout: 60000}, expected.length);
+    const listed = await page.evaluate(() => $("#mfaProvidersList [data-mfa-provider-id]").toArray()
+        .map((item) => `${item.dataset.mfaProviderId}: ${$(item).find(".palantir-mfa-providers__chip").text().trim()}`));
+    await cas.logg(`MFA providers: ${listed.join(" | ")}`);
+
+    const duo = expected.find((id) => id.includes("duo"));
+    if (duo && await page.evaluate(() => Boolean(CasActuatorEndpoints.duoPing()))) {
+        await page.click(`[data-mfa-provider-id="${duo}"]`);
+        await page.waitForFunction(() => $("#mfaProviderDetail [data-mfa-provider-action=ping]").length === 1, {timeout: 10000});
+        const status = await page.evaluate(() => $("#mfaProviderDetail .palantir-mfa-providers__title .palantir-mfa-providers__chip").text().trim());
+        await cas.logg(`${duo}: ${status}`);
+        assert(/^(Reachable · \d+ ms|Unreachable|Not checked)$/.test(status));
+        const settings = await page.evaluate(() => $("#mfaProviderSettingsTable").DataTable().rows().data().toArray()
+            .map((entry) => entry.name));
+        assert(settings.length > 0 && settings.every((name) => name.startsWith("cas.authn.mfa.duo[")));
+        assert(new Set(settings).size === settings.length);
+        const hidden = await page.evaluate(() => {
+            const entry = $("#mfaProviderSettingsTable").DataTable().rows().data().toArray().find((row) => /secret-key/.test(row.name));
+            return entry ? $(entry.value).text().trim() : "";
+        });
+        assert(hidden === "" || hidden === "••••••", `A Duo secret is shown: ${hidden}`);
+
+        if (await page.evaluate(() => Boolean(CasActuatorEndpoints.duoAdmin() && CasActuatorEndpoints.duoAccountStatus()))) {
+            await page.type("#mfaDuoUsername", "duocode");
+            await page.click(".palantir-mfa-duo__lookup button[type=submit]");
+            await page.waitForFunction(() => $(".palantir-mfa-duo .palantir-mfa-duo__status").length === 1
+                || $(".palantir-mfa-duo .palantir-mfa-duo__note").length > 0, {timeout: 30000});
+            const account = await page.evaluate(() => ({
+                signIn: $(".palantir-mfa-duo__status .palantir-mfa-providers__chip").text().trim(),
+                facts: $(".palantir-mfa-duo .palantir-mfa-providers__fact small").toArray().map((label) => label.textContent),
+                actions: $(".palantir-mfa-duo__actions [data-mfa-provider-action]").toArray().map((button) => button.dataset.mfaProviderAction),
+                note: $(".palantir-mfa-duo .palantir-mfa-duo__note").text().trim()
+            }));
+            await cas.logg(`Duo account of duocode: ${JSON.stringify(account)}`);
+            assert(account.signIn.length > 0, `Duo did not report how duocode signs in: ${account.note}`);
+            assert(account.facts.includes("Account") && account.facts.includes("Last login"));
+            assert(account.actions.includes("duo-bypass") && account.actions.includes("duo-edit"));
+            await page.click(".palantir-mfa-duo__actions [data-mfa-provider-action=duo-edit]");
+            await page.waitForFunction(() => $(".palantir-mfa-duo__edit select[name=status]").length === 1, {timeout: 10000});
+            const status = await page.evaluate(() => $(".palantir-mfa-duo__edit select[name=status]").val());
+            assert(["AUTH", "ALLOW", "DENY"].includes(status));
+            await page.click(".palantir-mfa-duo__edit [data-mfa-provider-action=duo-cancel]");
+            await page.waitForFunction(() => $(".palantir-mfa-duo__edit").length === 0, {timeout: 10000});
+        }
+    }
+
+    await page.evaluate(() => $("#mfaProvidersFilter").val("no provider has this setting").trigger("input"));
+    await page.waitForFunction(() => $("#mfaProvidersList [data-mfa-provider-id]").length === 0, {timeout: 10000});
+    await page.evaluate(() => $("#mfaProvidersFilter").val("").trigger("input"));
+    await page.waitForFunction((count) => $("#mfaProvidersList [data-mfa-provider-id]").length === count, {timeout: 10000}, expected.length);
+    await cas.logg("Filtering providers and settings narrows the list and brings it back");
+}
+
+/**
  * Open the keyboard shortcuts overlay with ? and close it with Escape.
  *
  * @param page the puppeteer page
@@ -433,6 +507,7 @@ async function verifyShortcutsOverlay(page) {
     await verifySettingsDialog(page);
     await verifyZenMode(page);
     await verifyShortcutsOverlay(page);
+    await verifyMfaProviders(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

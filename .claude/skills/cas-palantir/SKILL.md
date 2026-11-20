@@ -60,6 +60,8 @@ General view, theme and template rules are in the `cas-ui` skill.
   own; it is a jQuery UI dialog with a categorized autocomplete, not another library. Ctrl+K, `/` and `?` are one document keydown
   handler in `initializeCommandPalette`: Ctrl+K works inside fields, `/` and `?` are matched on `event.key` (not
   hotkeys key codes) so they work on any layout and the numeric keypad, and are ignored while typing in a field.
+  It reopens with the last query (selected) and marks the last chosen label, from `localStorage["PalantirCommandPalette"]`;
+  the mark is applied once, in the autocomplete `open` event after `autoFocus`, only for the search the dialog opens with.
 - To look at Palantir without a running CAS: render `palantir/casPalantirDashboardView` with Thymeleaf, the layout dialect,
   OGNL and a stub `#cas` expression object (jars from a built war; SpEL `?:` inside `${}` and `T(...)` need rewriting for
   OGNL), serve `static/` with the webjars (npm for those not in the war), and stub the actuator URLs in Playwright.
@@ -107,6 +109,25 @@ General view, theme and template rules are in the `cas-ui` skill.
   *Show All* button, and a `throttles-username-hint` line that says what is shown and, when filtered, how many records
   the username has. Ask the endpoint for that username rather than filtering in the page, ignore a response that
   belongs to an earlier filter, and keep the filter across polling.
+- MFA › providers (`PalantirMfaProviders`, `palantir-mfa.js`) reads each provider's settings from the `env` endpoint
+  (first property source wins, so each setting shows once), defaults and descriptions from a configuration metadata
+  search, registrations from the repository summaries and Duo reachability from `duoPing?providerId=`; secrets are
+  masked by name and never matched by the filter. Duo settings are a list: the entry is the one whose `id` or `name`
+  is the provider's, else `[0]`.
+- Text fields never draw the `#dashboard :focus-visible` ring (one rule near the top of palantir-meridian.css): a
+  field inside a rounded search wrapper shows focus on the wrapper with `:focus-within`, a bordered field changes its
+  border color. A new search wrapper needs its own `:focus-within` rule.
+- MFA provider settings are the standard DataTable (`#mfaProviderSettingsTable`, hidden group column with group rows
+  like the configuration table), rebuilt by `renderDetail`, which destroys the previous instance first.
+- Duo account tools (MFA › Providers, Duo only): `duoAccountStatus` (selector-only, so its link may be listed as
+  `duoAccountStatus-username`; `CasActuatorEndpoints.duoAccountStatus()` strips the template) and `duoAdmin` (GET user,
+  POST `bypassCodes`, PUT user with status, firstName, lastName, email; writes carry `data-palantir-write="duoAdmin"`).
+  State lives in `PalantirMfaProviders.duoAccounts` per provider so `renderDetail` can redraw; the username field keeps
+  focus across redraws. Never create bypass codes or edit accounts in scenarios: the Duo test account is shared.
+- Repository-wide tools (MFA › Multifactor Credential Repositories) are cards over the repository endpoints: counts come from a
+  `?summary=true` request that answers `{records, users}` rather than from loading the records, so secrets such as
+  Google Authenticator keys never reach the page; *Delete All* asks with plain Delete all/Cancel buttons (no typed name, Misagh); import
+  sends a zip as `application/zip` and a single record as JSON.
 
 ## Escaping server values
 
@@ -243,6 +264,35 @@ General view, theme and template rules are in the `cas-ui` skill.
   shortcuts and the search find destinations with `nav.sidebar-navigation ul li[...]:visible`.
 
 ## Service wizard and JSON editor
+
+- A nested policy chosen by type (delegated authentication, access strategy activation, consent) is a select whose
+  renderer writes `{"@class": value}` plus fields carrying the type's short name as a class; its change handler calls
+  `showWizardPolicyType(section, select)`, which shows that type's fields and, outside population, empties the rest
+  and puts switches back. Give such selects an explicit `id` (the generated one keeps dots after the first) and never
+  reuse a section header's id. Prove a new policy with a round trip through `/validate` in palantir-services-editor.
+  A type with no fields of its own needs `data: {markerClass: true}` on its option, or generation drops the bare
+  `{"@class"}`; options only some application types offer carry `serviceClass` and are added per type (SAML2 in
+  `createSamlRegisteredServiceAttributeReleasePolicy`, OIDC in `createOidcRegisteredServiceFields`). Several fields can
+  write one nested object (a persistent id generator's salt and attribute): each renderer returns the object with
+  its `@class` and `mergeWizardPolicy` joins them; give each a `data("reader")` that picks its value out on populate,
+  or the field shows `[object Object]`. When the object's type varies (the identifier generator), the reader notes the opened
+  type and the renderer reuses it, forgotten on a type change, so saving never swaps the type.
+  Map fields sharing a path across types (`accessStrategy.context`) are filled
+  into the container carrying the policy's short class name.
+  A type handler empties fields and calls `resetWizardSwitches(section)` only when `!isPopulatingWizard`: populate
+  fills inputs before it sets selects, and each select's handler runs then, so an unguarded handler wipes what was
+  just filled in. Never reset switches by clicking those whose `param-selected` is true; that turns default-on
+  switches off. Two options must never share a value: populate picks the first.
+
+- The service id field (`#registeredServiceIdFieldContainer`) is created in General and moved into the type's
+  protocol section by `placeRegisteredServiceIdField` when the wizard opens; a protocol section holding it must not be
+  advanced-only, or its required field drops out of validation.
+
+- Suggested values for wizard text fields live in `PalantirWizardSuggestions.FIELDS` (end of
+  `palantir-services-wizard.js`), keyed by the field's dotted path, or `path:key` / `path:value` for the two sides of a
+  map field; `list: true` completes comma-separated entries one at a time. A new field with standard values gets an
+  entry there, not its own autocomplete; values come from the spec or the CAS model (check the Java setter accepts
+  them), never `none` for JWS algorithms. They attach on focus, so map rows added later get them too.
 
 - The service wizard's fields are built in the background once the applications are loaded and the browser is idle
   (`prepareRegisteredServiceWizardWhenIdle`; palantir-services-editor checks the `palantir-wizard-built` mark follows

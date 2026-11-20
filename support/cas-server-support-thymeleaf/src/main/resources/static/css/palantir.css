@@ -3,14 +3,6 @@
     overflow: auto;
 }
 
-.mfa-provider-table td.wrap {
-    overflow-wrap: anywhere;
-    white-space: normal;
-    word-break: break-word;
-    overflow: visible;
-    text-overflow: clip;
-}
-
 .ts-dropdown, .jqueryui-multiselectmenu {
     background-color: #d7ebf9 !important;
     z-index: 10000 !important;

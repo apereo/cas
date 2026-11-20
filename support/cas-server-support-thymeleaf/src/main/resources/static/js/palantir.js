@@ -106,7 +106,8 @@ function registerPalantirTabInitializers() {
         initializeThrottlesOperations);
     registerDashboardTabInitializers(Tabs.MFA,
         initializeMultifactorOperations,
-        initializeTrustedMultifactorOperations);
+        initializeTrustedMultifactorOperations,
+        () => PalantirCredentialRepositories.initialize());
     registerDashboardTabInitializers(Tabs.MULTITENANCY,
         initializeMultitenancyOperations);
     registerDashboardTabInitializers(Tabs.CLUSTER,

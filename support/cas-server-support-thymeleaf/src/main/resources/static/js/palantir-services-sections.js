@@ -61,13 +61,13 @@ class RegisteredServiceSections {
         {
             key: "basics",
             title: "Basics",
-            description: "Name the application, say which requests it answers, and describe it to people.",
+            description: "Name the application and describe it to people.",
             groups: ["Basics"]
         },
         {
             key: "protocol",
             title: "Protocol",
-            description: "Settings of the protocol this application speaks.",
+            description: "Which requests the application answers, and the settings of the protocol it speaks.",
             groups: ["Protocol"]
         },
         {

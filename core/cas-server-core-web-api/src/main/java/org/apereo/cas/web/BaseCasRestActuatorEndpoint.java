@@ -27,6 +27,21 @@ public abstract class BaseCasRestActuatorEndpoint extends BaseCasActuatorEndpoin
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    /**
+     * The size, in bytes, one record of an imported archive may have at most.
+     */
+    protected static final int MAXIMUM_IMPORTED_RECORD_SIZE = 1024 * 1024;
+
+    /**
+     * The media type of a zip archive of records, as an export writes it.
+     */
+    protected static final String ZIP_MEDIA_TYPE = "application/zip";
+
+    /**
+     * The media type some browsers give a zip archive.
+     */
+    protected static final String ZIP_COMPRESSED_MEDIA_TYPE = "application/x-zip-compressed";
+
     protected final ConfigurableApplicationContext applicationContext;
 
     protected BaseCasRestActuatorEndpoint(final CasConfigurationProperties casProperties,

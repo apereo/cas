@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,palantir,oidc,saml-idp,interrupt-webflow,passwordless-webflow,heimdall,scripting,discovery-profile,gauth,simple-mfa,webauthn",
+  "dependencies": "reports,palantir,oidc,saml-idp,interrupt-webflow,passwordless-webflow,heimdall,scripting,discovery-profile,gauth,simple-mfa,webauthn,consent-webflow,pac4j-cas,permitio,aws,surrogate-webflow",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

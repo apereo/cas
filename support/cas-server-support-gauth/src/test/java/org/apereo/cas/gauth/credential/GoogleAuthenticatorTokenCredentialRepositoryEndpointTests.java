@@ -125,6 +125,39 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
+    void verifyExportedArchiveImportsBack() throws Throwable {
+        val acct = registry.create(UUID.randomUUID().toString());
+        registry.save(GoogleAuthenticatorAccount.builder()
+            .username(acct.getUsername())
+            .secretKey(acct.getSecretKey())
+            .validationCode(acct.getValidationCode())
+            .scratchCodes(acct.getScratchCodes())
+            .name(UUID.randomUUID().toString())
+            .build());
+        mockMvc.perform(get("/actuator/gauthCredentialRepository").param("summary", "true")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.records").isNumber())
+            .andExpect(jsonPath("$.users").isNumber())
+            .andExpect(jsonPath("$.secretKey").doesNotExist());
+        val archive = mockMvc.perform(get("/actuator/gauthCredentialRepository/export"))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsByteArray();
+        registry.delete(acct.getUsername());
+        assertTrue(registry.get(acct.getUsername()).isEmpty());
+
+        mockMvc.perform(post("/actuator/gauthCredentialRepository/import")
+                .contentType("application/zip")
+                .content(archive)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.imported").isNumber());
+        val imported = registry.get(acct.getUsername());
+        assertEquals(1, imported.size());
+        assertEquals(acct.getSecretKey(), imported.iterator().next().getSecretKey());
+    }
+
+    @Test
     void verifyImportOperation() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()

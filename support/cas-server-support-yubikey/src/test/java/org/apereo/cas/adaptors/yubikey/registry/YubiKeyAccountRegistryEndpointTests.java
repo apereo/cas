@@ -100,6 +100,52 @@ class YubiKeyAccountRegistryEndpointTests {
     }
 
     @Test
+    void verifyExportedArchiveImportsBack() throws Throwable {
+        val username = UUID.randomUUID().toString();
+        val request = YubiKeyDeviceRegistrationRequest.builder().username(username)
+            .token(UUID.randomUUID().toString()).name(UUID.randomUUID().toString()).build();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
+        val registered = yubiKeyAccountRegistry.getAccount(username).orElseThrow().getDevices().getFirst().getPublicId();
+        mockMvc.perform(get("/actuator/yubikeyAccountRepository").param("summary", "true")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.records").isNumber())
+            .andExpect(jsonPath("$.devices").isNumber());
+        val archive = mockMvc.perform(get("/actuator/yubikeyAccountRepository/export"))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsByteArray();
+        yubiKeyAccountRegistry.delete(username);
+        assertTrue(yubiKeyAccountRegistry.getAccount(username).isEmpty());
+
+        mockMvc.perform(post("/actuator/yubikeyAccountRepository/import")
+                .contentType("application/zip")
+                .content(archive)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.imported").isNumber());
+        val imported = yubiKeyAccountRegistry.getAccount(username).orElseThrow();
+        assertEquals(registered, imported.getDevices().getFirst().getPublicId());
+    }
+
+    @Test
+    void verifyExportedAccountImports() throws Throwable {
+        val username = UUID.randomUUID().toString();
+        val request = YubiKeyDeviceRegistrationRequest.builder().username(username)
+            .token(UUID.randomUUID().toString()).name(UUID.randomUUID().toString()).build();
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
+        val account = yubiKeyAccountRegistry.getAccount(username).orElseThrow();
+        val content = MAPPER.writeValueAsString(account);
+        yubiKeyAccountRegistry.delete(username);
+
+        mockMvc.perform(post("/actuator/yubikeyAccountRepository/import")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content))
+            .andExpect(status().isCreated());
+        val imported = yubiKeyAccountRegistry.getAccount(username).orElseThrow();
+        assertEquals(account.getDevices().getFirst().getPublicId(), imported.getDevices().getFirst().getPublicId());
+    }
+
+    @Test
     void verifyImportOperation() throws Throwable {
         val toSave = YubiKeyDeviceRegistrationRequest.builder().username(UUID.randomUUID().toString())
             .token(UUID.randomUUID().toString()).name(UUID.randomUUID().toString()).build();

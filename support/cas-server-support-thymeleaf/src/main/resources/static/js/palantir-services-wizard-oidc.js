@@ -16,6 +16,34 @@ function createOidcRegisteredServiceFields() {
         });
     }
     $registeredServiceUsernameAttributeProvider.selectmenu("refresh");
+
+    const $registeredServiceAttributeReleasePolicy = $("#registeredServiceAttributeReleasePolicy");
+    const scopePolicies = {
+        OidcOpenIdScopeAttributeReleasePolicy: "OPENID SCOPE",
+        OidcProfileScopeAttributeReleasePolicy: "PROFILE SCOPE",
+        OidcEmailScopeAttributeReleasePolicy: "EMAIL SCOPE",
+        OidcAddressScopeAttributeReleasePolicy: "ADDRESS SCOPE",
+        OidcPhoneScopeAttributeReleasePolicy: "PHONE SCOPE",
+        OidcOfflineAccessScopeAttributeReleasePolicy: "OFFLINE ACCESS SCOPE",
+        OidcAssuranceScopeAttributeReleasePolicy: "ASSURANCE SCOPE",
+        OidcCustomScopeAttributeReleasePolicy: "CUSTOM SCOPE",
+        OidcScopeFreeAttributeReleasePolicy: "SCOPE FREE"
+    };
+    Object.entries(scopePolicies)
+        .map(([type, text]) => ({
+            value: `org.apereo.cas.oidc.claims.${type}`,
+            text: text,
+            data: {
+                markerClass: true,
+                serviceClass: "OidcRegisteredService"
+            }
+        }))
+        .filter(option => $registeredServiceAttributeReleasePolicy.find(`option[value="${option.value}"]`).length === 0)
+        .forEach(option => appendOptionsToDropDown({
+            selectElement: $registeredServiceAttributeReleasePolicy,
+            options: [option]
+        }));
+    $registeredServiceAttributeReleasePolicy.selectmenu("refresh");
 }
 
 async function createRegisteredServiceOidcFields() {
@@ -320,7 +348,7 @@ async function createRegisteredServiceOidcFields() {
             {value: "", text: "DEFAULT", selected: true},
             {value: "ping", text: "PING"},
             {value: "push", text: "PUSH"},
-            {value: "pull", text: "POLL"}
+            {value: "poll", text: "POLL"}
         ],
         helpText: "Specify the backchannel token delivery mode for this OpenID Connect relying party."
     });
@@ -334,6 +362,17 @@ async function createRegisteredServiceOidcFields() {
         serviceClass: "class-OidcRegisteredService",
         containerId: "editServiceWizardOAuthOidcContainer",
         title: "Define the backchannel client notification endpoint for this OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "Backchannel Authentication Request Signing Algorithm",
+        name: "registeredServiceBackchannelAuthenticationRequestSigningAlg",
+        paramName: "backchannelAuthenticationRequestSigningAlg",
+        required: false,
+        serviceClass: "class-OidcRegisteredService",
+        containerId: "editServiceWizardOAuthOidcContainer",
+        title: "Define the algorithm this OpenID Connect relying party signs backchannel authentication requests with."
     });
 }
 

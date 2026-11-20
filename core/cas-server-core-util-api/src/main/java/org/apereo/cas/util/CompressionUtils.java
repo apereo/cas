@@ -248,4 +248,30 @@ public class CompressionUtils {
             return new TemporaryFileSystemResource(file);
         }).get();
     }
+
+    /**
+     * The text of every file in a zip archive, such as one {@link #toZipFile(Stream, Function, String)} writes, in the
+     * order the archive holds them. A file larger than the given size is refused, so an archive cannot make its reader
+     * hold more than it expects.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, a file in the archive may have at most
+     * @return the text of each file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize) throws IOException {
+        val entries = new ArrayList<String>();
+        try (val zip = new ZipInputStream(input, StandardCharsets.UTF_8)) {
+            for (var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                if (!entry.isDirectory()) {
+                    val content = zip.readNBytes(maximumEntrySize + 1);
+                    if (content.length > maximumEntrySize) {
+                        throw new IllegalArgumentException("Archive entry %s is larger than %s bytes".formatted(entry.getName(), maximumEntrySize));
+                    }
+                    entries.add(new String(content, StandardCharsets.UTF_8));
+                }
+            }
+        }
+        return entries;
+    }
 }

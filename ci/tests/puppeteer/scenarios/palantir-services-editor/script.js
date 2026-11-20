@@ -55,13 +55,14 @@ async function waitForDashboard(page) {
 }
 
 const PROTOCOL_FIELDS = {
-    OidcRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value",
+    OidcRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value", "#registeredServiceId",
         {selector: "#registeredServiceAllowedResources", advanced: true}],
-    OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value",
+    OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value", "#registeredServiceId",
         {selector: "#registeredServiceAllowedResources", advanced: true}],
-    SamlRegisteredService: ["#registeredServiceMetadataLocation"],
-    WSFederationRegisteredService: ["#registeredServiceWsFederationRealm"],
+    SamlRegisteredService: ["#registeredServiceId", "#registeredServiceMetadataLocation"],
+    WSFederationRegisteredService: ["#registeredServiceId", "#registeredServiceWsFederationRealm"],
     CasRegisteredService: [
+        "#registeredServiceId",
         {selector: "#registeredServiceSupportedProtocols", advanced: true},
         {selector: "#registeredServiceRedirectUrl", advanced: true}
     ]
@@ -137,7 +138,8 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
             registeredServiceAcceptableUsagePolicy: "AcceptableUsagePolicy",
             registeredServiceWebflowInterruptPolicy: "InterruptNotifications",
             registeredServicePasswordlessPolicy: "PasswordlessAuthn",
-            registeredServiceSurrogatePolicy: "SurrogateAuthentication"
+            registeredServiceSurrogatePolicy: "SurrogateAuthentication",
+            registeredServiceDelegatedAuthenticationPolicy: "DelegatedAuthentication"
         };
         const expected = (entry.protocolFields ?? [])
             .map((field) => typeof field === "string" ? {selector: field} : field);
@@ -149,7 +151,7 @@ async function inspectWizard(page, serviceClass, hideAdvanced) {
             const feature = featureSections[section.header.id];
             const shouldExist = (protocolClasses.length === 0 || protocolClasses.includes(`class-${entry.name}`))
                 && (!entry.hideAdvanced || !classes.includes("advanced-option"))
-                && (!feature || CAS_FEATURES.includes(feature))
+                && (!feature || CAS_FEATURES.some((name) => name === feature || name.startsWith(`${feature}.`)))
                 && (section.header.id !== "registeredServiceMfaPolicy"
                     || PalantirDashboardConfiguration.availableMultifactorProviders().length > 0);
 
@@ -330,6 +332,68 @@ async function verifyWizardDatePickers(page, name) {
     await cas.logg(`${name}: date fields pick ${expiration}, ${starting} and ${ending} into the definition`);
 }
 
+const WIZARD_SUGGESTIONS = {
+    SamlRegisteredService: [
+        {path: "requiredNameIdFormat", typed: "persist", pick: "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"},
+        {path: "signingSignatureAlgorithms", typed: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256,ecdsa",
+            pick: "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256",
+            expected: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256,http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256"},
+        {path: "metadataCriteriaEntityAttributes", typed: "subject-id", pick: "urn:oasis:names:tc:SAML:profiles:subject-id:req"}
+    ],
+    OidcRegisteredService: [
+        {path: "idTokenSigningAlg", typed: "P-256", pick: "ES256"},
+        {path: "tokenEndpointAuthenticationMethod", typed: "private", pick: "private_key_jwt"}
+    ],
+    OAuthRegisteredService: [
+        {path: "accessTokenExpirationPolicy.timeToKill", typed: "8 hours", pick: "PT8H"}
+    ],
+    WSFederationRegisteredService: [
+        {path: "protocol", typed: "1.3", pick: "http://docs.oasis-open.org/ws-sx/ws-trust/200512"}
+    ],
+    CasRegisteredService: [
+        {path: "supportedProtocols", typed: "CAS20,CAS3", pick: "CAS30", expected: "CAS20,CAS30"},
+        {path: "ticketGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds", typed: "8 h", pick: "28800"}
+    ]
+};
+
+/**
+ * Type part of a value into a wizard field with suggestions, pick one of the suggestions, and check what the field
+ * then holds: the picked value, or for a list the entries typed before it with the picked one in place of the last.
+ *
+ * @param page the puppeteer page
+ * @param name the registered service type under test
+ */
+async function verifyWizardSuggestions(page, name) {
+    const fields = [...(WIZARD_SUGGESTIONS[name] ?? []), {path: "locale", typed: "Fren", pick: "fr"}];
+    for (const field of fields) {
+        const shown = await page.evaluate((entry) => {
+            const input = $("#editServiceWizardForm input[type=text][data-param-name]")
+                .filter((index, element) => $(element).data("param-name") === entry.path).first();
+            if (input.length === 0) {
+                return null;
+            }
+            input.val(entry.typed).trigger("focusin");
+            return input.autocomplete("widget").find(".palantir-suggestion code").toArray().map((code) => code.textContent);
+        }, field);
+        if (shown === null) {
+            await cas.logy(`${name}: no ${field.path} field; skipping its suggestions`);
+            continue;
+        }
+        assert(shown.includes(field.pick), `${name}: ${field.path} does not suggest ${field.pick} for ${field.typed}: ${shown.join(", ")}`);
+        const value = await page.evaluate((entry) => {
+            const input = $("#editServiceWizardForm input[type=text][data-param-name]")
+                .filter((index, element) => $(element).data("param-name") === entry.path).first();
+            input.autocomplete("widget").find(".palantir-suggestion").filter((index, item) => $(item).find("code").text() === entry.pick)
+                .find(".ui-menu-item-wrapper").trigger("click");
+            const result = input.val();
+            input.val("").trigger("input").autocomplete("close");
+            return result;
+        }, field);
+        await cas.logg(`${name}: typing ${field.typed} into ${field.path} suggests ${shown.length} value(s); picking one gives ${value}`);
+        assert(value === (field.expected ?? field.pick), `${name}: ${field.path} holds ${value}`);
+    }
+}
+
 /**
  * Answer the unsaved-changes question, if closing a dialog asked it, by discarding the changes, which also removes
  * the draft kept for them.
@@ -434,6 +498,7 @@ async function verifyServiceWizard(page) {
 
         await verifyWizardDropdowns(page, name);
         await verifyWizardDatePickers(page, name);
+        await verifyWizardSuggestions(page, name);
 
         const steps = await walkWizardSteps(page);
         await cas.logg(`${name} steps: ${steps.join(" > ")}`);
@@ -573,6 +638,337 @@ async function verifyEditConflict(page) {
             headers: {"Content-Type": "application/json"}
         });
     }, serviceId);
+}
+
+/**
+ * Open an application whose access strategy has activation criteria and a delegated authentication policy, whose
+ * consent policy excludes attributes and services, whose interrupt policy is limited to an attribute and whose proxy
+ * granting tickets have their own lifetime, and check that the wizard generates all of it again and CAS accepts it.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyPolicyRoundTrip(page) {
+    await cas.separator();
+    await page.evaluate(() => openRegisteredServiceWizardDialog({
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        id: 654322,
+        name: "PolicyRoundTrip",
+        serviceId: "https://policy-round-trip.example.org/.*",
+        proxyGrantingTicketExpirationPolicy: {
+            "@class": "org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy",
+            maxTimeToLiveInSeconds: 30
+        },
+        accessStrategy: {
+            "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+            activationCriteria: {
+                "@class": "org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria",
+                requiredAttributes: {"@class": "java.util.HashMap", memberOf: ["java.util.ArrayList", ["admins"]]},
+                operator: "OR",
+                allowIfInactive: false
+            },
+            delegatedAuthenticationPolicy: {
+                "@class": "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+                allowedProviders: ["java.util.ArrayList", ["CasClient"]],
+                permitUndefined: false,
+                exclusive: true
+            }
+        },
+        attributeReleasePolicy: {
+            "@class": "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+            consentPolicy: {
+                "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+                status: "TRUE",
+                excludedAttributes: ["java.util.HashSet", ["mail"]],
+                excludedServices: ["java.util.HashSet", ["https://skip.example.org/.*"]]
+            }
+        },
+        webflowInterruptPolicy: {
+            "@class": "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+            attributeName: "memberOf",
+            attributeValue: "admins"
+        }
+    }));
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === "PolicyRoundTrip", {timeout: 30000});
+    await cas.sleep(2000);
+    const outcome = await page.evaluate(async () => {
+        const text = ace.edit("wizardServiceEditor").getValue();
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/validate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: text
+        });
+        const delegation = CAS_FEATURES.some((feature) => feature === "DelegatedAuthentication" || feature.startsWith("DelegatedAuthentication."));
+        return {definition: JSON.parse(text), status: response.status, body: await response.text(),
+            delegation, consent: CAS_FEATURES.includes("Consent"), interrupts: CAS_FEATURES.includes("InterruptNotifications")};
+    });
+    const definition = outcome.definition;
+    await cas.log(`Generated policies: ${JSON.stringify({pgt: definition.proxyGrantingTicketExpirationPolicy, access: definition.accessStrategy,
+        consent: definition.attributeReleasePolicy?.consentPolicy, interrupt: definition.webflowInterruptPolicy})}; validation answered ${outcome.status} ${outcome.body}`);
+    assert(definition.proxyGrantingTicketExpirationPolicy["@class"] === "org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy");
+    assert(definition.proxyGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds === 30);
+    const activation = definition.accessStrategy.activationCriteria;
+    assert(activation["@class"] === "org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria");
+    assert(activation.operator === "OR" && activation.allowIfInactive === false);
+    assert(JSON.stringify(activation.requiredAttributes).includes("admins"));
+    if (outcome.delegation) {
+        const delegated = definition.accessStrategy.delegatedAuthenticationPolicy;
+        assert(delegated["@class"] === "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy");
+        assert(JSON.stringify(delegated.allowedProviders).includes("CasClient") && delegated.exclusive === true && delegated.permitUndefined === false);
+    }
+    if (outcome.consent) {
+        const consent = definition.attributeReleasePolicy.consentPolicy;
+        assert(JSON.stringify(consent.excludedAttributes).includes("mail") && JSON.stringify(consent.excludedServices).includes("skip.example.org"));
+    }
+    if (outcome.interrupts) {
+        assert(definition.webflowInterruptPolicy.attributeName === "memberOf" && definition.webflowInterruptPolicy.attributeValue === "admins");
+    }
+    assert(outcome.status === 200);
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Policy round trip");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
+/**
+ * Open a definition in the wizard and send the definition the wizard generates from it to the validation endpoint.
+ *
+ * @param page the puppeteer page
+ * @param service the definition to open
+ * @returns {Promise<object>} the generated definition, the validation status and its answer, and the enabled features
+ */
+async function generateWizardDefinition(page, service) {
+    await page.evaluate((definition) => openRegisteredServiceWizardDialog(definition), service);
+    await page.waitForFunction((name) => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === name, {timeout: 30000}, service.name);
+    await cas.sleep(2000);
+    const outcome = await page.evaluate(async () => {
+        const text = ace.edit("wizardServiceEditor").getValue();
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/validate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: text
+        });
+        return {definition: JSON.parse(text), status: response.status, body: await response.text(), features: [...CAS_FEATURES]};
+    });
+    await cas.log(`${service.name}: generated ${JSON.stringify(outcome.definition)}; validation answered ${outcome.status} ${outcome.body}`);
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, service.name);
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+    return outcome;
+}
+
+/**
+ * Open applications that use the policy types the wizard offers beyond the common ones, such as external
+ * authorization services, surrogate access, scoped OpenID Connect claims and SAML2 attribute queries, and check that
+ * the definitions the wizard generates keep every setting and that CAS accepts them.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyAdditionalPolicyTypesRoundTrip(page) {
+    await cas.separator();
+    let outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        id: 654323,
+        name: "CerbosRoundTrip",
+        serviceId: "https://cerbos-round-trip.example.org",
+        matchingStrategy: {
+            "@class": "org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy",
+            expectedUrl: "https://cerbos-round-trip.example.org"
+        },
+        singleSignOnParticipationPolicy: {"@class": "org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicy"},
+        usernameAttributeProvider: {
+            "@class": "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+            persistentIdGenerator: {
+                "@class": "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator",
+                salt: "0123456789abcdef",
+                attribute: "uid"
+            }
+        },
+        accessStrategy: {
+            "@class": "org.apereo.cas.services.CerbosRegisteredServiceAccessStrategy",
+            apiUrl: "https://cerbos.example.org",
+            kind: "application",
+            rolesAttribute: "groups",
+            actions: ["java.util.ArrayList", ["read", "write"]],
+            auxData: {"@class": "java.util.HashMap", tenant: "acme"}
+        }
+    });
+    let definition = outcome.definition;
+    assert(definition.matchingStrategy.expectedUrl === "https://cerbos-round-trip.example.org");
+    assert(definition.singleSignOnParticipationPolicy["@class"].endsWith("NeverRegisteredServiceSingleSignOnParticipationPolicy"));
+    const generator = definition.usernameAttributeProvider.persistentIdGenerator;
+    assert(generator["@class"].endsWith("ShibbolethCompatiblePersistentIdGenerator") && generator.salt === "0123456789abcdef" && generator.attribute === "uid");
+    assert(definition.accessStrategy.apiUrl === "https://cerbos.example.org" && definition.accessStrategy.rolesAttribute === "groups");
+    assert(JSON.stringify(definition.accessStrategy.actions).includes("write") && JSON.stringify(definition.accessStrategy.auxData).includes("acme"));
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        id: 654324,
+        name: "PermitRoundTrip",
+        serviceId: "https://permit-round-trip.example.org/.*",
+        accessStrategy: {
+            "@class": "org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy",
+            apiKey: "permit-key",
+            action: "view",
+            resource: "documents",
+            tenant: "default",
+            context: {"@class": "java.util.HashMap", region: "emea"}
+        }
+    });
+    definition = outcome.definition;
+    assert(definition.accessStrategy.apiKey === "permit-key" && definition.accessStrategy.resource === "documents");
+    assert(JSON.stringify(definition.accessStrategy.context).includes("emea"));
+    assert(outcome.status === 200);
+
+    if (outcome.features.includes("Core.aws")) {
+        outcome = await generateWizardDefinition(page, {
+            "@class": "org.apereo.cas.services.CasRegisteredService",
+            id: 654325,
+            name: "VerifiedPermissionsRoundTrip",
+            serviceId: "https://avp-round-trip.example.org/.*",
+            accessStrategy: {
+                "@class": "org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+                region: "us-east-1",
+                policyStoreId: "store-1",
+                actionId: "view",
+                context: {"@class": "java.util.TreeMap", department: "finance"}
+            }
+        });
+        definition = outcome.definition;
+        assert(definition.accessStrategy.policyStoreId === "store-1" && JSON.stringify(definition.accessStrategy.context).includes("finance"));
+        assert(outcome.status === 200);
+    }
+
+    if (outcome.features.some((feature) => feature === "SurrogateAuthentication" || feature.startsWith("SurrogateAuthentication."))) {
+        outcome = await generateWizardDefinition(page, {
+            "@class": "org.apereo.cas.services.CasRegisteredService",
+            id: 654326,
+            name: "SurrogateRoundTrip",
+            serviceId: "https://surrogate-round-trip.example.org/.*",
+            accessStrategy: {
+                "@class": "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
+                requireAllAttributes: false,
+                caseInsensitive: true,
+                surrogateRequiredAttributes: {"@class": "java.util.HashMap", memberOf: ["java.util.HashSet", ["helpdesk"]]}
+            }
+        });
+        definition = outcome.definition;
+        assert(definition.accessStrategy.requireAllAttributes === false && definition.accessStrategy.caseInsensitive === true);
+        assert(JSON.stringify(definition.accessStrategy.surrogateRequiredAttributes).includes("helpdesk"));
+        assert(outcome.status === 200);
+    }
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.services.OidcRegisteredService",
+        id: 654327,
+        name: "OidcScopeRoundTrip",
+        serviceId: "https://oidc-round-trip.example.org/callback",
+        clientId: "oidc-round-trip",
+        usernameAttributeProvider: {
+            "@class": "org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider",
+            persistentIdGenerator: {
+                "@class": "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+                salt: "fedcba9876543210"
+            }
+        },
+        backchannelAuthenticationRequestSigningAlg: "ES256",
+        backchannelUserCodeParameterSupported: true,
+        attributeReleasePolicy: {
+            "@class": "org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy",
+            scopeName: "employment",
+            allowedAttributes: ["java.util.ArrayList", ["title", "department"]],
+            claimMappings: {"@class": "java.util.TreeMap", title: "jobTitle"}
+        }
+    });
+    definition = outcome.definition;
+    assert(definition.backchannelAuthenticationRequestSigningAlg === "ES256" && definition.backchannelUserCodeParameterSupported === true);
+    const pairwise = definition.usernameAttributeProvider.persistentIdGenerator;
+    assert(pairwise["@class"].endsWith("OidcPairwisePersistentIdGenerator") && pairwise.salt === "fedcba9876543210");
+    assert(definition.attributeReleasePolicy.scopeName === "employment");
+    assert(JSON.stringify(definition.attributeReleasePolicy.allowedAttributes).includes("department"));
+    assert(JSON.stringify(definition.attributeReleasePolicy.claimMappings).includes("jobTitle"));
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        id: 654331,
+        name: "ProxyPolicyRoundTrip",
+        serviceId: "https://proxy-round-trip.example.org/.*",
+        proxyPolicy: {
+            "@class": "org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+            pattern: "^https://proxy-round-trip.example.org/.*"
+        }
+    });
+    assert(outcome.definition.proxyPolicy.pattern === "^https://proxy-round-trip.example.org/.*");
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+        id: 654332,
+        name: "TokenExchangeRoundTrip",
+        serviceId: "https://token-exchange-round-trip.example.org/callback",
+        clientId: "token-exchange-round-trip",
+        tokenExchangePolicy: {
+            "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+            allowedTokenTypes: ["java.util.HashSet", ["urn:ietf:params:oauth:token-type:access_token"]],
+            allowedActorTokenTypes: ["java.util.HashSet", ["urn:ietf:params:oauth:token-type:jwt"]],
+            requiredActorTokenAttributes: {"@class": "java.util.HashMap", scope: ["java.util.ArrayList", ["admin"]]}
+        }
+    });
+    const exchange = outcome.definition.tokenExchangePolicy;
+    assert(JSON.stringify(exchange.allowedTokenTypes).includes("access_token"));
+    assert(JSON.stringify(exchange.allowedActorTokenTypes).includes("token-type:jwt"));
+    assert(JSON.stringify(exchange.requiredActorTokenAttributes).includes("admin"));
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.services.OidcRegisteredService",
+        id: 654328,
+        name: "OidcProfileScopeRoundTrip",
+        serviceId: "https://oidc-profile-round-trip.example.org/callback",
+        clientId: "oidc-profile-round-trip",
+        usernameAttributeProvider: {
+            "@class": "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+            persistentIdGenerator: {
+                "@class": "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+                salt: "pairwise-salt",
+                attribute: "uid"
+            }
+        },
+        attributeReleasePolicy: {"@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy"}
+    });
+    assert(outcome.definition.attributeReleasePolicy["@class"].endsWith("OidcProfileScopeAttributeReleasePolicy"));
+    const profileGenerator = outcome.definition.usernameAttributeProvider.persistentIdGenerator;
+    assert(profileGenerator["@class"].endsWith("OidcPairwisePersistentIdGenerator"));
+    assert(profileGenerator.salt === "pairwise-salt" && profileGenerator.attribute === "uid");
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+        id: 654329,
+        name: "AttributeQueryRoundTrip",
+        serviceId: "https://sp.attribute-query.example.org",
+        metadataLocation: "https://sp.attribute-query.example.org/metadata",
+        attributeReleasePolicy: {
+            "@class": "org.apereo.cas.support.saml.services.AttributeQueryAttributeReleasePolicy",
+            allowedAttributes: ["java.util.ArrayList", ["mail", "cn"]]
+        }
+    });
+    assert(outcome.definition.attributeReleasePolicy["@class"].endsWith("AttributeQueryAttributeReleasePolicy"));
+    assert(JSON.stringify(outcome.definition.attributeReleasePolicy.allowedAttributes).includes("mail"));
+    assert(outcome.status === 200);
+
+    outcome = await generateWizardDefinition(page, {
+        "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+        id: 654330,
+        name: "MappedEntityAttributesRoundTrip",
+        serviceId: "https://sp.mapped-entity.example.org",
+        metadataLocation: "https://sp.mapped-entity.example.org/metadata",
+        attributeReleasePolicy: {"@class": "org.apereo.cas.support.saml.services.MappedEntityAttributesAttributeReleasePolicy"}
+    });
+    assert(outcome.definition.attributeReleasePolicy["@class"].endsWith("MappedEntityAttributesAttributeReleasePolicy"));
+    assert(outcome.status === 200);
 }
 
 /**
@@ -941,6 +1337,8 @@ async function openNewApplicationMenu(page) {
     await verifyTypePicker(page);
     await verifyEditConflict(page);
     await verifyMultifactorPolicyRoundTrip(page);
+    await verifyPolicyRoundTrip(page);
+    await verifyAdditionalPolicyTypesRoundTrip(page);
     await verifyEditorHandoffs(page);
 
     if (failures.length > 0) {

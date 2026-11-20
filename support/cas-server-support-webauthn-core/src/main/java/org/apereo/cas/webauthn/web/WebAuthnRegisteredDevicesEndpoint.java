@@ -53,6 +53,49 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     }
 
     /**
+     * Every device registration of every user.
+     *
+     * @return the registrations
+     */
+    @Operation(summary = "Fetch the registered devices of every user")
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<? extends CredentialRegistration> load() {
+        try (val registrations = registrationStorage.getObject().stream()) {
+            return registrations.collect(Collectors.toList());
+        }
+    }
+
+    /**
+     * How many device registrations the repository holds and how many users they belong to, without the registrations.
+     *
+     * @return the number of registrations, as records, and of users
+     */
+    @Operation(summary = "Count the registered devices and the users they belong to")
+    @GetMapping(params = "summary", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Long> summary() {
+        try (val registrations = registrationStorage.getObject().stream()) {
+            val usernames = registrations.map(CredentialRegistration::getUsername).toList();
+            return Map.of("records", (long) usernames.size(), "users", usernames.stream().distinct().count());
+        }
+    }
+
+    /**
+     * Remove the device registrations of every user.
+     *
+     * @return the number of users whose registrations were removed
+     */
+    @Operation(summary = "Remove the registered devices of every user")
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public long deleteAll() {
+        val repository = registrationStorage.getObject();
+        try (val registrations = repository.stream()) {
+            val usernames = registrations.map(CredentialRegistration::getUsername).collect(Collectors.toSet());
+            usernames.forEach(repository::removeAllRegistrations);
+            return usernames.size();
+        }
+    }
+
+    /**
      * Fetch collection.
      *
      * @param username the username
@@ -149,14 +192,34 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         try (val is = request.getInputStream()) {
-            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
-            LOGGER.trace("Submitted account: [{}]", requestBody);
-            val account = WebAuthnUtils.getObjectMapper()
-                .readValue(requestBody, new TypeReference<CredentialRegistration>() {
-                });
-            LOGGER.trace("Storing account: [{}]", account);
-            registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
+            importRecord(IOUtils.toString(is, StandardCharsets.UTF_8));
             return ResponseEntity.status(HttpStatus.CREATED).build();
         }
+    }
+
+    /**
+     * Import the device registrations of an archive as {@link #export()} writes it, one registration per file.
+     *
+     * @param request the request
+     * @return the number of registrations imported
+     * @throws Exception the exception
+     */
+    @Operation(summary = "Import the device registrations of an archive as the export writes it")
+    @PostMapping(path = "/import", consumes = {ZIP_MEDIA_TYPE, ZIP_COMPRESSED_MEDIA_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
+        try (val input = request.getInputStream()) {
+            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE);
+            records.forEach(Unchecked.consumer(this::importRecord));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("imported", records.size()));
+        }
+    }
+
+    private void importRecord(final String json) throws Exception {
+        LOGGER.trace("Submitted account: [{}]", json);
+        val account = WebAuthnUtils.getObjectMapper().readValue(json, new TypeReference<CredentialRegistration>() {
+        });
+        LOGGER.trace("Storing account: [{}]", account);
+        registrationStorage.getObject().addRegistrationByUsername(account.getUsername(), account);
     }
 }

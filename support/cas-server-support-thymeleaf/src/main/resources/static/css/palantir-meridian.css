@@ -272,6 +272,18 @@ html[data-palantir-pointer-focus] :focus-visible:not(input, textarea, select, [c
     outline: none !important;
 }
 
+/* Text fields never draw the focus ring, which shows as a box inside a rounded search field. A field inside a
+   rounded search field shows focus on that field through :focus-within; a field with a border of its own shows it in
+   the border's color. Checkboxes, radios, switches and buttons keep the ring. */
+#dashboard :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus-visible,
+.ui-dialog.palantir-dialog :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus-visible {
+    outline: none;
+}
+
+:where(#dashboard, .ui-dialog.palantir-dialog) :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus {
+    border-color: var(--palantir-focus);
+}
+
 /* ==========================================================================
    Navigation bar
    ========================================================================== */
@@ -2032,6 +2044,11 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
     border-radius: 999px;
     background: var(--palantir-surface);
     color: var(--palantir-text-muted);
+}
+
+.registered-service-sections__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
 }
 
 .registered-service-sections__search input {
@@ -8042,4 +8059,556 @@ html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]
     html.palantir-page input[type="checkbox"] {
         transition: none;
     }
+}
+
+/* ==========================================================================
+   Application wizard: suggested values for fields with standard values
+   ========================================================================== */
+html.palantir-page .ui-autocomplete:has(.palantir-suggestion) {
+    max-width: min(640px, calc(100vw - 32px));
+    max-height: 320px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface-raised, var(--palantir-surface)) !important;
+    box-shadow: var(--palantir-shadow-soft);
+    color: var(--palantir-text);
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 7px 12px;
+    border: none;
+    border-radius: 8px;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion code {
+    color: var(--palantir-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12.5px;
+    overflow-wrap: anywhere;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion span {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active {
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active code {
+    color: var(--palantir-brand);
+}
+
+/* ==========================================================================
+   MFA providers: the providers listed beside the selected one's settings
+   ========================================================================== */
+.palantir-mfa-providers {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    margin-top: 12px;
+}
+
+.palantir-mfa-providers__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: sticky;
+    top: 12px;
+}
+
+.palantir-mfa-providers__filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-providers__filter input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 0;
+    border: none;
+    background: transparent;
+    color: var(--palantir-text);
+    font-size: 13px;
+    outline: none;
+}
+
+.palantir-mfa-providers__filter:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+#mfaProvidersList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.palantir-mfa-providers__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.palantir-mfa-providers__item:hover {
+    border-color: var(--palantir-border-strong);
+}
+
+.palantir-mfa-providers__item.is-selected {
+    border-color: var(--palantir-brand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-brand) 16%, transparent);
+}
+
+.palantir-mfa-providers__item:focus-visible {
+    outline: 2px solid var(--palantir-brand);
+    outline-offset: 2px;
+}
+
+.palantir-mfa-providers__badge {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.palantir-mfa-providers__badge.is-large {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    font-size: 15px;
+}
+
+.palantir-mfa-providers__name {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.palantir-mfa-providers__name strong {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-mfa-providers__name .palantir-mfa-providers__chip {
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.palantir-mfa-providers__name small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-mfa-providers__chip {
+    flex: none;
+    padding: 2px 9px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__chip.is-ok {
+    border-color: transparent;
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-mfa-providers__chip.is-warn {
+    border-color: transparent;
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-mfa-providers__chip.is-alert {
+    border-color: transparent;
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-mfa-providers__detail {
+    min-width: 0;
+    padding: 18px 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+.palantir-mfa-providers__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.palantir-mfa-providers__title {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    min-width: 200px;
+}
+
+.palantir-mfa-providers__title h3 {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 18px;
+}
+
+.palantir-mfa-providers__title code {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-providers__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.palantir-mfa-providers__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 16px 0 8px;
+}
+
+.palantir-mfa-providers__fact {
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-mfa-providers__fact small {
+    display: block;
+    color: var(--palantir-text-muted);
+    font-size: 11.5px;
+}
+
+.palantir-mfa-providers__fact strong {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__group {
+    margin-top: 14px;
+}
+
+.palantir-mfa-providers__group h4 {
+    margin: 0 0 4px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.palantir-mfa-duo {
+    padding: 12px 14px 14px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 12px;
+}
+
+.palantir-mfa-duo__lookup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 4px;
+}
+
+.palantir-mfa-duo__lookup .palantir-mfa-providers__filter {
+    flex: 1 1 220px;
+}
+
+.palantir-mfa-duo__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.palantir-mfa-duo__note {
+    margin: 10px 0 0;
+    color: var(--palantir-text-muted);
+    font-size: 12.5px;
+}
+
+.palantir-mfa-duo__note.is-alert {
+    color: var(--palantir-danger, #b3261e);
+}
+
+.palantir-mfa-duo__devices {
+    display: grid;
+    gap: 6px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-mfa-duo__devices li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 13px;
+}
+
+.palantir-mfa-duo__devices small {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-duo__groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.palantir-mfa-duo__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.palantir-mfa-duo__edit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.palantir-mfa-duo__edit label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit :is(input, select) {
+    box-sizing: border-box;
+    width: 100%;
+    height: 38px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 8px;
+    background-color: var(--palantir-surface);
+    box-shadow: none;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 13px;
+    line-height: normal;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit select {
+    padding-right: 32px;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--palantir-text-muted) 50%),
+        linear-gradient(135deg, var(--palantir-text-muted) 50%, transparent 50%);
+    background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
+    background-repeat: no-repeat;
+    background-size: 5px 5px, 5px 5px;
+    cursor: pointer;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit :is(input, select):focus {
+    border-color: var(--palantir-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+.palantir-mfa-duo__edit .palantir-mfa-duo__note,
+.palantir-mfa-duo__edit .palantir-mfa-duo__actions {
+    grid-column: 1 / -1;
+    margin-top: 0;
+}
+
+.palantir-mfa-duo__codes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-mfa-duo__codes code {
+    font-size: 15px;
+    letter-spacing: .04em;
+}
+
+#mfaProviderSettingsTable code {
+    overflow-wrap: anywhere;
+}
+
+.palantir-mfa-providers__description {
+    display: block;
+    margin-top: 2px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-mfa-providers__value {
+    overflow-wrap: anywhere;
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12.5px;
+}
+
+#mfaProviderSettingsTable tr.is-changed .palantir-mfa-providers__value {
+    color: var(--palantir-brand);
+    font-weight: 600;
+}
+
+#mfaProviderSettingsTable tr.is-unset .palantir-mfa-providers__value,
+.palantir-mfa-providers__value small {
+    color: var(--palantir-text-muted);
+    font-weight: 400;
+}
+
+#mfaProviderSettingsTable .palantir-mfa-providers__source {
+    max-width: 220px;
+}
+
+#mfaProviderSettingsTable td.palantir-mfa-providers__actions {
+    width: 72px;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    min-width: 0;
+}
+
+
+.palantir-mfa-providers__icon {
+    flex: none;
+    width: 28px;
+    height: 28px;
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon {
+    background: transparent;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon:hover,
+.palantir-icon-button.palantir-mfa-providers__icon:focus-visible {
+    background: var(--palantir-hover);
+    color: var(--palantir-brand);
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon:disabled,
+.palantir-icon-button.palantir-mfa-providers__icon[aria-disabled="true"] {
+    background: transparent;
+    color: var(--palantir-text-muted);
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.palantir-mfa-providers__icon .mdi::before {
+    font-size: 17px;
+}
+
+.palantir-mfa-providers__source {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0 6px;
+    border: 1px dashed var(--palantir-border);
+    border-radius: 6px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__link {
+    margin-left: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--palantir-brand);
+    font-size: 12.5px;
+    cursor: pointer;
+}
+
+.palantir-mfa-providers__link:hover {
+    text-decoration: underline;
+}
+
+.palantir-mfa-providers__link:disabled,
+.palantir-mfa-providers__link[aria-disabled="true"] {
+    color: var(--palantir-text-muted);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.palantir-mfa-providers__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 14px;
+}
+
+.palantir-mfa-providers__footer .palantir-mfa-providers__link {
+    margin-left: 0;
+}
+
+@media (max-width: 900px) {
+    .palantir-mfa-providers {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-mfa-providers__list {
+        position: static;
+    }
+
 }

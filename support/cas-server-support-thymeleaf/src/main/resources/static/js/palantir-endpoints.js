@@ -63,6 +63,39 @@ class CasActuatorEndpoints {
         return this.endpoints().mfadevices || this.endpoints().mfaDevices;
     }
 
+    static duoPing() {
+        return this.endpoints().duoping || this.endpoints().duoPing;
+    }
+
+    static duoAdmin() {
+        return this.endpoints().duoadmin || this.endpoints().duoAdmin;
+    }
+
+    /**
+     * The Duo Security account status endpoint. It only reads one username, so CAS may list it by its templated link,
+     * such as <code>duoAccountStatus-username</code>; the link without the username template is returned.
+     *
+     * @returns {string|undefined} the endpoint's address
+     */
+    static duoAccountStatus() {
+        const links = this.endpoints();
+        const key = Object.keys(links).find(name => name.toLowerCase() === "duoaccountstatus"
+            || name.toLowerCase().startsWith("duoaccountstatus-"));
+        return key === undefined ? undefined : String(links[key]).replace(/\/\{[^}]+\}$/, "");
+    }
+
+    static gauthCredentialRepository() {
+        return this.endpoints().gauthcredentialrepository || this.endpoints().gauthCredentialRepository;
+    }
+
+    static webAuthnDevices() {
+        return this.endpoints().webauthndevices || this.endpoints().webAuthnDevices;
+    }
+
+    static yubikeyAccountRepository() {
+        return this.endpoints().yubikeyaccountrepository || this.endpoints().yubikeyAccountRepository;
+    }
+
     static refresh() {
         return this.endpoints().busrefresh || this.endpoints().refresh;
     }

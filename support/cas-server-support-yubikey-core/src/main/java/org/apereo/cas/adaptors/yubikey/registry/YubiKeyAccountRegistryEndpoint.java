@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -72,6 +72,20 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
     @Operation(summary = "Get all Yubikey accounts")
     public Collection<? extends YubiKeyAccount> load() {
         return registry.getObject().getAccounts();
+    }
+
+    /**
+     * How many accounts the registry holds, one per user, without the accounts themselves.
+     *
+     * @return the number of accounts, as records, of users and of their devices
+     */
+    @GetMapping(params = "summary", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Count the accounts, the users they belong to and their devices")
+    public Map<String, Long> summary() {
+        val accounts = registry.getObject().getAccounts();
+        return Map.of("records", (long) accounts.size(),
+            "users", accounts.stream().map(YubiKeyAccount::getUsername).distinct().count(),
+            "devices", accounts.stream().mapToLong(account -> account.getDevices().size()).sum());
     }
 
     /**
@@ -126,17 +140,55 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
      * @return the http status
      * @throws Exception the exception
      */
-    @Operation(summary = "Import a Yubikey account as a JSON document")
+    @Operation(summary = "Import a Yubikey account, as the export writes it, or a device registration request as a JSON document")
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         try (val is = request.getInputStream()) {
-            val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
-            LOGGER.trace("Submitted account: [{}]", requestBody);
-            val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyDeviceRegistrationRequest>() {
-            });
-            LOGGER.trace("Storing account: [{}]", account);
-            registry.getObject().registerAccountFor(account);
+            importRecord(IOUtils.toString(is, StandardCharsets.UTF_8));
             return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+    }
+
+    /**
+     * Import the accounts of an archive as {@link #export()} writes it, one account per file.
+     *
+     * @param request the request
+     * @return the number of accounts imported
+     * @throws Exception the exception
+     */
+    @Operation(summary = "Import the Yubikey accounts of an archive as the export writes it")
+    @PostMapping(path = "/import", consumes = {ZIP_MEDIA_TYPE, ZIP_COMPRESSED_MEDIA_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
+        try (val input = request.getInputStream()) {
+            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE);
+            records.forEach(this::importRecord);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("imported", records.size()));
+        }
+    }
+
+    /**
+     * Store one record. An account, as the export writes it, is stored as it is, its devices' public ids encoded as the
+     * registry keeps them, and replaces the account the user has; it is read as a plain account whatever kind of
+     * registry exported it, so accounts move from one kind of registry to another. A device registration request is
+     * registered after its one-time password is validated, as when a user registers a device.
+     *
+     * @param json the record
+     */
+    private void importRecord(final String json) {
+        LOGGER.trace("Submitted account: [{}]", json);
+        val document = MAPPER.readTree(json);
+        if (document instanceof final ObjectNode fields && fields.has(YubiKeyAccount.FIELD_DEVICES)) {
+            fields.put("@class", YubiKeyAccount.class.getName());
+            val account = MAPPER.treeToValue(fields, YubiKeyAccount.class);
+            val accountRegistry = registry.getObject();
+            account.getDevices().forEach(device -> device.setPublicId(accountRegistry.getCipherExecutor().encode(device.getPublicId())));
+            LOGGER.trace("Storing account: [{}]", account);
+            accountRegistry.save(account);
+        } else {
+            val registration = MAPPER.readValue(json, YubiKeyDeviceRegistrationRequest.class);
+            LOGGER.trace("Registering device: [{}]", registration);
+            registry.getObject().registerAccountFor(registration);
         }
     }
 }

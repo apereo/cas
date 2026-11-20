@@ -58,14 +58,16 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
         this.auditTrailManager = auditTrailManager;
     }
 
-    private Stream<AuditActionContext> getAuditLog(final String interval, final long count) {
+    private Stream<AuditActionContext> getAuditLog(final String interval, final long count, final boolean filtered) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = auditActionDateProvider.getObject().get()
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
-            return auditTrailManager.getObject().getAuditRecords(Map.of(
-                AuditTrailManager.WhereClauseFields.DATE, sinceDate,
-                AuditTrailManager.WhereClauseFields.COUNT, count
-            )).parallelStream();
+            val criteria = new EnumMap<AuditTrailManager.WhereClauseFields, Object>(AuditTrailManager.WhereClauseFields.class);
+            criteria.put(AuditTrailManager.WhereClauseFields.DATE, sinceDate);
+            if (!filtered) {
+                criteria.put(AuditTrailManager.WhereClauseFields.COUNT, count);
+            }
+            return auditTrailManager.getObject().getAuditRecords(criteria).parallelStream();
         }
         val duration = Beans.newDuration(interval);
         val startingDate = LocalDateTime.from(duration.subtractFrom(auditActionDateProvider.getObject().get()));
@@ -94,7 +96,8 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
             MediaType.APPLICATION_JSON_VALUE,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE
         })
-    @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
+    @Operation(summary = "Provide a report of the audit log, latest first, as many records as `count` asks for once the filters apply. "
+        + "Each filter other than `interval` can accept a regular expression to match against.",
         parameters = {
             @Parameter(name = "count", description = "Total number of records to fetch from audit log"),
             @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"),
@@ -110,11 +113,14 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
         @RequestParam(required = false) final String clientIpAddress,
         @RequestParam(required = false) final String principal,
         @RequestParam(required = false) final String resourceOperatedUpon) {
-        val records = getAuditLog(interval, count)
+        val filtered = Stream.of(actionPerformed, clientIpAddress, principal, resourceOperatedUpon).anyMatch(StringUtils::isNotBlank);
+        val records = getAuditLog(interval, count, filtered)
             .filter(e -> StringUtils.isBlank(actionPerformed) || RegexUtils.find(actionPerformed, e.getActionPerformed()))
             .filter(e -> StringUtils.isBlank(clientIpAddress) || RegexUtils.find(clientIpAddress, e.getClientInfo().getClientIpAddress()))
             .filter(e -> StringUtils.isBlank(principal) || RegexUtils.find(principal, e.getPrincipal()))
             .filter(e -> StringUtils.isBlank(resourceOperatedUpon) || RegexUtils.find(resourceOperatedUpon, e.getResourceOperatedUpon()))
+            .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed, Comparator.nullsLast(Comparator.reverseOrder())))
+            .limit(count > 0 ? count : Long.MAX_VALUE)
             .toList();
         LOGGER.debug("Found [{}] audit log records", records.size());
         return records;

@@ -206,10 +206,10 @@ function createRegisteredServiceSaml2Fields() {
         cssClasses: "advanced-option",
         labelTitle: "Signing Signature Whitelisted Algorithms",
         name: "registeredServiceSigningSignatureWhiteListedAlgorithms",
-        paramName: "signingSignatureBlackListedAlgorithms",
+        paramName: "signingSignatureWhiteListedAlgorithms",
         required: false,
         containerId: "editServiceWizardSamlContainer",
-        title: "Defines a comma-separated list of whitelisted signature algorithms to avoid when signing SAML messages."
+        title: "Defines a comma-separated list of whitelisted signature algorithms to allow when signing SAML messages."
     })
         .data("renderer", function (value) {
             return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
@@ -275,7 +275,7 @@ function createRegisteredServiceSaml2Fields() {
         paramName: "encryptionWhiteListedAlgorithms",
         required: false,
         containerId: "editServiceWizardSamlContainer",
-        title: "Defines a comma-separated list of whitelisted algorithms to avoid when encrypting SAML assertions."
+        title: "Defines a comma-separated list of whitelisted algorithms to allow when encrypting SAML assertions."
     })
         .data("renderer", function (value) {
             return ["java.util.ArrayList", value.split(",").filter(v => v != null && v !== "")];
@@ -553,6 +553,22 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
         {
             value: "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
             text: "PATTERN MATCHING ENTITY IDS",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.AttributeQueryAttributeReleasePolicy",
+            text: "ATTRIBUTE QUERY",
+            data: {
+                markerClass: true,
+                serviceClass: "SamlRegisteredService"
+            }
+        },
+        {
+            value: "org.apereo.cas.support.saml.services.MappedEntityAttributesAttributeReleasePolicy",
+            text: "MAPPED ENTITY ATTRIBUTES",
             data: {
                 markerClass: true,
                 serviceClass: "SamlRegisteredService"

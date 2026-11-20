@@ -10,7 +10,11 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
 
 ## Gradle build settings
 
-- Gradle 9.8.0 enables build caching, the configuration cache, parallel execution and Isolated Projects here.
+- The build (Gradle 9.9.2 at the time of writing; `gradle/wrapper/gradle-wrapper.properties` is authoritative) enables
+  build caching, the configuration cache, parallel execution and Isolated Projects.
+- Upgrade the wrapper only with `./gradlew :wrapper --gradle-version=X.Y.Z --gradle-distribution-sha256-sum=<sum>`, run
+  twice (the second run regenerates `gradlew`, `gradlew.bat` and the jar from the new version's templates); never edit
+  those files or `distributionUrl` by hand. The sum is `<distributionUrl>.sha256` (`curl -sL`, it redirects).
   Isolated Projects configures every project on a cache miss and ignores configuration on demand. Compare representative
   scoped commands before changing either setting. User-home `gradle.properties` overrides the repository's JVM settings.
 - Test category discovery runs inside `TestCategoryTagsValueSource`: only its sorted tag list is a configuration input.

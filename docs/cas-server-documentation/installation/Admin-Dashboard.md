@@ -80,7 +80,8 @@ page that was showing.
 The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or
 section of Palantir, including the sections inside a section such as the key rotation of OpenID Connect, a registered application by its name, identifier or service id, and common actions such as
 creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
-`Enter` opens one. Typing a username also offers to look that user up.
+`Enter` opens one. Typing a username also offers to look that user up. It opens with the last search, selected so typing
+replaces it, and with the match chosen last marked, so `Enter` opens it again; this is remembered in the browser.
 
 The *Users* page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices,
 trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless
@@ -94,6 +95,27 @@ the page has the whole window, while the keyboard shortcuts and the search keep 
 choice, and a small button at the top right leaves zen mode.
 
 The *Throttles* page lists every throttled login attempt, or only those of one username, matched regardless of case.
+The *Consent* page and the audit events likewise show the consent decisions or the audit records of one username.
+
+The multifactor section lists the [multifactor authentication providers](../mfa/Configuring-Multifactor-Authentication.html)
+CAS registers by rank, each with how it is doing: for Duo Security, whether Duo answers and how quickly, from the Duo
+ping endpoint, and for providers that keep registrations, how many users registered. The selected provider shows its
+rank, failure mode, registered users, bypass rules and how many of its settings differ from their defaults, and its
+settings grouped as identity and ranking, behavior, bypass, storage and security. Each setting appears once, with the
+value that takes effect and the property source it comes from, its description and whether it keeps its default;
+secrets stay hidden. A setting can be looked up in the configuration metadata or overridden when the configuration
+can be changed at runtime, and settings left at their default can be shown as well. A filter narrows the providers
+and their settings. A Duo Security provider also looks a user up in Duo: how Duo treats their next sign-in, and, with the Duo
+Admin API, their name, email address, account status, enrollment, last login, devices, groups and bypass codes.
+From there, new bypass codes can be created and shown once, and the account's status, name and email address changed.
+
+Under *Multifactor Credential Repositories*, the multifactor section has a card for each repository of registered
+[Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) accounts,
+[WebAuthn](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) devices and
+[YubiKey](../mfa/YubiKey-Authentication.html) accounts whose actuator endpoint is enabled, with how many records it
+holds and for how many users. *Export* downloads every record as a zip, *Import* takes such a zip or a single JSON
+record, so records can move from one server or repository to another, and *Delete All* removes every record after a
+confirmation. Removing one user's devices is done from the *Users* page or the devices section.
 
 *System Metrics* opens on a board of pinned metrics, each with its current value in its own unit, a trend while the
 page is open and a warning when usage passes three quarters or nine tenths; the pins are kept in the browser. The
@@ -133,6 +155,26 @@ they changed and asks whether to keep editing or to save anyway.
 
 An endpoint whose access level is read-only only answers reads, so the dashboard disables what would change something
 through it, such as saving an application, ending a session or changing a logger, and explains why.
+
+The wizard asks for what an application answers, such as its service id, redirect URI or entity id, in the section of
+its protocol, next to the protocol's other settings.
+Among its advanced sections, the wizard sets an application's delegated authentication policy, when its access
+strategy checks the required and rejected attributes, and which users an interrupt notification applies to; its
+consent policy can leave attributes and services out of consent. Access can be decided by Cerbos, Permit.io or
+Amazon Verified Permissions, or, for surrogate sessions, by the surrogate's attributes or a Groovy script; OpenID
+Connect claims can be released per scope, for a custom scope or regardless of scope, with claims mapped to attributes;
+SAML2 service providers can be given the attributes released to attribute queries or those mapped from entity
+attributes. The wizard also matches services by the start of their URL, keeps applications out of single sign-on
+altogether, sets the salt and source attribute of anonymous and pairwise identifiers, and sets how OpenID Connect relying parties
+sign backchannel authentication requests and whether those requests may carry a user code.
+
+Fields of the wizard whose values come from a standard or from the server suggest them as they are typed, each with a
+short description, while still taking any value: SAML2 NameID formats, authentication context classes, bindings,
+XML signature, digest and encryption algorithms, entity attributes and their values, such as entity categories, OpenID Connect signing and encryption
+algorithms, client authentication methods, subject types and the default issuer, OAuth token types and the client ids
+of other applications as audiences, the WS-Federation protocol, token types, namespaces and default realm, CAS ticket
+lifetimes and uses, durations, time units, HTTP methods and header names, locales and time zones, and the attributes,
+authentication handlers and multifactor providers of the server. Fields that hold a list are completed one entry at a time.
 
 When adding a SAML2 service provider, *From Metadata* fills the wizard from the provider's metadata: from a URL,
 which CAS reads on the dashboard's behalf without registering, caching or storing it, or from metadata XML pasted or

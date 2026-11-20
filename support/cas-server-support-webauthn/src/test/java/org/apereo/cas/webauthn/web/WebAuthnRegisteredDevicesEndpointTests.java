@@ -18,6 +18,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)
+@ResourceLock(value = WebAuthnCredentialRepository.BEAN_NAME, mode = ResourceAccessMode.READ_WRITE)
 class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("mockMvc")
@@ -144,6 +148,42 @@ class WebAuthnRegisteredDevicesEndpointTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content))
             .andExpect(status().isCreated());
+    }
+
+    @Test
+    void verifyDeleteAllAndArchiveImport() throws Throwable {
+        val username = UUID.randomUUID().toString();
+        register(RegisteredServiceTestUtils.getAuthentication(username));
+        mockMvc.perform(get("/actuator/webAuthnDevices")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[*].userIdentity.name", hasItem(username)));
+        val archive = mockMvc.perform(get("/actuator/webAuthnDevices/export"))
+            .andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsByteArray();
+
+        mockMvc.perform(delete("/actuator/webAuthnDevices")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        try (val registrations = webAuthnCredentialRepository.stream()) {
+            assertEquals(0, registrations.count());
+        }
+        mockMvc.perform(get("/actuator/webAuthnDevices").param("summary", "true")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.records").value(0))
+            .andExpect(jsonPath("$.users").value(0));
+
+        mockMvc.perform(post("/actuator/webAuthnDevices/import")
+                .contentType("application/zip")
+                .content(archive)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.imported").isNumber());
+        mockMvc.perform(get("/actuator/webAuthnDevices/%s".formatted(username))
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isNotEmpty());
     }
 
     private CredentialRegistration register(final Authentication authn) throws Exception {

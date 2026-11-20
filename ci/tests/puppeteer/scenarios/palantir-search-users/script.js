@@ -1,5 +1,5 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
-   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette */
+   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, Swal */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -106,6 +106,21 @@ async function verifyCommandPalette(page) {
     await page.waitForFunction((index) => currentActiveTab === index
         && !$("#palantirCommandPalette").dialog("isOpen"), {timeout: 10000}, target.index);
     await cas.logg(`Command palette opened ${target.label}`);
+
+    await page.keyboard.down("Control");
+    await page.keyboard.press("k");
+    await page.keyboard.up("Control");
+    await page.waitForFunction((label) => $("#palantirCommandPalette").dialog("isOpen")
+        && $(".palantir-command-palette__item.ui-state-active .palantir-command-palette__label").text() === label,
+    {timeout: 10000}, target.label);
+    const restored = await page.evaluate(() => {
+        const input = $("#palantirCommandPaletteInput")[0];
+        return {value: input.value, selected: input.selectionStart === 0 && input.selectionEnd === input.value.length};
+    });
+    await cas.logg(`Command palette reopens with ${JSON.stringify(restored)} and ${target.label} marked`);
+    assert(restored.value === target.label && restored.selected);
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => !$("#palantirCommandPalette").dialog("isOpen"), {timeout: 10000});
 
     const application = "Portal";
     await cas.sleep(1000);
@@ -288,6 +303,62 @@ async function verifyThrottlesUsername(page) {
 }
 
 /**
+ * The multifactor credential repositories each get a card with their counts; an export of Google Authenticator
+ * accounts imports back as an archive, and deleting every record asks for the repository's name first.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyCredentialRepositories(page) {
+    await cas.separator();
+    const expected = await page.evaluate(() => PalantirCredentialRepositories.available().map((repository) => repository.key));
+    if (expected.length === 0) {
+        await cas.logy("No multifactor credential repository endpoint is available; skipping");
+        return;
+    }
+    await page.evaluate(() => {
+        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.MFA.index}]`).trigger("click");
+        $("#mfaRepositoriesTab").trigger("click");
+    });
+    await page.waitForFunction((count) => $("#mfaRepositoriesCards [data-mfa-repository]").length === count
+        && $("#mfaRepositoriesCards .palantir-record-card__title p").toArray().every((line) => /user/.test(line.textContent)),
+    {timeout: 30000}, expected.length);
+    const lines = await page.evaluate(() => $("#mfaRepositoriesCards .palantir-record-card__title p").toArray().map((line) => line.textContent));
+    await cas.logg(`Credential repositories: ${lines.join(" | ")}`);
+
+    if (expected.includes("gauthCredentialRepository")) {
+        const roundTrip = await page.evaluate(async () => {
+            const endpoint = CasActuatorEndpoints.gauthCredentialRepository();
+            const exported = await fetch(`${endpoint}/export`, {credentials: "include"});
+            const archive = await exported.blob();
+            const imported = await fetch(`${endpoint}/import`, {
+                method: "POST",
+                credentials: "include",
+                headers: {"Content-Type": "application/zip", "Accept": "application/json"},
+                body: archive
+            });
+            return {exported: exported.status, imported: imported.status, body: await imported.json()};
+        });
+        await cas.log(`Google Authenticator export ${roundTrip.exported}, import ${roundTrip.imported}: ${JSON.stringify(roundTrip.body)}`);
+        assert(roundTrip.exported === 200 && roundTrip.imported === 201 && typeof roundTrip.body.imported === "number");
+    }
+
+    await page.evaluate(() => {
+        $("#mfaRepositoriesCards [data-mfa-repository] [data-mfa-repository-action=import]").first().closest("[data-mfa-repository]")
+            .find("[data-mfa-repository-action=delete]").prop("disabled", false).trigger("click");
+    });
+    await page.waitForFunction(() => Swal.isVisible() && $(".swal2-confirm").is(":visible"), {timeout: 10000});
+    const confirmation = await page.evaluate(() => ({
+        typed: $(".swal2-input").is(":visible"),
+        confirm: $(".swal2-confirm").text().trim(),
+        cancel: $(".swal2-cancel").text().trim()
+    }));
+    await cas.logg(`Deleting every record asks: ${JSON.stringify(confirmation)}`);
+    assert(!confirmation.typed && confirmation.confirm === "Delete all" && confirmation.cancel === "Cancel");
+    await page.click(".swal2-cancel");
+    await page.waitForFunction(() => !Swal.isVisible(), {timeout: 10000});
+}
+
+/**
  * Show the audit records of one username on the audit events page, then those of every username again. The admin
  * who signed in has audit records, and every record shown must be one of theirs.
  *
@@ -402,6 +473,7 @@ async function waitForApplications(page) {
     await verifyThrottlesUsername(page);
     await verifyConsentUsername(page);
     await verifyAuditEventsUsername(page);
+    await verifyCredentialRepositories(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

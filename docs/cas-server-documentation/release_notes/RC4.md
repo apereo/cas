@@ -225,15 +225,16 @@ during compile time.
 ### Gradle 9.9
 {: .changed data-area="project"}
 
-CAS is now built with Gradle `9.9` and the build process has been updated to use the
+CAS is now built with Gradle `9.9.2` and the build process has been updated to use the
 latest Gradle features and capabilities.
 
 ### Spring Boot 4.2
 {: .changed data-area="project"}
 
-CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that
-affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
-as well as some CAS functionality.
+CAS is now built on top of the general availability releases of Spring Boot `4.2.0` and Spring Framework `7.1.0`,
+together with the matching releases of Spring Security, Spring Data, Spring Session, Spring Integration,
+Spring Cloud and Micrometer. This minor platform upgrade affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
 for more information on the changes and updates in this release.
@@ -264,7 +265,7 @@ for more information on the changes and updates in this release.
   is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
   packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
   should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
-- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html) can also be supplied as an
+- {: .changed data-area="project"} Every Gradle build flag can also be supplied as an
   environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
   when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
   Javadoc errors fail the build unless that flag is set.
@@ -287,7 +288,7 @@ theme property.
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
 (`⌘K` on macOS) or `/`, that goes to any page or section, finds a registered application by name, identifier or service id,
-and runs common actions without leaving the keyboard. A new *Users* page looks up one user and gathers in one place their
+and runs common actions without leaving the keyboard; it reopens with the last search and the last match chosen. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. The page also lists the user's OAuth and OpenID Connect
@@ -346,7 +347,30 @@ applications it has. The wizard keeps Save disabled, naming the required fields 
 as valid, and the wizard keeps the principal attributes of a multifactor policy, with the policy's type, when it
 edits an application. It also keeps the contacts beyond the three it shows. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
 once after a confirmation. Importing applications accepts YAML definitions and exported zip files as well as JSON, and imports each chosen file
-once. A new application in the wizard starts by choosing its type from described cards with a single click. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
+once. A new application in the wizard starts by choosing its type from described cards with a single click; what the
+application answers, such as its service id, redirect URI or entity id, is entered with the settings of its protocol,
+and the
+wizard's fields that take standard values, such as SAML2 NameID formats, signing algorithms or OAuth token types,
+suggest them with a short description while still taking any value; the SAML2 entity attributes that
+filter metadata suggest the attribute names and values CAS supports, such as entity categories, Sirtfi and the
+required subject identifier. The wizard's whitelisted SAML2 signature
+algorithms are now saved as whitelisted rather than blacklisted algorithms, and its poll backchannel token delivery
+mode for OpenID Connect is saved as `poll`, which CAS accepts, rather than `pull`. The wizard also edits the delegated
+authentication policy of an application (allowed identity providers, whether any provider may be used when none is
+listed, exclusive use and a Groovy selection script), when the default access strategy checks its attributes, the
+attributes and services excluded from consent, and the attribute or Groovy script that limits interrupt
+notifications; a CAS application's proxy-granting ticket lifetime is saved with the proxy-granting ticket policy type. The wizard now covers the
+remaining policy types: access decided by Cerbos, Permit.io, Amazon Verified Permissions or surrogate rules, OpenID
+Connect claims released per scope with claim mappings, SAML2 attribute query and mapped entity attribute release,
+matching services by the start of their URL, opting applications out of single sign-on, the salt and attribute of
+anonymous identifiers, and the signing and user code options of OpenID Connect backchannel authentication. A pairwise
+identifier's salt now shows its value when an application is opened, rather than an unreadable placeholder; pairwise
+identifiers can also be computed from an attribute, and an application's identifier generator keeps its type. Opening
+an application in the wizard keeps the pattern of a regex proxy policy and the settings of a token exchange policy,
+which were emptied as the wizard filled itself in; a token exchange policy is now one type whose impersonation and
+delegation settings show together, so a delegation policy no longer opens as an impersonation one, and its required
+actor token attributes are saved in a form CAS accepts. Choosing another type of a policy puts that section's switches
+back to their defaults, rather than turning off every switch that was on. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
 closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days; drafts keep no secrets, such as client secrets or passwords. A keyboard shortcut overlay opens
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
@@ -495,6 +519,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   per collection; Redis also counts sessions and service tickets that way. Other registries read their
   tickets to count them. Palantir's ticket registry chart shows all tickets and a bar for every kind of ticket, refreshed
   once a minute, and its health chart reads the same timed health checks as the *Home* page.
+- {: .fixed data-area="operations"} The [audit log endpoint](../audits/Audits.html) returns as many records as asked for
+  with an interval as well, the latest first and counted after its filters, instead of every record of the interval.
 - {: .new data-area="ui"} The [audit log endpoint](../audits/Audits.html) can count audit records per action and per hour
   over a period of up to a week, as the audit storage counts them for the whole cluster: databases with one grouped query,
   MongoDB with one aggregation, and Redis and DynamoDB from hourly counters kept as records are written. A
@@ -971,6 +997,20 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.
   A custom CSRF token repository is defined once, as the `casCsrfTokenRepository` bean.
+- {: .new data-area="mfa"} Palantir lists the multifactor authentication providers by rank beside the selected
+  provider's key facts and settings: each setting once, with the value that takes effect, its source, its description
+  and whether it keeps its default, grouped and filterable, with secrets hidden. Duo Security providers show whether Duo
+  answers, from the Duo ping endpoint, and look a user up in Duo to see their status, account, devices and groups,
+  create bypass codes or change the account's status, name and email address. Updating a Duo account through the
+  Duo Admin API endpoint now changes its name and email address too, not only its status, and Duo's last login and
+  creation dates are read as the seconds Duo reports rather than as milliseconds.
+- {: .new data-area="mfa"} The actuator endpoints of the [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html),
+  [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) and [YubiKey](../mfa/YubiKey-Authentication.html)
+  repositories import the zip their export writes, so registrations move between servers or repositories, and report
+  how many records they hold and for how many users without returning the records. The WebAuthn endpoint can also list
+  and remove every registration, and the YubiKey endpoint imports an exported account as it is, which before needed a
+  one-time password from the device. Palantir's multifactor section offers export, import and removal of every record
+  for each of these repositories.
 - {: .fixed data-area="mfa"} [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) scratch codes are
   compared by their exact value, and a stored scratch code that cannot be decrypted is ignored instead of being used as
   it was stored. With scratch codes encrypted (`cas.authn.mfa.gauth.core.scratch-codes.encryption.key`{: .cas-setting}),

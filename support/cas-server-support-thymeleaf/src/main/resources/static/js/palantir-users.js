@@ -295,6 +295,7 @@ class PalantirUserLookup {
                 load: async username => {
                     const records = await PalantirUserLookup.get(CasActuatorEndpoints.auditLog(), {
                         interval: $("#userLookupAuditWindow").val() || "P7D",
+                        count: 500,
                         principal: `^${PalantirUserLookup.quoteRegex(username)}$`
                     });
                     return (Array.isArray(records) ? records : [])

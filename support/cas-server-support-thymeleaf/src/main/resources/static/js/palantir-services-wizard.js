@@ -52,6 +52,7 @@ function buildRegisteredServiceWizardFields() {
                 }
             }
             initializePalantirWidgets(document.getElementById("editServiceWizardForm"));
+            PalantirWizardSuggestions.attach(document.getElementById("editServiceWizardForm"));
             for (let attempt = 0; attempt < 20 && !$("#registeredServiceDescriptionEditor").data("trumbowyg"); attempt++) {
                 await new Promise(resolve => setTimeout(resolve, 50));
             }
@@ -113,6 +114,18 @@ function handleAttributeReleasePolicyChange(select) {
         });
     }
 }
+
+const OIDC_SCOPE_ATTRIBUTE_RELEASE_POLICIES = [
+    "OidcOpenIdScopeAttributeReleasePolicy",
+    "OidcProfileScopeAttributeReleasePolicy",
+    "OidcEmailScopeAttributeReleasePolicy",
+    "OidcAddressScopeAttributeReleasePolicy",
+    "OidcPhoneScopeAttributeReleasePolicy",
+    "OidcOfflineAccessScopeAttributeReleasePolicy",
+    "OidcAssuranceScopeAttributeReleasePolicy",
+    "OidcCustomScopeAttributeReleasePolicy",
+    "OidcScopeFreeAttributeReleasePolicy"
+];
 
 function createRegisteredServiceAttributeReleasePolicy() {
     createSelectField({
@@ -235,11 +248,12 @@ function createRegisteredServiceAttributeReleasePolicy() {
 
             createMultiSelectField({
                 id: "registeredServiceAttrReleaseAllowedAttrs",
-                cssClasses: "hide ReturnAllowedAttributeReleasePolicy",
+                cssClasses: `hide ReturnAllowedAttributeReleasePolicy AttributeQueryAttributeReleasePolicy ${OIDC_SCOPE_ATTRIBUTE_RELEASE_POLICIES
+                    .filter(policy => policy !== "OidcOpenIdScopeAttributeReleasePolicy").join(" ")}`,
                 containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
                 labelTitle: "Allowed Attributes:",
                 paramName: "attributeReleasePolicy.allowedAttributes",
-                title: "Define the attribute names for release, separated by comma.",
+                title: "Define the attribute names for release, separated by comma. For an OpenID Connect standard scope, leave it empty to release the claims of that scope.",
                 options: options,
                 allowCreateOption: true
             }).data("renderer", function (value) {
@@ -393,6 +407,27 @@ function createRegisteredServiceAttributeReleasePolicy() {
         valueLabel: "Source Attributes (separated by comma)",
         containerField: "attributeReleasePolicy.allowedAttributes",
         multipleValues: true
+    });
+
+    createInputField({
+        cssClasses: "hide OidcCustomScopeAttributeReleasePolicy",
+        labelTitle: "Scope Name",
+        name: "registeredServiceAttrReleaseOidcScopeName",
+        paramName: "attributeReleasePolicy.scopeName",
+        required: false,
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        title: "Define the name of the custom scope whose claims this policy releases."
+    });
+
+    createMappedInputField({
+        cssClasses: `hide ${OIDC_SCOPE_ATTRIBUTE_RELEASE_POLICIES.join(" ")}`,
+        header: "Claim Mappings",
+        containerId: "editServiceWizardMenuItemAttributeReleasePolicy",
+        keyField: "registeredServiceAttrReleasePolicyOidcClaimName",
+        keyLabel: "Claim",
+        valueField: "registeredServiceAttrReleasePolicyOidcClaimAttribute",
+        valueLabel: "Attribute",
+        containerField: "attributeReleasePolicy.claimMappings"
     });
 
     createMappedInputField({
@@ -635,6 +670,46 @@ function createRegisteredServiceAttributeReleaseConsentPolicy() {
         ],
         helpText: "Specify whether consent is enabled for attribute release."
     });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        cssClasses: "hide DefaultRegisteredServiceConsentPolicy",
+        labelTitle: "Excluded Attributes (separated by comma)",
+        name: "registeredServiceAttrReleaseConsentExcludedAttrs",
+        paramName: "attributeReleasePolicy.consentPolicy.excludedAttributes",
+        required: false,
+        title: "Attributes released without asking for consent, separated by comma."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.HashSet", value.split(",").map(entry => entry.trim()).filter(entry => entry.length > 0)];
+        });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        cssClasses: "hide DefaultRegisteredServiceConsentPolicy",
+        labelTitle: "Excluded Services (separated by comma)",
+        name: "registeredServiceAttrReleaseConsentExcludedServices",
+        paramName: "attributeReleasePolicy.consentPolicy.excludedServices",
+        required: false,
+        title: "Patterns of service URLs for which consent is not asked, separated by comma."
+    })
+        .data("renderer", function (value) {
+            return ["java.util.HashSet", value.split(",").map(entry => entry.trim()).filter(entry => entry.length > 0)];
+        });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+        containerId: "editServiceWizardMenuItemAttributeReleaseValueConsentPolicy",
+        cssClasses: "hide DefaultRegisteredServiceConsentPolicy",
+        labelTitle: "Order",
+        name: "registeredServiceAttrReleaseConsentOrder",
+        paramName: "attributeReleasePolicy.consentPolicy.order",
+        required: false,
+        dataType: "number",
+        title: "The position of this consent policy when consent policies are combined; lower runs first."
+    });
 }
 
 function handleAttributeReleaseConsentPolicyChange(select) {
@@ -687,13 +762,7 @@ function handleAttributeReleasePolicyActivationCriteriaChange(select) {
             .val("");
         $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAttributeReleasePolicyActivationCriteria");
     }
 }
 
@@ -793,13 +862,7 @@ function handleAttributeReleasePolicyPrincipalAttributeRepositoryChange(select) 
             .val("");
         $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAttributeReleasePrincipalAttributesRepository");
     }
 }
 
@@ -922,13 +985,7 @@ function handleAttributeReleasePolicyValueFilterChange(select) {
             .val("");
         $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAttributeReleaseValueFilters [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAttributeReleaseValueFilters");
     }
 }
 
@@ -1215,7 +1272,13 @@ function handleMatchingStrategyChange(select) {
     $("#editServiceWizardMenuItemMatchingStrategy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-
+    $("#editServiceWizardMenuItemMatchingStrategy [id$='FieldContainer']")
+        .not(`.${type}`)
+        .hide();
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemMatchingStrategy [id$='FieldContainer'] input").val("");
+        resetWizardSwitches("#editServiceWizardMenuItemMatchingStrategy");
+    }
 }
 
 function createRegisteredServiceMatchingStrategy() {
@@ -1242,6 +1305,10 @@ function createRegisteredServiceMatchingStrategy() {
                 data: {
                     markerClass: true
                 }
+            },
+            {
+                value: "org.apereo.cas.services.StartsWithRegisteredServiceMatchingStrategy",
+                text: "STARTS WITH"
             }
         ],
         helpText: "Specifies the strategy to determine how service IDs are matched.",
@@ -1249,10 +1316,23 @@ function createRegisteredServiceMatchingStrategy() {
     }).data("renderer", function (value) {
         return {"@class": value};
     });
+
+    createInputField({
+        cssClasses: "hide StartsWithRegisteredServiceMatchingStrategy",
+        labelTitle: "Expected URL",
+        name: "registeredServiceMatchingStrategyExpectedUrl",
+        paramName: "matchingStrategy.expectedUrl",
+        required: false,
+        containerId: "editServiceWizardMenuItemMatchingStrategy",
+        title: "Define the URL that the requested service must start with."
+    });
 }
 
 function handleAccessStrategyChange(select) {
     const type = getLastWord($(select).val());
+    if (typeof toggleAccessStrategyActivation === "function") {
+        toggleAccessStrategyActivation(type);
+    }
     $(`#editServiceWizardMenuItemAccessStrategy .${type}`).show();
     $("#editServiceWizardMenuItemAccessStrategy [id$='FieldContainer']")
         .not(`.${type}`)
@@ -1274,14 +1354,263 @@ function handleAccessStrategyChange(select) {
             .val("");
         $("#editServiceWizardMenuItemAccessStrategy [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAccessStrategy [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAccessStrategy");
     }
+}
+
+/**
+ * The fields of the access strategies that ask an external authorization service, such as Cerbos, Permit.io or
+ * Amazon Verified Permissions, and of the strategies that decide whether a surrogate session may access the
+ * application.
+ */
+function createRegisteredServiceExternalAccessStrategies() {
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "API URL",
+        name: "registeredServiceAccessStrategyCerbosApiUrl",
+        paramName: "accessStrategy.apiUrl",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Cerbos policy decision point URL. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Token",
+        name: "registeredServiceAccessStrategyCerbosToken",
+        paramName: "accessStrategy.token",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the token used to call Cerbos. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Kind",
+        name: "registeredServiceAccessStrategyCerbosKind",
+        paramName: "accessStrategy.kind",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the kind of resource Cerbos checks. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Scope",
+        name: "registeredServiceAccessStrategyCerbosScope",
+        paramName: "accessStrategy.scope",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Cerbos policy scope. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Roles Attribute",
+        name: "registeredServiceAccessStrategyCerbosRolesAttribute",
+        paramName: "accessStrategy.rolesAttribute",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the attribute that holds the principal's roles. Defaults to <code>memberOf</code>. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Request ID",
+        name: "registeredServiceAccessStrategyCerbosRequestId",
+        paramName: "accessStrategy.requestId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the request identifier sent to Cerbos. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        labelTitle: "Actions (separated by comma)",
+        name: "registeredServiceAccessStrategyCerbosActions",
+        paramName: "accessStrategy.actions",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the actions Cerbos must allow, separated by comma."
+    }).data("renderer", function (value) {
+        return ["java.util.ArrayList", value.split(",").map(v => v.trim()).filter(v => v.length > 0)];
+    });
+
+    createMappedInputField({
+        cssClasses: "hide CerbosRegisteredServiceAccessStrategy",
+        header: "Auxiliary Data",
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        keyField: "registeredServiceAccessStrategyCerbosAuxDataName",
+        keyLabel: "Name",
+        valueField: "registeredServiceAccessStrategyCerbosAuxDataValue",
+        valueLabel: "Value",
+        containerField: "accessStrategy.auxData"
+    });
+
+    createInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        labelTitle: "Access Key",
+        name: "registeredServiceAccessStrategyAvpAccessKey",
+        paramName: "accessStrategy.credentialAccessKey",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the AWS access key. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        labelTitle: "Secret Key",
+        name: "registeredServiceAccessStrategyAvpSecretKey",
+        paramName: "accessStrategy.credentialSecretKey",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the AWS secret key. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        labelTitle: "Region",
+        name: "registeredServiceAccessStrategyAvpRegion",
+        paramName: "accessStrategy.region",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the AWS region of the policy store. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        labelTitle: "Policy Store ID",
+        name: "registeredServiceAccessStrategyAvpPolicyStoreId",
+        paramName: "accessStrategy.policyStoreId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the policy store that holds the policies. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        labelTitle: "Action ID",
+        name: "registeredServiceAccessStrategyAvpActionId",
+        paramName: "accessStrategy.actionId",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the action the policies authorize. Supports expression language."
+    });
+
+    createMappedInputField({
+        cssClasses: "hide AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+        header: "Context",
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        keyField: "registeredServiceAccessStrategyAvpContextName",
+        keyLabel: "Name",
+        valueField: "registeredServiceAccessStrategyAvpContextValue",
+        valueLabel: "Value",
+        containerField: "accessStrategy.context"
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "API Key",
+        name: "registeredServiceAccessStrategyPermitApiKey",
+        paramName: "accessStrategy.apiKey",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permit.io API key. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "PDP Address",
+        name: "registeredServiceAccessStrategyPermitPdpAddress",
+        paramName: "accessStrategy.pdpAddress",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permit.io policy decision point. Defaults to the Permit.io cloud PDP. Supports expression language."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "Action",
+        name: "registeredServiceAccessStrategyPermitAction",
+        paramName: "accessStrategy.action",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the action Permit.io checks."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "Resource",
+        name: "registeredServiceAccessStrategyPermitResource",
+        paramName: "accessStrategy.resource",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the resource Permit.io checks."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "Tenant",
+        name: "registeredServiceAccessStrategyPermitTenant",
+        paramName: "accessStrategy.tenant",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the Permit.io tenant."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "Email Attribute",
+        name: "registeredServiceAccessStrategyPermitEmailAttribute",
+        paramName: "accessStrategy.emailAttributeName",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the attribute that holds the user's email. Defaults to <code>email</code>."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "First Name Attribute",
+        name: "registeredServiceAccessStrategyPermitFirstNameAttribute",
+        paramName: "accessStrategy.firstNameAttributeName",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the attribute that holds the user's first name. Defaults to <code>firstname</code>."
+    });
+
+    createInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        labelTitle: "Last Name Attribute",
+        name: "registeredServiceAccessStrategyPermitLastNameAttribute",
+        paramName: "accessStrategy.lastNameAttributeName",
+        required: false,
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        title: "Specifies the attribute that holds the user's last name. Defaults to <code>lastname</code>."
+    });
+
+    createMappedInputField({
+        cssClasses: "hide PermitRegisteredServiceAccessStrategy",
+        header: "Context",
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        keyField: "registeredServiceAccessStrategyPermitContextName",
+        keyLabel: "Name",
+        valueField: "registeredServiceAccessStrategyPermitContextValue",
+        valueLabel: "Value",
+        containerField: "accessStrategy.context"
+    });
+
+    createMappedInputField({
+        cssClasses: "hide SurrogateRegisteredServiceAccessStrategy",
+        header: "Surrogate Required Attributes",
+        containerId: "editServiceWizardMenuItemAccessStrategy",
+        keyField: "registeredServiceAccessStrategySurrogateReqAttrName",
+        keyLabel: "Attribute Name",
+        valueField: "registeredServiceAccessStrategySurrogateReqAttrValue",
+        valueLabel: "Attribute Values",
+        containerField: "accessStrategy.surrogateRequiredAttributes",
+        multipleValues: true,
+        multipleValuesType: "java.util.HashSet"
+    });
 }
 
 function createRegisteredServiceAccessStrategy() {
@@ -1330,6 +1659,40 @@ function createRegisteredServiceAccessStrategy() {
                         value: "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
                         text: "GROOVY"
                     }]
+                    : []
+            ),
+            {
+                value: "org.apereo.cas.services.CerbosRegisteredServiceAccessStrategy",
+                text: "CERBOS"
+            },
+            {
+                value: "org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy",
+                text: "PERMIT.IO"
+            },
+            ...(
+                CAS_FEATURES.some(feature => feature === "Core.aws")
+                    ? [{
+                        value: "org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy",
+                        text: "AMAZON VERIFIED PERMISSIONS"
+                    }]
+                    : []
+            ),
+            ...(
+                CAS_FEATURES.some(feature => feature === "SurrogateAuthentication" || feature.startsWith("SurrogateAuthentication."))
+                    ? [
+                        {
+                            value: "org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy",
+                            text: "SURROGATE"
+                        },
+                        ...(
+                            PalantirDashboardConfiguration.scriptFactoryAvailable()
+                                ? [{
+                                    value: "org.apereo.cas.services.GroovySurrogateRegisteredServiceAccessStrategy",
+                                    text: "GROOVY SURROGATE"
+                                }]
+                                : []
+                        )
+                    ]
                     : []
             ),
             ...(
@@ -1466,7 +1829,23 @@ function createRegisteredServiceAccessStrategy() {
             target: scriptInput,
             title: "Access Strategy Groovy Script"
         });
+
+        const surrogateScriptInput = createInputField({
+            cssClasses: "hide GroovySurrogateRegisteredServiceAccessStrategy",
+            labelTitle: "Groovy Script",
+            name: "registeredServiceAccessStrategyGroovySurrogateScript",
+            paramName: "accessStrategy.groovyScript",
+            required: false,
+            containerId: "editServiceWizardMenuItemAccessStrategy",
+            title: "Specifies the Groovy script location, inline or external, that decides whether a surrogate session may access the application."
+        });
+        attachPalantirGroovyEditorButton({
+            target: surrogateScriptInput,
+            title: "Surrogate Access Strategy Groovy Script"
+        });
     }
+
+    createRegisteredServiceExternalAccessStrategies();
 
     createInputField({
         cssClasses: "DefaultRegisteredServiceAccessStrategy",
@@ -1733,13 +2112,7 @@ function handleAuthenticationPolicyChange(select) {
     if (!isPopulatingWizard) {
         $("#editServiceWizardMenuItemAuthenticationPolicy [id$='FieldContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemAuthenticationPolicy [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemAuthenticationPolicy");
     }
 }
 
@@ -1995,13 +2368,7 @@ function handleSsoParticipationPolicyChange(select) {
             .val("");
         $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='MapContainer'] input")
             .val("");
-        $("#editServiceWizardMenuItemSSOParticipationPolicy [id$='ButtonPanel'] button")
-            .each(function () {
-                const selected = $(this).data("param-selected");
-                if (selected) {
-                    $(this).click();
-                }
-            });
+        resetWizardSwitches("#editServiceWizardMenuItemSSOParticipationPolicy");
     }
 }
 
@@ -2025,6 +2392,13 @@ function createRegisteredServiceSsoParticipationPolicy() {
             {
                 value: "org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy",
                 text: "AUTHENTICATION DATE"
+            },
+            {
+                value: "org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicy",
+                text: "NEVER",
+                data: {
+                    markerClass: true
+                }
             },
             ...(
                 PalantirDashboardConfiguration.scriptFactoryAvailable()
@@ -2119,6 +2493,219 @@ function createRegisteredServiceWebflowInterruptPolicy() {
         ],
         helpText: "Specifies whether to force execution of the webflow interrupt policy."
     });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+        labelTitle: "Only for Users with Attribute (pattern)",
+        name: "registeredServiceWebflowInterruptPolicyAttributeName",
+        paramName: "webflowInterruptPolicy.attributeName",
+        required: false,
+        containerId: "editServiceWizardMenuItemWebflowInterruptPolicy",
+        title: "Interrupt only users with an attribute whose name matches this pattern, and whose value matches the value pattern."
+    });
+
+    createInputField({
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+        labelTitle: "And Attribute Value (pattern)",
+        name: "registeredServiceWebflowInterruptPolicyAttributeValue",
+        paramName: "webflowInterruptPolicy.attributeValue",
+        required: false,
+        containerId: "editServiceWizardMenuItemWebflowInterruptPolicy",
+        title: "Interrupt only users with a value of the attribute that matches this pattern; both the name and the value must be set."
+    });
+
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
+        const scriptInput = createInputField({
+            paramType: "org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy",
+            labelTitle: "Groovy Script",
+            name: "registeredServiceWebflowInterruptPolicyGroovyScript",
+            paramName: "webflowInterruptPolicy.groovyScript",
+            required: false,
+            containerId: "editServiceWizardMenuItemWebflowInterruptPolicy",
+            title: "A Groovy script, inline or external, given the attributes, username, application and service; the user is not interrupted when it returns false."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Webflow Interrupt Policy Groovy Script"
+        });
+    }
+}
+
+/**
+ * Show the fields of the chosen type of a policy and hide those of the other types. When the operator chooses the
+ * type, rather than a definition filling it in, the fields are also emptied and the switches put back, so the
+ * settings of another type are not saved with it.
+ *
+ * @param containerSelector the section that holds the policy's fields
+ * @param select the list that chooses the policy's type
+ */
+function showWizardPolicyType(containerSelector, select) {
+    const container = $(containerSelector);
+    const type = getLastWord($(select).val()) || "UNDEFINED";
+    hideElements(container.find("[id$='FieldContainer'], [id$='SelectContainer'], [id$='SwitchButtonPanel'], [id$='MapContainer']")
+        .not(".always-show")
+        .not(`.${type}`));
+    showElements(container.find(`.${type}`));
+    if (!isPopulatingWizard) {
+        container.find("[id$='FieldContainer'] input, [id$='MapContainer'] input").val("");
+        resetWizardSwitches(container);
+    }
+}
+
+function handleDelegatedAuthenticationPolicyChange(select) {
+    showWizardPolicyType("#editServiceWizardMenuItemDelegatedAuthenticationPolicy", select);
+}
+
+/**
+ * The delegated authentication policy of the access strategy: which external identity providers the application's
+ * users may sign in with, whether any may be used when none is listed, whether the listed provider is used
+ * exclusively, and a Groovy script that picks the provider.
+ */
+function createRegisteredServiceDelegatedAuthenticationPolicy() {
+    const containerId = "editServiceWizardMenuItemDelegatedAuthenticationPolicy";
+    const policy = "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy";
+    createSelectField({
+        cssClasses: "always-show",
+        containerId: containerId,
+        labelTitle: "Policy:",
+        id: "registeredServiceDelegatedAuthenticationPolicyType",
+        paramName: "accessStrategy.delegatedAuthenticationPolicy",
+        options: [
+            {value: "", text: "UNDEFINED", selected: true},
+            {value: policy, text: "DEFAULT"}
+        ],
+        helpText: "Choose DEFAULT to limit the external identity providers this application may use.",
+        changeEventHandlers: "handleDelegatedAuthenticationPolicyChange"
+    }).data("renderer", function (value) {
+        return {"@class": value};
+    });
+
+    createInputField({
+        cssClasses: "hide DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+        paramType: policy,
+        labelTitle: "Allowed Identity Providers (separated by comma)",
+        name: "registeredServiceDelegatedAuthenticationAllowedProviders",
+        paramName: "accessStrategy.delegatedAuthenticationPolicy.allowedProviders",
+        required: false,
+        containerId: containerId,
+        title: "The names of the external identity providers this application's users may sign in with."
+    }).data("renderer", function (value) {
+        return ["java.util.ArrayList", value.split(",").map(entry => entry.trim()).filter(entry => entry.length > 0)];
+    });
+
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
+        const scriptInput = createInputField({
+            cssClasses: "hide DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+            paramType: policy,
+            labelTitle: "Provider Selection Groovy Script",
+            name: "registeredServiceDelegatedAuthenticationSelectionStrategy",
+            paramName: "accessStrategy.delegatedAuthenticationPolicy.selectionStrategy",
+            required: false,
+            containerId: containerId,
+            title: "A Groovy script, inline or external, given the request, service, application and the available providers, that returns the provider to redirect to."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Delegated Authentication Provider Selection Groovy Script"
+        });
+    }
+}
+
+function handleAccessStrategyActivationCriteriaChange(select) {
+    showWizardPolicyType("#editServiceWizardMenuItemAccessStrategyActivation", select);
+}
+
+/**
+ * Whether the access strategy's activation can be chosen: only the default access strategy checks required and
+ * rejected attributes, so only it has activation criteria. Choosing another type of access strategy puts the
+ * activation back to undefined.
+ *
+ * @param type the short name of the chosen access strategy type
+ */
+function toggleAccessStrategyActivation(type) {
+    const header = $("#registeredServiceAccessStrategyActivation");
+    if (type === "DefaultRegisteredServiceAccessStrategy") {
+        showElements(header);
+    } else {
+        hideElements(header);
+        if (!isPopulatingWizard) {
+            const select = $("#editServiceWizardMenuItemAccessStrategyActivation select[data-param-name='accessStrategy.activationCriteria']");
+            select.val("");
+            if (select.selectmenu("instance")) {
+                select.selectmenu("refresh");
+            }
+            handleAccessStrategyActivationCriteriaChange(select);
+        }
+    }
+    RegisteredServiceSections.refresh?.();
+}
+
+/**
+ * The activation criteria of the default access strategy: when it checks its required and rejected attributes, by
+ * the user's attributes or a Groovy script, and whether access is granted when it does not.
+ */
+function createRegisteredServiceAccessStrategyActivationCriteria() {
+    const containerId = "editServiceWizardMenuItemAccessStrategyActivation";
+    const byAttributes = "org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria";
+    const byScript = "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyActivationCriteria";
+    createSelectField({
+        cssClasses: "always-show",
+        containerId: containerId,
+        labelTitle: "Activation:",
+        id: "registeredServiceAccessStrategyActivationCriteria",
+        paramName: "accessStrategy.activationCriteria",
+        options: [
+            {value: "", text: "ALWAYS", selected: true},
+            {value: byAttributes, text: "ATTRIBUTES"},
+            ...(PalantirDashboardConfiguration.scriptFactoryAvailable() ? [{value: byScript, text: "GROOVY"}] : [])
+        ],
+        helpText: "Specifies when the access strategy checks its required and rejected attributes.",
+        changeEventHandlers: "handleAccessStrategyActivationCriteriaChange"
+    }).data("renderer", function (value) {
+        return {"@class": value};
+    });
+
+    createSelectField({
+        cssClasses: "hide AttributeBasedRegisteredServiceAccessStrategyActivationCriteria",
+        containerId: containerId,
+        labelTitle: "Operator:",
+        id: "registeredServiceAccessStrategyActivationOperator",
+        paramName: "accessStrategy.activationCriteria.operator",
+        options: [
+            {value: "AND", text: "AND: every attribute must match", selected: true},
+            {value: "OR", text: "OR: any attribute may match"}
+        ],
+        helpText: "Specifies how the attributes below are combined."
+    });
+
+    createMappedInputField({
+        cssClasses: "hide AttributeBasedRegisteredServiceAccessStrategyActivationCriteria",
+        header: "Activating Attributes",
+        containerId: containerId,
+        keyField: "registeredServiceAccessStrategyActivationAttrName",
+        keyLabel: "Attribute Name",
+        valueField: "registeredServiceAccessStrategyActivationAttrValue",
+        valueLabel: "Attribute Values (separated by comma)",
+        containerField: "accessStrategy.activationCriteria.requiredAttributes",
+        multipleValues: true
+    });
+
+    if (PalantirDashboardConfiguration.scriptFactoryAvailable()) {
+        const scriptInput = createInputField({
+            cssClasses: "hide GroovyRegisteredServiceAccessStrategyActivationCriteria",
+            paramType: byScript,
+            labelTitle: "Groovy Script",
+            name: "registeredServiceAccessStrategyActivationGroovyScript",
+            paramName: "accessStrategy.activationCriteria.groovyScript",
+            required: false,
+            containerId: containerId,
+            title: "A Groovy script, inline or external, that returns true when the access strategy should check its attributes."
+        });
+        attachPalantirGroovyEditorButton({
+            target: scriptInput,
+            title: "Access Strategy Activation Groovy Script"
+        });
+    }
 }
 
 function handleUsernameAttributeProviderChange(select) {
@@ -2136,6 +2723,7 @@ function handleUsernameAttributeProviderChange(select) {
     if (!isPopulatingWizard) {
         $("#editServiceWizardMenuItemUsernameAttribute [id$='FieldContainer'] input")
             .val("");
+        wizardPersistentIdGeneratorType = null;
     }
 
     const hideDefaults = $(select).find(":selected").data("hideDefaults");
@@ -2144,6 +2732,42 @@ function handleUsernameAttributeProviderChange(select) {
     } else {
         showElements($("#editServiceWizardMenuItemUsernameAttribute .DefaultRegisteredServiceUsernameProvider"));
     }
+}
+
+/**
+ * The type of the persistent identifier generator of the application the wizard opened, so that saving keeps it rather
+ * than replacing it with the default type of the username provider. It is forgotten when the operator chooses another
+ * username provider, and when the wizard opens.
+ */
+let wizardPersistentIdGeneratorType = null;
+
+/**
+ * One setting of the username provider's persistent identifier generator, with the generator's type: the type of the
+ * opened application's generator, otherwise the pairwise generator for OpenID Connect pairwise identifiers and the
+ * Shibboleth-compatible generator for anonymous ones.
+ *
+ * @param property the generator's setting
+ * @param value the field's text
+ * @returns {object} the generator, holding that setting
+ */
+function renderWizardPersistentIdGenerator(property, value) {
+    const provider = getLastWord($("#registeredServiceUsernameAttributeProvider").val());
+    const type = wizardPersistentIdGeneratorType ?? (provider === "PairwiseOidcRegisteredServiceUsernameAttributeProvider"
+        ? "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator"
+        : "org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator");
+    return {"@class": type, [property]: value.trim()};
+}
+
+/**
+ * Read one setting of the opened application's persistent identifier generator, noting the generator's type.
+ *
+ * @param property the generator's setting
+ * @param generator the generator, if the application has one
+ * @returns {string|undefined} the setting's value
+ */
+function readWizardPersistentIdGenerator(property, generator) {
+    wizardPersistentIdGeneratorType = generator?.["@class"] ?? null;
+    return generator?.[property];
 }
 
 function createRegisteredServiceUsernameAttributeProvider() {
@@ -2290,22 +2914,28 @@ function createRegisteredServiceUsernameAttributeProvider() {
         helpText: "Specifies the canonicalization mode for the username."
     });
 
+    const generatorProviders = "PairwiseOidcRegisteredServiceUsernameAttributeProvider AnonymousRegisteredServiceUsernameAttributeProvider";
     createInputField({
-        cssClasses: "hide PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+        cssClasses: `hide ${generatorProviders}`,
         labelTitle: "Salt",
-        name: "registeredServiceUsernameAttributePairwiseOidcSalt",
+        name: "registeredServiceUsernameAttributeGeneratorSalt",
         paramName: "usernameAttributeProvider.persistentIdGenerator",
         required: false,
         containerId: "editServiceWizardMenuItemUsernameAttribute",
-        title: "Specifies the salt value used to generate pairwise identifiers."
+        title: "Specifies the salt used to generate persistent or pairwise identifiers. A random salt is used when left blank."
+    }).data("renderer", value => renderWizardPersistentIdGenerator("salt", value))
+        .data("reader", generator => readWizardPersistentIdGenerator("salt", generator));
 
-    }).data("renderer", function (value) {
-        return {
-            "@class": "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
-            "salt": value.trim()
-        };
-    });
-
+    createInputField({
+        cssClasses: `hide ${generatorProviders}`,
+        labelTitle: "Attribute",
+        name: "registeredServiceUsernameAttributeGeneratorAttribute",
+        paramName: "usernameAttributeProvider.persistentIdGenerator",
+        required: false,
+        containerId: "editServiceWizardMenuItemUsernameAttribute",
+        title: "Specifies the attribute whose value, instead of the principal id, the identifier is computed from."
+    }).data("renderer", value => renderWizardPersistentIdGenerator("attribute", value))
+        .data("reader", generator => readWizardPersistentIdGenerator("attribute", generator));
 }
 
 function createRegisteredServiceExpirationPolicy() {
@@ -2320,6 +2950,36 @@ function createRegisteredServiceExpirationPolicy() {
         containerId: "editServiceWizardMenuItemExpirationPolicy",
         title: "Specifies the expiration date for the registered service in the format YYYY-MM-DD."
     });
+}
+
+/**
+ * Put the field that says which requests an application answers, its service id, redirect URI or entity id, at the
+ * top of the protocol section of the application's type, after the client id and secrets for OAuth and OpenID
+ * Connect, since what it holds depends on the protocol. A type without a protocol section keeps it in the general
+ * section.
+ *
+ * @param className the short name of the application's type
+ */
+function placeRegisteredServiceIdField(className) {
+    const field = $("#registeredServiceIdFieldContainer");
+    const containers = {
+        CasRegisteredService: "#editServiceWizardCasContainer",
+        OAuthRegisteredService: "#editServiceWizardOAuthOidcContainer",
+        OidcRegisteredService: "#editServiceWizardOAuthOidcContainer",
+        SamlRegisteredService: "#editServiceWizardSamlContainer",
+        WSFederationRegisteredService: "#editServiceWizardWSFederationContainer"
+    };
+    const container = $(containers[className] ?? "");
+    if (container.length === 0) {
+        $("#registeredServiceIdHome").before(field);
+        return;
+    }
+    const client = container.children("#registeredServiceClientSecretsContainer, #registeredServiceClientIdFieldContainer").last();
+    if (client.length > 0) {
+        client.after(field);
+    } else {
+        container.prepend(field);
+    }
 }
 
 function createRegisteredServiceFields() {
@@ -2339,7 +2999,7 @@ function createRegisteredServiceFields() {
         required: true,
         dataType: "regex",
         containerId: "editServiceWizardGeneralContainer",
-        title: "Define a pattern that determines which requests are mapped to this application. This is typically a URL pattern or a regular regular expression."
+        title: "Define a pattern that determines which requests are mapped to this application. This is typically a URL pattern or a regular expression."
     }).after(`
         <button class="mdc-button mdc-button--unelevated mdc-input-group-append mdc-icon-button mr-2" 
                 type="button"
@@ -2348,6 +3008,8 @@ function createRegisteredServiceFields() {
             <span class="sr-only">Validate</span>
         </button>
     `);
+
+    $("#registeredServiceIdFieldContainer").after($("<span>", {id: "registeredServiceIdHome", hidden: true}));
 
     initializeDescriptionEditor("editServiceWizardGeneralContainer");
 
@@ -2486,6 +3148,9 @@ function hideAdvancedRegisteredServiceOptions() {
     }
     if (!CAS_FEATURES.includes("SurrogateAuthentication")) {
         hideElements($("#registeredServiceSurrogatePolicy"));
+    }
+    if (!CAS_FEATURES.some(feature => feature === "DelegatedAuthentication" || feature.startsWith("DelegatedAuthentication."))) {
+        hideElements($("#registeredServiceDelegatedAuthenticationPolicy"));
     }
     RegisteredServiceSections.refresh();
 }
@@ -2768,15 +3433,6 @@ function wizardSwitchSelected($button) {
 }
 
 /**
- * Put every switch of the wizard, or of one part of it, back the way the page first drew it, before a definition fills the wizard in, so a
- * switch turned on or off for the previous application does not show for the next one, or for the policy chosen
- * after another. Its hidden field stays empty,
- * so a switch nobody touches adds nothing to the definition. The hidden field's value is its default only until the
- * switch is first used, so the default is noted the first time the wizard opens.
- *
- * @param scope the part of the wizard whose switches are put back
- */
-/**
  * Put every dropdown of the wizard back to the option it starts with and empty every multi-select, then let each
  * dropdown's handlers show and hide the fields that depend on it, so a definition opened after another one starts
  * from the same wizard a new one does.
@@ -2801,6 +3457,15 @@ function resetWizardSelects() {
     });
 }
 
+/**
+ * Put every switch of the wizard, or of one part of it, back the way the page first drew it, before a definition fills the wizard in, so a
+ * switch turned on or off for the previous application does not show for the next one, or for the policy chosen
+ * after another. Its hidden field stays empty,
+ * so a switch nobody touches adds nothing to the definition. The hidden field's value is its default only until the
+ * switch is first used, so the default is noted the first time the wizard opens.
+ *
+ * @param scope the part of the wizard whose switches are put back
+ */
 function resetWizardSwitches(scope = "#editServiceWizardForm") {
     $(scope).find("input[type='hidden'][data-switch-btn]").each(function () {
         if (this.dataset.switchDefault === undefined) {
@@ -3866,7 +4531,9 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
             return;
         }
 
-        const value = getNestedValue(serviceDefinition, paramName);
+        const reader = $input.data("reader");
+        const setting = getNestedValue(serviceDefinition, paramName);
+        const value = typeof reader === "function" ? reader(setting) : setting;
 
         if (value !== undefined && value !== null) {
             const stringValue = arrayToString(value);
@@ -3987,10 +4654,10 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
                     const mapData = getNestedValue(serviceDefinition, paramName);
                     if (mapData) {
                         // Pass the attribute release policy class if applicable
-                        let policyClass = null;
-                        if (paramName.startsWith("attributeReleasePolicy.") && serviceDefinition.attributeReleasePolicy) {
-                            policyClass = serviceDefinition.attributeReleasePolicy["@class"];
-                        }
+                        const policy = paramName.includes(".") ? serviceDefinition[paramName.split(".")[0]] : null;
+                        const policyClass = policy !== null && typeof policy === "object" && !Array.isArray(policy)
+                            ? policy["@class"] ?? null
+                            : null;
                         populateMappedField(paramName, mapData, policyClass);
                     }
                 }
@@ -4212,6 +4879,7 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
 
         showElements($("#editServiceWizardForm").find(`.class-${className}`));
         hideElements($("#editServiceWizardForm [class*='class-']").not(`.class-${className}`).not(".always-show"));
+        placeRegisteredServiceIdField(className);
 
         RegisteredServiceSections.refresh();
 
@@ -4440,4 +5108,482 @@ async function chooseRegisteredServiceType(serviceTypes) {
         }
     });
     return result.isConfirmed ? result.value : null;
+}
+
+/**
+ * Suggestions for the wizard's text fields whose values usually come from a standard or from what CAS knows, such as
+ * SAML2 NameID formats, JOSE algorithms, OAuth token types or the attributes CAS can resolve. A suggestion only helps:
+ * the field still takes any value. Fields that hold a comma-separated list are completed one entry at a time.
+ */
+class PalantirWizardSuggestions {
+    static choices(...entries) {
+        return entries.map(([value, description = ""]) => ({value, description}));
+    }
+
+    static DURATIONS = PalantirWizardSuggestions.choices(
+        ["PT30S", "30 seconds"], ["PT1M", "1 minute"], ["PT5M", "5 minutes"], ["PT15M", "15 minutes"],
+        ["PT30M", "30 minutes"], ["PT1H", "1 hour"], ["PT8H", "8 hours"], ["P1D", "1 day"], ["P7D", "7 days"],
+        ["P30D", "30 days"]);
+
+    static TIME_UNITS = PalantirWizardSuggestions.choices(
+        ["SECONDS"], ["MINUTES"], ["HOURS"], ["DAYS"], ["MILLISECONDS"]);
+
+    static HTTP_METHODS = PalantirWizardSuggestions.choices(
+        ["GET"], ["POST"], ["PUT"], ["PATCH"], ["DELETE"]);
+
+    static JWS_ALGORITHMS = PalantirWizardSuggestions.choices(
+        ["RS256", "RSASSA-PKCS1-v1_5 using SHA-256, the OpenID Connect default"],
+        ["RS384", "RSASSA-PKCS1-v1_5 using SHA-384"], ["RS512", "RSASSA-PKCS1-v1_5 using SHA-512"],
+        ["PS256", "RSASSA-PSS using SHA-256"], ["PS384", "RSASSA-PSS using SHA-384"], ["PS512", "RSASSA-PSS using SHA-512"],
+        ["ES256", "ECDSA using P-256 and SHA-256"], ["ES384", "ECDSA using P-384 and SHA-384"],
+        ["ES512", "ECDSA using P-521 and SHA-512"], ["EdDSA", "Edwards-curve signatures, such as Ed25519"],
+        ["HS256", "HMAC using SHA-256, keyed with the client secret"], ["HS384", "HMAC using SHA-384"],
+        ["HS512", "HMAC using SHA-512"]);
+
+    static JWE_ALGORITHMS = PalantirWizardSuggestions.choices(
+        ["RSA-OAEP-256", "RSAES OAEP using SHA-256"], ["RSA-OAEP", "RSAES OAEP using SHA-1"],
+        ["ECDH-ES", "Elliptic curve Diffie-Hellman, direct key agreement"],
+        ["ECDH-ES+A128KW", "ECDH-ES with AES key wrap, 128 bits"], ["ECDH-ES+A192KW", "ECDH-ES with AES key wrap, 192 bits"],
+        ["ECDH-ES+A256KW", "ECDH-ES with AES key wrap, 256 bits"], ["A128KW", "AES key wrap, 128 bits"],
+        ["A192KW", "AES key wrap, 192 bits"], ["A256KW", "AES key wrap, 256 bits"],
+        ["A128GCMKW", "AES GCM key wrap, 128 bits"], ["A256GCMKW", "AES GCM key wrap, 256 bits"],
+        ["dir", "A shared symmetric key used directly"]);
+
+    static JWE_ENCODINGS = PalantirWizardSuggestions.choices(
+        ["A128CBC-HS256", "AES-128-CBC with HMAC SHA-256"], ["A192CBC-HS384", "AES-192-CBC with HMAC SHA-384"],
+        ["A256CBC-HS512", "AES-256-CBC with HMAC SHA-512"], ["A128GCM", "AES GCM, 128 bits"],
+        ["A192GCM", "AES GCM, 192 bits"], ["A256GCM", "AES GCM, 256 bits"]);
+
+    static TOKEN_TYPES = PalantirWizardSuggestions.choices(
+        ["urn:ietf:params:oauth:token-type:access_token", "OAuth access token"],
+        ["urn:ietf:params:oauth:token-type:refresh_token", "OAuth refresh token"],
+        ["urn:ietf:params:oauth:token-type:id_token", "OpenID Connect ID token"],
+        ["urn:ietf:params:oauth:token-type:jwt", "A JWT"],
+        ["urn:ietf:params:oauth:token-type:saml2", "A SAML 2.0 assertion"],
+        ["urn:ietf:params:oauth:token-type:saml1", "A SAML 1.1 assertion"]);
+
+    static XML_SIGNATURE_ALGORITHMS = PalantirWizardSuggestions.choices(
+        ["http://www.w3.org/2001/04/xmldsig-more#rsa-sha256", "RSA with SHA-256"],
+        ["http://www.w3.org/2001/04/xmldsig-more#rsa-sha384", "RSA with SHA-384"],
+        ["http://www.w3.org/2001/04/xmldsig-more#rsa-sha512", "RSA with SHA-512"],
+        ["http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-MGF1", "RSA-PSS with SHA-256"],
+        ["http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256", "ECDSA with SHA-256"],
+        ["http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384", "ECDSA with SHA-384"],
+        ["http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512", "ECDSA with SHA-512"],
+        ["http://www.w3.org/2000/09/xmldsig#rsa-sha1", "RSA with SHA-1, for older service providers"]);
+
+    static XML_DIGEST_METHODS = PalantirWizardSuggestions.choices(
+        ["http://www.w3.org/2001/04/xmlenc#sha256", "SHA-256"],
+        ["http://www.w3.org/2001/04/xmldsig-more#sha384", "SHA-384"],
+        ["http://www.w3.org/2001/04/xmlenc#sha512", "SHA-512"],
+        ["http://www.w3.org/2000/09/xmldsig#sha1", "SHA-1, for older service providers"]);
+
+    static XML_CANONICALIZATIONS = PalantirWizardSuggestions.choices(
+        ["http://www.w3.org/2001/10/xml-exc-c14n#", "Exclusive canonicalization"],
+        ["http://www.w3.org/2001/10/xml-exc-c14n#WithComments", "Exclusive canonicalization, keeping comments"],
+        ["http://www.w3.org/TR/2001/REC-xml-c14n-20010315", "Canonical XML 1.0"],
+        ["http://www.w3.org/2006/12/xml-c14n11", "Canonical XML 1.1"]);
+
+    static XML_DATA_ENCRYPTIONS = PalantirWizardSuggestions.choices(
+        ["http://www.w3.org/2009/xmlenc11#aes128-gcm", "AES-128 GCM"],
+        ["http://www.w3.org/2009/xmlenc11#aes192-gcm", "AES-192 GCM"],
+        ["http://www.w3.org/2009/xmlenc11#aes256-gcm", "AES-256 GCM"],
+        ["http://www.w3.org/2001/04/xmlenc#aes128-cbc", "AES-128 CBC, for older service providers"],
+        ["http://www.w3.org/2001/04/xmlenc#aes256-cbc", "AES-256 CBC, for older service providers"]);
+
+    static XML_KEY_ENCRYPTIONS = PalantirWizardSuggestions.choices(
+        ["http://www.w3.org/2009/xmlenc11#rsa-oaep", "RSA-OAEP"],
+        ["http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p", "RSA-OAEP with MGF1 and SHA-1"],
+        ["http://www.w3.org/2001/04/xmlenc#kw-aes128", "AES-128 key wrap"],
+        ["http://www.w3.org/2001/04/xmlenc#kw-aes256", "AES-256 key wrap"],
+        ["http://www.w3.org/2001/04/xmlenc#rsa-1_5", "RSA PKCS#1 v1.5, for older service providers"]);
+
+    static NAME_ID_FORMATS = PalantirWizardSuggestions.choices(
+        ["urn:oasis:names:tc:SAML:2.0:nameid-format:persistent", "A stable, opaque identifier per service provider"],
+        ["urn:oasis:names:tc:SAML:2.0:nameid-format:transient", "A one-time identifier"],
+        ["urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress", "An email address"],
+        ["urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified", "Any identifier the IdP chooses"],
+        ["urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName", "An X.509 subject name"],
+        ["urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName", "A Windows domain qualified name"],
+        ["urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos", "A Kerberos principal name"],
+        ["urn:oasis:names:tc:SAML:2.0:nameid-format:entity", "An entity id"],
+        ["urn:oasis:names:tc:SAML:2.0:nameid-format:encrypted", "An encrypted identifier"]);
+
+    static AUTHENTICATION_CONTEXTS = PalantirWizardSuggestions.choices(
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport", "A password over a protected session"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:Password", "A password"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:X509", "An X.509 certificate"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:TLSClient", "A TLS client certificate"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:Kerberos", "Kerberos"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard", "A smart card"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:MobileTwoFactorContract", "A mobile second factor"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:TimeSyncToken", "A time-based one-time password"],
+        ["urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified", "Any authentication"],
+        ["https://refeds.org/profile/mfa", "REFEDS multifactor authentication profile"],
+        ["https://refeds.org/profile/sfa", "REFEDS single-factor authentication profile"]);
+
+    static SAML_BINDINGS = PalantirWizardSuggestions.choices(
+        ["urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "HTTP POST"],
+        ["urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect", "HTTP Redirect"],
+        ["urn:oasis:names:tc:SAML:2.0:bindings:SOAP", "SOAP back channel"]);
+
+    static ATTRIBUTE_NAME_FORMATS = PalantirWizardSuggestions.choices(
+        ["uri", "urn:oasis:names:tc:SAML:2.0:attrname-format:uri"],
+        ["basic", "urn:oasis:names:tc:SAML:2.0:attrname-format:basic"],
+        ["unspecified", "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"]);
+
+    static ENTITY_CATEGORIES = PalantirWizardSuggestions.choices(
+        ["http://refeds.org/category/research-and-scholarship", "REFEDS Research and Scholarship"],
+        ["https://refeds.org/category/code-of-conduct/v2", "REFEDS Data Protection Code of Conduct"],
+        ["http://www.geant.net/uri/dataprotection-code-of-conduct/v1", "GÉANT Data Protection Code of Conduct"],
+        ["https://refeds.org/category/personalized", "REFEDS Personalized Access"],
+        ["https://refeds.org/category/pseudonymous", "REFEDS Pseudonymous Access"],
+        ["https://refeds.org/category/anonymous", "REFEDS Anonymous Access"],
+        ["https://refeds.org/sirtfi", "Sirtfi security incident response"]);
+
+    static ENTITY_ATTRIBUTE_NAMES = PalantirWizardSuggestions.choices(
+        ["http://macedir.org/entity-category", "Entity categories the service provider belongs to"],
+        ["http://macedir.org/entity-category-support", "Entity categories the service provider supports"],
+        ["urn:oasis:names:tc:SAML:attribute:assurance-certification", "Assurance certifications, such as Sirtfi"],
+        ["urn:oasis:names:tc:SAML:profiles:subject-id:req", "The subject identifier the service provider requires"]);
+
+    static ENTITY_ATTRIBUTE_VALUES = [
+        ...PalantirWizardSuggestions.ENTITY_CATEGORIES,
+        ...PalantirWizardSuggestions.choices(
+            ["http://id.incommon.org/category/research-and-scholarship", "InCommon Research and Scholarship"],
+            ["http://refeds.org/category/hide-from-discovery", "Hidden from discovery services"],
+            ["https://refeds.org/sirtfi2", "Sirtfi version 2"],
+            ["subject-id", "Requires a subject identifier"],
+            ["pairwise-id", "Requires a pairwise identifier"],
+            ["any", "Accepts a subject or pairwise identifier"],
+            ["none", "Requires no subject identifier"])
+    ];
+
+    static LOCALES = PalantirWizardSuggestions.choices(
+        ["en", "English"], ["ar", "Arabic"], ["ca", "Catalan"], ["cs", "Czech"], ["de", "German"], ["es", "Spanish"],
+        ["fa", "Persian"], ["fr", "French"], ["hr", "Croatian"], ["it", "Italian"], ["ja", "Japanese"],
+        ["mk", "Macedonian"], ["nl", "Dutch"], ["pl", "Polish"], ["pt_BR", "Portuguese (Brazil)"],
+        ["pt_PT", "Portuguese (Portugal)"], ["ru", "Russian"], ["sk", "Slovak"], ["sl", "Slovenian"],
+        ["sv", "Swedish"], ["tr", "Turkish"], ["uk", "Ukrainian"], ["ur", "Urdu"], ["vi", "Vietnamese"],
+        ["zh_CN", "Chinese (Simplified)"], ["zh_TW", "Chinese (Traditional)"]);
+
+    static SECONDS = PalantirWizardSuggestions.choices(
+        ["300", "5 minutes"], ["1800", "30 minutes"], ["3600", "1 hour"], ["28800", "8 hours"], ["86400", "1 day"],
+        ["604800", "7 days"]);
+
+    static HEADERS = PalantirWizardSuggestions.choices(
+        ["Authorization", "Credentials, such as a bearer token or basic authentication"], ["Accept", "The media types accepted"],
+        ["Accept-Language", "The languages accepted"], ["Content-Type", "The media type of the body"],
+        ["Cache-Control", "Caching directives"], ["User-Agent", "The client software"],
+        ["X-Request-ID", "An identifier to trace the request"], ["X-Forwarded-For", "The client address behind a proxy"]);
+
+    static ONE_USE = PalantirWizardSuggestions.choices(["1", "Used once, as the protocol expects"]);
+
+    static OIDC_CLAIMS = PalantirWizardSuggestions.choices(
+        ["sub", "Subject"], ["name", "Full name"], ["given_name", "Given name"], ["family_name", "Family name"],
+        ["middle_name", "Middle name"], ["nickname", "Casual name"], ["preferred_username", "Preferred username"],
+        ["profile", "Profile page"], ["picture", "Profile picture"], ["website", "Web page or blog"],
+        ["gender", "Gender"], ["birthdate", "Birthday"], ["zoneinfo", "Time zone"], ["locale", "Locale"],
+        ["updated_at", "Last profile update"], ["email", "Email address"], ["email_verified", "Whether the email is verified"],
+        ["address", "Postal address"], ["phone_number", "Phone number"],
+        ["phone_number_verified", "Whether the phone number is verified"]);
+
+    /**
+     * The client ids of the OAuth and OpenID Connect applications CAS has, as audiences a token may be exchanged for.
+     *
+     * @returns {object[]} the client ids, described by the application's name
+     */
+    static clientIds() {
+        return [...registeredServicesById.values()]
+            .filter(service => service?.clientId)
+            .map(service => ({value: String(service.clientId), description: String(service.name ?? "")}));
+    }
+
+    static attributes() {
+        return CasDiscoveryProfile.availableAttributes().map(name => ({value: name, description: "An attribute CAS can resolve"}));
+    }
+
+    static timeZones() {
+        const zones = typeof Intl.supportedValuesOf === "function" ? Intl.supportedValuesOf("timeZone") : [];
+        return [{value: "UTC", description: "Coordinated Universal Time"}, ...zones.map(zone => ({value: zone, description: ""}))];
+    }
+
+    static authenticationHandlers() {
+        return CasDiscoveryProfile.availableAuthenticationHandlers().map(name => ({value: name, description: "An authentication handler of this server"}));
+    }
+
+    static identityProviderNames = null;
+
+    /**
+     * The external identity providers CAS delegates to, read once from the delegated clients endpoint.
+     *
+     * @returns {object[]|Promise<object[]>} the providers, or a promise of them while they are read
+     */
+    static identityProviders() {
+        if (Array.isArray(PalantirWizardSuggestions.identityProviderNames)) {
+            return PalantirWizardSuggestions.identityProviderNames;
+        }
+        if (!CasActuatorEndpoints.delegatedClients()) {
+            return [];
+        }
+        return Promise.resolve($.get(CasActuatorEndpoints.delegatedClients()))
+            .then(response => {
+                const names = response && typeof response === "object" && !Array.isArray(response) ? Object.keys(response).sort() : [];
+                PalantirWizardSuggestions.identityProviderNames = names.map(name => ({value: name, description: "An external identity provider of this server"}));
+                return PalantirWizardSuggestions.identityProviderNames;
+            });
+    }
+
+    static multifactorProviders() {
+        const providers = Object.entries(CasDiscoveryProfile.multifactorAuthenticationProviders())
+            .map(([id, name]) => ({value: id, description: String(name)}));
+        return providers.length > 0 ? providers : PalantirWizardSuggestions.choices(
+            ["mfa-duo", "Duo Security"], ["mfa-gauth", "Google Authenticator"], ["mfa-webauthn", "WebAuthn"],
+            ["mfa-yubikey", "YubiKey"], ["mfa-simple", "One-time codes by email or text message"],
+            ["mfa-radius", "RADIUS"], ["mfa-inwebo", "inWebo"], ["mfa-twilio", "Twilio"]);
+    }
+
+    /**
+     * The suggestions of each field, by the dotted path it writes to, with <code>:key</code> or <code>:value</code>
+     * for the two sides of a field that edits a map. A list field is completed one comma-separated entry at a time.
+     */
+    static FIELDS = {
+        "idTokenSigningAlg": {source: () => PalantirWizardSuggestions.JWS_ALGORITHMS},
+        "userInfoSigningAlg": {source: () => PalantirWizardSuggestions.JWS_ALGORITHMS},
+        "jwtAccessTokenSigningAlg": {source: () => PalantirWizardSuggestions.JWS_ALGORITHMS},
+        "introspectionSignedResponseAlg": {source: () => PalantirWizardSuggestions.JWS_ALGORITHMS},
+        "backchannelAuthenticationRequestSigningAlg": {
+            source: () => PalantirWizardSuggestions.JWS_ALGORITHMS.filter(choice => !choice.value.startsWith("HS"))
+        },
+        "idTokenEncryptionAlg": {source: () => PalantirWizardSuggestions.JWE_ALGORITHMS},
+        "userInfoEncryptedResponseAlg": {source: () => PalantirWizardSuggestions.JWE_ALGORITHMS},
+        "introspectionEncryptedResponseAlg": {source: () => PalantirWizardSuggestions.JWE_ALGORITHMS},
+        "idTokenEncryptionEncoding": {source: () => PalantirWizardSuggestions.JWE_ENCODINGS},
+        "userInfoEncryptedResponseEncoding": {source: () => PalantirWizardSuggestions.JWE_ENCODINGS},
+        "introspectionEncryptedResponseEncoding": {source: () => PalantirWizardSuggestions.JWE_ENCODINGS},
+        "tokenEndpointAuthenticationMethod": {source: () => PalantirWizardSuggestions.choices(
+            ["client_secret_basic", "Client secret in the HTTP Basic header"],
+            ["client_secret_post", "Client secret in the request body"],
+            ["client_secret_jwt", "A JWT signed with the client secret"],
+            ["private_key_jwt", "A JWT signed with the client's private key"],
+            ["tls_client_auth", "A TLS client certificate issued by a trusted authority"],
+            ["self_signed_tls_client_auth", "A self-signed TLS client certificate"],
+            ["none", "A public client that does not authenticate"])},
+        "applicationType": {source: () => PalantirWizardSuggestions.choices(["web", "A web application"], ["native", "A native or mobile application"])},
+        "subjectType": {source: () => PalantirWizardSuggestions.choices(
+            ["public", "The same subject for every client"], ["pairwise", "A different subject for each sector"])},
+        "jwksCacheDuration": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "idTokenExpirationPolicy.timeToKill": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "verifiableCredentialsPolicy.credentialSigningAlgValuesSupported": {
+            list: true,
+            source: () => PalantirWizardSuggestions.JWS_ALGORITHMS.filter(choice => !choice.value.startsWith("HS"))
+        },
+        "tokenExchangePolicy.allowedTokenTypes": {list: true, source: () => PalantirWizardSuggestions.TOKEN_TYPES},
+        "tokenExchangePolicy.allowedActorTokenTypes": {list: true, source: () => PalantirWizardSuggestions.TOKEN_TYPES},
+        "accessTokenExpirationPolicy.timeToKill": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "accessTokenExpirationPolicy.maxTimeToLive": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "refreshTokenExpirationPolicy.timeToKill": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "deviceTokenExpirationPolicy.timeToKill": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "codeExpirationPolicy.timeToLive": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "serviceTicketExpirationPolicy.timeToLive": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "serviceTicketExpirationPolicy.numberOfUses": {source: () => PalantirWizardSuggestions.ONE_USE},
+        "proxyTicketExpirationPolicy.timeToLive": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "proxyTicketExpirationPolicy.numberOfUses": {source: () => PalantirWizardSuggestions.ONE_USE},
+        "proxyGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds": {source: () => PalantirWizardSuggestions.SECONDS},
+        "ticketGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds": {source: () => PalantirWizardSuggestions.SECONDS},
+        "proxyPolicy.pattern": {source: () => PalantirWizardSuggestions.choices(
+            ["^https://.+", "Any HTTPS proxy callback"], ["^https://([a-z0-9-]+\\.)*example\\.org/.*", "HTTPS callbacks on one domain"])},
+        "proxyPolicy.headers:key": {source: () => PalantirWizardSuggestions.HEADERS},
+        "codeExpirationPolicy.numberOfUses": {source: () => PalantirWizardSuggestions.ONE_USE},
+        "tokenExchangePolicy.allowedAudience": {list: true, source: () => PalantirWizardSuggestions.clientIds()},
+        "tokenExchangePolicy.requiredActorTokenAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "audience": {list: true, source: () => PalantirWizardSuggestions.clientIds()},
+        "idTokenIssuer": {source: () => PalantirWizardSuggestions.choices(
+            [`${PalantirDashboardConfiguration.casServerPrefix() ?? ""}/oidc`, "The issuer CAS uses by default"])},
+        "realm": {source: () => PalantirWizardSuggestions.choices(["urn:org:apereo:cas:ws:idp:realm-CAS", "The realm CAS uses by default"])},
+        "accessStrategy.headers:key": {source: () => PalantirWizardSuggestions.HEADERS},
+        "attributeReleasePolicy.headers:key": {source: () => PalantirWizardSuggestions.HEADERS},
+        "accessStrategy.rolesAttribute": {source: () => PalantirWizardSuggestions.attributes()},
+        "accessStrategy.emailAttributeName": {source: () => PalantirWizardSuggestions.attributes()},
+        "accessStrategy.firstNameAttributeName": {source: () => PalantirWizardSuggestions.attributes()},
+        "accessStrategy.lastNameAttributeName": {source: () => PalantirWizardSuggestions.attributes()},
+        "accessStrategy.surrogateRequiredAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.claimMappings:key": {source: () => PalantirWizardSuggestions.OIDC_CLAIMS},
+        "attributeReleasePolicy.claimMappings:value": {source: () => PalantirWizardSuggestions.attributes()},
+
+        "requiredNameIdFormat": {source: () => PalantirWizardSuggestions.NAME_ID_FORMATS},
+        "requiredAuthenticationContextClass": {source: () => PalantirWizardSuggestions.AUTHENTICATION_CONTEXTS},
+        "logoutResponseBinding": {source: () => PalantirWizardSuggestions.SAML_BINDINGS},
+        "signingSignatureAlgorithms": {list: true, source: () => PalantirWizardSuggestions.XML_SIGNATURE_ALGORITHMS},
+        "signingSignatureBlackListedAlgorithms": {list: true, source: () => PalantirWizardSuggestions.XML_SIGNATURE_ALGORITHMS},
+        "signingSignatureWhiteListedAlgorithms": {list: true, source: () => PalantirWizardSuggestions.XML_SIGNATURE_ALGORITHMS},
+        "signingSignatureReferenceDigestMethods": {list: true, source: () => PalantirWizardSuggestions.XML_DIGEST_METHODS},
+        "signingSignatureCanonicalizationAlgorithm": {source: () => PalantirWizardSuggestions.XML_CANONICALIZATIONS},
+        "encryptionDataAlgorithms": {list: true, source: () => PalantirWizardSuggestions.XML_DATA_ENCRYPTIONS},
+        "encryptionKeyAlgorithms": {list: true, source: () => PalantirWizardSuggestions.XML_KEY_ENCRYPTIONS},
+        "encryptionBlackListedAlgorithms": {list: true, source: () => [...PalantirWizardSuggestions.XML_DATA_ENCRYPTIONS, ...PalantirWizardSuggestions.XML_KEY_ENCRYPTIONS]},
+        "encryptionWhiteListedAlgorithms": {list: true, source: () => [...PalantirWizardSuggestions.XML_DATA_ENCRYPTIONS, ...PalantirWizardSuggestions.XML_KEY_ENCRYPTIONS]},
+        "whiteListBlackListPrecedence": {source: () => PalantirWizardSuggestions.choices(
+            ["INCLUDE", "The allowed algorithms win over the blocked ones"], ["EXCLUDE", "The blocked algorithms win over the allowed ones"])},
+        "signingCredentialType": {source: () => PalantirWizardSuggestions.choices(
+            ["X509", "Sign with an X.509 certificate"], ["BASIC", "Sign with a bare key pair"])},
+        "signingKeyAlgorithm": {source: () => PalantirWizardSuggestions.choices(["RSA"], ["EC", "Elliptic curve"])},
+        "metadataCriteriaDirection": {source: () => PalantirWizardSuggestions.choices(
+            ["INCLUDE", "Keep the entities that match"], ["EXCLUDE", "Remove the entities that match"])},
+        "metadataCriteriaRoles": {list: true, source: () => PalantirWizardSuggestions.choices(
+            ["SPSSODescriptor", "Service provider role"], ["IDPSSODescriptor", "Identity provider role"])},
+        "metadataExpirationDuration": {source: () => PalantirWizardSuggestions.DURATIONS},
+        "skewAllowance": {source: () => PalantirWizardSuggestions.DURATIONS.slice(0, 5)},
+        "encryptableAttributes": {list: true, source: () => PalantirWizardSuggestions.attributes()},
+        "attributeNameFormats:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeNameFormats:value": {source: () => PalantirWizardSuggestions.ATTRIBUTE_NAME_FORMATS},
+        "attributeValueTypes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeValueTypes:value": {source: () => PalantirWizardSuggestions.choices(
+            ["XSString", "Text"], ["XSURI", "A URI"], ["XSBoolean", "true or false"], ["XSInteger", "A whole number"],
+            ["XSDateTime", "A date and time"], ["XSBase64Binary", "Base64 binary data"],
+            ["XSObject", "Values released as they are"], ["NameIDType", "A NameID"])},
+        "attributeFriendlyNames:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.entityAttribute": {source: () => PalantirWizardSuggestions.ENTITY_ATTRIBUTE_NAMES},
+        "attributeReleasePolicy.entityAttributeValues": {list: true, source: () => PalantirWizardSuggestions.ENTITY_ATTRIBUTE_VALUES},
+        "metadataCriteriaEntityAttributes:key": {source: () => PalantirWizardSuggestions.ENTITY_ATTRIBUTE_NAMES},
+        "metadataCriteriaEntityAttributes:value": {list: true, source: () => PalantirWizardSuggestions.ENTITY_ATTRIBUTE_VALUES},
+        "attributeReleasePolicy.entityAttributeFormat": {source: () => PalantirWizardSuggestions.choices(
+            ["urn:oasis:names:tc:SAML:2.0:attrname-format:uri", "URI"],
+            ["urn:oasis:names:tc:SAML:2.0:attrname-format:basic", "Basic"],
+            ["urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified", "Unspecified"])},
+
+        "protocol": {source: () => PalantirWizardSuggestions.choices(
+            ["http://docs.oasis-open.org/ws-sx/ws-trust/200512", "WS-Trust 1.3"],
+            ["http://schemas.xmlsoap.org/ws/2005/02/trust", "WS-Trust, February 2005"])},
+        "tokenType": {source: () => PalantirWizardSuggestions.choices(
+            ["http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV2.0", "SAML 2.0 token"],
+            ["http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1", "SAML 1.1 token"])},
+        "namespace": {source: () => PalantirWizardSuggestions.choices(
+            ["http://docs.oasis-open.org/ws-sx/ws-trust/200512/", "WS-Trust 1.3"])},
+        "addressingNamespace": {source: () => PalantirWizardSuggestions.choices(
+            ["http://www.w3.org/2005/08/addressing", "WS-Addressing 1.0"])},
+        "policyNamespace": {source: () => PalantirWizardSuggestions.choices(
+            ["http://www.w3.org/ns/ws-policy", "WS-Policy 1.5"], ["http://schemas.xmlsoap.org/ws/2004/09/policy", "WS-Policy 1.2"])},
+        "wsdlService": {source: () => PalantirWizardSuggestions.choices(["SecurityTokenService", "The CAS security token service"])},
+        "wsdlEndpoint": {source: () => PalantirWizardSuggestions.choices(["TransportUT_Port", "The CAS security token service endpoint"])},
+
+        "locale": {source: () => PalantirWizardSuggestions.LOCALES},
+        "supportedProtocols": {list: true, source: () => PalantirWizardSuggestions.choices(
+            ["CAS10", "CAS protocol 1.0"], ["CAS20", "CAS protocol 2.0"], ["CAS30", "CAS protocol 3.0"], ["SAML1", "SAML 1.1"])},
+        "accessStrategy.zoneId": {source: () => PalantirWizardSuggestions.timeZones()},
+        "accessStrategy.method": {source: () => PalantirWizardSuggestions.HTTP_METHODS},
+        "accessStrategy.acceptableResponseCodes": {list: true, source: () => PalantirWizardSuggestions.choices(
+            ["200", "OK"], ["201", "Created"], ["202", "Accepted"], ["204", "No content"])},
+        "attributeReleasePolicy.method": {source: () => PalantirWizardSuggestions.HTTP_METHODS},
+        "attributeReleasePolicy.allowedAttributes": {list: true, source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.allowedAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.attribute": {source: () => PalantirWizardSuggestions.choices(
+            ["eduPersonTargetedID", "The attribute name eduPerson defines"],
+            ["urn:oid:1.3.6.1.4.1.5923.1.1.1.10", "The attribute's OID, as SAML2 service providers expect it"])},
+        "attributeReleasePolicy.consentPolicy.includeOnlyAttributes": {list: true, source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.activationCriteria.operator": {source: () => PalantirWizardSuggestions.choices(
+            ["AND", "Every required attribute must match"], ["OR", "Any required attribute may match"])},
+        "attributeReleasePolicy.activationCriteria.requiredAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.principalAttributesRepository.timeUnit": {source: () => PalantirWizardSuggestions.TIME_UNITS},
+        "singleSignOnParticipationPolicy.timeUnit": {source: () => PalantirWizardSuggestions.TIME_UNITS},
+        "singleSignOnParticipationPolicy.attributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "multifactorPolicy.multifactorAuthenticationProviders": {list: true, source: () => PalantirWizardSuggestions.multifactorProviders()},
+        "multifactorPolicy.multifactorProviderSelectionMappings:key": {source: () => PalantirWizardSuggestions.multifactorProviders()},
+        "authenticationPolicy.requiredAuthenticationHandlers": {list: true, source: () => PalantirWizardSuggestions.authenticationHandlers()},
+        "authenticationPolicy.excludedAuthenticationHandlers": {list: true, source: () => PalantirWizardSuggestions.authenticationHandlers()},
+        "accessStrategy.delegatedAuthenticationPolicy.allowedProviders": {list: true, source: () => PalantirWizardSuggestions.identityProviders()},
+        "accessStrategy.activationCriteria.requiredAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "attributeReleasePolicy.consentPolicy.excludedAttributes": {list: true, source: () => PalantirWizardSuggestions.attributes()},
+        "webflowInterruptPolicy.attributeName": {source: () => PalantirWizardSuggestions.attributes()},
+        "publicKey.algorithm": {source: () => PalantirWizardSuggestions.choices(["RSA", "The algorithm CAS encrypts with by default"])}
+    };
+
+    /**
+     * The suggestions of a field, if it has any.
+     *
+     * @param input the field
+     * @returns {object|null} the field's suggestions
+     */
+    static rule(input) {
+        const path = String($(input).data("param-name") ?? "");
+        const role = input.dataset.mappedFieldRole;
+        const key = role === "key" || role === "value" ? `${path}:${role}` : path;
+        return PalantirWizardSuggestions.FIELDS[key] ?? null;
+    }
+
+    static matches(rule, term) {
+        return PalantirWizardSuggestions.filter(rule.source(), term);
+    }
+
+    static filter(choices, term) {
+        const wanted = term.trim().toLowerCase();
+        return (Array.isArray(choices) ? choices : [])
+            .filter(choice => wanted === "" || choice.value.toLowerCase().includes(wanted) || choice.description.toLowerCase().includes(wanted))
+            .slice(0, 50)
+            .map(choice => ({label: choice.value, value: choice.value, description: choice.description}));
+    }
+
+    /**
+     * Offer suggestions on every field of the wizard that has them, including fields added later, such as another row
+     * of a map, as each field gets focus.
+     *
+     * @param form the wizard's form
+     */
+    static attach(form) {
+        if (!form || typeof $.fn.autocomplete !== "function") {
+            return;
+        }
+        $(form).off("focusin.palantirSuggestions").on("focusin.palantirSuggestions", "input[type=text][data-param-name]", event => {
+            const input = event.currentTarget;
+            const rule = PalantirWizardSuggestions.rule(input);
+            if (rule === null) {
+                return;
+            }
+            if (!$(input).autocomplete("instance")) {
+                PalantirWizardSuggestions.enable(input, rule);
+            }
+            $(input).autocomplete("search", PalantirWizardSuggestions.term(input, rule));
+        });
+    }
+
+    static term(input, rule) {
+        const value = String(input.value ?? "");
+        return rule.list ? value.split(",").pop().trimStart() : value;
+    }
+
+    static enable(input, rule) {
+        $(input).attr("autocomplete", "off").autocomplete({
+            delay: 0,
+            minLength: 0,
+            source: (request, respond) => {
+                const choices = rule.source();
+                const term = PalantirWizardSuggestions.term(input, rule);
+                if (typeof choices?.then === "function") {
+                    choices.then(list => respond(PalantirWizardSuggestions.filter(list, term)), () => respond([]));
+                } else {
+                    respond(PalantirWizardSuggestions.filter(choices, term));
+                }
+            },
+            focus: () => false,
+            open: () => attachPalantirTextFields($(input).closest(".mdc-text-field")),
+            select: (event, ui) => {
+                if (rule.list) {
+                    const entries = String(input.value ?? "").split(",").map(entry => entry.trim());
+                    entries[entries.length - 1] = ui.item.value;
+                    input.value = entries.filter(Boolean).join(",");
+                } else {
+                    input.value = ui.item.value;
+                }
+                $(input).trigger("input").trigger("change");
+                attachPalantirTextFields($(input).closest(".mdc-text-field"));
+                return false;
+            }
+        });
+        $(input).autocomplete("instance")._renderItem = (list, item) => $("<li>")
+            .addClass("palantir-suggestion")
+            .append($("<div>")
+                .append($("<code>").text(item.value))
+                .append(item.description ? $("<span>").text(item.description) : ""))
+            .appendTo(list);
+    }
 }

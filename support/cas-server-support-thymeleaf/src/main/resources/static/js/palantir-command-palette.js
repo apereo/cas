@@ -4,7 +4,8 @@
  *
  * It is a jQuery UI dialog holding a jQuery UI autocomplete; the entries are collected when the palette
  * opens, from what the dashboard shows at that moment, so pages and sections hidden because their
- * endpoints are off never show up.
+ * endpoints are off never show up. It opens with the last search, selected so typing replaces it, and with the
+ * entry chosen last marked when it is still among the results.
  */
 class PalantirCommandPalette {
     static MAX_RESULTS = 40;
@@ -16,6 +17,52 @@ class PalantirCommandPalette {
     static applicationsPending = false;
 
     static CATEGORY_ORDER = ["Pages", "Actions"];
+
+    static STORAGE_KEY = "PalantirCommandPalette";
+
+    static restoring = false;
+
+    /**
+     * What the palette held when it last closed, in this browser: the text typed and the label of the entry chosen.
+     *
+     * @returns {{query: string, label: string}} the last search, empty when there is none or storage is unavailable
+     */
+    static remembered() {
+        try {
+            const stored = JSON.parse(localStorage.getItem(PalantirCommandPalette.STORAGE_KEY)) ?? {};
+            return {query: String(stored.query ?? ""), label: String(stored.label ?? "")};
+        } catch (error) {
+            return {query: "", label: ""};
+        }
+    }
+
+    static remember(changes) {
+        try {
+            localStorage.setItem(PalantirCommandPalette.STORAGE_KEY,
+                JSON.stringify({...PalantirCommandPalette.remembered(), ...changes}));
+        } catch (error) {
+            console.debug("Palantir could not remember the last search", error);
+        }
+    }
+
+    /**
+     * Once the results of the remembered search show, mark the entry chosen last time instead of the first one, so
+     * Enter opens it again. Only the search the palette opens with does this; typing ranks the results as usual.
+     *
+     * @param input the search field
+     */
+    static markRemembered(input) {
+        if (!PalantirCommandPalette.restoring) {
+            return;
+        }
+        PalantirCommandPalette.restoring = false;
+        const {label} = PalantirCommandPalette.remembered();
+        const menu = input.paletteautocomplete("widget");
+        const item = menu.children("li").filter((index, element) => $(element).data("ui-autocomplete-item")?.label === label).first();
+        if (label !== "" && item.length > 0) {
+            menu.menu("focus", null, item);
+        }
+    }
 
     /**
      * Whether a sidebar or tab element is hidden by processNavigationTabs or a disabled feature.
@@ -450,10 +497,18 @@ class PalantirCommandPalette {
             position: {my: "center top", at: "center top+80", of: window},
             open: () => {
                 const input = $("#palantirCommandPaletteInput");
-                input.val("").trigger("focus");
-                input.paletteautocomplete("search", "");
+                const {query} = PalantirCommandPalette.remembered();
+                PalantirCommandPalette.restoring = true;
+                input.val(query).trigger("focus");
+                input[0].select();
+                input.paletteautocomplete("search", query);
             },
-            close: () => $("#palantirCommandPaletteInput").paletteautocomplete("close")
+            close: () => {
+                const input = $("#palantirCommandPaletteInput");
+                PalantirCommandPalette.restoring = false;
+                PalantirCommandPalette.remember({query: String(input.val() ?? "")});
+                input.paletteautocomplete("close");
+            }
         });
 
         $("#palantirCommandPaletteInput").paletteautocomplete({
@@ -464,6 +519,7 @@ class PalantirCommandPalette {
             source: (request, response) => response(PalantirCommandPalette.search(request.term)),
             select: (event, ui) => {
                 event.preventDefault();
+                PalantirCommandPalette.remember({label: ui.item.label});
                 dialog.dialog("close");
                 Promise.resolve()
                     .then(() => ui.item.run())
@@ -472,7 +528,11 @@ class PalantirCommandPalette {
             focus: event => event.preventDefault(),
             response: (event, ui) => {
                 $("#palantirCommandPaletteResults").attr("data-empty", String(ui.content.length === 0));
-            }
+                if (ui.content.length === 0) {
+                    PalantirCommandPalette.restoring = false;
+                }
+            },
+            open: () => PalantirCommandPalette.markRemembered($("#palantirCommandPaletteInput"))
         });
         $("#palantirCommandPaletteInput").on("keydown", event => {
             if (event.key === "Escape") {

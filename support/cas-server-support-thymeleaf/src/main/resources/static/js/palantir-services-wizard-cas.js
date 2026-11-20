@@ -10,17 +10,13 @@ function handleRegisteredServiceProxyPolicyChange(select) {
     $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemProxyAuthenticationPolicy [id$='MapContainer'] input")
+            .val("");
+        resetWizardSwitches("#editServiceWizardMenuItemProxyAuthenticationPolicy");
+    }
 }
 
 function createRegisteredServiceProxyPolicy() {
@@ -44,7 +40,7 @@ function createRegisteredServiceProxyPolicy() {
             }
 
         ],
-        helpText: "Specifies the strategy to determine the username attribute.",
+        helpText: "Specifies whether, and to which callback URLs, the application may be issued proxy-granting tickets.",
         changeEventHandlers: "handleRegisteredServiceProxyPolicyChange"
     })
         .data("renderer", function (value) {
@@ -109,7 +105,7 @@ function createRegisteredServiceProxyTicketPolicy() {
 
 function createRegisteredServiceProxyGrantingTicketPolicy() {
     createInputField({
-        paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy",
+        paramType: "org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy",
         labelTitle: "Max Time to Live",
         name: "registeredServiceProxyGrantingTicketExpirationPolicyMaxTimeToLive",
         paramName: "proxyGrantingTicketExpirationPolicy.maxTimeToLiveInSeconds",
