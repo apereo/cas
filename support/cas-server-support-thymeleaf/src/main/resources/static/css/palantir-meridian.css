@@ -8785,6 +8785,20 @@ html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.u
     min-width: 0;
 }
 
+.palantir-access__hint-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.palantir-access__hint-choices .palantir-button {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .palantir-access__hint-text :is(strong, small) {
     overflow: hidden;
     text-overflow: ellipsis;

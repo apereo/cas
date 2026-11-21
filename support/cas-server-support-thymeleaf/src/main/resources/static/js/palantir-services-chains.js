@@ -39,6 +39,7 @@ class PalantirWizardChains {
             chain: "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
             members: "strategies",
             combine: {key: "operator", choices: "allow", initial: "AND"},
+            lift: ["unauthorizedRedirectUrl"],
             one: "strategy",
             many: "strategies",
             initial: "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy"
@@ -279,7 +280,9 @@ class PalantirWizardChains {
                 PalantirWizardChains.state.set(kind.path, {members, base: members.map(member => structuredClone(member)), active, extras,
                     holder: PalantirWizardChains.holder(copy, kind.path)});
                 PalantirWizardChains.preferred.set(kind.path, active);
-                PalantirWizardChains.write(copy, kind.path, active >= 0 ? structuredClone(members[active]) : undefined);
+                const shown = active >= 0 ? structuredClone(members[active]) : undefined;
+                (kind.lift ?? []).filter(key => shown && extras[key] !== undefined).forEach(key => shown[key] = structuredClone(extras[key]));
+                PalantirWizardChains.write(copy, kind.path, shown);
             });
         return copy;
     }
@@ -310,14 +313,53 @@ class PalantirWizardChains {
                     chain.members[chain.active] = node !== null && typeof node === "object" && node["@class"]
                         ? PalantirWizardChains.keep(kind, chain.base[chain.active], structuredClone(node))
                         : null;
+                    if (chain.members[chain.active]) {
+                        PalantirWizardChains.lift(kind, chain, chain.members[chain.active]);
+                    }
                 }
-                const members = chain.members.filter(member => member !== null && member !== undefined);
-                PalantirWizardChains.write(definition, kind.path, {
-                    "@class": kind.chain,
-                    ...structuredClone(chain.extras),
-                    [kind.members]: [PalantirWizardChains.LIST, members]
-                });
+                PalantirWizardChains.write(definition, kind.path, PalantirWizardChains.packed(kind, chain));
             });
+    }
+
+    /**
+     * A chain as the definition holds it.
+     *
+     * @param kind the kind of chain
+     * @param chain the chain
+     * @returns {object} the chain
+     */
+    static packed(kind, chain) {
+        return {
+            "@class": kind.chain,
+            ...structuredClone(chain.extras),
+            [kind.members]: [PalantirWizardChains.LIST, chain.members.filter(member => member !== null && member !== undefined)]
+        };
+    }
+
+    /**
+     * Move the settings CAS reads from the chain itself, such as where to send a refused user, from the member the
+     * fields generated to the chain: the fields show the chain's value while a member is edited. A setting the fields
+     * leave out is removed from the chain only when its field is shown, so changing the member's type keeps it.
+     *
+     * @param kind the kind of chain
+     * @param chain the chain
+     * @param member the member the fields generated
+     */
+    static lift(kind, chain, member) {
+        (kind.lift ?? []).forEach(key => {
+            const value = member[key];
+            delete member[key];
+            if (value !== undefined && value !== null && value !== "") {
+                chain.extras[key] = value;
+            } else if (PalantirWizardChains.shown(kind, key)) {
+                delete chain.extras[key];
+            }
+        });
+    }
+
+    static shown(kind, key) {
+        const field = $(`#editServiceWizardForm [data-param-name="${kind.path}.${key}"]`).first();
+        return field.length > 0 && field.parentsUntil(`#${kind.section}`).addBack().toArray().every(element => !isWizardContainerSwitchedOff(element));
     }
 
     /**
@@ -435,7 +477,7 @@ class PalantirWizardChains {
      */
     static async toggle(path, on) {
         const kind = PalantirWizardChains.kind(path);
-        PalantirWizardChains.sync();
+        const definition = PalantirWizardChains.sync() ?? {"@class": $("#serviceClassType").text().trim()};
         if (on) {
             const current = PalantirWizardChains.captured.get(path);
             const member = current?.["@class"] ? current : {"@class": PalantirWizardChains.initialType(kind)};
@@ -443,7 +485,12 @@ class PalantirWizardChains {
             const holder = PalantirWizardChains.captured.get(`holder:${path}`) ?? "";
             PalantirWizardChains.state.set(path, {members: [member], base: [structuredClone(member)], active: 0, extras, holder});
             PalantirWizardChains.preferred.set(path, 0);
-            PalantirWizardChains.finish(path, !current?.["@class"]);
+            if (current?.["@class"]) {
+                PalantirWizardChains.finish(path, false);
+                return;
+            }
+            PalantirWizardChains.write(definition, path, PalantirWizardChains.packed(kind, PalantirWizardChains.state.get(path)));
+            PalantirWizardChains.refill(definition, path);
             return;
         }
         const chain = PalantirWizardChains.state.get(path);
@@ -463,6 +510,15 @@ class PalantirWizardChains {
         }
         PalantirWizardChains.state.delete(path);
         PalantirWizardChains.preferred.delete(path);
+        const only = chain?.active >= 0 ? chain.members[chain.active] : null;
+        if (only && (kind.lift ?? []).some(key => chain.extras[key] !== undefined && only[key] === undefined)) {
+            const single = structuredClone(only);
+            kind.lift.filter(key => chain.extras[key] !== undefined && single[key] === undefined)
+                .forEach(key => single[key] = structuredClone(chain.extras[key]));
+            PalantirWizardChains.write(definition, path, single);
+            PalantirWizardChains.refill(definition, path);
+            return;
+        }
         PalantirWizardChains.finish(path, false);
     }
 

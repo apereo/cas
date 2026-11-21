@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -20,7 +21,10 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.HttpRequestRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.LogicalOperatorTypes;
+import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria;
@@ -29,6 +33,8 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
@@ -145,7 +151,8 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             }
             steps.add(AccessStep.of("application", "Application Found", true,
                 "%s (#%s) matches %s".formatted(registeredService.getName(), registeredService.getId(), service.getId())));
-            steps.addAll(AccessExplainer.explainApplication(registeredService, service));
+            val ownAvailability = AccessExplainer.decidesAvailabilityItself(registeredService.getAccessStrategy());
+            steps.addAll(AccessExplainer.explainApplication(registeredService, service, !ownAvailability));
             if (steps.stream().anyMatch(AccessStep::failed)) {
                 return explanation(HttpStatus.FORBIDDEN, firstFailure(steps), steps, service, registeredService, null);
             }
@@ -175,6 +182,18 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 .authentication(authentication)
                 .registeredService(registeredService)
                 .build());
+            if (ownAvailability) {
+                val failure = accessResult.getException().orElse(null);
+                if (failure != null && !(failure instanceof UnauthorizedServiceException) && !(failure instanceof PrincipalException)) {
+                    throw failure;
+                }
+                val unavailable = failure instanceof UnauthorizedServiceException && Strings.CS.contains(failure.getMessage(), "is not enabled");
+                steps.add(1, AccessStep.of("enabled", "Enabled", !unavailable,
+                    unavailable ? "The access strategy does not accept sign-ins for the application" : "The access strategy accepts sign-ins for the application"));
+                if (unavailable) {
+                    return explanation(HttpStatus.FORBIDDEN, firstFailure(steps), steps, service, registeredService, authentication);
+                }
+            }
             steps.addAll(explainAuthorization(registeredService, accessRequest, !accessResult.isExecutionFailure()));
             if (accessResult.isExecutionFailure() && steps.stream().noneMatch(AccessStep::failed)) {
                 steps.add(AccessStep.of("enforcement", "Other Access Rules", false,
@@ -474,12 +493,67 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
          *
          * @param registeredService the application
          * @param service           the service requested
+         * @param checkAvailability whether to ask the access strategy if the application takes sign-ins
          * @return the steps
          */
-        static List<AccessStep> explainApplication(final RegisteredService registeredService, final Service service) {
+        static List<AccessStep> explainApplication(final RegisteredService registeredService, final Service service,
+                                                   final boolean checkAvailability) {
+            val strategy = registeredService.getAccessStrategy();
+            val steps = new ArrayList<AccessStep>();
+            if (checkAvailability) {
+                steps.add(availabilityOf(registeredService, service));
+            }
+            val expirationDate = Optional.ofNullable(registeredService.getExpirationPolicy())
+                .map(RegisteredServiceExpirationPolicy::getExpirationDate)
+                .filter(StringUtils::isNotBlank);
+            val notExpired = RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService);
+            steps.add(AccessStep.of("expiration", "Not Expired", notExpired,
+                expirationDate.map(date -> (notExpired ? "Expires on " : "Expired on ") + date).orElse("No expiration date is set")));
+            steps.add(AccessStep.of("sso", "Single Sign-On", Outcome.INFO, singleSignOnOf(registeredService, strategy.isServiceAccessAllowedForSso(registeredService))));
+            return steps;
+        }
+
+        /**
+         * Whether the access strategy decides by its own means if the application takes sign-ins, such as a script whose
+         * answer may change from one call to the next, rather than by its settings: the decision CAS makes then says
+         * whether it does, and the strategy is not asked twice.
+         *
+         * @param strategy the access strategy
+         * @return true when the strategy decides by its own means
+         */
+        static boolean decidesAvailabilityItself(final RegisteredServiceAccessStrategy strategy) {
+            if (strategy instanceof final ChainingRegisteredServiceAccessStrategy chain) {
+                return chain.getStrategies().stream().anyMatch(AccessExplainer::decidesAvailabilityItself);
+            }
+            try {
+                val decider = strategy.getClass().getMethod("isServiceAccessAllowed", RegisteredService.class, Service.class).getDeclaringClass();
+                return !Set.of(RegisteredServiceAccessStrategy.class, DefaultRegisteredServiceAccessStrategy.class,
+                    TimeBasedRegisteredServiceAccessStrategy.class, HttpRequestRegisteredServiceAccessStrategy.class).contains(decider);
+            } catch (final NoSuchMethodException e) {
+                return true;
+            }
+        }
+
+        private static String singleSignOnOf(final RegisteredService registeredService, final boolean allowed) {
+            if (!allowed) {
+                return "The access strategy does not allow single sign-on: every sign-in asks for credentials again";
+            }
+            val policy = registeredService instanceof final WebBasedRegisteredService webBased ? webBased.getSingleSignOnParticipationPolicy() : null;
+            if (policy == null || policy instanceof DefaultRegisteredServiceSingleSignOnParticipationPolicy) {
+                return "The access strategy allows single sign-on, so an existing single sign-on session is reused";
+            }
+            if (policy instanceof NeverRegisteredServiceSingleSignOnParticipationPolicy) {
+                return "The access strategy allows single sign-on, but the application never takes part in it: every sign-in asks for credentials again";
+            }
+            val name = Strings.CS.removeEnd(policy.getClass().getSimpleName(), "RegisteredServiceSingleSignOnParticipationPolicy");
+            return "The access strategy allows single sign-on; whether an existing session is reused depends on the %s participation policy"
+                .formatted(String.join(" ", StringUtils.splitByCharacterTypeCamelCase(StringUtils.defaultIfBlank(name, "custom"))).toLowerCase(Locale.ROOT));
+        }
+
+        private static AccessStep availabilityOf(final RegisteredService registeredService, final Service service) {
             val strategy = registeredService.getAccessStrategy();
             val allowed = strategy.isServiceAccessAllowed(registeredService, service);
-            val availability = strategy instanceof final TimeBasedRegisteredServiceAccessStrategy timeBased
+            return strategy instanceof final TimeBasedRegisteredServiceAccessStrategy timeBased
                 ? AccessStep.of("window", "Active Window", allowed,
                     "%s, from %s until %s (%s)".formatted(allowed ? "Within its active window" : "Outside its active window",
                         StringUtils.defaultIfBlank(timeBased.getStartingDateTime(), "any time"),
@@ -487,18 +561,6 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                         StringUtils.defaultIfBlank(timeBased.getZoneId(), "the time zone of the server")))
                 : AccessStep.of("enabled", "Enabled", allowed,
                     allowed ? "The application accepts sign-ins" : "The application is disabled");
-
-            val expirationDate = Optional.ofNullable(registeredService.getExpirationPolicy())
-                .map(RegisteredServiceExpirationPolicy::getExpirationDate)
-                .filter(StringUtils::isNotBlank);
-            val notExpired = RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService);
-            val expiration = AccessStep.of("expiration", "Not Expired", notExpired,
-                expirationDate.map(date -> (notExpired ? "Expires on " : "Expired on ") + date).orElse("No expiration date is set"));
-
-            val sso = strategy.isServiceAccessAllowedForSso(registeredService);
-            val singleSignOn = AccessStep.of("sso", "Single Sign-On", Outcome.INFO,
-                sso ? "An existing single sign-on session is reused" : "Every sign-in asks for credentials again");
-            return List.of(availability, expiration, singleSignOn);
         }
 
         /**

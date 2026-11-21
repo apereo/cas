@@ -173,7 +173,9 @@ criteria and delegated authentication policy, the attribute release policy, its 
 consent policy, and the single sign-on participation policy. A chain shows how it decides, such as whether every
 strategy must allow access or any one may, or how released attributes are merged, and a tab per member; the
 section's fields edit the member whose tab is chosen, and members can be added, moved and removed. A member the wizard
-has no fields for, such as a chain inside the chain, is kept as it is and edited as JSON.
+has no fields for, such as a chain inside the chain, is kept as it is and edited as JSON. Where to send a user the
+chained access strategies refuse belongs to the chain itself, so it stays with the chain when members change and moves
+to the one strategy left when the chain is turned off.
 
 Fields of the wizard whose values come from a standard or from the server suggest them as they are typed, each with a
 short description, while still taking any value: SAML2 NameID formats, authentication context classes, bindings,
@@ -229,7 +231,8 @@ left alone), or deleted together; *Delete All* removes every application from th
 *Access Check*, under the access pages, tells whether a user may access an application and why, the way CAS decides
 at sign-in. The application field takes a service URL, a client id or an entity id, and suggests registered
 applications by name or identifier; under the field, the application CAS resolves the value to is shown, matched in
-evaluation order, with a warning when another application is matched before the one picked. The applications' menu
+evaluation order, with a warning when another application is matched before the one picked. When a value is both the
+entity id of a service provider and a URL a CAS application answers, the dashboard asks which of them to check. The applications' menu
 offers *Check Access* to open the check for an application. The password is checked only on request. The answer shows a verdict with its reason, the steps CAS
 went through as a row of passed and failed steps (whether the application is enabled and has not expired, whether the
 user signed in, and the access strategy's activation and required and rejected attributes, or the answer of a strategy
@@ -241,7 +244,9 @@ strategy. The last checks are kept in the browser, without passwords.
 with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the
 definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or
 discard the changes. Drafts are kept by the browser, never on the server, while changes stay unsaved, so a reload or a closed
-tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft. A draft
+tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft.
+Secrets are left out of drafts and put back from the saved application when a draft resumes; a chained policy that was
+moved or removed in the draft gets back its own secret, or none when it can no longer be told apart from the others. A draft
 is dropped once it is thirty days old.
 
 Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut.

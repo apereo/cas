@@ -1431,10 +1431,13 @@ class PalantirAccessCheck {
     /**
      * What the application field names: the request parameter to send and the registered application CAS resolves it
      * to: the client id of an OAuth or OpenID Connect client, the entity id of a SAML2 service provider, and otherwise a
-     * service URL, matched the way CAS matches it, in evaluation order.
+     * service URL, matched the way CAS matches it, in evaluation order. When a SAML2 service provider names what is
+     * typed as its one entity id and a CAS application also answers it as a URL, nothing is chosen: the applications
+     * that answer are given as choices for the operator to pick from.
      *
      * @param text the text of the field
-     * @returns {{parameter: object|null, service: object|null}} the parameter and the application, if any
+     * @returns {{parameter: object|null, service: object|null, choices: object[]|undefined}} the parameter, the
+     * application, if any, and the applications to choose from when more than one answers
      */
     static resolve(text) {
         const value = String(text ?? "").trim();
@@ -1455,7 +1458,18 @@ class PalantirAccessCheck {
         if (provider) {
             return {parameter: {name: "entityId", value}, service: provider};
         }
-        return {parameter: {name: "service", value}, service: PalantirAccessCheck.matching(value)};
+        const application = PalantirAccessCheck.matching(value);
+        if (!selected) {
+            const answering = providers.filter(service => PalantirAccessCheck.answers(service, value));
+            const named = answering.find(service => PalantirAccessCheck.literal(service.serviceId));
+            if (named && application) {
+                return {parameter: {name: "service", value}, service: null, choices: [named, application]};
+            }
+            if (named || (answering.length > 0 && !application)) {
+                return {parameter: {name: "entityId", value}, service: named ?? answering[0]};
+            }
+        }
+        return {parameter: {name: "service", value}, service: application};
     }
 
     /**
@@ -1492,7 +1506,7 @@ class PalantirAccessCheck {
         if (selected && start !== "" && !text.trim().startsWith(start) && !PalantirAccessCheck.answers(selected, text.trim())) {
             PalantirAccessCheck.selected = selected = null;
         }
-        const {parameter, service} = PalantirAccessCheck.resolve(text);
+        const {parameter, service, choices} = PalantirAccessCheck.resolve(text);
         $("#accessTargetField .palantir-access__target-clear").prop("hidden", text === "");
         const hint = $("#accessTargetHint").removeClass("is-resolved is-pending is-shadowed");
         const card = (entry, note) => {
@@ -1504,7 +1518,13 @@ class PalantirAccessCheck {
                     <small>${note}</small>
                 </span>`;
         };
-        if (service && selected && service.id !== selected.id && PalantirAccessCheck.answers(selected, text.trim())) {
+        if (choices) {
+            hint.addClass("is-pending").html(`<i class="mdi mdi-call-split" aria-hidden="true"></i>
+                <span class="palantir-access__hint-text"><span>More than one application answers this. Pick the one to check:</span>
+                <span class="palantir-access__hint-choices">${choices.map(entry => `
+                    <button type="button" class="palantir-button" data-access-action="pick" data-service-id="${escape(entry.id)}">
+                        ${escape(applicationProtocolOf(entry["@class"]).short)} · ${escape(entry.name ?? `#${entry.id}`)}</button>`).join("")}</span></span>`);
+        } else if (service && selected && service.id !== selected.id && PalantirAccessCheck.answers(selected, text.trim())) {
             hint.addClass("is-resolved is-shadowed").html(card(service,
                 `CAS matches this first, before ${escape(selected.name ?? "the application you picked")}`));
         } else if (selected && service?.id !== selected.id) {
@@ -1522,6 +1542,18 @@ class PalantirAccessCheck {
         } else {
             hint.text("Pick a registered application, or type what it sends to CAS.");
         }
+    }
+
+    /**
+     * Pick which of the applications that answer what is typed to check, keeping what is typed.
+     *
+     * @param service the application
+     */
+    static pick(service) {
+        PalantirAccessCheck.selected = service;
+        PalantirAccessCheck.problem(null);
+        PalantirAccessCheck.update();
+        $("#accessUsername").trigger("focus");
     }
 
     /**
@@ -1593,7 +1625,12 @@ class PalantirAccessCheck {
             }
         }
         const value = String($("#accessApplication").val() ?? "").trim();
-        const {parameter, service} = PalantirAccessCheck.resolve(value);
+        const {parameter, service, choices} = PalantirAccessCheck.resolve(value);
+        if (choices) {
+            PalantirAccessCheck.problem(`Both ${choices.map(entry => entry.name ?? `#${entry.id}`).join(" and ")} answer this: pick the one to check.`);
+            $("#accessTargetHint [data-access-action='pick']").first().trigger("focus");
+            return null;
+        }
         const selected = PalantirAccessCheck.selected;
         if (selected && !PalantirAccessCheck.answers(selected, value) && service?.id !== selected.id) {
             const wanted = PalantirAccessCheck.protocolOf(selected) === "saml" ? "an entity id" : "a URL";
@@ -2006,8 +2043,8 @@ class PalantirAccessCheck {
             position: {my: "left top+6", at: "left bottom", of: "#accessTargetField", collision: "flipfit"},
             source: (request, response) => {
                 const term = String(request.term ?? "").trim();
-                const {parameter, service} = PalantirAccessCheck.resolve(term);
-                if (PalantirAccessCheck.selected || (service && (parameter.name !== "service" || /^https?:\/\//i.test(term)))) {
+                const {parameter, service, choices} = PalantirAccessCheck.resolve(term);
+                if (PalantirAccessCheck.selected || choices || (service && (parameter.name !== "service" || /^https?:\/\//i.test(term)))) {
                     response([]);
                     return;
                 }
@@ -2073,6 +2110,11 @@ class PalantirAccessCheck {
                 if (action === "clear") {
                     PalantirAccessCheck.choose(null);
                     $("#accessApplication").trigger("focus");
+                } else if (action === "pick") {
+                    const service = registeredServicesById.get(String(button.dataset.serviceId));
+                    if (service) {
+                        PalantirAccessCheck.pick(service);
+                    }
                 } else if (action === "open") {
                     navigateToApplication(button.dataset.serviceId);
                 } else if (action === "edit") {

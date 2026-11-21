@@ -296,6 +296,9 @@ General view, theme and template rules are in the `cas-ui` skill.
 
 ## Service wizard and JSON editor
 
+- Settings CAS reads from a chain itself rather than its members (the access strategy's `unauthorizedRedirectUrl`) are
+  listed as `lift` on the chain kind: the fields show the chain's value and packing moves it back to the chain.
+- Matching a draft's list entries to the saved definition (to restore secrets) never goes by position alone.
 - Code that runs on every wizard generation or every key typed must not walk all wizard fields or compile a pattern per
   application: cache what only changes with the fields or the application type (`PalantirWizardChains.modeled()`), read
   a section's options once per drawing, and compile service id patterns once (`PalantirAccessCheck.pattern()`).

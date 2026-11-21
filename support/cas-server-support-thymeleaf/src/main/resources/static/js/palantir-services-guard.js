@@ -183,13 +183,59 @@ class PalantirServiceEditGuard {
             return typeof source === "string" && source !== PalantirServiceEditGuard.REDACTED ? source : "";
         }
         if (Array.isArray(value)) {
-            return value.map((entry, index) => PalantirServiceEditGuard.restore(entry, Array.isArray(source) ? source[index] : undefined));
+            const counterparts = PalantirServiceEditGuard.counterparts(value, Array.isArray(source) ? source : []);
+            return value.map((entry, index) => PalantirServiceEditGuard.restore(entry, counterparts[index]));
         }
         if (value !== null && typeof value === "object") {
             const from = source !== null && typeof source === "object" && !Array.isArray(source) ? source : {};
             return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, PalantirServiceEditGuard.restore(entry, from[key])]));
         }
         return value;
+    }
+
+    /**
+     * The entry of the definition the dialog opens with that each entry of a list in a draft came from. Entries such as
+     * the policies of a chain may have been moved or removed in the draft, so an object is matched first to an object of
+     * its type it still equals once secrets are left out, then to the one object of its type that shares the most of
+     * its settings; when no single object stands out, the entry gets no secret rather than the secret of another one.
+     *
+     * @param value the list in the draft
+     * @param source the same list in the definition the dialog opens with
+     * @returns {Array} the counterpart of each entry, or undefined
+     */
+    static counterparts(value, source) {
+        const isObject = entry => entry !== null && typeof entry === "object" && !Array.isArray(entry);
+        const redacted = source.map(candidate => isObject(candidate) ? PalantirServiceEditGuard.redact(candidate) : candidate);
+        const used = new Set();
+        const found = value.map((entry, index) => isObject(entry) ? undefined : source[index]);
+        const open = entry => source.map((candidate, at) => at)
+            .filter(at => !used.has(at) && isObject(source[at]) && source[at]["@class"] === entry["@class"]);
+        value.forEach((entry, index) => {
+            if (!isObject(entry)) {
+                return;
+            }
+            const shape = JSON.stringify(entry);
+            const at = open(entry).find(candidate => JSON.stringify(redacted[candidate]) === shape);
+            if (at !== undefined) {
+                used.add(at);
+                found[index] = source[at];
+            }
+        });
+        value.forEach((entry, index) => {
+            if (!isObject(entry) || found[index] !== undefined) {
+                return;
+            }
+            const shared = at => Object.keys(entry).filter(key => key !== "@class" && entry[key] !== PalantirServiceEditGuard.REDACTED
+                && JSON.stringify(entry[key]) === JSON.stringify(redacted[at][key])).length;
+            const scored = open(entry).map(at => ({at, score: shared(at)})).sort((left, right) => right.score - left.score);
+            const best = scored[0];
+            const unique = best !== undefined && (scored.length === 1 || scored[1].score < best.score);
+            if (unique && (best.score > 0 || (scored.length === 1 && best.at === index))) {
+                used.add(best.at);
+                found[index] = source[best.at];
+            }
+        });
+        return found;
     }
 
     /**

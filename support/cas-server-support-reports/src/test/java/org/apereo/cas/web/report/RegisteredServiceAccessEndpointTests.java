@@ -8,6 +8,7 @@ import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.LogicalOperatorTypes;
+import org.apereo.cas.services.NeverRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
@@ -354,6 +355,68 @@ class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
             .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[0].outcome", hasItem("FAILED")))
             .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[1].outcome", hasItem("PASSED")))
             .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[1].title", hasItem("Attributes: uid")));
+    }
+
+    @Test
+    void verifyAvailabilityDecidedByTheStrategyIsAskedOnce() throws Throwable {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://counted-availability.example.edu");
+        registeredService.setAccessStrategy(new CountingAvailabilityStrategy());
+        servicesManager.save(registeredService);
+
+        CountingAvailabilityStrategy.CALLS.set(0);
+        CountingAvailabilityStrategy.AVAILABLE.set(true);
+        mockMvc.perform(post("/actuator/serviceAccess")
+                .param("service", "https://counted-availability.example.edu")
+                .param("username", "casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.steps[1].id").value("enabled"))
+            .andExpect(jsonPath("$.steps[1].outcome").value("PASSED"));
+        assertEquals(1, CountingAvailabilityStrategy.CALLS.get());
+
+        CountingAvailabilityStrategy.CALLS.set(0);
+        CountingAvailabilityStrategy.AVAILABLE.set(false);
+        mockMvc.perform(post("/actuator/serviceAccess")
+                .param("service", "https://counted-availability.example.edu")
+                .param("username", "casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.steps[?(@.id == 'enabled')].outcome", hasItem("FAILED")))
+            .andExpect(jsonPath("$.reason", startsWith("Enabled:")));
+        assertEquals(1, CountingAvailabilityStrategy.CALLS.get());
+    }
+
+    @Test
+    void verifyNeverParticipatingInSingleSignOnIsExplained() throws Throwable {
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://never-sso.example.edu");
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        registeredService.setSingleSignOnParticipationPolicy(new NeverRegisteredServiceSingleSignOnParticipationPolicy());
+        servicesManager.save(registeredService);
+        mockMvc.perform(post("/actuator/serviceAccess")
+                .param("service", "https://never-sso.example.edu")
+                .param("username", "casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.steps[?(@.id == 'sso')].detail", hasItem(containsString("never takes part"))))
+            .andExpect(jsonPath("$.steps[?(@.id == 'sso')].detail", not(hasItem(containsString("is reused")))));
+    }
+
+    static class CountingAvailabilityStrategy extends BaseRegisteredServiceAccessStrategy {
+        static final AtomicInteger CALLS = new AtomicInteger();
+
+        static final AtomicBoolean AVAILABLE = new AtomicBoolean(true);
+
+        @Serial
+        private static final long serialVersionUID = 3381904417734025566L;
+
+        @Override
+        public boolean isServiceAccessAllowed(final RegisteredService registeredService, @Nullable final Service service) {
+            CALLS.incrementAndGet();
+            return AVAILABLE.get();
+        }
     }
 
     static class BrokenAccessStrategy extends BaseRegisteredServiceAccessStrategy {

@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -33,6 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Getter
 @Tag("MFAProvider")
 class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {
+    private static final String ALL_ACCOUNTS = "gauthCredentialRepository:all-accounts";
+
     @Autowired
     @Qualifier(BaseGoogleAuthenticatorTokenCredentialRepository.BEAN_NAME)
     private OneTimeTokenCredentialRepository registry;
@@ -79,6 +83,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
+    @ResourceLock(value = ALL_ACCOUNTS, mode = ResourceAccessMode.READ_WRITE)
     void verifyOperation() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
         val toSave = GoogleAuthenticatorAccount.builder()
@@ -125,6 +130,7 @@ class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends Abstract
     }
 
     @Test
+    @ResourceLock(value = ALL_ACCOUNTS, mode = ResourceAccessMode.READ)
     void verifyExportedArchiveImportsBack() throws Throwable {
         val acct = registry.create(UUID.randomUUID().toString());
         registry.save(GoogleAuthenticatorAccount.builder()

@@ -508,10 +508,21 @@ async function verifyAccessCheck(page) {
         PalantirAccessCheck.choose(registeredServicesById.get("91"));
         const entity = resolved("https://sp.example.org/shibboleth");
         PalantirAccessCheck.choose(null);
+        registeredServicesById.set("94", {"@class": "org.apereo.cas.support.saml.services.SamlRegisteredService", id: 94, name: "Named SP",
+            serviceId: "https://named\\.example\\.org/sp", evaluationOrder: -1});
+        registeredServicesVersion++;
+        const pasted = PalantirAccessCheck.resolve("https://named.example.org/sp");
+        $("#accessApplication").val("https://named.example.org/sp");
+        PalantirAccessCheck.update();
+        const offered = $("#accessTargetHint [data-access-action='pick']").map((_, button) => button.dataset.serviceId).get();
+        $("#accessTargetHint [data-access-action='pick'][data-service-id='94']").trigger("click");
+        const picked = resolved("https://named.example.org/sp");
+        const kept = $("#accessApplication").val();
+        PalantirAccessCheck.choose(null);
         registeredServicesById.clear();
         saved.forEach((service, id) => registeredServicesById.set(id, service));
         registeredServicesVersion++;
-        return {url, client, entity};
+        return {url, client, entity, ambiguous: (pasted.choices ?? []).map(service => service.id), offered, picked, kept};
     });
     const unavailable = await page.evaluate(() => [
         PalantirAccessCheck.verdict({username: "casuser", label: "Portal"}, 404, null).style,
@@ -531,6 +542,8 @@ async function verifyAccessCheck(page) {
     assert(repeated);
     await cas.log(`With catch-all SAML, OIDC and CAS applications: ${JSON.stringify(protocols)}`);
     assert(protocols.url === "service:93" && protocols.client === "client_id:92" && protocols.entity === "entityId:91");
+    assert(JSON.stringify(protocols.ambiguous) === JSON.stringify([94, 93]) && JSON.stringify(protocols.offered) === JSON.stringify(["94", "93"]));
+    assert(protocols.picked === "entityId:94" && protocols.kept === "https://named.example.org/sp");
 }
 
 /**

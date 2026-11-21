@@ -1264,6 +1264,34 @@ async function verifyMappedValueTypes(page) {
 }
 
 /**
+ * A draft whose chained policies were moved or removed gets back the secret of each policy it kept, never the secret
+ * of another one: a policy that cannot be told apart from the others is left without its secret.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyDraftSecretsFollowTheirPolicies(page) {
+    const restored = await page.evaluate(() => {
+        const remote = "org.apereo.cas.services.RemoteEndpointServiceAccessStrategy";
+        const source = {accessStrategy: {"@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+            strategies: ["java.util.ArrayList", [
+                {"@class": remote, endpointUrl: "https://a.example.org", password: "first"},
+                {"@class": remote, endpointUrl: "https://b.example.org", password: "second"}]]}};
+        const kept = PalantirServiceEditGuard.redact(source).accessStrategy.strategies[1];
+        const passwords = members => PalantirServiceEditGuard.restore({accessStrategy: {...source.accessStrategy,
+            strategies: ["java.util.ArrayList", members]}}, source).accessStrategy.strategies[1].map(member => member.password);
+        return {
+            moved: passwords([kept[1], kept[0]]),
+            removed: passwords([kept[1]]),
+            removedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}])
+        };
+    });
+    await cas.log(`Draft secrets after moving and removing chained policies: ${JSON.stringify(restored)}`);
+    assert(JSON.stringify(restored.moved) === JSON.stringify(["second", "first"]));
+    assert(JSON.stringify(restored.removed) === JSON.stringify(["second"]));
+    assert(JSON.stringify(restored.removedAndChanged) === JSON.stringify([""]));
+}
+
+/**
  * Edit an application in the wizard and the JSON editor and move between them, then delete it.
  *
  * @param page the puppeteer page
@@ -1276,6 +1304,7 @@ async function verifyEditorHandoffs(page) {
     await verifyWizardDraftToJsonEditor(page, id);
     await verifyCarryOfOmittedPolicy(page);
     await verifyMappedValueTypes(page);
+    await verifyDraftSecretsFollowTheirPolicies(page);
     await page.evaluate(async (serviceId) => {
         await fetch(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, {
             method: "DELETE",
@@ -1355,6 +1384,7 @@ async function verifyChainedPolicies(page) {
         accessStrategy: {
             "@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
             operator: "AND",
+            unauthorizedRedirectUrl: "https://chained.example.org/denied",
             strategies: ["java.util.ArrayList", [
                 {
                     "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
@@ -1403,6 +1433,11 @@ async function verifyChainedPolicies(page) {
     assert(definition.accessStrategy["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy");
     assert(definition.accessStrategy.strategies[1].length === 3);
     assert(definition.accessStrategy.strategies[1][2]["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy");
+    const redirect = await page.evaluate(() => $("#registeredServiceAccessStrategyUnauthorizedRedirectUrl").val());
+    await cas.log(`Where a refused user goes, shown for the chain: ${redirect}`);
+    assert(redirect === "https://chained.example.org/denied");
+    assert(definition.accessStrategy.unauthorizedRedirectUrl === "https://chained.example.org/denied");
+    assert(definition.accessStrategy.strategies[1][0].unauthorizedRedirectUrl === undefined);
 
     await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy'] .palantir-chain__tab").eq(1).trigger("click"));
     await settled();
@@ -1414,6 +1449,7 @@ async function verifyChainedPolicies(page) {
     await cas.sleep(500);
     definition = await generated();
     assert(definition.accessStrategy.operator === "OR");
+    assert(definition.accessStrategy.unauthorizedRedirectUrl === "https://chained.example.org/denied");
     assert(definition.accessStrategy.strategies[1][0].requiredAttributes.memberOf[1][0] === "admins");
     assert(definition.accessStrategy.strategies[1][1].endingDateTime === "2099-12-31T23:59:59Z");
 
@@ -1439,6 +1475,14 @@ async function verifyChainedPolicies(page) {
     await cas.log(`Attribute release policy chained: ${JSON.stringify(definition.attributeReleasePolicy)}`);
     assert(definition.attributeReleasePolicy["@class"] === "org.apereo.cas.services.ChainingAttributeReleasePolicy");
     assert(definition.attributeReleasePolicy.policies[1].length === 1 && definition.attributeReleasePolicy.mergingPolicy === "REPLACE");
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='singleSignOnParticipationPolicy'] [data-chain-action='toggle']")
+        .prop("checked", true).trigger("change"));
+    await settled();
+    definition = await generated();
+    await cas.log(`Single sign-on participation chained from no policy: ${JSON.stringify(definition.singleSignOnParticipationPolicy)}`);
+    assert(definition.singleSignOnParticipationPolicy["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy");
+    assert(definition.singleSignOnParticipationPolicy.policies[1].length === 1);
 
     const offered = await page.evaluate(() => PalantirServiceEditor.wizardChoices().accessStrategy);
     assert(offered.includes("org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy"));

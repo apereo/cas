@@ -243,7 +243,7 @@ springWebflow = "4.0.2"
 springWs = "5.1.0"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
-swagger = "2.2.56"
+swagger = "3.0.0"
 sweetAlert = "11.26.25"
 trumbowyg = "2.31.0"
 textEncoding = "0.7.0"
@@ -753,8 +753,8 @@ ssm = { module = "software.amazon.awssdk:ssm", version.ref = "amazonSdk" }
 stomp-websocket = { module = "org.webjars:stomp-websocket", version.ref = "stompWebSocket" }
 sts = { module = "software.amazon.awssdk:sts", version.ref = "amazonSdk" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
-swagger-core-jakarta = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }
-swagger-jaxrs2-jakarta = { module = "io.swagger.core.v3:swagger-jaxrs2-jakarta", version.ref = "swagger" }
+swagger-core = { module = "io.swagger.core.v3:swagger-core", version.ref = "swagger" }
+swagger-rest = { module = "io.swagger.core.v3:swagger-rest", version.ref = "swagger" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
 sweetalert2 = { module = "org.webjars.npm:sweetalert2", version.ref = "sweetAlert" }
 trumbowyg = { module = "org.webjars.npm:trumbowyg", version.ref = "trumbowyg" }
