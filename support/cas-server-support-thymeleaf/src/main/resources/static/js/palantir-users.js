@@ -4,8 +4,8 @@
  * Each source reads one endpoint the dashboard already calls from its own tab and draws one card.
  * Sources load in parallel and independently, so a slow or failing endpoint leaves the other cards
  * usable. A source whose endpoint is not enabled has no card, and the page itself is hidden when no
- * source is available. A lazy source, such as the OAuth tokens that take a scan of the ticket registry, is read only
- * once its card is opened.
+ * source is available. A lazy source, such as the OAuth tokens that take a scan of the ticket registry, is only read when
+ * the operator asks for it with its button. A source with nothing recorded, lazy or not, has no visible card.
  */
 class PalantirUserLookup {
 
@@ -78,9 +78,6 @@ class PalantirUserLookup {
                 },
                 render: tokens => {
                     PalantirUserLookup.tokens = new Map(tokens.map((token, index) => [String(index), token.id]));
-                    if (tokens.length === 0) {
-                        return "<p class=\"palantir-user-card__note\">No access or refresh tokens are issued to this user.</p>";
-                    }
                     const rows = tokens.map((token, index) => ({
                         primary: `${PalantirUserLookup.tokenKind(token)} for ${token.clientId ?? "an unknown client"}`,
                         secondary: [
@@ -205,9 +202,13 @@ class PalantirUserLookup {
                             <i class="mdi mdi-information-outline" aria-hidden="true"></i>
                             Pick an application to see the attributes it would receive for this user.
                         </p>
-                        <div class="palantir-control-row">
-                            <label for="userReleaseApplication">Application:</label>
-                            <select id="userReleaseApplication" class="palantir" aria-label="Application"></select>
+                        <div class="palantir-user-release__row">
+                            <label class="palantir-access__field palantir-access__target" id="userReleaseApplicationField">
+                                <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                                <span class="palantir-sr-only">Application</span>
+                                <input id="userReleaseApplication" type="text" autocomplete="off" spellcheck="false"
+                                       placeholder="Application name, service id, client id or id"/>
+                            </label>
                             <button type="button" class="palantir-button" data-user-release>
                                 <i class="mdi mdi-account-eye" aria-hidden="true"></i>Preview
                             </button>
@@ -215,9 +216,27 @@ class PalantirUserLookup {
                         <div id="userReleaseResult" aria-live="polite"></div>
                     </div>`,
                 afterRender: async () => {
-                    const applications = await PalantirAttributeRelease.applications();
-                    $("#userReleaseApplication").empty().append(applications.map(service =>
-                        $("<option>", {value: service.id, text: `${service.name ?? service.serviceId} (#${service.id})`})));
+                    PalantirAttributeRelease.selected = null;
+                    PalantirAttributeRelease.choices = await PalantirAttributeRelease.applications();
+                    const input = $("#userReleaseApplication");
+                    PalantirApplicationSuggestions.attach(input, {
+                        field: "#userReleaseApplicationField",
+                        source: term => PalantirAttributeRelease.choices.filter(service => PalantirApplicationSuggestions.matches(service, term)),
+                        select: service => {
+                            PalantirAttributeRelease.selected = service;
+                            input.val(service.name ?? PalantirAccessCheck.identifierOf(service));
+                        }
+                    });
+                    input.on("focus", function () {
+                        if (!$(this).val()) {
+                            $(this).autocomplete("search", "");
+                        }
+                    }).on("input", function () {
+                        const selected = PalantirAttributeRelease.selected;
+                        if (selected && $(this).val() !== (selected.name ?? PalantirAccessCheck.identifierOf(selected))) {
+                            PalantirAttributeRelease.selected = null;
+                        }
+                    });
                 }
             },
             {
@@ -530,7 +549,7 @@ class PalantirUserLookup {
      * card, so that reloading it after an action can bring it back.
      *
      * @param source the source the card belongs to
-     * @param state one of deferred (read when opened), loading, empty, error or loaded
+     * @param state one of loading, empty, error or loaded
      * @param content the records, or the error message for the failed state
      * @param username the user being looked up
      * @param open whether the card is expanded
@@ -542,7 +561,6 @@ class PalantirUserLookup {
         }
         const count = state === "loaded" && source.counted !== false ? content.length : null;
         const body = {
-            deferred: "<p class=\"palantir-user-card__note\">Read when opened.</p>",
             loading: "<p class=\"palantir-user-card__note\">Loading…</p>",
             error: `<p class="palantir-user-card__note is-error"><i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>${escapePalantirMarkup(content)}</p>`,
             loaded: state === "loaded" ? source.render(content, username) : ""
@@ -572,7 +590,7 @@ class PalantirUserLookup {
             return;
         }
         for (const card of $("#userLookupResults .palantir-user-card").toArray()) {
-            if (card.classList.contains("is-empty") || card.classList.contains("is-deferred")) {
+            if (card.classList.contains("is-empty")) {
                 continue;
             }
             if (!card.classList.contains("is-loading")) {
@@ -613,7 +631,7 @@ class PalantirUserLookup {
         };
         try {
             const records = await source.load(username, sequence);
-            replace(records.length === 0 && !source.lazy ? "empty" : "loaded", records);
+            replace(records.length === 0 ? "empty" : "loaded", records);
             counted(records.length);
             return {source, count: records.length};
         } catch (error) {
@@ -645,7 +663,8 @@ class PalantirUserLookup {
         const summary = [
             parts.length > 0 ? `${username}: ${parts.join(" · ")}` : nothing,
             failed.length > 0 ? `${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.` : "",
-            unread.length > 0 ? `${unread.map(source => source.title).join(", ")} ${unread.length === 1 ? "is" : "are"} read when opened.` : ""
+            unread.length > 0 ? `${unread.map(source => source.title).join(", ")} ${unread.length === 1 ? "is" : "are"} read on request.` : "",
+            ...sources.filter(source => source.lazy && counts.get(source.key) === 0).map(source => `No ${source.title} are recorded for ${username}.`)
         ].filter(Boolean).join(" ");
         $("#userLookupSummary").text(summary);
     }
@@ -670,7 +689,13 @@ class PalantirUserLookup {
         const sources = PalantirUserLookup.availableSources();
         $("#userLookupResults table").filter((index, table) => $.fn.dataTable.isDataTable(table))
             .each((index, table) => $(table).DataTable().destroy());
-        $("#userLookupResults").html(sources.map(source => PalantirUserLookup.card(source, source.lazy ? "deferred" : "loading", null, trimmed)).join(""));
+        const lazy = sources.filter(source => source.lazy);
+        const readers = lazy.length === 0 ? "" : `
+            <div class="palantir-user-lookup__readers">${lazy.map(source => `
+                <button type="button" class="palantir-button" data-user-read="${escapePalantirMarkup(source.key)}">
+                    <i class="mdi ${source.icon}" aria-hidden="true"></i>Look for ${escapePalantirMarkup(source.title)}</button>`).join("")}
+            </div>`;
+        $("#userLookupResults").html(readers + sources.map(source => PalantirUserLookup.card(source, source.lazy ? "empty" : "loading", null, trimmed)).join(""));
         $("#userLookupSummary").text(`Looking up ${trimmed}…`);
         await Promise.all(sources.filter(source => !source.lazy)
             .map(source => PalantirUserLookup.loadSource(source, trimmed, sequence)));
@@ -679,6 +704,7 @@ class PalantirUserLookup {
         }
         PalantirUserLookup.settled = sequence;
         PalantirUserLookup.summarize(trimmed, sequence);
+
     }
 
     /**
@@ -784,24 +810,32 @@ async function initializeUserLookupOperations() {
     $("#userLookupResults").off("click").on("click", "[data-user-action]", event => {
         PalantirUserLookup.runAction(event.currentTarget);
     });
+    $("#userLookupResults").on("click", "[data-user-read]", async event => {
+        const button = $(event.currentTarget).prop("disabled", true);
+        const source = PalantirUserLookup.availableSources().find(entry => entry.key === button.data("user-read"));
+        if (source) {
+            const sequence = PalantirUserLookup.lookupSequence;
+            await PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, sequence);
+            if (sequence === PalantirUserLookup.lookupSequence) {
+                button.remove();
+                $("#userLookupResults [data-user-source]").filter((index, card) => card.dataset.userSource === source.key && !card.hidden)
+                    .prop("open", true);
+            }
+        }
+    });
     $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
         openInterruptInquiry(event.currentTarget.dataset.username);
     });
-    document.getElementById("userLookupResults")?.addEventListener("toggle", event => {
-        const card = event.target;
-        if (!card.open || !card.classList?.contains("is-deferred")) {
+    $("#userLookupResults").on("click", "[data-user-release]", async event => {
+        const picked = PalantirAttributeRelease.picked(String($("#userReleaseApplication").val() ?? ""));
+        if (picked === null) {
+            $("#userReleaseResult").html(`<p class="palantir-user-card__note is-error"><i class="mdi mdi-alert-circle-outline" aria-hidden="true"></i>${
+                escapePalantirMarkup("Pick an application from the list: what is typed names no single application.")}</p>`);
+            $("#userReleaseApplication").trigger("focus");
             return;
         }
-        const source = PalantirUserLookup.availableSources().find(entry => entry.key === card.dataset.userSource);
-        if (source) {
-            card.classList.replace("is-deferred", "is-loading");
-            card.querySelector(".palantir-user-card__body").innerHTML = "<p class=\"palantir-user-card__note\">Loading…</p>";
-            PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, PalantirUserLookup.lookupSequence);
-        }
-    }, true);
-    $("#userLookupResults").on("click", "[data-user-release]", async event => {
         const button = $(event.currentTarget).prop("disabled", true);
-        const service = String($("#userReleaseApplication").val() ?? "");
+        const service = String(picked.id);
         const result = $("#userReleaseResult").html("<p class=\"palantir-user-card__note\">Working out the attributes…</p>");
         try {
             const released = await PalantirAttributeRelease.preview(PalantirUserLookup.currentUsername, service);
@@ -822,6 +856,31 @@ async function initializeUserLookupOperations() {
  * so attributes that only come from authenticating, such as those a login adds, are not part of the preview.
  */
 class PalantirAttributeRelease {
+    static choices = [];
+
+    static selected = null;
+
+    /**
+     * The application to preview: the one picked from the suggestions, else the one application whose id or name is
+     * typed. When what is typed is the id of one application and the name of another, or the name of several, nothing
+     * is picked and the operator is asked to choose from the list.
+     *
+     * @param typed what the field holds
+     * @returns {object|null} the application, or null when none is picked or exactly named
+     */
+    static picked(typed) {
+        const text = typed.trim();
+        if (PalantirAttributeRelease.selected) {
+            return PalantirAttributeRelease.selected;
+        }
+        if (text === "") {
+            return null;
+        }
+        const named = PalantirAttributeRelease.choices.filter(service => String(service.id) === text
+            || String(service.name ?? "").toLowerCase() === text.toLowerCase());
+        return named.length === 1 ? named[0] : null;
+    }
+
     /**
      * Whether the preview can run: the release endpoint is enabled and accepts the POST it answers to.
      *

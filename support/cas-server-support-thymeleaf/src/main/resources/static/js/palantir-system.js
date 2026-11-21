@@ -1,3 +1,304 @@
+/**
+ * The Application Startup page: the steps Spring recorded while CAS started, as a tree or sorted by duration or name,
+ * with filters by duration and name.
+ *
+ * The steps are read once and drawn once, however often the page is opened. A startup can record thousands of steps,
+ * so the rows are built as text in batches, each added to the page in one go, with a progress bar saying how far
+ * along it is; a row's children are opened and closed through one listener on the list rather than one per row, and
+ * rows out of view are not laid out until they are scrolled to.
+ */
+class PalantirStartupTimeline {
+    static BATCH = 800;
+
+    static steps = null;
+
+    static loading = null;
+
+    static drawing = 0;
+
+    static rows = [];
+
+    static filter = "all";
+
+    static search = "";
+
+    static order = "index";
+
+    static searchTimer = null;
+
+    /**
+     * Read the steps the first time the page is shown and draw them; later, leave the page as it is.
+     *
+     * @returns {Promise<void>} resolved once the steps are drawn
+     */
+    static async show() {
+        if (!CasActuatorEndpoints.startup()) {
+            return;
+        }
+        PalantirStartupTimeline.bind();
+        PalantirStartupTimeline.loading ??= PalantirStartupTimeline.load();
+        await PalantirStartupTimeline.loading;
+    }
+
+    static async load() {
+        PalantirStartupTimeline.progress("Reading the startup steps…", null);
+        try {
+            const response = await $.get(CasActuatorEndpoints.startup());
+            const events = response?.timeline?.events ?? [];
+            PalantirStartupTimeline.steps = events.map(event => {
+                const ms = PalantirStartupTimeline.millis(event.duration);
+                return {
+                    id: event.startupStep.id,
+                    parentId: event.startupStep.parentId,
+                    name: String(event.startupStep.name ?? ""),
+                    search: String(event.startupStep.name ?? "").toLowerCase(),
+                    tags: event.startupStep.tags ?? [],
+                    ms,
+                    speed: PalantirStartupTimeline.speed(ms)
+                };
+            });
+        } catch (xhr) {
+            console.error("The startup steps could not be read", xhr);
+            PalantirStartupTimeline.loading = null;
+            PalantirStartupTimeline.progress(null);
+            $("#startupTimelineList").html("<p class=\"text-muted p-3\">Could not load startup timeline data.</p>");
+            displayBanner(xhr);
+            updateNavigationSidebar();
+            return;
+        }
+        const steps = PalantirStartupTimeline.steps;
+        if (steps.length === 0) {
+            PalantirStartupTimeline.progress(null);
+            $("#startupTimelineList").html("<p class=\"text-muted p-3\">No startup steps available. Ensure <code>BufferingApplicationStartup</code> is configured.</p>");
+            updateNavigationSidebar();
+            return;
+        }
+        const counts = {fastest: 0, fast: 0, medium: 0, slow: 0, slowest: 0};
+        steps.forEach(step => counts[step.speed]++);
+        Object.entries(counts).forEach(([speed, count]) => $(`#count-${speed}`).text(count.toLocaleString()));
+        await PalantirStartupTimeline.draw();
+        updateNavigationSidebar();
+    }
+
+    static millis(duration) {
+        const match = String(duration ?? "").match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:([\d.]+)S)?/);
+        if (!match) {
+            return 0;
+        }
+        return ((Number(match[1] || 0) * 60 + Number(match[2] || 0)) * 60 + Number(match[3] || 0)) * 1000;
+    }
+
+    static speed(ms) {
+        if (ms < 10) {
+            return "fastest";
+        }
+        if (ms < 50) {
+            return "fast";
+        }
+        if (ms < 200) {
+            return "medium";
+        }
+        return ms < 1000 ? "slow" : "slowest";
+    }
+
+    static duration(ms) {
+        return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`;
+    }
+
+    /**
+     * Show how far along reading or drawing the steps is, or put the progress bar away.
+     *
+     * @param message what is happening, or null when done
+     * @param percent how far along, or null while it cannot be told
+     */
+    static progress(message, percent = null) {
+        const box = $("#startupProgress");
+        if (message === null) {
+            box.prop("hidden", true);
+            return;
+        }
+        box.prop("hidden", false);
+        const track = box.find(".palantir-progress__track").toggleClass("is-busy", percent === null);
+        if (percent === null) {
+            track.removeAttr("aria-valuenow").find(".palantir-progress__bar").css("width", "");
+        } else {
+            track.attr("aria-valuenow", Math.round(percent)).find(".palantir-progress__bar").css("width", `${percent}%`);
+        }
+        $("#startupProgressDetail").text(message);
+    }
+
+    /**
+     * The steps to draw at the top of the list: the tree's roots, each with its children, or every step on its own
+     * when sorted by duration or name.
+     *
+     * @returns {object[]} the top rows, each with its children
+     */
+    static roots() {
+        const steps = PalantirStartupTimeline.steps;
+        const order = PalantirStartupTimeline.order;
+        if (order !== "index") {
+            const sorted = [...steps];
+            if (order === "duration-desc") {
+                sorted.sort((left, right) => right.ms - left.ms);
+            } else if (order === "duration-asc") {
+                sorted.sort((left, right) => left.ms - right.ms);
+            } else {
+                sorted.sort((left, right) => left.name.localeCompare(right.name));
+            }
+            return sorted.map(step => ({step, children: []}));
+        }
+        const nodes = new Map(steps.map(step => [step.id, {step, children: []}]));
+        const roots = [];
+        steps.forEach(step => {
+            const parent = step.parentId ? nodes.get(step.parentId) : null;
+            (parent ? parent.children : roots).push(nodes.get(step.id));
+        });
+        return roots;
+    }
+
+    /**
+     * The row of one step, with an empty place for its children, which are added to it as they are drawn.
+     *
+     * @param node the step and its children
+     * @param depth how deep in the tree it is
+     * @returns {string} the row
+     */
+    static row(node, depth) {
+        const step = node.step;
+        const children = node.children.length;
+        const tags = step.tags.map(tag => `<span class="startup-tag">${escapePalantirMarkup(tag.key)}=${escapePalantirMarkup(tag.value)}</span>`).join("");
+        return `<div class="startup-step-row depth-${depth}${children > 0 ? "" : " is-leaf"}" data-duration-class="${step.speed}" data-step-name="${escapePalantirMarkup(step.search)}">`
+            + `<div class="startup-step-main" style="padding-left:${depth * 28}px">`
+            + (children > 0
+                ? "<button type=\"button\" class=\"startup-expand-btn\" data-expanded=\"true\" title=\"Collapse\">&#9660;</button>"
+                : "<span class=\"startup-expand-spacer\"></span>")
+            + `<div class="startup-step-info"><span class="startup-step-name">${escapePalantirMarkup(step.name)}</span>`
+            + `<span class="startup-step-index">#${escapePalantirMarkup(step.id)}</span>`
+            + (children > 0 ? `<span class="startup-children-count">${children} ${children === 1 ? "child" : "children"}</span>` : "")
+            + `</div><span class="startup-duration-badge ${step.speed}">${PalantirStartupTimeline.duration(step.ms)}</span></div>`
+            + (tags ? `<div class="startup-step-tags" style="padding-left:${depth * 28 + 36}px">${tags}</div>` : "")
+            + (children > 0 ? "<div class=\"startup-children\"></div>" : "")
+            + "</div>";
+    }
+
+    /**
+     * Wait for the page to be drawn before the next batch; a page in a hidden browser tab, which is not drawn, carries
+     * on all the same.
+     *
+     * @returns {Promise<void>} resolved once the batch is on screen or a moment has passed
+     */
+    static frame() {
+        return new Promise(resolve => {
+            const timer = setTimeout(resolve, 50);
+            requestAnimationFrame(() => {
+                clearTimeout(timer);
+                resolve();
+            });
+        });
+    }
+
+    /**
+     * Draw the steps in batches, saying how many are drawn so far. A step's children are added to its row as further
+     * batches, so a step with thousands of steps under it, such as the refresh of the application context, does not
+     * make one batch of the whole tree; each level is drawn before the next, so the top of the tree shows first. A
+     * newer drawing, as when the order changes, stops an older one.
+     *
+     * @returns {Promise<void>} resolved once every step is drawn
+     */
+    static async draw() {
+        const drawing = ++PalantirStartupTimeline.drawing;
+        const list = document.getElementById("startupTimelineList");
+        const total = PalantirStartupTimeline.steps.length;
+        list.innerHTML = "";
+        PalantirStartupTimeline.rows = [];
+        const queue = [{container: list, depth: 0, nodes: PalantirStartupTimeline.roots(), next: 0}];
+        let drawn = 0;
+        while (queue.length > 0) {
+            let budget = PalantirStartupTimeline.BATCH;
+            while (queue.length > 0 && budget > 0) {
+                const group = queue[0];
+                const nodes = group.nodes.slice(group.next, group.next + budget);
+                group.next += nodes.length;
+                budget -= nodes.length;
+                drawn += nodes.length;
+                const before = group.container.children.length;
+                group.container.insertAdjacentHTML("beforeend", nodes.map(node => PalantirStartupTimeline.row(node, group.depth)).join(""));
+                nodes.forEach((node, index) => {
+                    if (node.children.length > 0) {
+                        const children = group.container.children[before + index].querySelector(":scope > .startup-children");
+                        queue.push({container: children, depth: group.depth + 1, nodes: node.children, next: 0});
+                    }
+                });
+                if (group.next >= group.nodes.length) {
+                    queue.shift();
+                }
+            }
+            PalantirStartupTimeline.progress(`Showing ${drawn.toLocaleString()} of ${total.toLocaleString()} startup steps…`, drawn / total * 100);
+            await PalantirStartupTimeline.frame();
+            if (drawing !== PalantirStartupTimeline.drawing) {
+                return;
+            }
+        }
+        PalantirStartupTimeline.rows = [...list.querySelectorAll(".startup-step-row")];
+        PalantirStartupTimeline.progress(null);
+        PalantirStartupTimeline.apply();
+    }
+
+    /**
+     * Show the rows that match the duration and the name asked for.
+     */
+    static apply() {
+        const filter = PalantirStartupTimeline.filter;
+        const search = PalantirStartupTimeline.search;
+        PalantirStartupTimeline.rows.forEach(row => {
+            const shown = (filter === "all" || row.dataset.durationClass === filter) && (!search || row.dataset.stepName.includes(search));
+            row.style.display = shown ? "" : "none";
+        });
+    }
+
+    static expand(button, expanded) {
+        button.dataset.expanded = String(expanded);
+        button.innerHTML = expanded ? "&#9660;" : "&#9658;";
+        button.title = expanded ? "Collapse" : "Expand";
+        const children = button.closest(".startup-step-row")?.querySelector(":scope > .startup-children");
+        if (children) {
+            children.style.display = expanded ? "" : "none";
+        }
+    }
+
+    static bind() {
+        $("#startupTimelineList").off("click.startup").on("click.startup", ".startup-expand-btn", event => {
+            PalantirStartupTimeline.expand(event.currentTarget, event.currentTarget.dataset.expanded !== "true");
+        });
+        $("#startupStepFilter").off("input").on("input", function () {
+            const value = String($(this).val() ?? "").toLowerCase();
+            clearTimeout(PalantirStartupTimeline.searchTimer);
+            PalantirStartupTimeline.searchTimer = setTimeout(() => {
+                PalantirStartupTimeline.search = value;
+                PalantirStartupTimeline.apply();
+            }, 120);
+        });
+        $("#startupExpandAll").off("click").on("click", () => {
+            document.querySelectorAll("#startupTimelineList .startup-expand-btn").forEach(button => PalantirStartupTimeline.expand(button, true));
+        });
+        $("#startupCollapseAll").off("click").on("click", () => {
+            document.querySelectorAll("#startupTimelineList .startup-expand-btn").forEach(button => PalantirStartupTimeline.expand(button, false));
+        });
+        $("#startupDurationFilters").off("click", ".startup-duration-filter").on("click", ".startup-duration-filter", function () {
+            PalantirStartupTimeline.filter = $(this).data("filter");
+            $("#startupDurationFilters .startup-duration-filter").removeClass("active");
+            $(this).addClass("active");
+            PalantirStartupTimeline.apply();
+        });
+        $("#startupSortSelect").off("change").on("change", function () {
+            PalantirStartupTimeline.order = $(this).val();
+            if (PalantirStartupTimeline.steps?.length > 0) {
+                PalantirStartupTimeline.draw();
+            }
+        });
+    }
+}
+
 async function initializeSystemOperations() {
     function configureAuditEventsChart() {
         if (CasActuatorEndpoints.auditEvents()) {
@@ -2574,202 +2875,7 @@ async function initializeSystemOperations() {
     const tabs = dashboardTabBar();
 
     async function configureStartupTimeline() {
-        if (!CasActuatorEndpoints.startup()) {
-            return;
-        }
-
-        let allEvents = [];
-        let activeFilter = "all";
-        let searchFilter = "";
-        let sortOrder = "index";
-        let initialized = false;
-
-        function parseDurationMs(durationStr) {
-            if (!durationStr) return 0;
-            const match = durationStr.match(/PT(?:(\d+)M)?(?:([\d.]+)S)?/);
-            if (!match) return 0;
-            return (parseFloat(match[1] || 0) * 60 + parseFloat(match[2] || 0)) * 1000;
-        }
-
-        function getDurationClass(ms) {
-            if (ms < 10) return "fastest";
-            if (ms < 50) return "fast";
-            if (ms < 200) return "medium";
-            if (ms < 1000) return "slow";
-            return "slowest";
-        }
-
-        function formatDuration(ms) {
-            if (ms < 1000) return `${Math.round(ms)} ms`;
-            return `${(ms / 1000).toFixed(2)} s`;
-        }
-
-        function buildTree(events) {
-            const map = {};
-            const roots = [];
-            events.forEach(e => { map[e.startupStep.id] = {...e, children: []}; });
-            events.forEach(e => {
-                const node = map[e.startupStep.id];
-                const parentId = e.startupStep.parentId;
-                if (parentId && parentId !== 0 && map[parentId]) {
-                    map[parentId].children.push(node);
-                } else {
-                    roots.push(node);
-                }
-            });
-            return roots;
-        }
-
-        function renderNode(node, depth) {
-            const ms = parseDurationMs(node.duration);
-            const durClass = getDurationClass(ms);
-            const hasChildren = node.children && node.children.length > 0;
-            const tags = (node.startupStep.tags || [])
-                .map(t => `<span class="startup-tag">${escapeHtml(t.key)}=${escapeHtml(t.value)}</span>`).join("");
-            const childLabel = hasChildren
-                ? `<span class="startup-children-count">${node.children.length} ${node.children.length === 1 ? "child" : "children"}</span>` : "";
-            const expandBtn = hasChildren
-                ? `<button class="startup-expand-btn" data-expanded="true" title="Collapse">&#9660;</button>`
-                : `<span class="startup-expand-spacer"></span>`;
-
-            const el = document.createElement("div");
-            el.className = `startup-step-row depth-${depth}`;
-            el.dataset.durationClass = durClass;
-            el.dataset.stepName = node.startupStep.name.toLowerCase();
-            el.dataset.ms = ms;
-            el.innerHTML = `
-                <div class="startup-step-main" style="padding-left:${depth * 28}px">
-                    ${expandBtn}
-                    <div class="startup-step-info">
-                        <span class="startup-step-name">${escapeHtml(node.startupStep.name)}</span>
-                        <span class="startup-step-index">#${node.startupStep.id}</span>
-                        ${childLabel}
-                    </div>
-                    <span class="startup-duration-badge ${durClass}">${formatDuration(ms)}</span>
-                </div>
-                ${tags ? `<div class="startup-step-tags" style="padding-left:${depth * 28 + 36}px">${tags}</div>` : ""}
-            `;
-
-            if (hasChildren) {
-                const childrenEl = document.createElement("div");
-                childrenEl.className = "startup-children";
-                node.children.forEach(child => childrenEl.appendChild(renderNode(child, depth + 1)));
-                el.appendChild(childrenEl);
-
-                el.querySelector(".startup-expand-btn").addEventListener("click", evt => {
-                    const btn = evt.currentTarget;
-                    const expanded = btn.dataset.expanded === "true";
-                    btn.dataset.expanded = String(!expanded);
-                    btn.innerHTML = expanded ? "&#9658;" : "&#9660;";
-                    btn.title = expanded ? "Expand" : "Collapse";
-                    childrenEl.style.display = expanded ? "none" : "";
-                });
-            }
-            return el;
-        }
-
-        function countByDuration(events) {
-            const counts = {fastest: 0, fast: 0, medium: 0, slow: 0, slowest: 0};
-            events.forEach(e => counts[getDurationClass(parseDurationMs(e.duration))]++);
-            return counts;
-        }
-
-        function applyFilters() {
-            document.querySelectorAll("#startupTimelineList .startup-step-row").forEach(row => {
-                const matchesDuration = activeFilter === "all" || row.dataset.durationClass === activeFilter;
-                const matchesSearch = !searchFilter || row.dataset.stepName.includes(searchFilter);
-                row.style.display = matchesDuration && matchesSearch ? "" : "none";
-            });
-        }
-
-        function renderAll() {
-            const list = document.getElementById("startupTimelineList");
-            list.innerHTML = "";
-            let events = [...allEvents];
-
-            if (sortOrder === "duration-desc") {
-                events.sort((a, b) => parseDurationMs(b.duration) - parseDurationMs(a.duration));
-                events.forEach(e => list.appendChild(renderNode({...e, children: []}, 0)));
-            } else if (sortOrder === "duration-asc") {
-                events.sort((a, b) => parseDurationMs(a.duration) - parseDurationMs(b.duration));
-                events.forEach(e => list.appendChild(renderNode({...e, children: []}, 0)));
-            } else if (sortOrder === "name") {
-                events.sort((a, b) => a.startupStep.name.localeCompare(b.startupStep.name));
-                events.forEach(e => list.appendChild(renderNode({...e, children: []}, 0)));
-            } else {
-                buildTree(events).forEach(node => list.appendChild(renderNode(node, 0)));
-            }
-            applyFilters();
-        }
-
-        function attachControls() {
-            $("#startupStepFilter").off("input").on("input", function () {
-                searchFilter = $(this).val().toLowerCase();
-                applyFilters();
-            });
-
-            $("#startupExpandAll").off("click").on("click", () => {
-                document.querySelectorAll("#startupTimelineList .startup-expand-btn").forEach(btn => {
-                    btn.dataset.expanded = "true";
-                    btn.innerHTML = "&#9660;";
-                    btn.title = "Collapse";
-                });
-                document.querySelectorAll("#startupTimelineList .startup-children").forEach(c => c.style.display = "");
-            });
-
-            $("#startupCollapseAll").off("click").on("click", () => {
-                document.querySelectorAll("#startupTimelineList .startup-expand-btn").forEach(btn => {
-                    btn.dataset.expanded = "false";
-                    btn.innerHTML = "&#9658;";
-                    btn.title = "Expand";
-                });
-                document.querySelectorAll("#startupTimelineList .startup-children").forEach(c => c.style.display = "none");
-            });
-
-            $("#startupDurationFilters").off("click", ".startup-duration-filter").on("click", ".startup-duration-filter", function () {
-                activeFilter = $(this).data("filter");
-                $("#startupDurationFilters .startup-duration-filter").removeClass("active");
-                $(this).addClass("active");
-                applyFilters();
-            });
-
-            $("#startupSortSelect").off("change").on("change", function () {
-                sortOrder = $(this).val();
-                renderAll();
-            });
-        }
-
-        if (initialized) {
-            attachControls();
-            return;
-        }
-
-        $.get(CasActuatorEndpoints.startup(), response => {
-            initialized = true;
-            allEvents = (response.timeline && response.timeline.events) ? response.timeline.events : [];
-
-            if (allEvents.length === 0) {
-                $("#startupTimelineList").html('<p class="text-muted p-3">No startup steps available. Ensure <code>BufferingApplicationStartup</code> is configured.</p>');
-                updateNavigationSidebar();
-                return;
-            }
-
-            const counts = countByDuration(allEvents);
-            $("#count-fastest").text(counts.fastest);
-            $("#count-fast").text(counts.fast);
-            $("#count-medium").text(counts.medium);
-            $("#count-slow").text(counts.slow);
-            $("#count-slowest").text(counts.slowest);
-
-            renderAll();
-            attachControls();
-            updateNavigationSidebar();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching startup data:", error);
-            $("#startupTimelineList").html('<p class="text-muted p-3">Could not load startup timeline data.</p>');
-            displayBanner(xhr);
-            updateNavigationSidebar();
-        });
+        await PalantirStartupTimeline.show();
     }
 
     async function configureSystemInfo() {

@@ -20,6 +20,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,7 +95,8 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
         return managers
             .values()
             .stream()
-            .filter(manager -> manager.getName().equals(name))
+            .filter(BeanSupplier::isNotProxy)
+            .filter(manager -> isNamed(manager, name))
             .findFirst()
             .map(manager -> ResponseEntity.ok(manager.load()))
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -138,7 +140,8 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
         return managers
             .values()
             .stream()
-            .filter(manager -> manager.getName().equals(name))
+            .filter(BeanSupplier::isNotProxy)
+            .filter(manager -> isNamed(manager, name))
             .findFirst()
             .map(manager -> ResponseEntity.of(manager.findById(id)))
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -182,7 +185,8 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
         return managers
             .values()
             .stream()
-            .filter(manager -> manager.getName().equals(name))
+            .filter(BeanSupplier::isNotProxy)
+            .filter(manager -> isNamed(manager, name))
             .findFirst()
             .map(manager -> {
                 manager.removeById(id);
@@ -223,10 +227,24 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
         return managers
             .values()
             .stream()
-            .filter(manager -> manager.getName().equals(name))
+            .filter(BeanSupplier::isNotProxy)
+            .filter(manager -> isNamed(manager, name))
             .findFirst()
             .map(manager -> store(manager, document))
             .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Whether a manager goes by a name: its name, or the simple name of its class, which managers went by before they
+     * had names of their own; the class is the manager's own, not that of a proxy Spring puts around it, such as for a
+     * refreshable bean.
+     *
+     * @param manager the manager
+     * @param name    the name
+     * @return true when the manager goes by the name
+     */
+    private static boolean isNamed(final SamlRegisteredServiceMetadataManager manager, final String name) {
+        return manager.getName().equalsIgnoreCase(name) || ClassUtils.getUserClass(manager).getSimpleName().equals(name);
     }
 
     private static ResponseEntity store(final SamlRegisteredServiceMetadataManager manager, final SamlMetadataDocument document) {

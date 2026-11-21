@@ -1150,6 +1150,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="saml"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html) downloaded
   from a URL or an MDQ server that cannot be parsed, or that its filters refuse, no longer replaces the metadata backup file,
   so CAS keeps falling back onto the last copy it trusted.
+- {: .changed data-area="saml"} Stores of [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html),
+  such as MongoDB, Redis, DynamoDB or Amazon S3, are listed by the metadata endpoint under names meant for people, such as
+  `Amazon S3` or `Relational Database`, rather than their class names, which the endpoint still accepts.
 
 ### Authentication Interrupts
 {: .changed data-area="ui"}

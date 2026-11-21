@@ -208,6 +208,45 @@ async function verifyHome(page) {
         const stored = JSON.parse(localStorage.getItem("PalantirHomeLayout")).order;
         return order.indexOf("resources") < order.indexOf("health") && stored.indexOf("resources") < stored.indexOf("health");
     }, {timeout: 10000});
+    const before = await page.evaluate(() => ({
+        order: $("#homeGrid > [data-home-widget]").map((index, element) => element.dataset.homeWidget).get(),
+        layout: localStorage.getItem("PalantirHomeLayout"),
+        title: $("#homeGrid > [data-home-widget='health'] h3")[0].getBoundingClientRect().height,
+        ticks: PalantirHome.healthChart?.scales?.y?.options?.ticks?.font?.size ?? null
+    }));
+    await page.click("#homeGrid [data-home-for='health'][data-home-action='spotlight']");
+    await page.waitForFunction(() => $("#homeGrid").hasClass("is-spotlight")
+        && $("#homeGrid > [data-home-widget]:visible").length === 1
+        && $("#homeGrid > [data-home-widget='health']").is(":visible"), {timeout: 10000});
+    const spotlit = await page.evaluate(() => {
+        const card = $("#homeGrid > [data-home-widget='health']");
+        return {
+            width: Math.round(card.outerWidth()),
+            grid: Math.round($("#homeGrid").width()),
+            pressed: card.find("[data-home-action='spotlight']").attr("aria-pressed"),
+            layout: localStorage.getItem("PalantirHomeLayout"),
+            title: card.find("h3")[0].getBoundingClientRect().height,
+            ticks: PalantirHome.healthChart?.scales?.y?.options?.ticks?.font?.size ?? null,
+            zoom: Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--palantir-spotlight-zoom"))
+        };
+    });
+    await cas.log(`Home card in the spotlight: ${JSON.stringify(spotlit)}`);
+    assert(spotlit.pressed === "true" && spotlit.width >= spotlit.grid - 2 && spotlit.layout === before.layout);
+    assert(spotlit.zoom <= 1 || spotlit.title > before.title * 1.1, `The card in the spotlight is magnified: ${before.title} to ${spotlit.title}`);
+    assert(spotlit.zoom <= 1 || spotlit.ticks === null || spotlit.ticks > (before.ticks ?? 12));
+    await cas.screenshot(page);
+    await page.keyboard.press("Escape");
+    await page.waitForFunction(() => !$("#homeGrid").hasClass("is-spotlight"), {timeout: 10000});
+    const restored = await page.evaluate(() => $("#homeGrid > [data-home-widget='health'] h3")[0].getBoundingClientRect().height);
+    assert(Math.abs(restored - before.title) < 1, `The card is back to its size: ${restored} for ${before.title}`);
+    await page.click("#homeGrid [data-home-for='health'][data-home-action='spotlight']");
+    await page.waitForFunction(() => $("#homeGrid").hasClass("is-spotlight"), {timeout: 10000});
+    await page.click("#homeGrid [data-home-for='health'][data-home-action='spotlight']");
+    await page.waitForFunction((order) => !$("#homeGrid").hasClass("is-spotlight")
+        && JSON.stringify($("#homeGrid > [data-home-widget]:visible").map((index, element) => element.dataset.homeWidget).get())
+            === JSON.stringify(order), {timeout: 10000}, before.order);
+    await cas.logg("A Home card can be put in the spotlight and taken out of it, with the layout as it was");
+
     await page.click("#homeCustomize");
     await page.click("#homeCustomizeMenu [data-home-action='reset']");
     await page.waitForFunction(() => localStorage.getItem("PalantirHomeLayout") === null
@@ -317,16 +356,24 @@ async function verifyApplicationTypeFilter(page) {
  */
 async function verifyTheme(page) {
     await cas.separator();
-    const readTheme = () => page.evaluate(() => ({
-        theme: document.documentElement.getAttribute("data-theme"),
-        stored: localStorage.getItem("PalantirTheme")
-    }));
+    const readTheme = () => page.evaluate(() => {
+        const chart = Object.values(Chart.instances ?? {}).find((instance) => instance.scales?.y?.getLabelItems?.().length > 0);
+        const label = chart?.scales.y.getLabelItems()[0];
+        return {
+            theme: document.documentElement.getAttribute("data-theme"),
+            stored: localStorage.getItem("PalantirTheme"),
+            label: label ? String(label.options?.color ?? label.color) : null,
+            text: getComputedStyle(document.documentElement).getPropertyValue("--palantir-text-muted").trim()
+        };
+    });
     const initial = await readTheme();
     await cas.click(page, "#palantirThemeToggle");
     const switched = await readTheme();
     await cas.logg(`Theme switched from ${initial.theme} to ${switched.theme}`);
     assert(switched.theme !== initial.theme);
     assert(switched.stored === switched.theme);
+    await cas.log(`Chart labels follow the theme at once: ${initial.label} to ${switched.label}`);
+    assert(switched.label === null || switched.label === switched.text, `Chart labels are ${switched.label}, not ${switched.text}`);
     await cas.click(page, "#palantirThemeToggle");
     const restored = await readTheme();
     assert(restored.theme === initial.theme);

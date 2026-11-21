@@ -177,6 +177,51 @@ async function verifySignIns(page) {
     assert(await page.$("#systemstatus-tab #topApplicationsChart") === null);
 }
 
+/**
+ * Open the Application Startup page twice: the steps are read once, drawn with a progress bar that goes away once
+ * they are all shown, and found by name.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyStartupTimeline(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.startup()))) {
+        await cas.logy("The startup endpoint is not available; skipping");
+        return;
+    }
+    const requests = [];
+    const listener = (request) => {
+        if (/\/actuator\/startup/.test(request.url())) {
+            requests.push(request.url());
+        }
+    };
+    page.on("request", listener);
+    const open = (tab) => page.evaluate((href) => {
+        $("#systemTabButton").trigger("click");
+        $("#system-tabs").tabs("option", "active", $(`#system-tabs ul li a[href='${href}']`).parent().index());
+    }, tab);
+    await open("#casstartup-tab");
+    await page.waitForFunction(() => $("#startupProgress").prop("hidden")
+        && ($("#startupTimelineList .startup-step-row").length > 0 || $("#startupTimelineList p").length > 0), {timeout: 60000});
+    await open("#systemstatus-tab");
+    await open("#casstartup-tab");
+    await cas.sleep(1000);
+    page.off("request", listener);
+    const drawn = await page.evaluate(() => ({
+        rows: $("#startupTimelineList .startup-step-row").length,
+        steps: PalantirStartupTimeline.steps?.length ?? 0
+    }));
+    await cas.logg(`Application Startup drew ${drawn.rows} of ${drawn.steps} steps with ${requests.length} request(s)`);
+    assert(requests.length === 1 && drawn.rows === drawn.steps);
+    if (drawn.rows > 0) {
+        const name = await page.evaluate(() => $("#startupTimelineList > .startup-step-row").last().find(".startup-step-name").first().text());
+        await page.evaluate((value) => $("#startupStepFilter").val(value).trigger("input"), name);
+        await page.waitForFunction((value) => $("#startupTimelineList .startup-step-row:visible").first()
+            .find(".startup-step-name").first().text() === value, {timeout: 10000}, name);
+        await page.evaluate(() => $("#startupStepFilter").val("").trigger("input"));
+    }
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -203,6 +248,7 @@ async function verifySignIns(page) {
     await verifyCasModules(page);
     await verifySystemMetrics(page);
     await verifySignIns(page);
+    await verifyStartupTimeline(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

@@ -8,6 +8,7 @@ function createRegisteredServiceSaml2Fields() {
         title: "Define the metadata location (URL, file path, etc) for the SAML2 service provider."
     });
     createSamlMetadataUploadButton();
+    PalantirSamlMetadataSources.watch();
 
     createInputField({
         cssClasses: "advanced-option",
@@ -608,6 +609,132 @@ function createSamlRegisteredServiceAttributeReleasePolicy() {
 }
 
 /**
+ * Metadata locations that are sources of many service providers: the stores of the SAML2 metadata managers, such as
+ * MongoDB or Amazon S3, and metadata query (MDQ) servers. When such a location is chosen for an application with no
+ * entity id yet, the operator is asked whether the application should accept every entity the source provides, with
+ * <code>.+</code> as its entity id, or name its entity ids.
+ */
+class PalantirSamlMetadataSources {
+    static TRUST_EVERY_ENTITY = ".+";
+
+    /**
+     * Sources that only find the metadata of the entity an application names, so an application cannot accept all of
+     * them with a pattern: the JSON file of service providers looks each one up by its exact entity id, and metadata
+     * kept in memory is not resolved at all.
+     */
+    static ONE_ENTITY_AT_A_TIME = ["json://", "memory://"];
+
+    static asked = "";
+
+    /**
+     * Ask about a location once it is chosen or typed, not while the wizard is being filled.
+     */
+    static watch() {
+        PalantirSamlMetadataSources.asked = "";
+        $("#registeredServiceMetadataLocation").off("change.palantirSources").on("change.palantirSources", async function () {
+            if (typeof isPopulatingWizard !== "undefined" && isPopulatingWizard) {
+                return;
+            }
+            await PalantirSamlMetadataSources.offer(String($(this).val() ?? "").trim());
+        });
+    }
+
+    /**
+     * Whether the wizard still holds what a question was asked about: the same metadata location and entity id, in a
+     * wizard that is still open. An answer to a question about a location since changed, or an entity id since typed,
+     * is not applied.
+     *
+     * @param location the metadata location asked about
+     * @param entityId the entity id when asked
+     * @returns {boolean} true when the answer still applies
+     */
+    static unchanged(location, entityId) {
+        return $("#editServiceWizardDialog").dialog("instance") !== undefined && $("#editServiceWizardDialog").dialog("isOpen")
+            && String($("#registeredServiceMetadataLocation").val() ?? "").trim() === location
+            && String($("#registeredServiceId").val() ?? "").trim() === entityId;
+    }
+
+    static isMetadataQuery(location) {
+        return /\/entities\/\{0}$/.test(location);
+    }
+
+    /**
+     * The source a location reads many service providers from: a metadata manager CAS has, or one CAS can have when it
+     * cannot be asked, or a metadata query server.
+     *
+     * @param location the metadata location
+     * @returns {Promise<string|null>} what the source is, for people, or null when the location is not such a source
+     */
+    static async sourceOf(location) {
+        const lower = location.toLowerCase();
+        if (location === "" || PalantirSamlMetadataSources.ONE_ENTITY_AT_A_TIME.some(prefix => lower.startsWith(prefix))) {
+            return null;
+        }
+        if (PalantirSamlMetadataSources.isMetadataQuery(location)) {
+            return "This metadata query (MDQ) server";
+        }
+        const managers = typeof PalantirSamlMetadataUpload !== "undefined" && CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()
+            ? await PalantirSamlMetadataUpload.loadManagers()
+            : [];
+        const manager = managers.find(entry => entry?.sourceId && lower.startsWith(String(entry.sourceId).toLowerCase()));
+        if (manager) {
+            return `The ${manager.name ?? manager.sourceId} metadata store`;
+        }
+        const known = Object.keys(PalantirWizardSuggestions.SAML_METADATA_MANAGERS).find(prefix => lower.startsWith(prefix));
+        return known ? `The ${known} metadata store` : null;
+    }
+
+    /**
+     * Ask whether the application accepts every entity of the source its metadata location names, once per location,
+     * when it has no entity id yet: yes makes its entity id <code>.+</code>; no leaves the entity id to be entered.
+     *
+     * @param location the metadata location
+     * @returns {Promise<void>} resolved once answered
+     */
+    static async offer(location) {
+        const entityId = $("#registeredServiceId");
+        const current = String(entityId.val() ?? "").trim();
+        if (location === PalantirSamlMetadataSources.asked || (current !== "" && current !== PalantirSamlMetadataSources.TRUST_EVERY_ENTITY)) {
+            return;
+        }
+        const source = await PalantirSamlMetadataSources.sourceOf(location);
+        if (source === null || !PalantirSamlMetadataSources.unchanged(location, current)) {
+            return;
+        }
+        PalantirSamlMetadataSources.asked = location;
+        const escape = escapePalantirMarkup;
+        const answer = await Swal.fire({
+            icon: "question",
+            titleText: "Accept Every Service Provider From This Source?",
+            html: `<p>${escape(source)} (<code>${escape(location)}</code>) can provide metadata for many service providers.</p>
+                <p>If you accept all of them, CAS will trust every service provider whose metadata it finds there:
+                they need no application of their own, and the policies of this application, such as the attributes it
+                releases, apply to every one of them. Its entity ID becomes <code>${PalantirSamlMetadataSources.TRUST_EVERY_ENTITY}</code>.</p>
+                <p>Otherwise, enter the entity ID, or a pattern of entity IDs, that you can accept from this source.</p>`,
+            showCancelButton: true,
+            confirmButtonText: "Accept Every Service Provider",
+            cancelButtonText: "Enter Entity IDs",
+            focusCancel: true
+        });
+        if (!PalantirSamlMetadataSources.unchanged(location, current)) {
+            return;
+        }
+        if (answer.isConfirmed) {
+            entityId.val(PalantirSamlMetadataSources.TRUST_EVERY_ENTITY).trigger("input").trigger("blur");
+            entityId.closest(".mdc-text-field").find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+            return;
+        }
+        if (answer.dismiss !== Swal.DismissReason.cancel) {
+            return;
+        }
+        if (current === PalantirSamlMetadataSources.TRUST_EVERY_ENTITY) {
+            entityId.val("").trigger("input");
+        }
+        entityId.trigger("focus");
+    }
+}
+
+/**
  * Offer Upload Metadata and Manage Metadata buttons next to the metadata location, when SAML2 metadata management is
  * available: its endpoint can be written to and at least one metadata manager is registered. Uploaded metadata goes to
  * a metadata manager, the same way as from the metadata management section under Protocols, and the metadata location
@@ -668,20 +795,24 @@ function createSamlMetadataUploadButton() {
             name: String($("#registeredServiceName").val() ?? "").trim(),
             onUploaded: async (manager, document) => {
                 $("#registeredServiceMetadataLocation").val(manager.sourceId).trigger("input").trigger("blur");
-                if (String($("#registeredServiceId").val() ?? "").trim() !== "") {
-                    return;
-                }
-                let entityIds = [];
+                let providers = [];
                 try {
-                    entityIds = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(document.value ?? ""))
-                        .map(provider => provider.getAttribute("entityID"))
-                        .filter(Boolean);
+                    providers = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(document.value ?? ""))
+                        .filter(provider => provider.getAttribute("entityID"));
                 } catch (error) {
                     console.debug("The entity ids could not be read from the uploaded metadata", error);
                 }
-                const entityId = entityIds.length > 1 ? await PalantirSamlMetadataImport.choose(entityIds) : entityIds[0];
-                if (entityId) {
-                    $("#registeredServiceId").val(entityId).trigger("input").trigger("blur");
+                let entityId = String($("#registeredServiceId").val() ?? "").trim();
+                if (entityId === "") {
+                    const entityIds = providers.map(provider => provider.getAttribute("entityID"));
+                    entityId = (entityIds.length > 1 ? await PalantirSamlMetadataImport.choose(entityIds) : entityIds[0]) ?? "";
+                    if (entityId) {
+                        $("#registeredServiceId").val(entityId).trigger("input").trigger("blur");
+                    }
+                }
+                const provider = providers.find(entry => entry.getAttribute("entityID") === entityId);
+                if (provider && String($("#registeredServiceName").val() ?? "").trim() === "") {
+                    $("#registeredServiceName").val(PalantirSamlMetadataImport.nameOf(provider)).trigger("input").trigger("blur");
                 }
             }
         });
@@ -953,6 +1084,67 @@ class PalantirSamlMetadataImport {
     }
 
     /**
+     * The name a service provider gives itself in its metadata: its display name, else the display name or the name of
+     * its organization, else a readable form of its entity id.
+     *
+     * @param entity the provider's EntityDescriptor
+     * @returns {string} the name, or an empty string
+     */
+    static nameOf(entity) {
+        const ns = PalantirSamlMetadataImport.NAMESPACES;
+        const children = (parent, namespace, name) => Array.from(parent?.children ?? [])
+            .filter(child => child.namespaceURI === namespace && child.localName === name);
+        const provider = entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor")[0];
+        const uiInfo = provider?.getElementsByTagNameNS(ns.mdui, "UIInfo")[0];
+        const displayNames = uiInfo ? Array.from(uiInfo.getElementsByTagNameNS(ns.mdui, "DisplayName")) : [];
+        const organization = children(entity, ns.md, "Organization")[0];
+        return PalantirSamlMetadataImport.localized(displayNames)
+            || PalantirSamlMetadataImport.localized(children(organization, ns.md, "OrganizationDisplayName"))
+            || PalantirSamlMetadataImport.localized(children(organization, ns.md, "OrganizationName"))
+            || PalantirSamlMetadataImport.readableEntityId(entity.getAttribute("entityID"));
+    }
+
+    /**
+     * A readable form of an entity id: the host of a URL, without www, or the last part of a URN.
+     *
+     * @param entityId the entity id
+     * @returns {string} the readable form, or the entity id as it is
+     */
+    static readableEntityId(entityId) {
+        const value = String(entityId ?? "").trim();
+        if (/^urn:/i.test(value)) {
+            return value.split(":").filter(Boolean).pop() ?? value;
+        }
+        try {
+            return new URL(value).hostname.replace(/^www\./i, "") || value;
+        } catch (error) {
+            return value;
+        }
+    }
+
+    /**
+     * The name to keep uploaded metadata under: the name of its one service provider, else the name the aggregate
+     * gives itself, else the name of its first service provider.
+     *
+     * @param text the metadata XML
+     * @returns {string} the name, or an empty string when the metadata names no service provider
+     */
+    static documentName(text) {
+        try {
+            const document = PalantirSamlMetadataImport.parse(String(text ?? ""));
+            const providers = PalantirSamlMetadataImport.serviceProviders(document);
+            const root = document.documentElement;
+            const aggregate = root?.localName === "EntitiesDescriptor" ? String(root.getAttribute("Name") ?? "").trim() : "";
+            if (providers.length === 1) {
+                return PalantirSamlMetadataImport.nameOf(providers[0]);
+            }
+            return aggregate || (providers.length > 0 ? PalantirSamlMetadataImport.nameOf(providers[0]) : "");
+        } catch (error) {
+            return "";
+        }
+    }
+
+    /**
      * Whether a value is a web address the wizard may link to.
      *
      * @param value the value
@@ -987,16 +1179,7 @@ class PalantirSamlMetadataImport {
 
         const entityId = entity.getAttribute("entityID");
         set("serviceId", "Entity ID", entityId);
-        const organization = children(entity, ns.md, "Organization")[0];
-        let host;
-        try {
-            host = new URL(entityId).hostname;
-        } catch (error) {
-            host = "";
-        }
-        set("name", "Name", PalantirSamlMetadataImport.localized(ui("DisplayName"))
-            || PalantirSamlMetadataImport.localized(children(organization, ns.md, "OrganizationDisplayName"))
-            || host || entityId);
+        set("name", "Name", PalantirSamlMetadataImport.nameOf(entity));
         const description = PalantirSamlMetadataImport.localized(ui("Description"));
         set("description", "Description", description ? escapePalantirMarkup(description) : "");
         const informationUrl = PalantirSamlMetadataImport.localized(ui("InformationURL"));

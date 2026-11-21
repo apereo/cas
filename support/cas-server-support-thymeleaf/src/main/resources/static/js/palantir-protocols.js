@@ -149,7 +149,8 @@ class PalantirSamlMetadataUpload {
      * Open the upload dialog.
      *
      * @param managers the metadata managers to upload to; the first is chosen, and a choice is offered when there are several
-     * @param name the name to start with
+     * @param name the name to start with; while it is empty or still the one suggested, choosing the metadata file
+     *        suggests the name of the service provider it describes
      * @param onUploaded called with the manager and the uploaded document once the metadata is stored
      */
     static open({managers, name = "", onUploaded = () => {}}) {
@@ -179,9 +180,20 @@ class PalantirSamlMetadataUpload {
             signatureEditor.resize();
         };
         const reading = {count: 0, latest: new Map(), closed: false};
+        let suggested = "";
+        const suggestName = content => {
+            const field = $("#saml2MetadataUploadName");
+            const typed = String(field.val() ?? "").trim();
+            const found = typeof PalantirSamlMetadataImport === "undefined" ? "" : PalantirSamlMetadataImport.documentName(content);
+            if (found !== "" && (typed === "" || typed === suggested)) {
+                suggested = found;
+                field.val(found).trigger("input");
+                field.closest(".mdc-text-field").find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+            }
+        };
         const current = (editor, read) => !reading.closed && reading.latest.get(editor) === read;
         const uploadButton = () => dialog.closest(".ui-dialog").find(".ui-dialog-buttonpane button").first();
-        const readInto = (editor, container) => function () {
+        const readInto = (editor, container, onRead = () => {}) => function () {
             if (this.files.length === 0) {
                 return;
             }
@@ -195,6 +207,7 @@ class PalantirSamlMetadataUpload {
                     if (current(editor, read)) {
                         editor.setValue(content);
                         editor.gotoLine(1);
+                        onRead(content);
                         showElements($(container));
                         adjustUploadEditorLayout();
                     }
@@ -212,7 +225,7 @@ class PalantirSamlMetadataUpload {
                 });
         };
         $("#saml2MetadataUploadXmlFileButton").off().on("click", () => $("#saml2MetadataUploadXmlFile").click());
-        $("#saml2MetadataUploadXmlFile").off().on("change", readInto(metadataXmlEditor, "#saml2MetadataUploadXmlEditorContainer"));
+        $("#saml2MetadataUploadXmlFile").off().on("change", readInto(metadataXmlEditor, "#saml2MetadataUploadXmlEditorContainer", suggestName));
         $("#saml2MetadataUploadSignatureFileButton").off().on("click", () => $("#saml2MetadataUploadSignatureFile").click());
         $("#saml2MetadataUploadSignatureFile").off().on("change", readInto(signatureEditor, "#saml2MetadataUploadSignatureEditorContainer"));
 
@@ -959,7 +972,7 @@ async function initializeSAML2ProtocolOperations() {
             }
 
             function viewSaml2MetadataManagerEntry(entryId, managerName) {
-                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`, entry => {
+                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}/${encodeURIComponent(entryId)}`, entry => {
                     saml2MetadataManagerEntryEditor.setValue(entry.value);
                     saml2MetadataManagerEntryEditor.gotoLine(1);
                     const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataManagerEntryDialog"));
@@ -1012,7 +1025,7 @@ async function initializeSAML2ProtocolOperations() {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`,
+                            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}/${encodeURIComponent(entryId)}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, textStatus, jqXHR) => {
@@ -1059,7 +1072,7 @@ async function initializeSAML2ProtocolOperations() {
 
             function fetchMetadataManagerEntries(managerName) {
                 saml2MetadataManagerEntriesTable.clear().draw();
-                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}`, response => {
+                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}`, response => {
                     for (const entry of response) {
                         const entityId = parseEntityIdFromMetadata(entry.value);
                         saml2MetadataManagerEntriesTable.row.add({

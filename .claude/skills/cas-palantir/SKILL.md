@@ -299,6 +299,12 @@ General view, theme and template rules are in the `cas-ui` skill.
 - Settings CAS reads from a chain itself rather than its members (the access strategy's `unauthorizedRedirectUrl`) are
   listed as `lift` on the chain kind: the fields show the chain's value and packing moves it back to the chain.
 - Matching a draft's list entries to the saved definition (to restore secrets) never goes by position alone.
+- Picking a registered application from a text field uses `PalantirApplicationSuggestions.attach` (the access
+  check's menu), never a `<select>`. Wizard field suggestions go in `PalantirWizardSuggestions.FIELDS` (map keys as
+  `path:key`), never a bare jQuery UI autocomplete; their lists are cached per wizard open by `choicesOf`.
+- Chart.js copies axis defaults into each chart when it is made, so theme colors are given as functions
+  (`PalantirTheme.chartColors`), never as values read once; code that needs the grid or text color reads
+  `PalantirTheme.chartColors`, not `Chart.defaults`.
 - Code that runs on every wizard generation or every key typed must not walk all wizard fields or compile a pattern per
   application: cache what only changes with the fields or the application type (`PalantirWizardChains.modeled()`), read
   a section's options once per drawing, and compile service id patterns once (`PalantirAccessCheck.pattern()`).

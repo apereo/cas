@@ -58,6 +58,6 @@ public class InMemorySamlRegisteredServiceMetadataManager implements SamlRegiste
 
     @Override
     public String getName() {
-        return "InMemoryMetadataManager";
+        return "In Memory";
     }
 }

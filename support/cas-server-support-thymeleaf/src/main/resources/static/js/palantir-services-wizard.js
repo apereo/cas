@@ -1859,10 +1859,6 @@ function createRegisteredServiceAccessStrategy() {
 
     CasDiscoveryProfile.fetchIfNeeded()
         .always(async () => {
-            const options = CasDiscoveryProfile.availableAttributes().map(attr => ({
-                value: attr,
-                text: attr
-            }));
             createMappedInputField({
                 cssClasses: "DefaultRegisteredServiceAccessStrategy GrouperRegisteredServiceAccessStrategy ScimRegisteredServiceAccessStrategy",
                 header: "Required Attributes",
@@ -1874,7 +1870,6 @@ function createRegisteredServiceAccessStrategy() {
                 containerField: "accessStrategy.requiredAttributes",
                 multipleValues: true,
                 multipleValuesType: "java.util.HashSet",
-                autoComplete: options,
                 inclusion: "after"
             });
 
@@ -1889,7 +1884,6 @@ function createRegisteredServiceAccessStrategy() {
                 containerField: "accessStrategy.rejectedAttributes",
                 multipleValues: true,
                 multipleValuesType: "java.util.HashSet",
-                autoComplete: options,
                 inclusion: "after"
             });
         });
@@ -2261,7 +2255,6 @@ function createRegisteredServiceProperties() {
         valueField: "registeredServicePropertyValue",
         valueLabel: "Property Value(s) Separated by Comma",
         containerField: "properties",
-        autoComplete: PalantirDashboardConfiguration.serviceProperties(),
         valueFieldRenderer: function ($inputKey, $inputValue) {
             return {
                 "@class": "org.apereo.cas.services.DefaultRegisteredServiceProperty",
@@ -2955,7 +2948,8 @@ function createRegisteredServiceExpirationPolicy() {
 /**
  * Put the field that says which requests an application answers, its service id, redirect URI or entity id, at the
  * top of the protocol section of the application's type, after the client id and secrets for OAuth and OpenID
- * Connect, since what it holds depends on the protocol. A type without a protocol section keeps it in the general
+ * Connect and after the metadata location for SAML2, since what it holds depends on the protocol and, for SAML2, on
+ * where the metadata comes from. A type without a protocol section keeps it in the general
  * section.
  *
  * @param className the short name of the application's type
@@ -2974,7 +2968,8 @@ function placeRegisteredServiceIdField(className) {
         $("#registeredServiceIdHome").before(field);
         return;
     }
-    const client = container.children("#registeredServiceClientSecretsContainer, #registeredServiceClientIdFieldContainer").last();
+    const client = container.children("#registeredServiceClientSecretsContainer, #registeredServiceClientIdFieldContainer, "
+        + "#registeredServiceMetadataLocationFieldContainer").last();
     if (client.length > 0) {
         client.after(field);
     } else {
@@ -3709,7 +3704,6 @@ function createMappedInputField(config) {
         unwrapSingleElement = false,
         onChangeCallback,
         groovyEditorTitle = "",
-        autoComplete = [],
         additionalFields = []
     } = config;
 
@@ -3896,20 +3890,6 @@ function createMappedInputField(config) {
     configureInputRenderer();
     configureGroovyEditors($(`#${sectionContainerId}`));
 
-    if (autoComplete && autoComplete.length > 0) {
-       $(`#${inputFieldKeyId}`).autocomplete({
-           delay: 0,
-           source: autoComplete,
-           open: function( event, ui ) {
-                attachPalantirTextFields($(this).closest(".mdc-text-field"));
-           },
-           select: function (event, ui) {
-                $(this).val(ui.item.value);
-                attachPalantirTextFields($(this).closest(".mdc-text-field"));
-                return false;
-           }
-       });
-    }
     return $(`#${sectionContainerId}`);
 }
 
@@ -4914,6 +4894,10 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
 
         editServiceWizardDialog = createRegisteredServiceWizardDialog();
         PalantirWizardChains.reset();
+        if (typeof PalantirSamlMetadataSources !== "undefined") {
+            PalantirSamlMetadataSources.asked = "";
+        }
+        PalantirWizardSuggestions.reset();
         PalantirWizardChains.bind();
         $("#editServiceWizardGeneralContainer").find("input").val("");
         $(".jqueryui-multiselectmenu").each(function () {
@@ -5084,7 +5068,8 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
 }
 
 /**
- * Ask which type of application to create, as a set of described cards.
+ * Ask which type of application to create, as a set of described cards. While the cards are shown, the digit on each
+ * card chooses it; the keys are read before the page's own shortcuts and only for as long as the cards are shown.
  *
  * @param serviceTypes the supported registered service classes, mapped to their friendly names
  * @returns {Promise<string|null>} the chosen class, or null when the operator cancels
@@ -5099,16 +5084,18 @@ async function chooseRegisteredServiceType(serviceTypes) {
     };
     const needs = {
         cas: "the service URL pattern",
-        saml: "the entity ID and a metadata location",
+        saml: "a metadata location and the entity ID",
         oidc: "a redirect URI, client ID and secret",
         oauth: "a redirect URI, client ID and grant types",
         wsfed: "the realm and reply URL"
     };
-    const cards = Object.entries(serviceTypes).map(([serviceClass, friendlyName]) => {
+    const cards = Object.entries(serviceTypes).map(([serviceClass, friendlyName], index) => {
         const protocol = applicationProtocolOf(serviceClass);
+        const shortcut = index < 9 ? String(index + 1) : "";
         return `
             <button type="button" class="palantir-type-card" role="radio" aria-checked="false"
-                    data-service-class="${escapePalantirMarkup(serviceClass)}">
+                    data-service-class="${escapePalantirMarkup(serviceClass)}"${shortcut ? ` aria-keyshortcuts="${shortcut}"` : ""}>
+                ${shortcut ? `<kbd class="palantir-type-card-key" title="Press ${shortcut} to choose">${shortcut}</kbd>` : ""}
                 <span class="palantir-type-card-head">
                     <span class="palantir-protocol-badge is-${protocol.key}" aria-hidden="true">${escapePalantirMarkup(protocol.short)}</span>
                     <span class="palantir-type-card-name">
@@ -5121,12 +5108,13 @@ async function chooseRegisteredServiceType(serviceTypes) {
             </button>`;
     }).join("");
     let chosen = null;
+    let shortcuts = () => {};
     const result = await Swal.fire({
         title: "What type of application do you want to add?",
         html: `
-            <p class="palantir-type-picker-intro">The type decides which protocol settings the wizard shows.</p>
+            <p class="palantir-type-picker-intro">The type decides which protocol settings the wizard shows. Press the number on a card to choose it.</p>
             <div class="palantir-type-picker" role="radiogroup" aria-label="Application type">${cards}</div>`,
-        width: 920,
+        width: 1100,
         showConfirmButton: false,
         showCancelButton: true,
         customClass: {popup: "palantir-type-picker-popup"},
@@ -5155,7 +5143,21 @@ async function chooseRegisteredServiceType(serviceTypes) {
                 });
             });
             cards[0]?.focus();
+            shortcuts = event => {
+                if (event.ctrlKey || event.metaKey || event.altKey || !/^[1-9]$/.test(event.key)) {
+                    return;
+                }
+                const card = cards[Number(event.key) - 1];
+                if (card) {
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+                    choose(card);
+                    Swal.clickConfirm();
+                }
+            };
+            window.addEventListener("keydown", shortcuts, true);
         },
+        willClose: () => window.removeEventListener("keydown", shortcuts, true),
         preConfirm: () => {
             if (!chosen) {
                 Swal.showValidationMessage("Choose the type of application to continue.");
@@ -5369,26 +5371,71 @@ class PalantirWizardSuggestions {
         return CasDiscoveryProfile.availableAuthenticationHandlers().map(name => ({value: name, description: "An authentication handler of this server"}));
     }
 
-    static identityProviderNames = null;
-
     /**
      * The external identity providers CAS delegates to, read once from the delegated clients endpoint.
      *
      * @returns {object[]|Promise<object[]>} the providers, or a promise of them while they are read
      */
-    static identityProviders() {
-        if (Array.isArray(PalantirWizardSuggestions.identityProviderNames)) {
-            return PalantirWizardSuggestions.identityProviderNames;
-        }
+    static async identityProviders() {
         if (!CasActuatorEndpoints.delegatedClients()) {
             return [];
         }
-        return Promise.resolve($.get(CasActuatorEndpoints.delegatedClients()))
-            .then(response => {
-                const names = response && typeof response === "object" && !Array.isArray(response) ? Object.keys(response).sort() : [];
-                PalantirWizardSuggestions.identityProviderNames = names.map(name => ({value: name, description: "An external identity provider of this server"}));
-                return PalantirWizardSuggestions.identityProviderNames;
-            });
+        const response = await $.get(CasActuatorEndpoints.delegatedClients());
+        const names = response && typeof response === "object" && !Array.isArray(response) ? Object.keys(response).sort() : [];
+        return names.map(name => ({value: name, description: "An external identity provider of this server"}));
+    }
+
+    static serviceProperties() {
+        return [].concat(PalantirDashboardConfiguration.serviceProperties() ?? [])
+            .map(property => typeof property === "string" ? {value: property, description: ""}
+                : {value: String(property?.name ?? ""), description: String(property?.description ?? "")})
+            .filter(property => property.value !== "");
+    }
+
+    /**
+     * Where each SAML2 metadata manager CAS can have stores service provider metadata, by the prefix of the metadata
+     * locations it handles.
+     */
+    static SAML_METADATA_MANAGERS = {
+        "mongodb://": "Metadata stored in MongoDB",
+        "jdbc://": "Metadata stored in a relational database",
+        "redis://": "Metadata stored in Redis",
+        "dynamodb://": "Metadata stored in Amazon DynamoDB",
+        "awss3://": "Metadata stored in Amazon S3",
+        "git://": "Metadata stored in a Git repository",
+        "rest://": "Metadata stored behind a REST API",
+        "json://": "Metadata stored in a JSON file",
+        "memory://": "Metadata stored in memory until CAS restarts"
+    };
+
+    /**
+     * The kinds of metadata location a SAML2 service provider can have, in the order an operator would weigh them: a
+     * URL, a metadata query (MDQ) service, the metadata stores of the managers CAS has, or of every manager CAS can
+     * have when it cannot be asked which it has, then a file or a Groovy script. Any other location can still be typed.
+     *
+     * @returns {Promise<object[]>} the choices
+     */
+    static async samlMetadataLocations() {
+        const readable = typeof PalantirSamlMetadataUpload !== "undefined" && Boolean(CasActuatorEndpoints.samlIdpRegisteredServiceMetadata());
+        const managers = readable ? await PalantirSamlMetadataUpload.loadManagers() : [];
+        const known = PalantirWizardSuggestions.SAML_METADATA_MANAGERS;
+        const stores = readable && PalantirSamlMetadataUpload.managers !== null
+            ? [...new Map(managers.filter(manager => manager?.sourceId).map(manager => {
+                const prefix = String(manager.sourceId);
+                return [prefix.toLowerCase(), {value: prefix, description: known[prefix.toLowerCase()] ?? `Metadata stored by ${manager.name ?? prefix}`}];
+            })).values()]
+            : Object.entries(known).map(([value, description]) => ({value, description: `${description}, if CAS includes its support`}));
+        return [
+            ...PalantirWizardSuggestions.choices(
+                ["https://", "Metadata downloaded from a URL"],
+                ["https://mdq.incommon.org/entities/{0}", "Metadata queried by entity ID from the InCommon MDQ service"],
+                ["http://mdq.ukfederation.org.uk/entities/{0}", "Metadata queried by entity ID from the UK federation MDQ service"]),
+            ...stores,
+            ...PalantirWizardSuggestions.choices(
+                ["file:/etc/cas/saml/sp-metadata.xml", "Metadata in a file on the CAS server"],
+                ["classpath:sp-metadata.xml", "Metadata in a file packaged with CAS"],
+                ["file:/etc/cas/saml/metadata.groovy", "Metadata resolved by a Groovy script, if CAS includes Groovy support"])
+        ];
     }
 
     static multifactorProviders() {
@@ -5459,6 +5506,9 @@ class PalantirWizardSuggestions {
             [`${PalantirDashboardConfiguration.casServerPrefix() ?? ""}/oidc`, "The issuer CAS uses by default"])},
         "realm": {source: () => PalantirWizardSuggestions.choices(["urn:org:apereo:cas:ws:idp:realm-CAS", "The realm CAS uses by default"])},
         "accessStrategy.headers:key": {source: () => PalantirWizardSuggestions.HEADERS},
+        "accessStrategy.requiredAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "accessStrategy.rejectedAttributes:key": {source: () => PalantirWizardSuggestions.attributes()},
+        "properties:key": {source: () => PalantirWizardSuggestions.serviceProperties()},
         "attributeReleasePolicy.headers:key": {source: () => PalantirWizardSuggestions.HEADERS},
         "accessStrategy.rolesAttribute": {source: () => PalantirWizardSuggestions.attributes()},
         "accessStrategy.emailAttributeName": {source: () => PalantirWizardSuggestions.attributes()},
@@ -5468,6 +5518,7 @@ class PalantirWizardSuggestions {
         "attributeReleasePolicy.claimMappings:key": {source: () => PalantirWizardSuggestions.OIDC_CLAIMS},
         "attributeReleasePolicy.claimMappings:value": {source: () => PalantirWizardSuggestions.attributes()},
 
+        "metadataLocation": {source: () => PalantirWizardSuggestions.samlMetadataLocations()},
         "requiredNameIdFormat": {source: () => PalantirWizardSuggestions.NAME_ID_FORMATS},
         "requiredAuthenticationContextClass": {source: () => PalantirWizardSuggestions.AUTHENTICATION_CONTEXTS},
         "logoutResponseBinding": {source: () => PalantirWizardSuggestions.SAML_BINDINGS},
@@ -5568,14 +5619,60 @@ class PalantirWizardSuggestions {
         return PalantirWizardSuggestions.FIELDS[key] ?? null;
     }
 
-    static matches(rule, term) {
-        return PalantirWizardSuggestions.filter(rule.source(), term);
+    static cache = new Map();
+
+    /**
+     * Forget the suggestions read so far, as when the wizard opens, so a field reads what the server knows then.
+     */
+    static reset() {
+        PalantirWizardSuggestions.cache.clear();
+    }
+
+    /**
+     * The suggestions of a field, read once while the wizard is open rather than with every key typed: a list the
+     * server is asked for is asked for once, and one that cannot be read suggests nothing. Each value is listed once,
+     * with its text in lower case ready to be matched. A list known without asking the server is ready at once.
+     *
+     * @param rule the field's suggestions
+     * @returns {object[]|Promise<object[]>} the choices, or a promise of them while they are read
+     */
+    static choicesOf(rule) {
+        if (PalantirWizardSuggestions.cache.has(rule)) {
+            return PalantirWizardSuggestions.cache.get(rule);
+        }
+        const prepare = choices => [...new Map((Array.isArray(choices) ? choices : [])
+            .filter(choice => choice?.value !== undefined && choice.value !== null && String(choice.value) !== "")
+            .map(choice => {
+                const value = String(choice.value);
+                const description = String(choice.description ?? "");
+                return [value, {value, description, search: `${value}\n${description}`.toLowerCase()}];
+            })).values()];
+        const failed = error => {
+            console.debug("The wizard could not read the suggestions of a field", error);
+            PalantirWizardSuggestions.cache.set(rule, []);
+            return [];
+        };
+        try {
+            const choices = rule.source();
+            if (typeof choices?.then !== "function") {
+                PalantirWizardSuggestions.cache.set(rule, prepare(choices));
+            } else {
+                PalantirWizardSuggestions.cache.set(rule, choices.then(list => {
+                    const ready = prepare(list);
+                    PalantirWizardSuggestions.cache.set(rule, ready);
+                    return ready;
+                }, failed));
+            }
+        } catch (error) {
+            failed(error);
+        }
+        return PalantirWizardSuggestions.cache.get(rule);
     }
 
     static filter(choices, term) {
         const wanted = term.trim().toLowerCase();
-        return (Array.isArray(choices) ? choices : [])
-            .filter(choice => wanted === "" || choice.value.toLowerCase().includes(wanted) || choice.description.toLowerCase().includes(wanted))
+        return choices
+            .filter(choice => wanted === "" || choice.search.includes(wanted))
             .slice(0, 50)
             .map(choice => ({label: choice.value, value: choice.value, description: choice.description}));
     }
@@ -5613,12 +5710,12 @@ class PalantirWizardSuggestions {
             delay: 0,
             minLength: 0,
             source: (request, respond) => {
-                const choices = rule.source();
                 const term = PalantirWizardSuggestions.term(input, rule);
-                if (typeof choices?.then === "function") {
-                    choices.then(list => respond(PalantirWizardSuggestions.filter(list, term)), () => respond([]));
-                } else {
+                const choices = PalantirWizardSuggestions.choicesOf(rule);
+                if (Array.isArray(choices)) {
                     respond(PalantirWizardSuggestions.filter(choices, term));
+                } else {
+                    choices.then(list => respond(PalantirWizardSuggestions.filter(list, term)));
                 }
             },
             focus: () => false,

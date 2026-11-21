@@ -195,9 +195,11 @@ class PalantirServiceEditGuard {
 
     /**
      * The entry of the definition the dialog opens with that each entry of a list in a draft came from. Entries such as
-     * the policies of a chain may have been moved or removed in the draft, so an object is matched first to an object of
-     * its type it still equals once secrets are left out, then to the one object of its type that shares the most of
-     * its settings; when no single object stands out, the entry gets no secret rather than the secret of another one.
+     * the policies of a chain may have been moved or removed in the draft, so an object is matched to an object of its
+     * type it still equals once secrets are left out. The one object changed in the draft is matched to the object at
+     * its place only when the list was neither reordered nor shortened: it kept its length and every other object still
+     * equals the one at its own place. Otherwise, as when several objects changed, an entry that matches nothing gets
+     * no secret, rather than possibly the secret of another.
      *
      * @param value the list in the draft
      * @param source the same list in the definition the dialog opens with
@@ -205,36 +207,34 @@ class PalantirServiceEditGuard {
      */
     static counterparts(value, source) {
         const isObject = entry => entry !== null && typeof entry === "object" && !Array.isArray(entry);
-        const redacted = source.map(candidate => isObject(candidate) ? PalantirServiceEditGuard.redact(candidate) : candidate);
+        const redacted = source.map(candidate => isObject(candidate) ? JSON.stringify(PalantirServiceEditGuard.redact(candidate)) : null);
         const used = new Set();
         const found = value.map((entry, index) => isObject(entry) ? undefined : source[index]);
-        const open = entry => source.map((candidate, at) => at)
-            .filter(at => !used.has(at) && isObject(source[at]) && source[at]["@class"] === entry["@class"]);
         value.forEach((entry, index) => {
             if (!isObject(entry)) {
                 return;
             }
             const shape = JSON.stringify(entry);
-            const at = open(entry).find(candidate => JSON.stringify(redacted[candidate]) === shape);
+            const candidates = source.map((candidate, at) => at)
+                .filter(at => !used.has(at) && isObject(source[at]) && source[at]["@class"] === entry["@class"] && redacted[at] === shape);
+            const at = candidates.includes(index) ? index : candidates[0];
             if (at !== undefined) {
                 used.add(at);
                 found[index] = source[at];
             }
         });
-        value.forEach((entry, index) => {
-            if (!isObject(entry) || found[index] !== undefined) {
-                return;
-            }
-            const shared = at => Object.keys(entry).filter(key => key !== "@class" && entry[key] !== PalantirServiceEditGuard.REDACTED
-                && JSON.stringify(entry[key]) === JSON.stringify(redacted[at][key])).length;
-            const scored = open(entry).map(at => ({at, score: shared(at)})).sort((left, right) => right.score - left.score);
-            const best = scored[0];
-            const unique = best !== undefined && (scored.length === 1 || scored[1].score < best.score);
-            if (unique && (best.score > 0 || (scored.length === 1 && best.at === index))) {
-                used.add(best.at);
-                found[index] = source[best.at];
-            }
-        });
+        const unmatched = value.filter((entry, index) => isObject(entry) && found[index] === undefined).length;
+        const inPlace = unmatched === 1 && value.length === source.length
+            && value.every((entry, index) => !isObject(entry) || found[index] === undefined || found[index] === source[index]);
+        if (inPlace) {
+            value.forEach((entry, index) => {
+                if (isObject(entry) && found[index] === undefined && !used.has(index)
+                    && isObject(source[index]) && source[index]["@class"] === entry["@class"]) {
+                    used.add(index);
+                    found[index] = source[index];
+                }
+            });
+        }
         return found;
     }
 

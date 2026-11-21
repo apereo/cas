@@ -1311,7 +1311,7 @@ function palantirHealthScales(timed) {
                 type: "logarithmic",
                 min: 0.5,
                 grid: {
-                    color: context => PALANTIR_HEALTH_MARKS.includes(Number(context.tick?.value)) ? Chart.defaults.scale.grid.color : "transparent"
+                    color: context => PALANTIR_HEALTH_MARKS.includes(Number(context.tick?.value)) ? PalantirTheme.chartColors.grid : "transparent"
                 },
                 ticks: {
                     maxRotation: 0,

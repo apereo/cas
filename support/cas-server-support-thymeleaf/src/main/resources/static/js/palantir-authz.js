@@ -1288,10 +1288,6 @@ class PalantirAccessCheck {
 
     static selected = null;
 
-    static suggestionTotal = 0;
-
-    static suggestionTerm = "";
-
     static sorted = null;
 
     static patterns = new Map();
@@ -1445,23 +1441,33 @@ class PalantirAccessCheck {
             return {parameter: null, service: null};
         }
         const services = PalantirAccessCheck.applications();
-        const client = services.find(service => ["oidc", "oauth"].includes(PalantirAccessCheck.protocolOf(service))
-            && String(service.clientId ?? "").toLowerCase() === value.toLowerCase());
-        if (client) {
-            return {parameter: {name: "client_id", value}, service: client};
-        }
         const selected = PalantirAccessCheck.selected;
+        const clients = services.filter(service => ["oidc", "oauth"].includes(PalantirAccessCheck.protocolOf(service))
+            && String(service.clientId ?? "").toLowerCase() === value.toLowerCase());
+        if (selected && PalantirAccessCheck.answers(selected, value)) {
+            const protocol = PalantirAccessCheck.protocolOf(selected);
+            if (protocol === "cas") {
+                return {parameter: {name: "service", value}, service: PalantirAccessCheck.matching(value)};
+            }
+            if ((protocol === "oidc" || protocol === "oauth") && clients.length > 0) {
+                return {parameter: {name: "client_id", value}, service: clients[0]};
+            }
+        }
+        if (clients.length > 0 && !(selected && PalantirAccessCheck.protocolOf(selected) === "saml" && PalantirAccessCheck.answers(selected, value))) {
+            return {parameter: {name: "client_id", value}, service: clients[0]};
+        }
         const providers = services.filter(service => PalantirAccessCheck.protocolOf(service) === "saml");
         const provider = PalantirAccessCheck.protocolOf(selected) === "saml" && PalantirAccessCheck.answers(selected, value)
             ? providers.find(service => PalantirAccessCheck.answers(service, value))
-            : providers.find(service => String(service.serviceId ?? "") === value);
+            : null;
         if (provider) {
             return {parameter: {name: "entityId", value}, service: provider};
         }
         const application = PalantirAccessCheck.matching(value);
         if (!selected) {
             const answering = providers.filter(service => PalantirAccessCheck.answers(service, value));
-            const named = answering.find(service => PalantirAccessCheck.literal(service.serviceId));
+            const named = answering.find(service => String(service.serviceId ?? "") === value)
+                ?? answering.find(service => PalantirAccessCheck.literal(service.serviceId));
             if (named && application) {
                 return {parameter: {name: "service", value}, service: null, choices: [named, application]};
             }
@@ -2020,11 +2026,9 @@ class PalantirAccessCheck {
      */
     static suggestions(term) {
         const text = String(term ?? "").trim();
-        const lower = text.toLowerCase();
-        return PalantirAccessCheck.applications().filter(service => text === ""
-            || [service.name, service.serviceId, service.clientId, service.id, service.description]
-                .some(value => String(value ?? "").toLowerCase().includes(lower))
-            || (/^https?:\/\//i.test(text) && PalantirAccessCheck.answers(service, text)));
+        const url = /^https?:\/\//i.test(text);
+        return PalantirAccessCheck.applications().filter(service => PalantirApplicationSuggestions.matches(service, text)
+            || (url && PalantirAccessCheck.answers(service, text)));
     }
 
     static highlight(text, term) {
@@ -2037,61 +2041,23 @@ class PalantirAccessCheck {
     }
 
     static bind() {
-        $("#accessApplication").autocomplete({
-            minLength: 0,
-            delay: 0,
-            position: {my: "left top+6", at: "left bottom", of: "#accessTargetField", collision: "flipfit"},
-            source: (request, response) => {
-                const term = String(request.term ?? "").trim();
+        PalantirApplicationSuggestions.attach($("#accessApplication"), {
+            field: "#accessTargetField",
+            source: term => {
                 const {parameter, service, choices} = PalantirAccessCheck.resolve(term);
                 if (PalantirAccessCheck.selected || choices || (service && (parameter.name !== "service" || /^https?:\/\//i.test(term)))) {
-                    response([]);
-                    return;
+                    return null;
                 }
-                const found = PalantirAccessCheck.suggestions(request.term);
-                PalantirAccessCheck.suggestionTotal = found.length;
-                PalantirAccessCheck.suggestionTerm = String(request.term ?? "").trim();
-                response(found.slice(0, 50).map(service => ({label: service.name ?? PalantirAccessCheck.identifierOf(service),
-                    value: PalantirAccessCheck.valueOf(service), service})));
+                return PalantirAccessCheck.suggestions(term);
             },
-            open: () => {
-                const menu = $("#accessApplication").autocomplete("widget");
-                menu.outerWidth($("#accessTargetField").outerWidth());
-            },
-            select: (event, ui) => {
-                event.preventDefault();
-                PalantirAccessCheck.choose(ui.item.service, true);
-            },
-            focus: event => event.preventDefault()
-        }).on("focus", async function () {
+            select: service => PalantirAccessCheck.choose(service, true)
+        });
+        $("#accessApplication").on("focus", async function () {
             await PalantirAccessCheck.loadApplications();
             if (!$(this).val() && !PalantirAccessCheck.selected) {
                 $(this).autocomplete("search", "");
             }
         }).on("input", () => PalantirAccessCheck.update());
-        const widget = $("#accessApplication").autocomplete("instance");
-        widget._renderMenu = function (list, items) {
-            const total = PalantirAccessCheck.suggestionTotal ?? items.length;
-            $("<li>").addClass("palantir-access__suggestions-header ui-state-disabled")
-                .text(total > items.length ? `${items.length} of ${total} Applications` : `${total} ${total === 1 ? "Application" : "Applications"}`)
-                .appendTo(list);
-            items.forEach(item => this._renderItemData(list, item));
-        };
-        widget._renderItem = (list, item) => {
-            const escape = escapePalantirMarkup;
-            const term = PalantirAccessCheck.suggestionTerm;
-            const protocol = applicationProtocolOf(item.service["@class"]);
-            return $("<li>").append(`
-                <div class="palantir-access__suggestion">
-                    <span class="palantir-protocol-badge is-${escape(protocol.key)}" aria-hidden="true">${escape(PalantirAccessCheck.initials(item.service.name))}</span>
-                    <span class="palantir-access__suggestion-text">
-                        <strong>${PalantirAccessCheck.highlight(item.label, term)}</strong>
-                        <code>${PalantirAccessCheck.highlight(PalantirAccessCheck.identifierOf(item.service), term)}</code>
-                    </span>
-                    <span class="palantir-access__suggestion-meta">${escape(protocol.short)}<small>#${escape(item.service.id)}</small></span>
-                </div>`).appendTo(list);
-        };
-        widget.widget().addClass("palantir-access__suggestions");
 
         $("#accessCheckPassword").off("change").on("change", function () {
             $("#accessPasswordField").prop("hidden", !this.checked);
@@ -2128,6 +2094,97 @@ class PalantirAccessCheck {
                 }
             });
         $("#accessStrategyEditorContainer").off("toggle").on("toggle", () => PalantirAccessCheck.editor?.resize());
+    }
+}
+
+/**
+ * Suggestions of registered applications for a text field, as the access check and the attribute release preview of the
+ * Users page offer them: a count of the applications that match, then each with its protocol badge, its name and
+ * identifier with what is typed marked, and its protocol and id. An application matches by its name, service id,
+ * client id, id or description; its text is put together once rather than with every key typed.
+ */
+class PalantirApplicationSuggestions {
+    static LIMIT = 50;
+
+    static searchText = new WeakMap();
+
+    /**
+     * Whether an application matches what is typed.
+     *
+     * @param service the application
+     * @param term what is typed
+     * @returns {boolean} true when nothing is typed or the application's text holds it
+     */
+    static matches(service, term) {
+        const wanted = String(term ?? "").trim().toLowerCase();
+        if (wanted === "") {
+            return true;
+        }
+        if (!PalantirApplicationSuggestions.searchText.has(service)) {
+            PalantirApplicationSuggestions.searchText.set(service,
+                [service.name, service.serviceId, service.clientId, service.id, service.description]
+                    .map(value => String(value ?? "").toLowerCase()).join("\n"));
+        }
+        return PalantirApplicationSuggestions.searchText.get(service).includes(wanted);
+    }
+
+    /**
+     * Offer applications as suggestions on a field.
+     *
+     * @param input the text field
+     * @param options the field the menu lines up with, the source of the applications for what is typed (null to
+     *        suggest nothing) and what to do with the application picked
+     */
+    static attach(input, {field, source, select}) {
+        const state = {total: 0, term: ""};
+        input.autocomplete({
+            minLength: 0,
+            delay: 0,
+            position: {my: "left top+6", at: "left bottom", of: field, collision: "flipfit"},
+            source: (request, response) => {
+                const term = String(request.term ?? "").trim();
+                const found = source(term);
+                if (found === null) {
+                    response([]);
+                    return;
+                }
+                state.total = found.length;
+                state.term = term;
+                response(found.slice(0, PalantirApplicationSuggestions.LIMIT).map(service => ({
+                    label: service.name ?? PalantirAccessCheck.identifierOf(service),
+                    value: service.name ?? PalantirAccessCheck.identifierOf(service),
+                    service
+                })));
+            },
+            open: () => input.autocomplete("widget").outerWidth($(field).outerWidth()),
+            select: (event, ui) => {
+                event.preventDefault();
+                select(ui.item.service);
+            },
+            focus: event => event.preventDefault()
+        });
+        const widget = input.autocomplete("instance");
+        widget._renderMenu = function (list, items) {
+            const total = state.total ?? items.length;
+            $("<li>").addClass("palantir-access__suggestions-header ui-state-disabled")
+                .text(total > items.length ? `${items.length} of ${total} Applications` : `${total} ${total === 1 ? "Application" : "Applications"}`)
+                .appendTo(list);
+            items.forEach(item => this._renderItemData(list, item));
+        };
+        widget._renderItem = (list, item) => {
+            const escape = escapePalantirMarkup;
+            const protocol = applicationProtocolOf(item.service["@class"]);
+            return $("<li>").append(`
+                <div class="palantir-access__suggestion">
+                    <span class="palantir-protocol-badge is-${escape(protocol.key)}" aria-hidden="true">${escape(PalantirAccessCheck.initials(item.service.name))}</span>
+                    <span class="palantir-access__suggestion-text">
+                        <strong>${PalantirAccessCheck.highlight(item.label, state.term)}</strong>
+                        <code>${PalantirAccessCheck.highlight(PalantirAccessCheck.identifierOf(item.service), state.term)}</code>
+                    </span>
+                    <span class="palantir-access__suggestion-meta">${escape(protocol.short)}<small>#${escape(item.service.id)}</small></span>
+                </div>`).appendTo(list);
+        };
+        widget.widget().addClass("palantir-access__suggestions");
     }
 }
 

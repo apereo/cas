@@ -70,7 +70,9 @@ the services CAS registers for itself, and the latest changes to applications wi
 [service change history](../services/Configuring-Service-Version-History.html) installed, the changes of every CAS
 server are listed from that shared history; without it, those of the server Palantir runs on since it started. A widget's title opens the page it summarizes. Widgets can
 be dragged to another place, moved with their arrow buttons or hidden; *Customize* brings hidden widgets back or resets
-the page, and the browser remembers the order and the hidden widgets. The page is drawn from one summary that the server
+the page, and the browser remembers the order and the hidden widgets. *Spotlight* in a widget's header puts the other
+widgets away and lets that widget fill the page, magnified, text and charts alike; leaving the spotlight, with the same button or <kbd>Esc</kbd>, brings
+the page back as it was. The page is drawn from one summary that the server
 puts together and keeps for a few seconds per part, so it costs one request per refresh, and only the parts the shown
 widgets need are put together: hiding a widget that is slow to fill takes its work off the server for that person, and
 the server widget then says only that CAS is running when the health widget is hidden;
@@ -88,7 +90,10 @@ trusted devices, attribute consent decisions, resolved attributes, accounts the 
 account, password history, throttled login attempts, the interrupt the user would see at login and recent audit events, over the last day, week or month. Each source that has something
 recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
-actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is.
+actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is. OAuth and
+OpenID Connect tokens take a scan of the ticket registry, so they are only read when asked for with their button, and
+have no card when the user holds none. The attribute release preview picks its application the way the access check does:
+typing a name, service id, client id or id suggests the matching applications.
 
 <kbd>Shift</kbd>+<kbd>Z</kbd> turns zen mode on and off: the CAS header, the navigation bar and the footer are put away so
 the page has the whole window, while the keyboard shortcuts and the search keep working. The browser remembers the
@@ -178,7 +183,9 @@ chained access strategies refuse belongs to the chain itself, so it stays with t
 to the one strategy left when the chain is turned off.
 
 Fields of the wizard whose values come from a standard or from the server suggest them as they are typed, each with a
-short description, while still taking any value: SAML2 NameID formats, authentication context classes, bindings,
+short description, while still taking any value: SAML2 metadata locations (a URL, a metadata query server, a file or
+a Groovy script, and the prefix of each metadata manager the server has, such as MongoDB,
+a relational database, Redis, DynamoDB or Amazon S3), SAML2 NameID formats, authentication context classes, bindings,
 XML signature, digest and encryption algorithms, entity attributes and their values, such as entity categories, OpenID Connect signing and encryption
 algorithms, client authentication methods, subject types and the default issuer, OAuth token types and the client ids
 of other applications as audiences, the WS-Federation protocol, token types, namespaces and default realm, CAS ticket
@@ -192,10 +199,20 @@ name, description, information and privacy URLs, logo, metadata location, a sing
 signing, an attribute release policy for a research and scholarship category or for the attributes the provider
 requests, and its contacts are filled in for review before saving.
 
+A SAML2 application asks for its metadata location before its entity id. When the metadata location is a metadata
+store, such as MongoDB or Amazon S3, or a metadata query (MDQ) server, and the application has no entity id yet, the
+wizard asks whether the application should accept every service provider of that source. Accepting sets the entity id
+to `.+`: CAS then trusts every service provider whose metadata it finds there, none of them needs an application of its
+own, and the application's policies apply to all of them. Otherwise the entity id, or a pattern of entity ids, is
+entered as usual.
+
 When SAML2 service provider metadata management is available, *Upload Metadata* beside the metadata location stores
 the provider's metadata with a metadata manager and points the application at it, and *Manage Metadata* closes the
 wizard, asking first when it holds unsaved changes, and shows the entries of the application's metadata manager under
-*Protocols*.
+*Protocols*. Choosing the metadata file to upload suggests a name for it from the metadata: the service provider's
+display name, else its organization's display name or name, else the host of its entity id or the last part of an
+entity id that is a URN; an aggregate is named after the name it gives itself. A name already typed is kept. After the
+upload, an application with no name yet takes the name of its service provider the same way.
 
 The applications chart and the authentication flow diagrams can be magnified to fill the window, with their
 magnify button or a click on them; a magnified diagram can be zoomed and moved.
@@ -232,7 +249,8 @@ left alone), or deleted together; *Delete All* removes every application from th
 at sign-in. The application field takes a service URL, a client id or an entity id, and suggests registered
 applications by name or identifier; under the field, the application CAS resolves the value to is shown, matched in
 evaluation order, with a warning when another application is matched before the one picked. When a value is both the
-entity id of a service provider and a URL a CAS application answers, the dashboard asks which of them to check. The applications' menu
+entity id of a service provider and a URL a CAS application answers, the dashboard asks which of them to check; an
+application picked from the list is checked with the parameter of its own protocol. The applications' menu
 offers *Check Access* to open the check for an application. The password is checked only on request. The answer shows a verdict with its reason, the steps CAS
 went through as a row of passed and failed steps (whether the application is enabled and has not expired, whether the
 user signed in, and the access strategy's activation and required and rejected attributes, or the answer of a strategy
@@ -251,7 +269,8 @@ is dropped once it is thirty days old.
 
 Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut.
 Rows with actions in Palantir's tables can be reached with the keyboard: `Enter` chooses the focused row and `Shift+F10`
-opens its actions, as a right click does.
+opens its actions, as a right click does. When a new application asks for its type, the number shown on each type
+chooses it; those numbers only choose a type while the types are shown and leave the page's own shortcuts alone.
 
 {% endtab %}
 

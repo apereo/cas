@@ -118,6 +118,60 @@ async function verifySamlMetadataImport(page) {
 }
 
 /**
+ * The metadata location comes before the entity id. Choosing a metadata query server or a metadata store as the
+ * location of an application with no entity id asks whether to accept every service provider of that source: yes
+ * makes the entity id .+, no leaves it to be entered.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyMetadataSourceTrust(page) {
+    await cas.separator();
+    const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
+    await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceMetadataLocation").is(":visible"), {timeout: 30000});
+    await cas.sleep(1000);
+    const order = await page.evaluate(() => {
+        const fields = $("#editServiceWizardSamlContainer").children("[id$='FieldContainer']").map((index, element) => element.id).get();
+        return fields.indexOf("registeredServiceMetadataLocationFieldContainer") < fields.indexOf("registeredServiceIdFieldContainer");
+    });
+    await cas.log(`The metadata location comes before the entity id: ${order}`);
+    assert(order);
+
+    const choose = (location) => page.evaluate((value) => {
+        $("#registeredServiceId").val("").trigger("input");
+        $("#registeredServiceMetadataLocation").val(value).trigger("input").trigger("change");
+    }, location);
+    const asked = () => page.waitForFunction(() => Swal.isVisible()
+        && $(".swal2-title").text() === "Accept Every Service Provider From This Source?", {timeout: 15000});
+
+    await choose("https://mdq.example.org/entities/{0}");
+    await asked();
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => $("#registeredServiceId").val() === ".+", {timeout: 10000});
+    await cas.log("Accepting every service provider of a metadata query server sets the entity id to .+");
+
+    await choose("mongodb://");
+    await asked();
+    await page.click(".swal2-cancel");
+    await cas.sleep(500);
+    const declined = await page.evaluate(() => ({value: $("#registeredServiceId").val(), focused: document.activeElement?.id}));
+    await cas.log(`Declining leaves the entity id to be entered: ${JSON.stringify(declined)}`);
+    assert(declined.value === "" && declined.focused === "registeredServiceId");
+
+    const plain = await page.evaluate(async () => {
+        $("#registeredServiceMetadataLocation").val("https://sp.example.org/metadata.xml").trigger("input").trigger("change");
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return Swal.isVisible();
+    });
+    assert(!plain, "A metadata location for one service provider should not ask about accepting every one");
+
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "SAML2 metadata source trust");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
+/**
  * Store the SAML2 test service provider's metadata with the MongoDb metadata manager, then use Manage Metadata in the
  * SAML2 wizard: with unsaved changes it asks first, Keep Editing stays in the wizard, and Discard Changes closes it and
  * shows that manager's entries under Protocols, the stored entry among them. The entry is removed afterwards.
@@ -146,12 +200,60 @@ async function verifySamlMetadataManage(page) {
     await cas.log(`Stored ${entryName} with ${manager.name} (${manager.sourceId}): ${stored}`);
     assert(stored === 200);
 
+    const names = await page.evaluate(async () => {
+        const preview = await PalantirSamlMetadataImport.request("http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp");
+        const md = "urn:oasis:names:tc:SAML:2.0:metadata";
+        const ui = "urn:oasis:names:tc:SAML:metadata:ui";
+        const provider = (entityId, inside = "", after = "") => `<md:EntityDescriptor xmlns:md="${md}" xmlns:mdui="${ui}" entityID="${entityId}">
+            <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">${inside}</md:SPSSODescriptor>${after}</md:EntityDescriptor>`;
+        return {
+            uploaded: PalantirSamlMetadataImport.documentName(preview.metadata),
+            displayName: PalantirSamlMetadataImport.documentName(provider("https://sp.example.org/shibboleth",
+                "<md:Extensions><mdui:UIInfo><mdui:DisplayName xml:lang=\"en\">Example Portal</mdui:DisplayName></mdui:UIInfo></md:Extensions>")),
+            organization: PalantirSamlMetadataImport.documentName(provider("https://sp.example.org/shibboleth", "",
+                "<md:Organization><md:OrganizationName xml:lang=\"en\">Example Org</md:OrganizationName></md:Organization>")),
+            host: PalantirSamlMetadataImport.documentName(provider("https://www.wiki.example.org/sp")),
+            urn: PalantirSamlMetadataImport.documentName(provider("urn:mace:example.org:sp:portal")),
+            broken: PalantirSamlMetadataImport.documentName("<md:EntityDescriptor")
+        };
+    });
+    await cas.log(`Names suggested for uploaded metadata: ${JSON.stringify(names)}`);
+    assert(names.uploaded !== "" && names.displayName === "Example Portal" && names.organization === "Example Org");
+    assert(names.host === "wiki.example.org" && names.urn === "portal" && names.broken === "");
+
     const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
     await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
     await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
         && $("#registeredServiceMetadataManage").is(":visible") && $("#registeredServiceMetadataUpload").is(":visible"),
     {timeout: 30000});
     await cas.sleep(1000);
+    const typed = manager.sourceId.replace("://", "").slice(0, 3);
+    await page.evaluate((term) => $("#registeredServiceMetadataLocation").val(term).trigger("focusin"), typed);
+    await page.waitForFunction((sourceId) => $("#registeredServiceMetadataLocation").autocomplete("instance")
+        && $("#registeredServiceMetadataLocation").autocomplete("widget").find(".palantir-suggestion code").toArray()
+            .some((code) => code.textContent === sourceId), {timeout: 10000}, manager.sourceId);
+    const suggested = await page.evaluate((sourceId) => {
+        const input = $("#registeredServiceMetadataLocation");
+        input.autocomplete("widget").find(".palantir-suggestion").filter((index, item) => $(item).find("code").text() === sourceId)
+            .find(".ui-menu-item-wrapper").trigger("click");
+        const picked = input.val();
+        input.autocomplete("close").val("https://sp.example.org/custom-metadata.xml").trigger("input");
+        const typedValue = input.val();
+        input.val("").trigger("input");
+        $("#registeredServiceMetadataLocation").val("").trigger("focusin");
+        return {picked, typedValue};
+    }, manager.sourceId);
+    await cas.sleep(1000);
+    assert(!await page.evaluate(() => Swal.isVisible()), "A question about a location since changed should not be asked");
+    await page.evaluate(() => $("#registeredServiceMetadataLocation").val("").trigger("focusin"));
+    await page.waitForFunction(() => {
+        const shown = $("#registeredServiceMetadataLocation").autocomplete("widget").find(".palantir-suggestion code").toArray()
+            .map((code) => code.textContent);
+        return shown.includes("https://") && shown.includes("https://mdq.incommon.org/entities/{0}");
+    }, {timeout: 10000});
+    await page.evaluate(() => $("#registeredServiceMetadataLocation").autocomplete("close"));
+    await cas.log(`Typing ${typed} into the metadata location suggests ${manager.sourceId}: ${JSON.stringify(suggested)}`);
+    assert(suggested.picked === manager.sourceId && suggested.typedValue === "https://sp.example.org/custom-metadata.xml");
     await page.evaluate((location) => {
         $("#registeredServiceMetadataLocation").val(location).trigger("input").trigger("blur");
         $("#registeredServiceName").val("ManageMetadataWizard").trigger("input");
@@ -331,6 +433,7 @@ async function openApplications(page) {
     await removeLeftoverApplications(page, ["MetadataHealthExample"]);
     await openApplications(page);
     await verifySamlMetadataImport(page);
+    await verifyMetadataSourceTrust(page);
     await verifySamlMetadataHealth(page);
     await verifySamlMetadataManage(page);
 

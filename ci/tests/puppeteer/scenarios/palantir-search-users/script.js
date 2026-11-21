@@ -194,6 +194,45 @@ async function verifyUserLookup(page, failures) {
     await cas.logg(lookup.summary);
     assert(lookup.cards.length === lookup.sources);
     assert(lookup.cards.every((card) => !card.endsWith(":error")), `Failed sources: ${lookup.cards.join(", ")}`);
+    const readers = await page.evaluate(() => {
+        const lazy = PalantirUserLookup.availableSources().filter((source) => source.lazy).map((source) => source.key);
+        const buttons = $("#userLookupResults [data-user-read]").map((index, button) => button.dataset.userRead).get();
+        const scanned = lazy.filter((key) => PalantirUserLookup.counts.has(key));
+        $("#userLookupResults [data-user-read]").trigger("click");
+        return {lazy, buttons, scanned};
+    });
+    await cas.log(`Sources read only on request: ${JSON.stringify(readers)}`);
+    assert(JSON.stringify(readers.lazy) === JSON.stringify(readers.buttons) && readers.scanned.length === 0);
+    await page.waitForFunction(() => PalantirUserLookup.availableSources().every((source) => PalantirUserLookup.counts.has(source.key)),
+        {timeout: 60000});
+    const empty = await page.evaluate(() => PalantirUserLookup.availableSources()
+        .filter((source) => PalantirUserLookup.counts.get(source.key) === 0)
+        .map((source) => ({key: source.key, hidden: $(`#userLookupResults [data-user-source="${source.key}"]`).prop("hidden") === true})));
+    await cas.log(`Sources with nothing recorded, such as OAuth tokens read on request, have no card: ${JSON.stringify(empty)}`);
+    assert(empty.every((source) => source.hidden));
+    const release = await page.evaluate(async () => {
+        const card = $("#userLookupResults [data-user-source='release']");
+        if (card.length === 0 || card.prop("hidden") || PalantirAttributeRelease.choices.length === 0) {
+            return null;
+        }
+        card.prop("open", true);
+        $("#userReleaseApplication").val("").trigger("focus").autocomplete("search", "");
+        await new Promise(resolve => setTimeout(resolve, 500));
+        const menu = $("#userReleaseApplication").autocomplete("widget");
+        const shown = {
+            styled: menu.hasClass("palantir-access__suggestions") && menu.is(":visible"),
+            header: menu.find(".palantir-access__suggestions-header").text(),
+            first: menu.find(".palantir-access__suggestion").length > 0
+        };
+        menu.find(".ui-menu-item").not(".palantir-access__suggestions-header").first().find(".ui-menu-item-wrapper").trigger("click");
+        return {...shown, picked: $("#userReleaseApplication").val(), selected: PalantirAttributeRelease.selected?.name ?? null,
+            select: $("#userLookupResults select#userReleaseApplication").length};
+    });
+    if (release !== null) {
+        await cas.log(`Attribute release picks its application like the access check: ${JSON.stringify(release)}`);
+        assert(release.styled && /Application/.test(release.header) && release.first);
+        assert(release.selected !== null && release.picked === release.selected && release.select === 0);
+    }
     const unexpected = failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
         && !/status of 404/.test(failure));
     failures.push(...unexpected);

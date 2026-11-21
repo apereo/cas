@@ -10,6 +10,11 @@ async function initializeHotKeyOperations() {
         switch (key) {
         case "esc":
             event.preventDefault();
+            if ($(".ui-dialog-content:visible").length === 0 && !(typeof Swal !== "undefined" && Swal.isVisible())
+                && currentActiveTab === Tabs.HOME.index && typeof PalantirHome !== "undefined" && PalantirHome.spotlight !== null) {
+                PalantirHome.setSpotlight(null);
+                break;
+            }
             closeAllDialogs();
             break;
         case "w":
@@ -106,7 +111,7 @@ function palantirShortcutGroups() {
                 {keys: [["Shift", "Z"]], label: "Zen mode: hide or show the navigation bar and the footer"},
                 {keys: [["w"]], label: "Create an application in the wizard"},
                 {keys: [["n"]], label: "Create an item on the current page: an application, property, logger, handler, attribute definition or repository, tenant or access resource"},
-                {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes"}
+                {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes. On Home, leave the spotlight"}
             ]
         },
         {
@@ -123,7 +128,8 @@ function palantirShortcutGroups() {
                 {keys: [["Enter"]], label: "Submit the form you are typing in"},
                 {keys: [["Tab"], ["Shift", "Tab"]], label: "Move to the next or previous control; focus stays inside an open dialog"},
                 {keys: [["Enter"]], label: "Sort by the focused column header, or choose the focused row"},
-                {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"}
+                {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"},
+                {keys: [["1–9"]], label: "Choose the type of a new application by the number on its card, while the types are shown"}
             ]
         },
         {

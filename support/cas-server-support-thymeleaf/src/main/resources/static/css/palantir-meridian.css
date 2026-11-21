@@ -2422,12 +2422,13 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup {
 
 .palantir-type-picker {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr));
     gap: 12px;
     text-align: start;
 }
 
 .palantir-type-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -2452,10 +2453,28 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup {
     box-shadow: 0 0 0 4px var(--palantir-accent-ring);
 }
 
+.palantir-type-card-key {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    min-width: 22px;
+    padding: 1px 6px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font-family: var(--mdc-typography-font-family);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+}
+
 .palantir-type-card-head {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding-inline-end: 24px;
 }
 
 .palantir-type-card-head .palantir-protocol-badge {
@@ -2566,7 +2585,9 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup .swal2-title {
 }
 
 .palantir-type-card-name code {
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ui-dialog .registered-service-sections__search input {
@@ -3369,6 +3390,17 @@ html.palantir-page[data-theme="dark"] .palantir-feature-card mark {
     margin: 0 0 16px;
     color: var(--palantir-text-2);
     font-size: 14px;
+}
+
+.palantir-user-lookup__readers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.palantir-user-lookup__readers:empty {
+    display: none;
 }
 
 .palantir-user-lookup__summary:empty {
@@ -6241,6 +6273,23 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
     margin: 0;
 }
 
+/* Application Startup: the progress of reading and drawing the steps, and rows out of view left unlaid. */
+.startup-progress {
+    display: grid;
+    gap: 6px;
+    max-width: 480px;
+    margin: 4px 0 14px;
+}
+
+.startup-progress[hidden] {
+    display: none;
+}
+
+#startupTimelineList .startup-step-row.is-leaf {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 46px;
+}
+
 .palantir-home__loading .palantir-progress__track {
     width: min(360px, 100%);
 }
@@ -6269,6 +6318,61 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
 .palantir-home__widget--span-1 { grid-column: span 1; }
 .palantir-home__widget--span-2 { grid-column: span 2; }
 .palantir-home__widget--span-4 { grid-column: 1 / -1; }
+
+/* A card in the spotlight fills the page and is magnified, text, fields and figures alike; the other cards are put away
+   until it leaves the spotlight, which brings back the usual size. The health chart is drawn on a canvas, so it is
+   not magnified but given more room instead. */
+html.palantir-page {
+    --palantir-spotlight-zoom: 2;
+}
+
+@media (max-width: 1100px) {
+    html.palantir-page {
+        --palantir-spotlight-zoom: 1.5;
+    }
+}
+
+@media (max-width: 640px) {
+    html.palantir-page {
+        --palantir-spotlight-zoom: 1;
+    }
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight > * {
+    zoom: var(--palantir-spotlight-zoom);
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight .palantir-home__health {
+    zoom: calc(1 / var(--palantir-spotlight-zoom));
+}
+
+.palantir-home__grid.is-spotlight > :not(.is-spotlight) {
+    display: none;
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight {
+    grid-column: 1 / -1;
+    min-height: max(420px, calc(100vh - 240px));
+    padding: 20px 24px;
+    gap: 16px;
+}
+
+.palantir-home__widget.is-spotlight :is([data-home-action="earlier"], [data-home-action="later"]),
+.palantir-home__widget.is-spotlight .palantir-home__grip {
+    display: none;
+}
+
+#dashboard .palantir-home__widget.is-spotlight .palantir-home__action {
+    opacity: 1;
+}
+
+#dashboard .palantir-home__widget.is-spotlight [data-home-action="spotlight"] {
+    color: var(--palantir-brand);
+}
+
+.palantir-home__widget.is-spotlight .palantir-home__health {
+    height: min(60vh, 560px) !important;
+}
 
 .palantir-home__widget.is-dragging {
     opacity: .5;
@@ -7904,15 +8008,15 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
     gap: 10px;
 }
 
-.palantir-user-release .palantir-control-row {
+.palantir-user-release__row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
 }
 
-.palantir-user-release select {
-    flex: 1 1 260px;
+.palantir-user-release__row .palantir-access__field {
+    flex: 1 1 320px;
     min-width: 0;
 }
 
@@ -8064,29 +8168,37 @@ html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]
 /* ==========================================================================
    Application wizard: suggested values for fields with standard values
    ========================================================================== */
+/* Field suggestions share the look of the application suggestions of the access check. */
 html.palantir-page .ui-autocomplete:has(.palantir-suggestion) {
+    z-index: 1000;
     max-width: min(640px, calc(100vw - 32px));
-    max-height: 320px;
+    max-height: 360px;
+    padding: 6px;
+    overflow-y: auto;
     border: 1px solid var(--palantir-border);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--palantir-surface-raised, var(--palantir-surface)) !important;
-    box-shadow: var(--palantir-shadow-soft);
+    box-shadow: 0 18px 40px -16px rgba(15, 23, 42, .35), var(--palantir-shadow-soft);
     color: var(--palantir-text);
+    font-size: 13px !important;
 }
 
 html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper {
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 7px 12px;
-    border: none;
-    border-radius: 8px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--palantir-text);
 }
 
 html.palantir-page .ui-autocomplete .palantir-suggestion code {
     color: var(--palantir-text);
     font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
     font-size: 12.5px;
+    font-weight: 600;
     overflow-wrap: anywhere;
 }
 
@@ -8095,13 +8207,12 @@ html.palantir-page .ui-autocomplete .palantir-suggestion span {
     font-size: 12px;
 }
 
-html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active {
-    background: var(--palantir-selected);
-    color: var(--palantir-brand);
-}
-
-html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active code {
-    color: var(--palantir-brand);
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active,
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper:hover {
+    margin: 0;
+    border: 0;
+    background: var(--palantir-selected, var(--palantir-surface-2));
+    color: var(--palantir-text);
 }
 
 /* ==========================================================================
@@ -8687,7 +8798,7 @@ html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.u
     font-size: 19px;
 }
 
-#accessstrategy-tab .palantir-access__field input {
+:is(#accessstrategy-tab, #userLookupResults) .palantir-access__field input {
     flex: 1;
     min-width: 0;
     height: auto;

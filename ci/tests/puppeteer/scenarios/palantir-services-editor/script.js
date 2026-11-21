@@ -59,7 +59,7 @@ const PROTOCOL_FIELDS = {
         {selector: "#registeredServiceAllowedResources", advanced: true}],
     OAuthRegisteredService: ["#registeredServiceClientId", "input.registered-service-client-secret-value", "#registeredServiceId",
         {selector: "#registeredServiceAllowedResources", advanced: true}],
-    SamlRegisteredService: ["#registeredServiceId", "#registeredServiceMetadataLocation"],
+    SamlRegisteredService: ["#registeredServiceMetadataLocation", "#registeredServiceId"],
     WSFederationRegisteredService: ["#registeredServiceId", "#registeredServiceWsFederationRealm"],
     CasRegisteredService: [
         "#registeredServiceId",
@@ -413,7 +413,8 @@ async function discardUnsavedChanges(page, name) {
 
 /**
  * A new application in the wizard starts by choosing its type: a single click on a card opens the wizard for that
- * type, without a button to confirm the choice.
+ * type, without a button to confirm the choice, and so does the number on a card. The number keys only choose while
+ * the cards are shown; the page's own shortcuts keep working once the picker is gone.
  *
  * @param page the puppeteer page
  */
@@ -441,6 +442,38 @@ async function verifyTypePicker(page) {
     await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
     await discardUnsavedChanges(page, "Type picker");
     await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+
+    await page.evaluate(() => openRegisteredServiceWizardDialog());
+    await page.waitForFunction(() => $(".palantir-type-card").length > 1, {timeout: 15000});
+    const keyed = await page.evaluate(() => ({
+        keys: $(".palantir-type-card .palantir-type-card-key").map((index, key) => key.textContent).get(),
+        second: $(".palantir-type-card").eq(1).data("service-class"),
+        tab: currentActiveTab
+    }));
+    assert(keyed.keys[0] === "1" && keyed.keys[1] === "2");
+    await page.keyboard.press("2");
+    await cas.sleep(500);
+    if (await page.evaluate(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Resume Your Draft?")) {
+        await page.click(".swal2-deny");
+    }
+    await page.waitForFunction((serviceClass) => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#editServiceWizardForm").data("service-class") === serviceClass, {timeout: 30000}, keyed.second);
+    assert(await page.evaluate((tab) => currentActiveTab === tab, keyed.tab));
+    await cas.logg(`Pressing 2 on the type picker opens the wizard for ${keyed.second}`);
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Type picker shortcut");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+    const systemShown = await page.evaluate(() => {
+        document.activeElement?.blur();
+        return $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]:visible`).length > 0;
+    });
+    if (systemShown) {
+        await page.keyboard.press("s");
+        await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+        await page.keyboard.press("a");
+        await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+        await cas.logg("The page shortcuts still work once the type picker is gone");
+    }
 }
 
 /**
@@ -1282,13 +1315,17 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
         return {
             moved: passwords([kept[1], kept[0]]),
             removed: passwords([kept[1]]),
-            removedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}])
+            removedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}]),
+            changedInPlace: passwords([{...kept[0], endpointUrl: "https://c.example.org"}, kept[1]]),
+            swappedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}, {...kept[0], endpointUrl: "https://d.example.org"}])
         };
     });
     await cas.log(`Draft secrets after moving and removing chained policies: ${JSON.stringify(restored)}`);
     assert(JSON.stringify(restored.moved) === JSON.stringify(["second", "first"]));
     assert(JSON.stringify(restored.removed) === JSON.stringify(["second"]));
     assert(JSON.stringify(restored.removedAndChanged) === JSON.stringify([""]));
+    assert(JSON.stringify(restored.changedInPlace) === JSON.stringify(["first", "second"]));
+    assert(JSON.stringify(restored.swappedAndChanged) === JSON.stringify(["", ""]));
 }
 
 /**

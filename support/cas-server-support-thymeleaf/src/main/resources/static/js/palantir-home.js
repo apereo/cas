@@ -40,6 +40,7 @@ class PalantirHome {
     static dragged = null;
     static healthChart = null;
     static refreshing = new Set();
+    static spotlight = null;
     static queued = false;
     static reads = 0;
     static readings = {};
@@ -149,8 +150,15 @@ class PalantirHome {
                 PalantirHome.toggleMenu(false);
             }
         });
-        $("#homeGrid").off("click dragstart dragover dragleave drop dragend")
+        $("#homeGrid").off("click dragstart dragover dragleave drop dragend keydown")
             .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
+            .on("keydown", event => {
+                if (event.key === "Escape" && PalantirHome.spotlight !== null) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    PalantirHome.setSpotlight(null);
+                }
+            })
             .on("click", "[data-home-application]", event => openTopApplication(event.currentTarget.dataset.homeApplication))
             .on("click", "[data-home-page]", event => {
                 const page = PalantirHome.PAGES[event.currentTarget.dataset.homePage];
@@ -235,7 +243,13 @@ class PalantirHome {
         const layout = PalantirHome.layout();
         const shown = layout.order.filter(entry => !layout.hidden.includes(entry) && PalantirHome.available(PalantirHome.widget(entry)));
         const position = shown.indexOf(id);
+        if (["hide", "show", "reset"].includes(button.dataset.homeAction)) {
+            PalantirHome.spotlight = null;
+        }
         switch (button.dataset.homeAction) {
+        case "spotlight":
+            PalantirHome.setSpotlight(PalantirHome.spotlight === id ? null : id);
+            return;
         case "refresh":
             PalantirHome.refreshWidget(id);
             return;
@@ -281,6 +295,82 @@ class PalantirHome {
         }
         PalantirHome.saveLayout(layout);
         $(`#homeGrid [data-home-for="${id}"][data-home-action="${button.dataset.homeAction}"]`).trigger("focus");
+    }
+
+    /**
+     * Put a card in the spotlight, or take the one there out of it: the other cards are put away and the card fills the
+     * page, until it leaves the spotlight and the page is as it was. Only the page shows it; the layout is not changed.
+     *
+     * @param id the card to put in the spotlight, or null to leave it
+     */
+    static setSpotlight(id) {
+        const leaving = PalantirHome.spotlight;
+        PalantirHome.spotlight = id;
+        PalantirHome.applySpotlight();
+        const title = PalantirHome.widget(id ?? leaving)?.title ?? "The card";
+        PalantirHome.announce(id ? `${title} is in the spotlight; the other cards are put away.` : `${title} left the spotlight.`);
+        const card = $(`#homeGrid [data-home-widget="${id ?? leaving}"]`);
+        card.find('[data-home-action="spotlight"]').trigger("focus");
+        if (id && card.length > 0) {
+            card[0].scrollIntoView({block: "nearest", behavior: "smooth"});
+        }
+    }
+
+    /**
+     * Show the spotlight as it stands on the cards on the page: the card in it is marked and its button says it leaves
+     * the spotlight, and a card in the spotlight that is no longer shown takes the spotlight with it.
+     */
+    static applySpotlight() {
+        const grid = $("#homeGrid");
+        const cards = grid.children("[data-home-widget]");
+        if (PalantirHome.spotlight !== null && !cards.toArray().some(card => card.dataset.homeWidget === PalantirHome.spotlight)) {
+            PalantirHome.spotlight = null;
+        }
+        const id = PalantirHome.spotlight;
+        grid.toggleClass("is-spotlight", id !== null);
+        cards.each((index, card) => {
+            const spotlit = card.dataset.homeWidget === id;
+            const title = PalantirHome.widget(card.dataset.homeWidget)?.title ?? "";
+            $(card).toggleClass("is-spotlight", spotlit).attr("draggable", String(id === null));
+            $(card).find('[data-home-action="spotlight"]')
+                .attr({
+                    "aria-pressed": String(spotlit),
+                    title: spotlit ? "Leave the Spotlight" : "Spotlight",
+                    "aria-label": `${spotlit ? "Leave the Spotlight" : "Spotlight"}: ${title}`
+                })
+                .find("i").attr("class", `mdi ${spotlit ? "mdi-arrow-collapse-all" : "mdi-arrow-expand-all"}`);
+        });
+        PalantirHome.magnifyHealthChart();
+    }
+
+    /**
+     * Draw the text of the health chart as large as the rest of its card: the chart is a canvas, which the magnifying
+     * of a card in the spotlight does not reach, so its labels are sized to match it, and back when it leaves.
+     */
+    static magnifyHealthChart() {
+        const chart = PalantirHome.healthChart;
+        if (!chart) {
+            return;
+        }
+        const spotlit = $(chart.canvas).closest(".palantir-home__widget").hasClass("is-spotlight");
+        const zoom = spotlit ? Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--palantir-spotlight-zoom")) || 1 : 1;
+        const size = Math.round((Chart.defaults.font.size ?? 12) * zoom);
+        const font = zoom === 1 ? undefined : {size};
+        const set = (options, key) => {
+            if (font) {
+                options[key] = font;
+            } else {
+                delete options[key];
+            }
+        };
+        Object.keys(chart.config.options.scales ?? {}).forEach(axis => set(chart.config.options.scales[axis].ticks ??= {}, "font"));
+        const tooltip = chart.config.options.plugins?.tooltip;
+        if (tooltip) {
+            set(tooltip, "bodyFont");
+            set(tooltip, "titleFont");
+        }
+        chart.resize();
+        chart.update("none");
     }
 
     /**
@@ -483,6 +573,7 @@ class PalantirHome {
             PalantirHome.renderMenu();
         }
         PalantirHome.drawHealthChart();
+        PalantirHome.applySpotlight();
         if (restore) {
             grid.find(restore).first().trigger("focus");
         }
@@ -524,7 +615,8 @@ class PalantirHome {
                 ? $("<button>", {type: "button", class: "palantir-home__title-link", "data-home-page": widget.page, text: widget.title, title: `Go to ${widget.title}`})
                 : document.createTextNode(widget.title)));
         const actions = $("<span>", {class: "palantir-home__widget-actions"});
-        [["refresh", "mdi-refresh", "Refresh", false],
+        [["spotlight", "mdi-arrow-expand-all", "Spotlight", false],
+            ["refresh", "mdi-refresh", "Refresh", false],
             ["earlier", "mdi-arrow-left", "Move earlier", index === 0],
             ["later", "mdi-arrow-right", "Move later", index === count - 1],
             ["hide", "mdi-eye-off-outline", "Hide", false]].forEach(([action, icon, label, disabled]) => {
@@ -790,6 +882,7 @@ class PalantirHome {
             PalantirHome.healthChart.$palantirCopies = copies;
             PalantirHome.healthChart.update("none");
         }
+        PalantirHome.magnifyHealthChart();
     }
 
     /**

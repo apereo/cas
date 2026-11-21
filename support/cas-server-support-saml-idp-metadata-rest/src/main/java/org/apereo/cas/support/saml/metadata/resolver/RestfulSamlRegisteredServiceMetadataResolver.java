@@ -117,6 +117,11 @@ public class RestfulSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         return "rest://";
     }
 
+    @Override
+    public String getName() {
+        return "REST API";
+    }
+
     /**
      * Store a metadata document with the REST service. A document the REST service refused, or that could not be sent,
      * is reported rather than handed back as stored.

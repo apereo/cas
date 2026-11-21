@@ -77,9 +77,9 @@ public class DashboardController extends AbstractController {
      * Service properties are the constants of an enum; resolving them once avoids rebuilding the
      * same list on every render.
      */
-    private static final Supplier<List<String>> SERVICE_PROPERTIES =
+    private static final Supplier<List<Map<String, String>>> SERVICE_PROPERTIES =
         memoize(() -> Arrays.stream(RegisteredServiceProperty.RegisteredServiceProperties.values())
-            .map(RegisteredServiceProperty.RegisteredServiceProperties::name)
+            .map(property -> Map.of("name", property.getPropertyName(), "description", Objects.requireNonNullElse(property.getDescription(), StringUtils.EMPTY)))
             .toList());
 
     private final CasConfigurationProperties casProperties;

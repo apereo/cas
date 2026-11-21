@@ -14,9 +14,12 @@ const cas = require("../../cas.js");
         assert(Object.keys(api.paths).length > 0);
         assert(Object.keys(api.components.schemas).length > 0);
 
-        response = await cas.goto(page, "https://localhost:8443/cas/v3/api-docs.yaml");
-        assert(response.ok());
-        const yaml = await cas.parseYAML(await response.text());
+        const yamlDocument = await page.evaluate(async () => {
+            const answer = await fetch("https://localhost:8443/cas/v3/api-docs.yaml");
+            return {ok: answer.ok, text: await answer.text()};
+        });
+        assert(yamlDocument.ok);
+        const yaml = await cas.parseYAML(yamlDocument.text);
         assert.strictEqual(yaml.openapi, api.openapi);
         assert.deepStrictEqual(yaml.paths, api.paths);
         assert.deepStrictEqual(yaml.components.schemas, api.components.schemas);

@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,19 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     private static final long serialVersionUID = -2949244688986345692L;
 
     private List<RegisteredServiceConsentPolicy> policies = new ArrayList<>();
+
+    /**
+     * The chained policies. The interface hides {@code policies} from JSON, since a single policy reports only itself;
+     * the chain lifts that so its policies are written and read back.
+     *
+     * @return the policies
+     */
+    @Override
+    @JsonIgnore(false)
+    @JsonProperty("policies")
+    public List<RegisteredServiceConsentPolicy> getPolicies() {
+        return policies;
+    }
 
     /**
      * Add policies.

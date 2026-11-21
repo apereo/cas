@@ -145,6 +145,11 @@ class DashboardControllerTests {
         assertTrue(model.containsKey("actuatorEndpoints"));
         assertTrue(model.containsKey("actuatorEndpointAccess"));
         assertTrue(model.containsKey("serviceTemplates"));
+        val serviceProperties = ((List<?>) model.get("serviceProperties")).stream().map(entry -> (Map<?, ?>) entry).toList();
+        assertTrue(serviceProperties.stream().anyMatch(property ->
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName().equals(property.get("name"))
+                && !String.valueOf(property.get("description")).isBlank()));
+        assertTrue(serviceProperties.stream().noneMatch(property -> "TOKEN_AS_SERVICE_TICKET".equals(property.get("name"))));
         assertEquals(Boolean.FALSE, model.get("configurationEncryptionAvailable"));
         val strategies = (Collection<?>) model.get("supportedAccessStrategies");
         assertTrue(strategies.contains(DefaultRegisteredServiceAccessStrategy.class.getName()));
