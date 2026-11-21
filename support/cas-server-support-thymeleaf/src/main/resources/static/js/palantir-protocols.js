@@ -201,7 +201,7 @@ class PalantirSamlMetadataUpload {
                 })
                 .catch(error => {
                     if (current(editor, read)) {
-                        Swal.fire({icon: "error", titleText: "The file could not be read", text: String(error?.message ?? error)});
+                        Swal.fire({icon: "error", titleText: "The File Could Not Be Read", text: String(error?.message ?? error)});
                     }
                 })
                 .finally(() => {
@@ -532,7 +532,7 @@ async function initializeOidcProtocolOperations() {
         $("button[name=oidcKeyRotationButton]").off().on("click", () => {
             hideBanner();
             Swal.fire({
-                title: "Are you sure you want to rotate keys?",
+                title: "Are You Sure You Want to Rotate Keys?",
                 text: "Once rotated, the change will take effect immediately.",
                 icon: "question",
                 showConfirmButton: true,
@@ -561,7 +561,7 @@ async function initializeOidcProtocolOperations() {
         $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
             hideBanner();
             Swal.fire({
-                title: "Are you sure you want to revoke keys?",
+                title: "Are You Sure You Want to Revoke Keys?",
                 text: "Once revoked, the change will take effect immediately.",
                 icon: "question",
                 showConfirmButton: true,

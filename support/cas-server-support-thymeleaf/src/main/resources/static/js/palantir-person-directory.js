@@ -175,7 +175,7 @@ async function initializePersonDirectoryOperations() {
             }
             const username = $("#personUsername").val();
             Swal.fire({
-                title: `Are you sure you want to delete the cache for ${username}?`,
+                title: `Are You Sure You Want to Delete the Cache for ${username}?`,
                 text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
                 icon: "question",
                 showConfirmButton: true,
@@ -783,7 +783,7 @@ function renderNewAttributeRepositoryDialog() {
                         submitAttributeRepository(repositoryType, propertySources[0]);
                     } else {
                         Swal.fire({
-                            title: "Which property source should receive the configuration?",
+                            title: "Which Property Source Should Receive the Configuration?",
                             input: "select",
                             icon: "question",
                             inputOptions: propertySources,
@@ -941,15 +941,15 @@ function attributeDefinitionRow(definition) {
 function attributeDefinitionKind(definition) {
     const type = definition["@class"] || "";
     if (type.includes("SamlIdPAttributeDefinition")) {
-        return {key: "saml", short: "SAML", label: "SAML2 attribute"};
+        return {key: "saml", short: "SAML", label: "SAML2 Attribute"};
     }
     if (type.includes("OidcAttributeDefinition")) {
-        return {key: "oidc", short: "OIDC", label: "OpenID Connect claim"};
+        return {key: "oidc", short: "OIDC", label: "OpenID Connect Claim"};
     }
     if (type.includes("OAuthAttributeDefinition")) {
-        return {key: "oauth", short: "OAuth", label: "OAuth attribute"};
+        return {key: "oauth", short: "OAuth", label: "OAuth Attribute"};
     }
-    return {key: "default", short: "", label: "Attribute definition"};
+    return {key: "default", short: "", label: "Attribute Definition"};
 }
 
 /**
@@ -1094,7 +1094,7 @@ function deleteAllAttributeDefinitions() {
         return;
     }
     Swal.fire({
-        title: `Are you sure you want to delete all ${keys.length} attribute definition(s)?`,
+        title: `Are You Sure You Want to Delete All ${keys.length} Attribute Definition(s)?`,
         text: "Once deleted, you may not be able to recover these entries.",
         icon: "question",
         showConfirmButton: true,

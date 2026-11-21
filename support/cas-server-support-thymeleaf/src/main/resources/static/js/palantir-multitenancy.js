@@ -611,7 +611,7 @@ function newTenant(prefillData = null, options = {}) {
 
 function deleteTenant(id, btn) {
     Swal.fire({
-        title: `Are you sure you want to delete tenant <strong>${id}</strong>?`,
+        title: `Are You Sure You Want to Delete Tenant <strong>${id}</strong>?`,
         text: "Once removed, you may not be able to revert this.",
         icon: "question",
         showConfirmButton: true,

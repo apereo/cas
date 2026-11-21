@@ -72,8 +72,8 @@ class PalantirMfaProviders {
         AUTH: {style: "is-ok", text: "Active", title: "Signs in with Duo"},
         ALLOW: {style: "is-warn", text: "Bypass", title: "Skips Duo at sign in"},
         DENY: {style: "is-alert", text: "Disabled", title: "Duo refuses to sign this user in"},
-        ENROLL: {style: "is-warn", text: "Not enrolled", title: "Has to enroll with Duo at the next sign in"},
-        UNAVAILABLE: {style: "is-alert", text: "Duo unavailable", title: "Duo could not be asked"}
+        ENROLL: {style: "is-warn", text: "Not Enrolled", title: "Has to enroll with Duo at the next sign in"},
+        UNAVAILABLE: {style: "is-alert", text: "Duo Unavailable", title: "Duo could not be asked"}
     };
 
     static IDENTITY = new Set(["id", "name", "rank", "order", "failure-mode"]);
@@ -467,12 +467,12 @@ class PalantirMfaProviders {
             return {style: "is-alert", text: "Unreachable", title: `Duo did not answer from ${status.host ?? "its API host"}`};
         }
         if (status?.state === "unknown") {
-            return {style: "is-warn", text: "Not checked", title: status.text};
+            return {style: "is-warn", text: "Not Checked", title: status.text};
         }
         if (provider.summary) {
             return provider.summary.users === 0
-                ? {style: "is-warn", text: "No registrations", title: "Nobody has registered with this provider yet"}
-                : {style: "is-ok", text: `${provider.summary.users.toLocaleString()} registered`, title: "Users with a registration"};
+                ? {style: "is-warn", text: "No Registrations", title: "Nobody has registered with this provider yet"}
+                : {style: "is-ok", text: `${provider.summary.users.toLocaleString()} Registered`, title: "Users with a registration"};
         }
         if (!provider.loaded) {
             return {style: "", text: "Reading…", title: ""};
@@ -635,13 +635,13 @@ class PalantirMfaProviders {
         const repository = provider.repository;
         const facts = [
             PalantirMfaProviders.fact("Rank", PalantirMfaProviders.rank(provider)),
-            PalantirMfaProviders.fact("Failure mode", PalantirMfaProviders.failureMode(provider), "What happens when the provider cannot be reached"),
-            provider.summary ? PalantirMfaProviders.fact("Registered users", provider.summary.users.toLocaleString()) : "",
+            PalantirMfaProviders.fact("Failure Mode", PalantirMfaProviders.failureMode(provider), "What happens when the provider cannot be reached"),
+            provider.summary ? PalantirMfaProviders.fact("Registered Users", provider.summary.users.toLocaleString()) : "",
             isDuo && provider.status?.host ? PalantirMfaProviders.fact("API host", provider.status.host) : "",
-            PalantirMfaProviders.fact("Bypass rules", PalantirMfaProviders.bypassRules(provider) === 0 ? "None" : `${PalantirMfaProviders.bypassRules(provider)} set`),
+            PalantirMfaProviders.fact("Bypass Rules", PalantirMfaProviders.bypassRules(provider) === 0 ? "None" : `${PalantirMfaProviders.bypassRules(provider)} set`),
             provider.metadata.size > 0
-                ? PalantirMfaProviders.fact("Changed settings", `${changedCount} of ${total}`, "Settings whose value differs from their default")
-                : PalantirMfaProviders.fact("Settings set", String(provider.settings.length), "Without the configuration metadata, defaults are not known")
+                ? PalantirMfaProviders.fact("Changed Settings", `${changedCount} of ${total}`, "Settings whose value differs from their default")
+                : PalantirMfaProviders.fact("Settings Set", String(provider.settings.length), "Without the configuration metadata, defaults are not known")
         ].join("");
         const entries = [
             ...settings.map(setting => PalantirMfaProviders.settingEntry(provider, setting, false)),
@@ -673,7 +673,7 @@ class PalantirMfaProviders {
                 </div>
                 <div class="palantir-mfa-providers__buttons">
                     ${isDuo && CasActuatorEndpoints.duoPing() ? `<button type="button" class="palantir-button" data-mfa-provider-action="ping"${provider.status?.state === "checking" ? " disabled" : ""}><i class="mdi mdi-access-point-network" aria-hidden="true"></i>Ping Duo</button>` : ""}
-                    ${repository && CasActuatorEndpoints[repository]?.() && !$("#mfaRepositoriesTab").parent().hasClass("d-none") ? `<button type="button" class="palantir-button" data-mfa-provider-action="repository"><i class="mdi mdi-database-outline" aria-hidden="true"></i>Credential repository</button>` : ""}
+                    ${repository && CasActuatorEndpoints[repository]?.() && !$("#mfaRepositoriesTab").parent().hasClass("d-none") ? `<button type="button" class="palantir-button" data-mfa-provider-action="repository"><i class="mdi mdi-database-outline" aria-hidden="true"></i>Credential Repository</button>` : ""}
                     ${CasActuatorEndpoints.mfaDevices() && !$("#mfaDevicesTab").parent().hasClass("d-none") ? `<button type="button" class="palantir-button" data-mfa-provider-action="devices"><i class="mdi mdi-cellphone-link" aria-hidden="true"></i>Devices</button>` : ""}
                 </div>
             </header>
@@ -808,7 +808,7 @@ class PalantirMfaProviders {
         }
         const escape = escapePalantirMarkup;
         const confirmed = await Swal.fire({
-            titleText: `Create bypass codes for ${state.username}?`,
+            titleText: `Create Bypass Codes for ${state.username}?`,
             text: "Duo creates new bypass codes for this user. They are shown once, so pass them on before closing.",
             icon: "question",
             showCancelButton: true,
@@ -831,16 +831,16 @@ class PalantirMfaProviders {
             });
             const codes = (response?.[provider.id] ?? Object.values(response ?? {})[0] ?? []).map(String);
             if (codes.length === 0) {
-                Swal.fire({icon: "warning", titleText: "No bypass codes", text: `Duo created no bypass codes for ${state.username}.`});
+                Swal.fire({icon: "warning", titleText: "No Bypass Codes", text: `Duo created no bypass codes for ${state.username}.`});
                 return;
             }
             const copied = await Swal.fire({
-                titleText: `Bypass codes for ${state.username}`,
+                titleText: `Bypass Codes for ${state.username}`,
                 html: `<p>Each code signs ${escape(state.username)} in once. They are not shown again.</p>
                        <ul class="palantir-mfa-duo__codes">${codes.map(code => `<li><code>${escape(code)}</code></li>`).join("")}</ul>`,
                 icon: "success",
                 showCancelButton: true,
-                confirmButtonText: "Copy codes",
+                confirmButtonText: "Copy Codes",
                 cancelButtonText: "Close"
             });
             if (copied.isConfirmed) {
@@ -904,7 +904,7 @@ class PalantirMfaProviders {
                                value="${escape(state.typed)}"/>
                     </label>
                     <button type="submit" class="palantir-button"${state.loading ? " disabled" : ""}>
-                        <i class="mdi mdi-magnify" aria-hidden="true"></i>Look up</button>
+                        <i class="mdi mdi-magnify" aria-hidden="true"></i>Look Up</button>
                 </form>
                 ${result}
             </section>`;
@@ -918,7 +918,7 @@ class PalantirMfaProviders {
             <div class="palantir-mfa-duo__status">
                 <span class="palantir-mfa-providers__chip ${signIn.style}" title="${escape(signIn.title)}">${escape(signIn.text)}</span>
                 <span>${escape(state.status.message || signIn.title)}</span>
-                ${/^https:\/\//i.test(String(state.status.enrollPortalUrl ?? "")) ? `<a href="${escape(state.status.enrollPortalUrl)}" target="_blank" rel="noopener noreferrer">Enrollment page</a>` : ""}
+                ${/^https:\/\//i.test(String(state.status.enrollPortalUrl ?? "")) ? `<a href="${escape(state.status.enrollPortalUrl)}" target="_blank" rel="noopener noreferrer">Enrollment Page</a>` : ""}
             </div>` : "";
         if (!account) {
             const missing = state.adminError || (state.adminAnswered
@@ -935,9 +935,9 @@ class PalantirMfaProviders {
             PalantirMfaProviders.fact("Email", account.email || "—", account.email ?? ""),
             PalantirMfaProviders.fact("Account", adminStatus.text, adminStatus.title),
             PalantirMfaProviders.fact("Enrolled", account.enrolled ? "Yes" : "No"),
-            PalantirMfaProviders.fact("Last login", lastLogin.day, lastLogin.full),
+            PalantirMfaProviders.fact("Last Login", lastLogin.day, lastLogin.full),
             PalantirMfaProviders.fact("Created", created.day, created.full),
-            PalantirMfaProviders.fact("Bypass codes", String((account.bypassCodes ?? []).length), "Bypass codes the user has not used up")
+            PalantirMfaProviders.fact("Bypass Codes", String((account.bypassCodes ?? []).length), "Bypass codes the user has not used up")
         ].join("");
         const devices = (account.devices ?? []).map(device => `
             <li><i class="mdi ${String(device.type ?? "").toLowerCase() === "mobile" ? "mdi-cellphone" : "mdi-phone"}" aria-hidden="true"></i>
@@ -952,8 +952,8 @@ class PalantirMfaProviders {
                     <select name="status">
                         ${["AUTH", "ALLOW", "DENY"].map(value => `<option value="${value}"${value === statusChoice ? " selected" : ""}>${escape(PalantirMfaProviders.DUO_STATUSES[value].text)}</option>`).join("")}
                     </select></label>
-                <label><span>First name</span><input name="firstName" type="text" autocomplete="off" value="${escape(account.firstName ?? "")}"/></label>
-                <label><span>Last name</span><input name="lastName" type="text" autocomplete="off" value="${escape(account.lastName ?? "")}"/></label>
+                <label><span>First Name</span><input name="firstName" type="text" autocomplete="off" value="${escape(account.firstName ?? "")}"/></label>
+                <label><span>Last Name</span><input name="lastName" type="text" autocomplete="off" value="${escape(account.lastName ?? "")}"/></label>
                 <label><span>Email</span><input name="email" type="email" autocomplete="off" value="${escape(account.email ?? "")}"/></label>
                 <p class="palantir-mfa-duo__note">A field left empty keeps what Duo has.</p>
                 <div class="palantir-mfa-duo__actions">
@@ -968,9 +968,9 @@ class PalantirMfaProviders {
             ${groups ? `<div class="palantir-mfa-duo__groups" aria-label="Groups">${groups}</div>` : ""}
             ${editable && !state.editing ? `<div class="palantir-mfa-duo__actions">
                 <button type="button" class="palantir-button" data-palantir-write="duoAdmin" data-mfa-provider-action="duo-bypass">
-                    <i class="mdi mdi-ticket-confirmation-outline" aria-hidden="true"></i>Create bypass codes</button>
+                    <i class="mdi mdi-ticket-confirmation-outline" aria-hidden="true"></i>Create Bypass Codes</button>
                 <button type="button" class="palantir-button" data-palantir-write="duoAdmin" data-mfa-provider-action="duo-edit">
-                    <i class="mdi mdi-account-edit-outline" aria-hidden="true"></i>Edit account</button>
+                    <i class="mdi mdi-account-edit-outline" aria-hidden="true"></i>Edit Account</button>
             </div>` : ""}
             ${edit}`;
     }
@@ -1441,7 +1441,7 @@ class PalantirCredentialRepositories {
             document.body.removeChild(link);
             window.URL.revokeObjectURL(link.href);
         } catch (error) {
-            Swal.fire({icon: "error", titleText: `${repository.title} records could not be exported`, text: error.message});
+            Swal.fire({icon: "error", titleText: `${repository.title} Records Could Not Be Exported`, text: error.message});
         }
     }
 
@@ -1470,7 +1470,7 @@ class PalantirCredentialRepositories {
         if (imported === 0) {
             Swal.fire({
                 icon: "error",
-                titleText: "Nothing imported",
+                titleText: "Nothing Imported",
                 text: skipped > 0
                     ? `CAS refused all ${PalantirCredentialRepositories.count(skipped, records)} in ${file.name}.`
                     : `${file.name} holds no ${repository.title} records.`
@@ -1478,7 +1478,7 @@ class PalantirCredentialRepositories {
         } else if (skipped > 0) {
             Swal.fire({
                 icon: "warning",
-                titleText: "Partly imported",
+                titleText: "Partly Imported",
                 text: `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}; CAS refused ${PalantirCredentialRepositories.count(skipped, records)}.`
             });
         } else {
@@ -1531,7 +1531,7 @@ class PalantirCredentialRepositories {
             } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
                 Swal.fire({
                     icon: "error",
-                    titleText: "Nothing imported",
+                    titleText: "Nothing Imported",
                     text: xhr?.status === 413
                         ? `${file.name} is too large to import: a record, or the records together, exceed what CAS accepts.`
                         : `CAS could not import ${file.name} into ${repository.title}${xhr?.status ? ` (it answered ${xhr.status})` : ""}.`
@@ -1549,12 +1549,12 @@ class PalantirCredentialRepositories {
      */
     static async deleteAll(repository) {
         const result = await Swal.fire({
-            titleText: `Delete every ${repository.title} record?`,
+            titleText: `Delete Every ${repository.title} Record?`,
             html: `<p>Every user registered with ${escapePalantirMarkup(repository.title)} has to register again, and this
                    cannot be undone. Export the records first to keep a copy.</p>`,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Delete all",
+            confirmButtonText: "Delete All",
             cancelButtonText: "Cancel",
             focusCancel: true
         });

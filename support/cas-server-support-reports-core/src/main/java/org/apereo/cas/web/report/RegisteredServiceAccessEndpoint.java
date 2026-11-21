@@ -140,10 +140,10 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             }
             if (service == null || registeredService == null) {
                 val reason = service == null ? "No application was named" : "No application matches %s".formatted(requested(request, service));
-                steps.add(AccessStep.of("application", "Application found", false, reason));
+                steps.add(AccessStep.of("application", "Application Found", false, reason));
                 return explanation(HttpStatus.FORBIDDEN, reason, steps, service, null, null);
             }
-            steps.add(AccessStep.of("application", "Application found", true,
+            steps.add(AccessStep.of("application", "Application Found", true,
                 "%s (#%s) matches %s".formatted(registeredService.getName(), registeredService.getId(), service.getId())));
             steps.addAll(AccessExplainer.explainApplication(registeredService, service));
             if (steps.stream().anyMatch(AccessStep::failed)) {
@@ -155,10 +155,10 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 authentication = buildAuthentication(request.getParameter("username"), password, service);
             } catch (final AuthenticationException e) {
                 LoggingUtils.warn(LOGGER, e);
-                steps.add(AccessStep.of("authentication", "Signed in", false, "The username or password is not accepted"));
+                steps.add(AccessStep.of("authentication", "Signed In", false, "The username or password is not accepted"));
                 return explanation(HttpStatus.UNAUTHORIZED, firstFailure(steps), steps, service, registeredService, null);
             }
-            steps.add(AccessStep.of("authentication", "Signed in", true,
+            steps.add(AccessStep.of("authentication", "Signed In", true,
                 StringUtils.isNotBlank(password) ? "The password is accepted" : "Attributes are resolved without checking a password"));
 
             val attributes = new LinkedHashMap<String, List<Object>>(authentication.getAttributes());
@@ -177,7 +177,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 .build());
             steps.addAll(explainAuthorization(registeredService, accessRequest, !accessResult.isExecutionFailure()));
             if (accessResult.isExecutionFailure() && steps.stream().noneMatch(AccessStep::failed)) {
-                steps.add(AccessStep.of("enforcement", "Other access rules", false,
+                steps.add(AccessStep.of("enforcement", "Other Access Rules", false,
                     accessResult.getException().map(Throwable::getMessage).orElse("Access is refused")));
             }
             return accessResult.isExecutionFailure()
@@ -208,7 +208,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             return AccessExplainer.explainAuthorization(registeredService.getAccessStrategy(), accessRequest, allowed);
         } catch (final Throwable e) {
             LoggingUtils.warn(LOGGER, e);
-            return List.of(AccessStep.of("strategy", "Access strategy", allowed ? Outcome.PASSED : Outcome.FAILED,
+            return List.of(AccessStep.of("strategy", "Access Strategy", allowed ? Outcome.PASSED : Outcome.FAILED,
                 "%s; its rules could not be explained: %s".formatted(allowed ? "Allows access" : "Refuses access",
                     StringUtils.defaultIfBlank(e.getMessage(), e.getClass().getSimpleName()))));
         }
@@ -480,7 +480,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             val strategy = registeredService.getAccessStrategy();
             val allowed = strategy.isServiceAccessAllowed(registeredService, service);
             val availability = strategy instanceof final TimeBasedRegisteredServiceAccessStrategy timeBased
-                ? AccessStep.of("window", "Active window", allowed,
+                ? AccessStep.of("window", "Active Window", allowed,
                     "%s, from %s until %s (%s)".formatted(allowed ? "Within its active window" : "Outside its active window",
                         StringUtils.defaultIfBlank(timeBased.getStartingDateTime(), "any time"),
                         StringUtils.defaultIfBlank(timeBased.getEndingDateTime(), "any time"),
@@ -492,11 +492,11 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 .map(RegisteredServiceExpirationPolicy::getExpirationDate)
                 .filter(StringUtils::isNotBlank);
             val notExpired = RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService);
-            val expiration = AccessStep.of("expiration", "Not expired", notExpired,
+            val expiration = AccessStep.of("expiration", "Not Expired", notExpired,
                 expirationDate.map(date -> (notExpired ? "Expires on " : "Expired on ") + date).orElse("No expiration date is set"));
 
             val sso = strategy.isServiceAccessAllowedForSso(registeredService);
-            val singleSignOn = AccessStep.of("sso", "Single sign-on", Outcome.INFO,
+            val singleSignOn = AccessStep.of("sso", "Single Sign-On", Outcome.INFO,
                 sso ? "An existing single sign-on session is reused" : "Every sign-in asks for credentials again");
             return List.of(availability, expiration, singleSignOn);
         }
@@ -524,7 +524,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 return explainDefault((DefaultRegisteredServiceAccessStrategy) strategy, request);
             }
             if (deciderOf(strategy) == RegisteredServiceAccessStrategy.class) {
-                return List.of(AccessStep.of("strategy", "User rules", Outcome.SKIPPED,
+                return List.of(AccessStep.of("strategy", "User Rules", Outcome.SKIPPED,
                     "%s has no rules about the user".formatted(nameOf(strategy))));
             }
             return List.of(new AccessStep("strategy", "Decided by " + nameOf(strategy), outcomeOf(allowed),
@@ -555,7 +555,7 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
                 val outcome = chainOutcome(any, inner)
                     .or(() -> Optional.ofNullable(decided).map(AccessExplainer::outcomeOf))
                     .orElse(Outcome.INFO);
-                return new AccessStep("chain", "Chained strategies", outcome,
+                return new AccessStep("chain", "Chained Strategies", outcome,
                     "%s of %d strategies must allow access".formatted(any ? "Any one" : "Every one", inner.size()), List.of(), inner);
             }
             if (explainsAttributes(strategy)) {
@@ -633,39 +633,73 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             }
         }
 
+        /**
+         * The conditions of chained activation criteria, one step each, with whether each holds for the user; criteria
+         * that are not chained are one condition and have no steps of their own.
+         *
+         * @param criteria the activation criteria
+         * @param request  the user and the application
+         * @return the steps
+         * @throws Throwable when a condition cannot be evaluated
+         */
+        private static List<AccessStep> conditionsOf(final RegisteredServiceAccessStrategyActivationCriteria criteria,
+                                                     final RegisteredServiceAccessStrategyRequest request)
+                throws Throwable {
+            if (!(criteria instanceof final ChainingRegisteredServiceAccessStrategyActivationCriteria chain)) {
+                return List.of();
+            }
+            val steps = new ArrayList<AccessStep>();
+            for (val condition : chain.getConditions()) {
+                val holds = condition.shouldActivate(request);
+                val title = condition instanceof final AttributeBasedRegisteredServiceAccessStrategyActivationCriteria attributes
+                    ? "Attributes: " + String.join(", ", attributes.getRequiredAttributes().keySet())
+                    : condition instanceof ChainingRegisteredServiceAccessStrategyActivationCriteria
+                        ? "Chained conditions"
+                        : StringUtils.defaultIfBlank(condition.getClass().getSimpleName(), "Condition");
+                steps.add(new AccessStep("condition", title, outcomeOf(holds),
+                    holds ? "Holds for this user" : "Does not hold for this user", List.of(), conditionsOf(condition, request)));
+            }
+            return steps;
+        }
+
         private static List<AccessStep> explainDefault(final DefaultRegisteredServiceAccessStrategy strategy,
                                                        final RegisteredServiceAccessStrategyRequest request)
                 throws Throwable {
             val steps = new ArrayList<AccessStep>();
             val criteria = strategy.getActivationCriteria();
             if (criteria != null) {
+                val conditions = conditionsOf(criteria, request);
+                val chained = criteria instanceof final ChainingRegisteredServiceAccessStrategyActivationCriteria chain
+                    ? "%s of %d conditions must hold. ".formatted(chain.getOperator() == LogicalOperatorTypes.OR ? "Any one" : "Every one", conditions.size())
+                    : StringUtils.EMPTY;
                 if (!criteria.shouldActivate(request)) {
-                    steps.add(AccessStep.of("activation", "Activation", criteria.isAllowIfInactive(),
-                        "The attribute rules do not apply to this user, so access is %s".formatted(criteria.isAllowIfInactive() ? "allowed" : "refused")));
-                    steps.add(AccessStep.of("required", "Required attributes", Outcome.SKIPPED, "Not checked: the rules do not apply"));
-                    steps.add(AccessStep.of("rejected", "Rejected attributes", Outcome.SKIPPED, "Not checked: the rules do not apply"));
+                    steps.add(new AccessStep("activation", "Activation", outcomeOf(criteria.isAllowIfInactive()),
+                        chained + "The attribute rules do not apply to this user, so access is %s".formatted(criteria.isAllowIfInactive() ? "allowed" : "refused"),
+                        List.of(), conditions));
+                    steps.add(AccessStep.of("required", "Required Attributes", Outcome.SKIPPED, "Not checked: the rules do not apply"));
+                    steps.add(AccessStep.of("rejected", "Rejected Attributes", Outcome.SKIPPED, "Not checked: the rules do not apply"));
                     return steps;
                 }
-                steps.add(AccessStep.of("activation", "Activation", Outcome.PASSED, "The attribute rules apply to this user"));
+                steps.add(new AccessStep("activation", "Activation", Outcome.PASSED, chained + "The attribute rules apply to this user", List.of(), conditions));
             }
 
             val required = strategy.getRequiredAttributes();
             if (required.isEmpty()) {
-                steps.add(AccessStep.of("required", "Required attributes", Outcome.SKIPPED, "None are defined"));
+                steps.add(AccessStep.of("required", "Required Attributes", Outcome.SKIPPED, "None are defined"));
             } else {
                 val rules = rulesOf(strategy, required, request, true);
                 val passed = evaluator(strategy, required, Map.of()).apply(request);
-                steps.add(new AccessStep("required", "Required attributes", passed ? Outcome.PASSED : Outcome.FAILED,
+                steps.add(new AccessStep("required", "Required Attributes", passed ? Outcome.PASSED : Outcome.FAILED,
                     strategy.isRequireAllAttributes() ? "Every one of these must match" : "Any one of these must match", rules, List.of()));
             }
 
             val rejected = strategy.getRejectedAttributes();
             if (rejected.isEmpty()) {
-                steps.add(AccessStep.of("rejected", "Rejected attributes", Outcome.SKIPPED, "None are defined"));
+                steps.add(AccessStep.of("rejected", "Rejected Attributes", Outcome.SKIPPED, "None are defined"));
             } else {
                 val rules = rulesOf(strategy, rejected, request, false);
                 val passed = evaluator(strategy, Map.of(), rejected).apply(request);
-                steps.add(new AccessStep("rejected", "Rejected attributes", passed ? Outcome.PASSED : Outcome.FAILED,
+                steps.add(new AccessStep("rejected", "Rejected Attributes", passed ? Outcome.PASSED : Outcome.FAILED,
                     strategy.isRequireAllAttributes() ? "Access is refused when every one of these matches" : "Access is refused when any one of these matches",
                     rules, List.of()));
             }

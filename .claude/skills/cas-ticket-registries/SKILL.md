@@ -194,6 +194,10 @@ description: "Review and change ticket registries: stateless (compact tickets), 
   databases. Scenarios on MySQL/PostgreSQL with `cas.ticket.registry.core.enable-locking=true` must set
   `spring.integration.jdbc.initialize-schema=always`, or every lock fails ("Failed to lock for: TGT-...") and no service
   ticket is issued; a scenario that never asks for a service ticket will not notice.
+- Never call `afterPropertiesSet()` on an object a `@Bean` method returns; the container calls it again. Spring
+  Integration's JDBC `DefaultLockRepository` appends `ON CONFLICT DO NOTHING` to its insert query there on PostgreSQL,
+  so a second call breaks every lock ("Failed to lock for: TGT-..."). Refresh-scoped beans do not get
+  `afterSingletonsInstantiated()`, so that one is still called by hand.
 - `JpaTicketRegistry` never leaves a managed entity behind: `updateTicket` is a bulk JPQL `UPDATE` (falling back to
   `persist` when no row matched), which bypasses the persistence context, so every read detaches what it loaded when a
   transaction is bound (`toDetachedTicket`) and adding flushes and detaches (`persistDetached`). A new read path must do

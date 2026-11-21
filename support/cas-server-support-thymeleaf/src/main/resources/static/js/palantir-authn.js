@@ -921,7 +921,7 @@ function openNewAuthenticationHandlerDialog() {
                     submitAuthenticationHandler(PalantirDashboardConfiguration.mutablePropertySources()[0]);
                 } else {
                     Swal.fire({
-                        title: "Which property source should receive the configuration?",
+                        title: "Which Property Source Should Receive the Configuration?",
                         input: "select",
                         icon: "question",
                         inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
@@ -1386,7 +1386,7 @@ async function initializeAuthenticationOperations() {
         identity.append($("<i>", {class: "mdi mdi-shield-account", "aria-hidden": "true"}));
         const titleGroup = $("<div>", {class: "ticket-item-title-group"});
         titleGroup.append($("<code>", {class: "ticket-item-title"}).text(policyName));
-        titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("Authentication policy"));
+        titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("Authentication Policy"));
         identity.append(titleGroup);
         header.append(identity);
         header.append($("<span>", {class: "ticket-item-badge ticket-item-badge-catalog"})

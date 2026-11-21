@@ -168,6 +168,13 @@ attributes. The wizard also matches services by the start of their URL, keeps ap
 altogether, sets the salt and source attribute of anonymous and pairwise identifiers, and sets how OpenID Connect relying parties
 sign backchannel authentication requests and whether those requests may carry a user code.
 
+Settings CAS can chain have a switch above their type that makes them a chain: the access strategy, its activation
+criteria and delegated authentication policy, the attribute release policy, its activation criteria, value filters and
+consent policy, and the single sign-on participation policy. A chain shows how it decides, such as whether every
+strategy must allow access or any one may, or how released attributes are merged, and a tab per member; the
+section's fields edit the member whose tab is chosen, and members can be added, moved and removed. A member the wizard
+has no fields for, such as a chain inside the chain, is kept as it is and edited as JSON.
+
 Fields of the wizard whose values come from a standard or from the server suggest them as they are typed, each with a
 short description, while still taking any value: SAML2 NameID formats, authentication context classes, bindings,
 XML signature, digest and encryption algorithms, entity attributes and their values, such as entity categories, OpenID Connect signing and encryption

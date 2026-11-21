@@ -66,7 +66,7 @@ async function waitForDashboard(page) {
 async function discardUnsavedChanges(page, name) {
     await cas.sleep(500);
     const asked = await page.evaluate(() => $(".swal2-popup:visible").length > 0
-        && $(".swal2-title").text() === "Discard your changes?");
+        && $(".swal2-title").text() === "Discard Your Changes?");
     if (asked) {
         await page.click(".swal2-deny");
         await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
@@ -305,7 +305,7 @@ async function verifyApplicationBulkActions(page) {
         await page.click(`button[name=${button}]`);
         await page.waitForSelector(".swal2-confirm", {visible: true});
         await page.click(".swal2-confirm");
-        await page.waitForFunction((expected) => $(".swal2-title").text() === `2 applications ${expected ? "disabled" : "enabled"}`,
+        await page.waitForFunction((expected) => $(".swal2-title").text() === `2 Applications ${expected ? "Disabled" : "Enabled"}`,
             {timeout: 60000}, disable);
         await page.evaluate(() => Swal.close());
         const saved = [await strategy(ids[0]), await strategy(ids[1])];
@@ -317,7 +317,7 @@ async function verifyApplicationBulkActions(page) {
     await page.click("button[name=deleteSelectedServices]");
     await page.waitForSelector(".swal2-confirm", {visible: true});
     await page.click(".swal2-confirm");
-    await page.waitForFunction(() => $(".swal2-title").text() === "2 applications deleted", {timeout: 60000});
+    await page.waitForFunction(() => $(".swal2-title").text() === "2 Applications Deleted", {timeout: 60000});
     const remaining = await page.evaluate(async (created) => {
         const response = await fetch(CasActuatorEndpoints.registeredServices(), {headers: {"Accept": "application/json"}});
         const registered = new Set((await response.json())[1].map((service) => String(service.id)));

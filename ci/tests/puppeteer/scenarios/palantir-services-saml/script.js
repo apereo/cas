@@ -64,7 +64,7 @@ async function waitForDashboard(page) {
 async function discardUnsavedChanges(page, name) {
     await cas.sleep(500);
     const asked = await page.evaluate(() => $(".swal2-popup:visible").length > 0
-        && $(".swal2-title").text() === "Discard your changes?");
+        && $(".swal2-title").text() === "Discard Your Changes?");
     if (asked) {
         await page.click(".swal2-deny");
         await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
@@ -96,8 +96,8 @@ async function verifySamlMetadataImport(page) {
     await page.evaluate(() => $("#samlMetadataImportUrl").val(""));
     await page.type("#samlMetadataImportUrl", metadataLocation);
     await page.click(".swal2-confirm");
-    await page.waitForFunction(() => $(".swal2-title").text() === "Filled from metadata"
-        || $(".swal2-title").text() === "The metadata could not be read", {timeout: 60000});
+    await page.waitForFunction(() => $(".swal2-title").text() === "Filled from Metadata"
+        || $(".swal2-title").text() === "The Metadata Could Not Be Read", {timeout: 60000});
     const outcome = await page.evaluate(() => {
         const definition = JSON.parse(ace.edit("wizardServiceEditor").getValue());
         return {
@@ -108,7 +108,7 @@ async function verifySamlMetadataImport(page) {
         };
     });
     await cas.log(`${outcome.title}: ${outcome.message}`);
-    assert(outcome.title === "Filled from metadata");
+    assert(outcome.title === "Filled from Metadata");
     assert(outcome.serviceId && outcome.serviceId.length > 0);
     assert(outcome.metadataLocation === metadataLocation);
     await page.evaluate(() => Swal.close());
@@ -158,7 +158,7 @@ async function verifySamlMetadataManage(page) {
     }, manager.sourceId);
 
     await page.evaluate(() => $("#registeredServiceMetadataManage").trigger("click"));
-    await page.waitForFunction(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Discard your changes?",
+    await page.waitForFunction(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Discard Your Changes?",
         {timeout: 10000});
     await page.click(".swal2-cancel");
     await cas.sleep(1000);
@@ -170,7 +170,7 @@ async function verifySamlMetadataManage(page) {
     assert(kept.open && kept.applications);
 
     await page.evaluate(() => $("#registeredServiceMetadataManage").trigger("click"));
-    await page.waitForFunction(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Discard your changes?",
+    await page.waitForFunction(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Discard Your Changes?",
         {timeout: 10000});
     await page.click(".swal2-deny");
     await page.waitForFunction((sourceId, name) => !$("#editServiceWizardDialog").dialog("isOpen")
@@ -250,7 +250,7 @@ async function verifySamlMetadataHealth(page) {
     await cas.logg(`Metadata health of application ${serviceId}: ${health.status}`);
     await cas.screenshot(page);
     assert(health.checks["Download"] === "ok");
-    assert(health.checks["Service provider"] === "ok");
+    assert(health.checks["Service Provider"] === "ok");
     assert(health.checks["Resolution by CAS"] === "ok");
     assert(health.metadata);
 

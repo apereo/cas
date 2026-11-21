@@ -1110,7 +1110,7 @@ function editHeimdallResource(namespace, resourceId) {
 
 function deleteHeimdallResource(namespace, resourceId) {
     Swal.fire({
-        title: `Delete resource <strong>${escapeHeimdallHtml(resourceId)}</strong> from <strong>${escapeHeimdallHtml(namespace)}</strong>?`,
+        title: `Delete Resource <strong>${escapeHeimdallHtml(resourceId)}</strong> from <strong>${escapeHeimdallHtml(namespace)}</strong>?`,
         text: "This change is written to the namespace's authorization resource file.",
         icon: "question",
         showConfirmButton: true,
@@ -1294,6 +1294,8 @@ class PalantirAccessCheck {
 
     static sorted = null;
 
+    static patterns = new Map();
+
     static definitionRequest = 0;
 
     static attributesTable = null;
@@ -1303,8 +1305,8 @@ class PalantirAccessCheck {
     static OUTCOMES = {
         PASSED: {icon: "mdi-check-circle", style: "is-passed", label: "Passed"},
         FAILED: {icon: "mdi-close-circle", style: "is-failed", label: "Failed"},
-        SKIPPED: {icon: "mdi-minus-circle", style: "is-skipped", label: "Not checked"},
-        INFO: {icon: "mdi-information", style: "is-info", label: "For information"}
+        SKIPPED: {icon: "mdi-minus-circle", style: "is-skipped", label: "Not Checked"},
+        INFO: {icon: "mdi-information", style: "is-info", label: "For Information"}
     };
 
     /**
@@ -1376,14 +1378,8 @@ class PalantirAccessCheck {
      */
     static matching(url) {
         return PalantirAccessCheck.applications().find(service => {
-            if (PalantirAccessCheck.protocolOf(service) !== "cas" || !service.serviceId) {
-                return false;
-            }
-            try {
-                return new RegExp(`^(?:${service.serviceId})$`).test(url);
-            } catch (error) {
-                return false;
-            }
+            return PalantirAccessCheck.protocolOf(service) === "cas" && Boolean(service.serviceId)
+                && (PalantirAccessCheck.pattern(service.serviceId)?.test(url) ?? false);
         }) ?? null;
     }
 
@@ -1411,11 +1407,25 @@ class PalantirAccessCheck {
         if (String(service.clientId ?? "") === value || String(service.serviceId ?? "") === value) {
             return true;
         }
-        try {
-            return new RegExp(`^(?:${service.serviceId})$`).test(value);
-        } catch (error) {
-            return false;
+        return PalantirAccessCheck.pattern(service.serviceId)?.test(value) ?? false;
+    }
+
+    /**
+     * The pattern of a service id, compiled once: the applications are matched again with every key typed.
+     *
+     * @param serviceId the service id
+     * @returns {RegExp|null} the pattern, or null when the service id is not a valid one
+     */
+    static pattern(serviceId) {
+        const key = String(serviceId ?? "");
+        if (!PalantirAccessCheck.patterns.has(key)) {
+            try {
+                PalantirAccessCheck.patterns.set(key, new RegExp(`^(?:${key})$`));
+            } catch (error) {
+                PalantirAccessCheck.patterns.set(key, null);
+            }
         }
+        return PalantirAccessCheck.patterns.get(key);
     }
 
     /**
@@ -1671,18 +1681,18 @@ class PalantirAccessCheck {
 
     static verdict(request, status, answer) {
         if (!PalantirAccessCheck.decided(status, answer)) {
-            return {style: "is-unavailable", icon: "mdi-lan-disconnect", title: "Access could not be checked"};
+            return {style: "is-unavailable", icon: "mdi-lan-disconnect", title: "Access Could Not Be Checked"};
         }
         if (answer?.allowed === true) {
-            return {style: "is-allowed", icon: "mdi-shield-check-outline", title: `${request.username} may access ${answer.registeredService?.name ?? request.label}`};
+            return {style: "is-allowed", icon: "mdi-shield-check-outline", title: `${request.username} May Access ${answer.registeredService?.name ?? request.label}`};
         }
         if (status === 401) {
-            return {style: "is-unauthenticated", icon: "mdi-account-alert-outline", title: `${request.username} could not sign in`};
+            return {style: "is-unauthenticated", icon: "mdi-account-alert-outline", title: `${request.username} Could Not Sign In`};
         }
         if (answer && !answer.registeredService) {
-            return {style: "is-denied", icon: "mdi-help-rhombus-outline", title: "No application matches"};
+            return {style: "is-denied", icon: "mdi-help-rhombus-outline", title: "No Application Matches"};
         }
-        return {style: "is-denied", icon: "mdi-shield-off-outline", title: `${request.username} is denied`};
+        return {style: "is-denied", icon: "mdi-shield-off-outline", title: `${request.username} Is Denied`};
     }
 
     static gate(step) {
@@ -1693,7 +1703,27 @@ class PalantirAccessCheck {
                 <i class="mdi ${outcome.icon}" aria-hidden="true"></i>
                 <span class="palantir-access__gate-title">${escape(step.title)}</span>
                 <span class="palantir-access__gate-outcome">${escape(outcome.label)}</span>
+                ${PalantirAccessCheck.members(step)}
             </li>`;
+    }
+
+    /**
+     * The members of a chained step as a row of marks, one per strategy or condition, each colored by how it turned
+     * out, so the gate of a chain shows at a glance which of its members let the user through.
+     *
+     * @param step the step
+     * @returns {string} the marks, or nothing for a step that is not made of others
+     */
+    static members(step) {
+        const inner = Array.isArray(step.steps) ? step.steps : [];
+        if (inner.length === 0) {
+            return "";
+        }
+        const escape = escapePalantirMarkup;
+        return `<span class="palantir-access__gate-members" aria-label="${escape(`${inner.length} members`)}">${inner.map((member, index) => {
+            const outcome = PalantirAccessCheck.OUTCOMES[member.outcome] ?? PalantirAccessCheck.OUTCOMES.INFO;
+            return `<span class="palantir-access__gate-member ${outcome.style}" title="${escape(`${index + 1}. ${member.title}: ${outcome.label}`)}"></span>`;
+        }).join("")}</span>`;
     }
 
     static values(values, style) {
@@ -1761,15 +1791,15 @@ class PalantirAccessCheck {
                 </div>
                 ${service?.id !== undefined ? `<div class="palantir-access__verdict-actions">
                     <button type="button" class="palantir-button" data-access-action="open" data-service-id="${escape(service.id)}">
-                        <i class="mdi mdi-open-in-new" aria-hidden="true"></i>Open application</button>
+                        <i class="mdi mdi-open-in-new" aria-hidden="true"></i>Open Application</button>
                     <button type="button" class="palantir-button" data-access-action="edit" data-service-id="${escape(service.id)}"
                             data-palantir-write="registeredServices">
-                        <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>Edit access strategy</button>
+                        <i class="mdi mdi-pencil-outline" aria-hidden="true"></i>Edit Access Strategy</button>
                 </div>` : ""}
             </section>
             ${steps.length > 0 ? `
             <section class="palantir-access__card" aria-label="Steps">
-                <p class="palantir-access__label">How CAS decided</p>
+                <p class="palantir-access__label">How CAS Decided</p>
                 <ol class="palantir-access__flow">${steps.map(PalantirAccessCheck.gate).join("")}</ol>
             </section>
             <section class="palantir-access__card" aria-label="Why">
@@ -1800,12 +1830,12 @@ class PalantirAccessCheck {
         }
         for (const [name, value] of Object.entries(attributes)) {
             table.row.add({
-                0: `${palantirCode(name)}${named.has(name) ? ` <span class="palantir-access__chip is-info">In the rules</span>` : ""}`,
+                0: `${palantirCode(name)}${named.has(name) ? ` <span class="palantir-access__chip is-info">In the Rules</span>` : ""}`,
                 1: PalantirAccessCheck.values(value, "")
             });
         }
         table.draw();
-        $("#accessStrategyAttributesTitle").text(`${principal.id}'s attributes · ${Object.keys(attributes).length}`);
+        $("#accessStrategyAttributesTitle").text(`${principal.id}'s Attributes · ${Object.keys(attributes).length}`);
         $("#accessStrategyAttributesContainer").prop("hidden", false);
     }
 
@@ -1877,7 +1907,7 @@ class PalantirAccessCheck {
         const escape = escapePalantirMarkup;
         const entries = PalantirAccessCheck.recent();
         const labels = {allowed: ["is-passed", "Allowed"], denied: ["is-failed", "Denied"],
-            unauthenticated: ["is-warn", "Not signed in"], unmatched: ["is-warn", "No match"]};
+            unauthenticated: ["is-warn", "Not Signed In"], unmatched: ["is-warn", "No Match"]};
         $("#accessRecentList").html(entries.map((entry, index) => {
             const [style, text] = labels[entry.outcome] ?? labels.denied;
             return `
@@ -2006,7 +2036,7 @@ class PalantirAccessCheck {
         widget._renderMenu = function (list, items) {
             const total = PalantirAccessCheck.suggestionTotal ?? items.length;
             $("<li>").addClass("palantir-access__suggestions-header ui-state-disabled")
-                .text(total > items.length ? `${items.length} of ${total} applications` : `${total} ${total === 1 ? "application" : "applications"}`)
+                .text(total > items.length ? `${items.length} of ${total} Applications` : `${total} ${total === 1 ? "Application" : "Applications"}`)
                 .appendTo(list);
             items.forEach(item => this._renderItemData(list, item));
         };

@@ -317,7 +317,10 @@ to its required and rejected attributes, the values each rule names next to the 
 and its access strategy, with the last checks kept in the browser. One field takes the application, shows which
 registered application CAS resolves it to, and each application's menu can open the check for it; the service access endpoint returns the same
 explanation, also when access is refused, naming the application without its definition, and asks an external
-authorization service or a script once. A new *Users* page looks up one user and gathers in one place their
+authorization service or a script once; chained strategies and activation conditions are shown member by member. The
+application wizard edits chained policies: access strategies, their activation criteria and delegated authentication
+policies, attribute release policies, their activation criteria, value filters and consent policies, and single
+sign-on participation policies, a member at a time. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
 such as ending a session, removing a device or releasing a throttled attempt. The page also lists the user's OAuth and OpenID Connect
@@ -1242,6 +1245,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   their use can be reported; the settings search still finds them, with their replacement where there is one.
 
 ## Other Stuff
+
+- {: .fixed data-area="services"} A [chained consent policy](../integration/Attribute-Release-Consent.html) can be
+  given in an application's definition, and the policies it lists are read with it.
 
 - {: .fixed data-area="mfa"} Importing a YubiKey account into a [MongoDb repository](../mfa/YubiKey-Authentication-Registration-MongoDb.html)
   no longer replaces another user's account that happens to have the same identifier; the imported account gets an

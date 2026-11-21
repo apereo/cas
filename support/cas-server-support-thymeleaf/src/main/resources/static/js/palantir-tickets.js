@@ -88,7 +88,7 @@ async function initializeTicketsOperations() {
             .append(document.createTextNode(`${entries.length} ${entries.length === 1 ? "field" : "fields"}`)));
 
         if (entries.length === 0) {
-            fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No additional fields"));
+            fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No Additional Fields"));
             return fields;
         }
 

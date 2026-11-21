@@ -227,7 +227,7 @@ class PalantirHome {
             class: "palantir-home__customize-item is-reset",
             "data-home-action": "reset"
         }).append($("<i>", {class: "mdi mdi-restore", "aria-hidden": "true"}))
-            .append($("<span>", {text: "Reset the layout"})));
+            .append($("<span>", {text: "Reset the Layout"})));
     }
 
     static act(button) {

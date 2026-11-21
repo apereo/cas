@@ -404,7 +404,7 @@ async function verifyWizardSuggestions(page, name) {
 async function discardUnsavedChanges(page, name) {
     await cas.sleep(500);
     const asked = await page.evaluate(() => $(".swal2-popup:visible").length > 0
-        && $(".swal2-title").text() === "Discard your changes?");
+        && $(".swal2-title").text() === "Discard Your Changes?");
     if (asked) {
         await page.click(".swal2-deny");
         await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
@@ -432,7 +432,7 @@ async function verifyTypePicker(page) {
     const chosen = await page.evaluate(() => $(".palantir-type-card").eq(1).data("service-class"));
     await page.click(".palantir-type-card:nth-of-type(2)");
     await cas.sleep(500);
-    if (await page.evaluate(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Resume your draft?")) {
+    if (await page.evaluate(() => $(".swal2-popup:visible").length > 0 && $(".swal2-title").text() === "Resume Your Draft?")) {
         await page.click(".swal2-deny");
     }
     await page.waitForFunction((serviceClass) => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
@@ -617,7 +617,7 @@ async function verifyEditConflict(page) {
     await cas.sleep(1000);
 
     await page.evaluate(() => $("#saveService").trigger("click"));
-    await page.waitForFunction(() => $(".swal2-title").text() === "This application has changed", {timeout: 30000});
+    await page.waitForFunction(() => $(".swal2-title").text() === "This Application Has Changed", {timeout: 30000});
     const changed = await page.evaluate(() => $(".palantir-conflict__diff td.is-added").length);
     await cas.logg(`Saving a stale edit shows ${changed} changed line(s) instead of overwriting`);
     assert(changed > 0);
@@ -1138,13 +1138,13 @@ async function verifyJsonEditorToWizard(page, id) {
     await page.evaluate(() => {
         PalantirServiceEditor.openInWizard();
     });
-    await waitForAlert(page, "The wizard does not cover every setting");
+    await waitForAlert(page, "The Wizard Does Not Cover Every Setting");
     await page.click(".swal2-deny");
     await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
         && $("#registeredServiceName").val() === "HandoffEdited", {timeout: 30000});
     await cas.sleep(1500);
     await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
-    await waitForAlert(page, "Discard your changes?");
+    await waitForAlert(page, "Discard Your Changes?");
     await cas.logg("Closing the wizard with the unsaved edit from the JSON editor asks first");
     await page.click(".swal2-deny");
     await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
@@ -1164,7 +1164,7 @@ async function verifyWizardDraftToJsonEditor(page, id) {
     await page.evaluate((service) => {
         PalantirServiceEditor.openApplicationInWizard(service);
     }, first);
-    await waitForAlert(page, "The wizard does not cover every setting");
+    await waitForAlert(page, "The Wizard Does Not Cover Every Setting");
     await page.click(".swal2-deny");
     await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
     await cas.sleep(1500);
@@ -1172,7 +1172,7 @@ async function verifyWizardDraftToJsonEditor(page, id) {
     await page.evaluate(() => document.getElementById("accessStrategySsoEnabledButton").click());
     await cas.sleep(1500);
     await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
-    await waitForAlert(page, "Discard your changes?");
+    await waitForAlert(page, "Discard Your Changes?");
     await page.click(".swal2-confirm");
     await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
 
@@ -1187,9 +1187,9 @@ async function verifyWizardDraftToJsonEditor(page, id) {
     await page.evaluate((service) => {
         PalantirServiceEditor.openApplicationInWizard(service);
     }, second);
-    await waitForAlert(page, "Resume your draft?");
+    await waitForAlert(page, "Resume Your Draft?");
     await page.click(".swal2-confirm");
-    await waitForAlert(page, "The wizard does not cover every setting");
+    await waitForAlert(page, "The Wizard Does Not Cover Every Setting");
     await page.click(".swal2-confirm");
     await page.waitForFunction(() => $("#editServiceDialog").dialog("isOpen"), {timeout: 30000});
     await cas.sleep(1000);
@@ -1201,7 +1201,7 @@ async function verifyWizardDraftToJsonEditor(page, id) {
     assert(carried.accessStrategy?.ssoEnabled !== false);
 
     await page.evaluate(() => $("#saveService").trigger("click"));
-    await waitForAlert(page, "This application has changed");
+    await waitForAlert(page, "This Application Has Changed");
     await cas.logg("Saving the resumed draft from the JSON editor notices the change made since the draft began");
     await page.click(".swal2-cancel");
     await page.waitForFunction(() => !Swal.isVisible() && $("#editServiceDialog").dialog("isOpen"), {timeout: 10000});
@@ -1337,6 +1337,127 @@ async function openNewApplicationMenu(page) {
         && $("#newServiceWizard").is(":visible"), {timeout: 15000});
 }
 
+/**
+ * Edit chained policies in the wizard: a chained access strategy opens with a tab per strategy, the strategy the
+ * wizard has no fields for is kept as it is, another strategy is shown when its tab is chosen, the chain decides by
+ * any one strategy once asked, strategies are added and removed, and the attribute release policy becomes a chain of
+ * one. The generated definition keeps the chain throughout and CAS accepts it.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyChainedPolicies(page) {
+    await cas.separator();
+    const service = {
+        "@class": "org.apereo.cas.services.CasRegisteredService",
+        serviceId: "^https://chained.example.org/.*",
+        name: "ChainedExample",
+        id: 9100,
+        accessStrategy: {
+            "@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+            operator: "AND",
+            strategies: ["java.util.ArrayList", [
+                {
+                    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+                    requiredAttributes: {"@class": "java.util.HashMap", memberOf: ["java.util.HashSet", ["admins"]]}
+                },
+                {
+                    "@class": "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+                    startingDateTime: "2026-01-01T00:00:00Z",
+                    endingDateTime: "2099-12-31T23:59:59Z"
+                },
+                {
+                    "@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+                    operator: "OR",
+                    strategies: ["java.util.ArrayList", [
+                        {"@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy", enabled: true}
+                    ]]
+                }
+            ]]
+        }
+    };
+    const generated = () => page.evaluate(() => JSON.parse(ace.edit("wizardServiceEditor").getValue()));
+    const bar = () => page.evaluate(() => {
+        const chain = $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy']");
+        return {
+            on: chain.hasClass("is-on"),
+            tabs: chain.find(".palantir-chain__tab").map((_, tab) => $(tab).find(".palantir-chain__name").text().trim()).get(),
+            json: chain.find(".palantir-chain__tab.is-json").length,
+            active: chain.find(".palantir-chain__tab.is-active .palantir-chain__number").text().trim(),
+            type: $("#registeredServiceAccessStrategy").val()
+        };
+    });
+    const settled = async () => {
+        await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
+        await cas.sleep(500);
+    };
+
+    await page.evaluate((definition) => openRegisteredServiceWizardDialog(definition), service);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
+        && $("#registeredServiceName").val() === "ChainedExample", {timeout: 30000});
+    await cas.sleep(1500);
+    let state = await bar();
+    await cas.log(`Chained access strategy in the wizard: ${JSON.stringify(state)}`);
+    assert(state.on && state.tabs.length === 3 && state.json === 1 && state.active === "1");
+    assert(state.type === "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy");
+    let definition = await generated();
+    assert(definition.accessStrategy["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy");
+    assert(definition.accessStrategy.strategies[1].length === 3);
+    assert(definition.accessStrategy.strategies[1][2]["@class"] === "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy");
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy'] .palantir-chain__tab").eq(1).trigger("click"));
+    await settled();
+    state = await bar();
+    await cas.log(`Second strategy chosen: ${JSON.stringify(state)}`);
+    assert(state.active === "2" && state.type === "org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy");
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy'] [data-chain-action='combine'][data-chain-value='OR']").trigger("click"));
+    await cas.sleep(500);
+    definition = await generated();
+    assert(definition.accessStrategy.operator === "OR");
+    assert(definition.accessStrategy.strategies[1][0].requiredAttributes.memberOf[1][0] === "admins");
+    assert(definition.accessStrategy.strategies[1][1].endingDateTime === "2099-12-31T23:59:59Z");
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy'] [data-chain-action='add']").trigger("click"));
+    await settled();
+    state = await bar();
+    definition = await generated();
+    await cas.log(`Strategy added: ${JSON.stringify(state)}`);
+    assert(state.tabs.length === 4 && state.active === "4" && definition.accessStrategy.strategies[1].length === 4);
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='accessStrategy'] [data-chain-action='remove']").trigger("click"));
+    await settled();
+    state = await bar();
+    definition = await generated();
+    await cas.log(`Strategy removed: ${JSON.stringify(state)}`);
+    assert(state.tabs.length === 3 && definition.accessStrategy.strategies[1].length === 3);
+    assert(definition.accessStrategy.strategies[1][2].strategies[1][0].enabled === true);
+
+    await page.evaluate(() => $("#editServiceWizardForm .palantir-chain[data-chain-path='attributeReleasePolicy'] [data-chain-action='toggle']")
+        .prop("checked", true).trigger("change"));
+    await settled();
+    definition = await generated();
+    await cas.log(`Attribute release policy chained: ${JSON.stringify(definition.attributeReleasePolicy)}`);
+    assert(definition.attributeReleasePolicy["@class"] === "org.apereo.cas.services.ChainingAttributeReleasePolicy");
+    assert(definition.attributeReleasePolicy.policies[1].length === 1 && definition.attributeReleasePolicy.mergingPolicy === "REPLACE");
+
+    const offered = await page.evaluate(() => PalantirServiceEditor.wizardChoices().accessStrategy);
+    assert(offered.includes("org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy"));
+    const validation = await page.evaluate(async () => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/validate`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Accept": "application/json"},
+            body: ace.edit("wizardServiceEditor").getValue()
+        });
+        return {status: response.status, body: await response.text()};
+    });
+    await cas.log(`CAS validates the chained definition: ${validation.status} ${validation.body}`);
+    assert(validation.status === 200);
+
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "ChainedExample");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -1369,6 +1490,7 @@ async function openNewApplicationMenu(page) {
     await verifyMultifactorPolicyRoundTrip(page);
     await verifyPolicyRoundTrip(page);
     await verifyAdditionalPolicyTypesRoundTrip(page);
+    await verifyChainedPolicies(page);
     await verifyEditorHandoffs(page);
 
     if (failures.length > 0) {

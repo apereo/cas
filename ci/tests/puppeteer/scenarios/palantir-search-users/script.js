@@ -179,7 +179,7 @@ async function verifyUserLookup(page, failures) {
     const before = failures.length;
     await cas.click(page, "#palantirCommandPaletteButton");
     const first = await searchCommandPalette(page, "casuser");
-    assert(first === "Look up user casuser", `First match was ${first}`);
+    assert(first === "Look Up User casuser", `First match was ${first}`);
     await page.keyboard.press("Enter");
     await page.waitForFunction(() => currentActiveTab === 16
         && $("#userLookupResults .palantir-user-card").length > 0
@@ -354,7 +354,7 @@ async function verifyCredentialRepositories(page) {
         cancel: $(".swal2-cancel").text().trim()
     }));
     await cas.logg(`Deleting every record asks: ${JSON.stringify(confirmation)}`);
-    assert(!confirmation.typed && confirmation.confirm === "Delete all" && confirmation.cancel === "Cancel");
+    assert(!confirmation.typed && confirmation.confirm === "Delete All" && confirmation.cancel === "Cancel");
     await page.click(".swal2-cancel");
     await page.waitForFunction(() => !Swal.isVisible(), {timeout: 10000});
 }
@@ -441,7 +441,7 @@ async function verifyAccessCheck(page) {
     await page.waitForFunction(() => $(".palantir-access__suggestions:visible .palantir-access__suggestion").length > 0, {timeout: 10000});
     const header = await page.evaluate(() => $(".palantir-access__suggestions:visible .palantir-access__suggestions-header").text().trim());
     await cas.log(`Suggestions: ${header}`);
-    assert(header === "1 application");
+    assert(header === "1 Application");
     await page.evaluate(() => $(".palantir-access__suggestions:visible .ui-menu-item:not(.palantir-access__suggestions-header)")
         .first().trigger("mouseenter").trigger("click"));
     await page.waitForFunction(() => PalantirAccessCheck.selected?.name === "Staff Portal", {timeout: 10000});
@@ -467,8 +467,8 @@ async function verifyAccessCheck(page) {
         missing: $("#accessResult .palantir-access__rule.is-failed code").toArray().map((code) => code.textContent.trim())
     }));
     await cas.logg(`Access check for Staff Portal: ${JSON.stringify(denied)}`);
-    assert(denied.verdict.includes("is-denied") && denied.title === "casuser is denied");
-    assert(denied.failed.includes("Required attributes") && denied.missing.includes("memberOf"));
+    assert(denied.verdict.includes("is-denied") && denied.title === "casuser Is Denied");
+    assert(denied.failed.includes("Required Attributes") && denied.missing.includes("memberOf"));
     assert(denied.reason.includes("memberOf needs admins"));
 
     await page.evaluate(() => $("#accessTargetField [data-access-action=clear]").trigger("click"));
@@ -482,7 +482,7 @@ async function verifyAccessCheck(page) {
         recent: $("#accessRecentList [data-access-recent]").length
     }));
     await cas.logg(`Access check for Portal: ${JSON.stringify(allowed)}`);
-    assert(allowed.title === "casuser may access Portal" && allowed.gates > 0 && allowed.recent === 2);
+    assert(allowed.title === "casuser May Access Portal" && allowed.gates > 0 && allowed.recent === 2);
 
     await page.evaluate(() => PalantirAccessCheck.openFor(3));
     await page.waitForFunction(() => $("#accessApplication").val() === "https://staff.example.org/"

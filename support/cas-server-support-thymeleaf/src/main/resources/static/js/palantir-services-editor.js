@@ -334,7 +334,7 @@ class PalantirServiceEditor {
             <div class="palantir-template-card is-blank" role="option" tabindex="-1" data-template-key="blank"
                  aria-selected="${PalantirServiceEditor.selected === "blank"}">
                 <i class="mdi mdi-plus" aria-hidden="true"></i>
-                <span class="palantir-template-card__title">Blank definition</span>
+                <span class="palantir-template-card__title">Blank Definition</span>
                 <span class="palantir-template-card__summary">An empty JSON object to write from scratch.</span>
             </div>`;
         const cards = templates.map(template => `
@@ -445,7 +445,7 @@ class PalantirServiceEditor {
                     PalantirServiceEditor.startFrom(text);
                 }
             })
-            .catch(error => Swal.fire({icon: "error", titleText: `${file.name} could not be read`, text: String(error?.message ?? error)}));
+            .catch(error => Swal.fire({icon: "error", titleText: `${file.name} Could Not Be Read`, text: String(error?.message ?? error)}));
     }
 
     /**
@@ -455,12 +455,12 @@ class PalantirServiceEditor {
         const text = PalantirServiceEditor.editor().getValue().trim();
         if (text !== "" && text !== "{\n}" && text !== "{}") {
             const result = await Swal.fire({
-                title: "Start from a template?",
+                title: "Start from a Template?",
                 text: "The definition in the editor is replaced by the template you choose.",
                 icon: "question",
                 showDenyButton: true,
-                confirmButtonText: "Choose a template",
-                denyButtonText: "Keep editing"
+                confirmButtonText: "Choose a Template",
+                denyButtonText: "Keep Editing"
             });
             if (!result.isConfirmed) {
                 return;
@@ -786,14 +786,14 @@ class PalantirServiceEditor {
         const shown = dropped.slice(0, 12);
         const result = await Swal.fire({
             icon: "warning",
-            title: "The wizard does not cover every setting",
+            title: "The Wizard Does Not Cover Every Setting",
             html: `
                 <p class="palantir-json-editor__note">These settings have no place in the wizard, and saving from the wizard leaves them out:</p>
                 <ul class="palantir-json-editor__dropped">${shown.map(path => `<li>${palantirCode(path)}</li>`).join("")}</ul>
                 ${dropped.length > shown.length ? `<p class="palantir-json-editor__note">And ${dropped.length - shown.length} more.</p>` : ""}`,
             showDenyButton: true,
             confirmButtonText: confirmText,
-            denyButtonText: "Continue in the wizard"
+            denyButtonText: "Continue in the Wizard"
         });
         if (result.isConfirmed) {
             const handed = {
@@ -845,19 +845,25 @@ class PalantirServiceEditor {
 
     /**
      * The types the wizard offers for each part it chooses from a list, such as the kinds of access strategy, by the
-     * dotted path of that part.
+     * dotted path of that part, with the chain of that part when the wizard can make one.
      *
      * @returns {Object<string, string[]>} the values of the choices, by path
      */
     static wizardChoices() {
-        return $("#editServiceWizardForm select[data-param-name]").toArray()
-            .reduce((choices, element) => {
+        const choices = $("#editServiceWizardForm select[data-param-name]").toArray()
+            .reduce((found, element) => {
                 const path = PalantirServiceEditor.wizardPath(element);
                 if (path.length > 0) {
-                    choices[path] = [...(choices[path] ?? []), ...Array.from(element.options, option => option.value)];
+                    found[path] = [...(found[path] ?? []), ...Array.from(element.options, option => option.value)];
                 }
-                return choices;
+                return found;
             }, {});
+        if (typeof PalantirWizardChains !== "undefined") {
+            PalantirWizardChains.KINDS
+                .filter(kind => choices[kind.path] !== undefined)
+                .forEach(kind => choices[kind.path].push(kind.chain));
+        }
+        return choices;
     }
 
     /**

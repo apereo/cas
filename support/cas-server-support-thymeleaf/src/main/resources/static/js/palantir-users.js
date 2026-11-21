@@ -690,33 +690,33 @@ class PalantirUserLookup {
         const data = button.dataset;
         const actions = {
             "end-session": {
-                title: "End this SSO session?",
+                title: "End This SSO Session?",
                 url: () => `${CasActuatorEndpoints.ssoSessions()}/${encodeURIComponent(data.ticket)}`
             },
             "remove-mfa-device": {
-                title: "Remove this MFA device?",
+                title: "Remove This MFA Device?",
                 url: () => `${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(data.username)}/${encodeURIComponent(data.provider)}/${encodeURIComponent(data.key)}`
             },
             "remove-trusted-device": {
-                title: "Remove this trusted device?",
+                title: "Remove This Trusted Device?",
                 url: () => `${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(data.key)}`
             },
             "remove-throttle": {
-                title: "Remove this throttled attempt?",
+                title: "Remove This Throttled Attempt?",
                 url: () => `${CasActuatorEndpoints.throttles()}?key=${encodeURIComponent(data.key)}`
             },
             "revoke-consent": {
-                title: "Revoke this consent decision?",
+                title: "Revoke This Consent Decision?",
                 url: () => `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(data.principal)}/${encodeURIComponent(data.id)}`
             },
             "revoke-token": {
-                title: "Revoke this token?",
+                title: "Revoke This Token?",
                 text: "The application can no longer use it, and has to ask the user again.",
                 urls: () => [PalantirUserLookup.tokens.get(data.token)].filter(Boolean)
                     .map(token => `${CasActuatorEndpoints.oauthTokens()}/${encodeURIComponent(token)}`)
             },
             "revoke-all-tokens": {
-                title: `Revoke every token of ${PalantirUserLookup.currentUsername}?`,
+                title: `Revoke Every Token of ${PalantirUserLookup.currentUsername}?`,
                 text: "Their applications can no longer use these tokens, and have to ask the user again.",
                 urls: () => [...PalantirUserLookup.tokens.values()]
                     .map(token => `${CasActuatorEndpoints.oauthTokens()}/${encodeURIComponent(token)}`)
@@ -898,7 +898,7 @@ class PalantirAttributeRelease {
         : `<table class="mdc-data-table__table table table-striped noborder palantir-user-release__table">
                     <thead>
                     <tr class="mdc-data-table__header-row">
-                        <th class="mdc-data-table__header-cell" scope="col">Released as</th>
+                        <th class="mdc-data-table__header-cell" scope="col">Released As</th>
                         <th class="mdc-data-table__header-cell" scope="col">Value(s)</th>
                     </tr>
                     </thead>
@@ -924,7 +924,7 @@ class PalantirAttributeRelease {
         const service = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(String(serviceId)) : null;
         const name = service?.name ?? `application ${serviceId}`;
         const asked = await Swal.fire({
-            titleText: `Preview what ${name} receives`,
+            titleText: `Preview What ${name} Receives`,
             input: "text",
             inputLabel: "Username",
             inputValue: PalantirUserLookup.currentUsername,
@@ -954,7 +954,7 @@ class PalantirAttributeRelease {
             }
         }
         await Swal.fire({
-            titleText: `What ${name} receives for ${asked.value.username}`,
+            titleText: `What ${name} Receives for ${asked.value.username}`,
             html: `<div class="palantir-user-release is-dialog">${PalantirAttributeRelease.render(asked.value.released.attributes, resolved)}</div>`,
             width: Math.min(900, $(window).width() - 32),
             confirmButtonText: "Close"

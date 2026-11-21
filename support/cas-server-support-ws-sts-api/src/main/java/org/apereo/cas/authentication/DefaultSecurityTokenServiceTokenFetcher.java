@@ -62,7 +62,7 @@ public class DefaultSecurityTokenServiceTokenFetcher implements SecurityTokenSer
             return sts.requestSecurityToken(rp.getAppliesToOrRealm());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            throw new AuthenticationException(e.getMessage());
+            throw (AuthenticationException) new AuthenticationException(e.getMessage()).initCause(e);
         }
     }
 }

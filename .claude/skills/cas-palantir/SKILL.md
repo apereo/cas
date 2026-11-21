@@ -74,6 +74,14 @@ General view, theme and template rules are in the `cas-ui` skill.
 
 ## Forms, dialogs and widgets
 
+- Every label, caption, heading, tab, button, chip, switch label, column header, card title, dialog title and dialog
+  button in Palantir is title case, including the ones built in JS and the step titles the access check endpoint returns:
+  "Chain Several Strategies", "Look Up User casuser", "3 Applications Deleted". Short words (a, an, the, and, or, of, in,
+  on, to, for, by, with, at, as, from, via, per, than, into) stay lowercase unless first or last; acronyms keep their
+  capitals (SAML2, SSO, MFA); hyphenated words capitalize each part (Sign-On); particles of phrasal verbs are capitalized
+  (Turned On, Look Up). Sentences stay sentence case: tooltips (`title` attributes), screen-reader-only text, help and
+  hint text, placeholders, dialog body text, notes, toasts and long "Are you sure ...?" confirmations. When a string
+  changes, update the puppeteer scenarios that assert it (`grep` the `palantir-*` scenarios).
 - Palantir forms: Enter submits through the form's primary button, which is `type="submit"` while the form keeps
   `onsubmit="return false;"` (the button's click handler does the work); every dashboard form needs that attribute, since a
   form with one text field and no handler reloads the page on Enter. Don't add per-input Enter key handlers.
@@ -288,6 +296,9 @@ General view, theme and template rules are in the `cas-ui` skill.
 
 ## Service wizard and JSON editor
 
+- Code that runs on every wizard generation or every key typed must not walk all wizard fields or compile a pattern per
+  application: cache what only changes with the fields or the application type (`PalantirWizardChains.modeled()`), read
+  a section's options once per drawing, and compile service id patterns once (`PalantirAccessCheck.pattern()`).
 - A nested policy chosen by type (delegated authentication, access strategy activation, consent) is a select whose
   renderer writes `{"@class": value}` plus fields carrying the type's short name as a class; its change handler calls
   `showWizardPolicyType(section, select)`, which shows that type's fields and, outside population, empties the rest
@@ -419,3 +430,9 @@ General view, theme and template rules are in the `cas-ui` skill.
 ## CAS login
 
 - Palantir's CAS login entry point: see the `cas-web-security` skill.
+- Chained policies in the wizard live in palantir-services-chains.js (`PalantirWizardChains`). Its `KINDS` table names
+  each chainable setting (path, section, chain class, members key, combine key). The fields hold one member: the
+  definition is unpacked (outer chains first) before `populateWizardFromServiceDefinition` and packed (inner first)
+  in `buildWizardServiceDefinition`, which `generateServiceDefinition` now wraps. Switching members refills the whole
+  wizard from the packed definition. A new chainable setting only needs a `KINDS` entry; members whose type the
+  section's select lacks are edited as JSON.

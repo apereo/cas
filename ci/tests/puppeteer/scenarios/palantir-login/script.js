@@ -349,7 +349,7 @@ async function verifySettingsDialog(page) {
 
     await page.evaluate(() => sessionStorage.setItem("PalantirResetProbe", "kept"));
     await cas.click(page, "#resetPalantirPreferences");
-    await page.waitForFunction(() => $(".swal2-title").text() === "Reset all preferences?", {timeout: 10000});
+    await page.waitForFunction(() => $(".swal2-title").text() === "Reset All Preferences?", {timeout: 10000});
     await page.click(".swal2-cancel");
     await page.waitForFunction(() => !Swal.isVisible(), {timeout: 10000});
     const kept = await page.evaluate(() => sessionStorage.getItem("PalantirResetProbe"));
@@ -415,7 +415,7 @@ async function verifyMfaProviders(page) {
         await page.waitForFunction(() => $("#mfaProviderDetail [data-mfa-provider-action=ping]").length === 1, {timeout: 10000});
         const status = await page.evaluate(() => $("#mfaProviderDetail .palantir-mfa-providers__title .palantir-mfa-providers__chip").text().trim());
         await cas.logg(`${duo}: ${status}`);
-        assert(/^(Reachable · \d+ ms|Unreachable|Not checked)$/.test(status));
+        assert(/^(Reachable · \d+ ms|Unreachable|Not Checked)$/.test(status));
         const settings = await page.evaluate(() => $("#mfaProviderSettingsTable").DataTable().rows().data().toArray()
             .map((entry) => entry.name));
         assert(settings.length > 0 && settings.every((name) => name.startsWith("cas.authn.mfa.duo[")));
@@ -439,7 +439,7 @@ async function verifyMfaProviders(page) {
             }));
             await cas.logg(`Duo account of duocode: ${JSON.stringify(account)}`);
             assert(account.signIn.length > 0, `Duo did not report how duocode signs in: ${account.note}`);
-            assert(account.facts.includes("Account") && account.facts.includes("Last login"));
+            assert(account.facts.includes("Account") && account.facts.includes("Last Login"));
             assert(account.actions.includes("duo-bypass") && account.actions.includes("duo-edit"));
             await page.click(".palantir-mfa-duo__actions [data-mfa-provider-action=duo-edit]");
             await page.waitForFunction(() => $(".palantir-mfa-duo__edit select[name=status]").length === 1, {timeout: 10000});

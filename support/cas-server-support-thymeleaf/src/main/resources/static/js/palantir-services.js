@@ -231,7 +231,7 @@ async function importServiceFile(file) {
         PalantirProgress.close();
         if (xhr?.status === 400) {
             Swal.fire({
-                title: "Nothing imported",
+                title: "Nothing Imported",
                 text: `CAS could not read ${file.name} as an application definition.`,
                 icon: "error"
             });
@@ -365,7 +365,7 @@ async function initializeServiceButtons() {
             const confirmation = conflict === "overwrite"
                 ? Promise.resolve({isConfirmed: true})
                 : Swal.fire({
-                    title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
+                    title: `Are You Sure You Want to ${isNewService ? "Create" : "Update"} This Entry?`,
                     text: "Once updated, you may not be able to revert this entry.",
                     icon: "question",
                     showConfirmButton: true,
@@ -667,7 +667,7 @@ async function initializeFooterButtons() {
                     data: editor.getValue(),
                     success: response => {
                         if (response === false || response === "false") {
-                            Swal.fire({icon: "error", title: "The application definition is not valid", text: "CAS cannot read this definition."});
+                            Swal.fire({icon: "error", title: "The Application Definition Is Not Valid", text: "CAS cannot read this definition."});
                             return;
                         }
                         const message = `

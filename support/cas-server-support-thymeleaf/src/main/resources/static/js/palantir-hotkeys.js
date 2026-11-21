@@ -110,7 +110,7 @@ function palantirShortcutGroups() {
             ]
         },
         {
-            title: "Search palette",
+            title: "Search Palette",
             items: [
                 {keys: [["↑"], ["↓"]], label: "Move between results"},
                 {keys: [["Enter"]], label: "Open the selected result"},
@@ -118,7 +118,7 @@ function palantirShortcutGroups() {
             ]
         },
         {
-            title: "Forms, tables and dialogs",
+            title: "Forms, Tables and Dialogs",
             items: [
                 {keys: [["Enter"]], label: "Submit the form you are typing in"},
                 {keys: [["Tab"], ["Shift", "Tab"]], label: "Move to the next or previous control; focus stays inside an open dialog"},
@@ -158,7 +158,7 @@ function renderPalantirShortcuts() {
 function openPalantirShortcuts() {
     let dialog = $("#palantirShortcutsDialog");
     if (dialog.length === 0) {
-        dialog = $("<div>", {id: "palantirShortcutsDialog", "class": "palantir-shortcuts", title: "Keyboard shortcuts"}).appendTo("body");
+        dialog = $("<div>", {id: "palantirShortcutsDialog", "class": "palantir-shortcuts", title: "Keyboard Shortcuts"}).appendTo("body");
         dialog.dialog({
             autoOpen: false,
             modal: true,

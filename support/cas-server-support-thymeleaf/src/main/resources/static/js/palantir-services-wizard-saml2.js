@@ -733,7 +733,7 @@ class PalantirSamlMetadataImport {
         const location = String($("#registeredServiceMetadataLocation").val() ?? "").trim();
         const canReadUrls = PalantirSamlMetadataImport.canReadUrls();
         const result = await Swal.fire({
-            title: "Fill from service provider metadata",
+            title: "Fill from Service Provider Metadata",
             html: `
                 <form class="palantir-saml-metadata-import" onsubmit="return false;">
                     <label for="samlMetadataImportUrl">Metadata URL</label>
@@ -742,22 +742,22 @@ class PalantirSamlMetadataImport {
                     <p class="palantir-saml-metadata-import__hint">${canReadUrls
         ? "CAS reads the metadata at this URL, which also becomes the application's metadata location."
         : "Reading a URL needs the SAML2 metadata cache endpoint, which is not available; paste or choose the metadata instead."}</p>
-                    <label for="samlMetadataImportXml">Or paste the metadata XML</label>
+                    <label for="samlMetadataImportXml">Or Paste the Metadata XML</label>
                     <textarea id="samlMetadataImportXml" class="swal2-textarea" rows="5" spellcheck="false"></textarea>
-                    <label for="samlMetadataImportFile">Or choose a metadata file</label>
+                    <label for="samlMetadataImportFile">Or Choose a Metadata File</label>
                     <label class="palantir-saml-metadata-import__file" for="samlMetadataImportFile">
                         <input id="samlMetadataImportFile" type="file" class="palantir-saml-metadata-import__file-input"
                                accept=".xml,application/xml,text/xml">
                         <i class="mdi mdi-file-upload-outline" aria-hidden="true"></i>
                         <span class="palantir-saml-metadata-import__file-text">
-                            <strong id="samlMetadataImportFileName">Choose an XML file</strong>
+                            <strong id="samlMetadataImportFileName">Choose an XML File</strong>
                             <span id="samlMetadataImportFileHint">or drop it here</span>
                         </span>
                     </label>
                 </form>`,
             width: Math.min(720, $(window).width() - 32),
             showCancelButton: true,
-            confirmButtonText: "Read metadata",
+            confirmButtonText: "Read Metadata",
             focusConfirm: false,
             didOpen: () => PalantirSamlMetadataImport.trackFileChoice(),
             preConfirm: () => {
@@ -780,7 +780,7 @@ class PalantirSamlMetadataImport {
                 await PalantirSamlMetadataImport.fill(source.entity, source.metadataLocation);
             }
         } catch (error) {
-            Swal.fire({icon: "error", title: "The metadata could not be read", text: error.message});
+            Swal.fire({icon: "error", title: "The Metadata Could Not Be Read", text: error.message});
         }
     }
 
@@ -792,7 +792,7 @@ class PalantirSamlMetadataImport {
         $("#samlMetadataImportFile")
             .on("change", function () {
                 const file = this.files?.[0];
-                $("#samlMetadataImportFileName").text(file ? file.name : "Choose an XML file");
+                $("#samlMetadataImportFileName").text(file ? file.name : "Choose an XML File");
                 $("#samlMetadataImportFileHint").text(file ? "Choose or drop another file to replace it" : "or drop it here");
                 zone.toggleClass("has-file", Boolean(file)).removeClass("is-dragover");
             })
@@ -848,7 +848,7 @@ class PalantirSamlMetadataImport {
      */
     static async preview(url, entityId = null) {
         Swal.fire({
-            title: "Reading metadata",
+            title: "Reading Metadata",
             text: url,
             allowOutsideClick: false,
             showConfirmButton: false,
@@ -891,13 +891,13 @@ class PalantirSamlMetadataImport {
     static async choose(entityIds) {
         const listId = "samlMetadataImportEntities";
         const result = await Swal.fire({
-            title: "Choose the service provider",
+            title: "Choose the Service Provider",
             text: `The metadata holds ${entityIds.length} service providers.`,
             input: "text",
             inputLabel: "Entity ID",
             inputPlaceholder: "Start typing an entity id",
             showCancelButton: true,
-            confirmButtonText: "Use this service provider",
+            confirmButtonText: "Use This Service Provider",
             didOpen: () => {
                 const datalist = $("<datalist>", {id: listId});
                 entityIds.forEach(entityId => datalist.append($("<option>").attr("value", entityId)));
@@ -1072,7 +1072,7 @@ class PalantirSamlMetadataImport {
         const location = merged.metadataLocation ? "" : " Enter where CAS should read its metadata from as the metadata location.";
         Swal.fire({
             icon: "success",
-            title: "Filled from metadata",
+            title: "Filled from Metadata",
             text: `${definition.serviceId}: ${filled.join(", ")}. Review the fields before saving.${location}`
         });
     }
@@ -1294,8 +1294,8 @@ class PalantirSamlMetadataHealth {
         const location = String(service.metadataLocation ?? "").trim();
         const matcher = PalantirSamlMetadataHealth.entityMatcher(service.serviceId);
         checks.push(location
-            ? {status: "ok", title: "Metadata location", detail: location}
-            : {status: "fail", title: "Metadata location", detail: "The application has no metadata location."});
+            ? {status: "ok", title: "Metadata Location", detail: location}
+            : {status: "fail", title: "Metadata Location", detail: "The application has no metadata location."});
 
         let entity = null;
         let metadata = null;
@@ -1312,11 +1312,11 @@ class PalantirSamlMetadataHealth {
                 });
                 const matching = entities.filter(entityId => matcher.test(entityId));
                 if (matching.length === 0) {
-                    checks.push({status: "fail", title: "Service provider", detail: `No service provider in the metadata matches ${service.serviceId}.`});
+                    checks.push({status: "fail", title: "Service Provider", detail: `No service provider in the metadata matches ${service.serviceId}.`});
                 } else {
                     checks.push({
                         status: "ok",
-                        title: "Service provider",
+                        title: "Service Provider",
                         detail: matching.length === 1
                             ? `${matching[0]} is in the metadata.`
                             : `${matching.length} service providers in the metadata match ${service.serviceId}; ${matching[0]} is checked.`
@@ -1368,7 +1368,7 @@ class PalantirSamlMetadataHealth {
         if (validUntil) {
             checks.push(PalantirSamlMetadataHealth.expiry("Metadata validity", validUntil, "The metadata"));
         } else if (resolved.length > 0 || entity) {
-            checks.push({status: "info", title: "Metadata validity", detail: "The metadata declares no end to its validity."});
+            checks.push({status: "info", title: "Metadata Validity", detail: "The metadata declares no end to its validity."});
         }
 
         if (entity) {
@@ -1396,7 +1396,7 @@ class PalantirSamlMetadataHealth {
             return {status: "fail", label: "Failing"};
         }
         if (checks.some(check => check.status === "warn")) {
-            return {status: "warn", label: "Needs attention"};
+            return {status: "warn", label: "Needs Attention"};
         }
         return {status: "ok", label: "Healthy"};
     }
@@ -1420,7 +1420,7 @@ class PalantirSamlMetadataHealth {
                 classes: {"ui-dialog": "ui-corner-all palantir-metadata-health-dialog"},
                 buttons: [
                     {
-                        text: "Check again",
+                        text: "Check Again",
                         "class": "palantir-metadata-health-again",
                         click: () => {
                             const service = registeredServicesById.get(String(PalantirSamlMetadataHealth.serviceId));

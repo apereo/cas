@@ -131,7 +131,7 @@ function ssoSessionCard(session) {
     const rememberMe = String(session.remember_me) === "true";
     const method = [].concat(authentication.authenticationMethod ?? authentication.successfulAuthenticationHandlers ?? [])[0];
     const clientIp = authentication.clientIpAddress?.[0];
-    const details = [["Signed in", palantirRecordWhen(date), "is-text"], ["Method", method, ""], ["Ticket", ticket, "is-wrap"]]
+    const details = [["Signed In", palantirRecordWhen(date), "is-text"], ["Method", method, ""], ["Ticket", ticket, "is-wrap"]]
         .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== "");
     const shown = applications.slice(0, 3);
     return `

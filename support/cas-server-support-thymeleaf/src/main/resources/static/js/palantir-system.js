@@ -1173,7 +1173,7 @@ async function initializeSystemOperations() {
         const currentValue = $("#httpExchangesMethodFilter").val();
         $("#httpExchangesMethodFilter").empty().append($("<option>", {
             value: "",
-            text: "All methods"
+            text: "All Methods"
         }));
         methods.forEach(method => $("#httpExchangesMethodFilter").append($("<option>", {
             value: method,
@@ -1273,11 +1273,11 @@ async function initializeSystemOperations() {
                 </div>
                 <div class="http-exchange-headers">
                     <section>
-                        <h4>Request headers</h4>
+                        <h4>Request Headers</h4>
                         ${renderHeaderEntries(entry.requestHeaders)}
                     </section>
                     <section>
-                        <h4>Response headers</h4>
+                        <h4>Response Headers</h4>
                         ${renderHeaderEntries(entry.responseHeaders)}
                     </section>
                 </div>
@@ -2990,7 +2990,7 @@ class PalantirModules {
         {key: "support", label: "Support", icon: "mdi-puzzle-outline"},
         {key: "core", label: "Core", icon: "mdi-cube-outline"},
         {key: "api", label: "API", icon: "mdi-api"},
-        {key: "webapp", label: "Web application", icon: "mdi-web"},
+        {key: "webapp", label: "Web Application", icon: "mdi-web"},
         {key: "other", label: "Other", icon: "mdi-package-variant-closed"}
     ];
 

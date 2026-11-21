@@ -2259,7 +2259,7 @@ function createRegisteredServiceProperties() {
         keyField: "registeredServicePropertyName",
         keyLabel: "Property Name",
         valueField: "registeredServicePropertyValue",
-        valueLabel: "Property value(s) separated by comma",
+        valueLabel: "Property Value(s) Separated by Comma",
         containerField: "properties",
         autoComplete: PalantirDashboardConfiguration.serviceProperties(),
         valueFieldRenderer: function ($inputKey, $inputValue) {
@@ -2672,8 +2672,8 @@ function createRegisteredServiceAccessStrategyActivationCriteria() {
         id: "registeredServiceAccessStrategyActivationOperator",
         paramName: "accessStrategy.activationCriteria.operator",
         options: [
-            {value: "AND", text: "AND: every attribute must match", selected: true},
-            {value: "OR", text: "OR: any attribute may match"}
+            {value: "AND", text: "AND: Every Attribute Must Match", selected: true},
+            {value: "OR", text: "OR: Any Attribute May Match"}
         ],
         helpText: "Specifies how the attributes below are combined."
     });
@@ -3228,198 +3228,204 @@ function generateServiceDefinition() {
             return;
         }
         const editor = initializeAceEditor("wizardServiceEditor");
-        let serviceDefinition = {
-            "@class": $("#serviceClassType").text().trim()
-        };
-
-        // Track which param names have been processed to avoid duplicates from hidden containers
-        const processedMappedFields = new Set();
-
-        // Get currently selected attribute release policy type for filtering
-        const $attrReleasePolicySelect = $("select#registeredServiceAttributeReleasePolicy");
-        const selectedAttrReleasePolicy = $attrReleasePolicySelect.length > 0 ? getLastWord($attrReleasePolicySelect.val()) : "";
-
-        $("form#editServiceWizardForm")
-            .find("input,select,textarea")
-            .each(function () {
-                const $input = $(this);
-                const paramName = $input.data("param-name");
-                const paramType = $input.data("param-type");
-                const skipWhenFalse = $input.data("param-skip-false");
-                const skipWhenTrue = $input.data("param-skip-true");
-
-                // Skip inputs in MapContainers (handled specially)
-                const $mapContainer = $input.closest("[id$='MapContainer']");
-                if ($mapContainer.length > 0) {
-                    // For mapped fields, only process once per container
-                    const containerKey = `${paramName}:${$mapContainer.attr("id")}`;
-                    if (processedMappedFields.has(containerKey)) {
-                        return; // Already processed this container
-                    }
-                    processedMappedFields.add(containerKey);
-
-                    // For attributeReleasePolicy.allowedAttributes, only process the container
-                    // that matches the currently selected policy type
-                    if (paramName === "attributeReleasePolicy.allowedAttributes") {
-                        // Check if this container has the class matching the selected policy
-                        if (selectedAttrReleasePolicy && !$mapContainer.hasClass(selectedAttrReleasePolicy)) {
-                            return; // Skip containers for other policy types
-                        }
-                    }
-
-                    // Check if this container has any non-empty values before processing
-                    const $keyInputs = $mapContainer.find("input[data-mapped-field-role='key']");
-                    const $allInputs = $mapContainer.find("input");
-                    let hasNonEmptyValue = false;
-                    if ($keyInputs.length > 0) {
-                        for (let i = 0; i < $keyInputs.length; i++) {
-                            const key = $($keyInputs[i]).val();
-                            if (key && key.trim().length > 0) {
-                                hasNonEmptyValue = true;
-                                break;
-                            }
-                        }
-                    } else {
-                        for (let i = 0; i < $allInputs.length; i += 2) {
-                            const key = $($allInputs[i]).val();
-                            if (key && key.trim().length > 0) {
-                                hasNonEmptyValue = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!hasNonEmptyValue) {
-                        return; // Skip empty containers
-                    }
-                } else {
-                    // For regular inputs/selects (not in MapContainer), check if they're in a hidden container
-                    // This handles fields like ReturnAllowedAttributeReleasePolicy's allowedAttributes
-                    const $fieldContainer = $input.closest("[id$='FieldContainer'], [id$='SelectContainer']");
-                    if ($fieldContainer.length > 0 && isWizardContainerSwitchedOff($fieldContainer[0])) {
-                        // Don't skip if this is an advanced-option that has a value
-                        if (!$fieldContainer.hasClass("advanced-option")) {
-                            return; // Skip inputs in hidden field containers (except advanced-option)
-                        }
-                    }
-
-                    // For attributeReleasePolicy.allowedAttributes, check if this field matches the selected policy
-                    if (paramName === "attributeReleasePolicy.allowedAttributes") {
-                        if (selectedAttrReleasePolicy && $fieldContainer.length > 0 && !$fieldContainer.hasClass(selectedAttrReleasePolicy)) {
-                            return; // Skip fields for other policy types
-                        }
-                    }
-                }
-
-                let value = $input.val();
-
-                if (value && Array.isArray(value)) {
-                    value = value.filter(v => v != null && v !== "").join(",");
-                }
-                if (paramName === "clientSecrets" && $input.attr("id") === "registeredServiceClientSecrets") {
-                    value = "clientSecrets";
-                }
-                if (paramName && paramName.trim().length > 0 && value && String(value).trim().length > 0) {
-                    if (skipWhenFalse && (value === "false" || value === false)) {
-                        console.debug(`Skipping parameter ${paramName} because its value is false`);
-                    } else if (skipWhenTrue && (value === "true" || value === true)) {
-                        console.debug(`Skipping parameter ${paramName} because its value is true`);
-                    } else {
-                        const renderer = $input.data("renderer");
-
-                        if (typeof renderer === "function") {
-                            value = renderer(String(value), $input, serviceDefinition);
-                        } else if (value === "true") {
-                            value = true;
-                        } else if (value === "false") {
-                            value = false;
-                        } else if (isNumeric(value) && !isWizardTextSetting($input, paramName)) {
-                            value = Number(value);
-                        }
-
-                        if (paramName.includes(".")) {
-                            const parts = paramName.split(".");
-                            let current = serviceDefinition;
-
-                            if (paramType && paramType.length > 0 && parts.length > 0) {
-                                if (!current[parts[0]]) {
-                                    current[parts[0]] = {"@class": paramType};
-                                }
-                            }
-
-                            for (let i = 0; i < parts.length; i++) {
-                                let part = parts[i];
-                                const isLastPart = (i === parts.length - 1);
-
-                                if (isLastPart) {
-                                    // Always set the value at the last part of the path
-                                    if (typeof value === "object" && Object.keys(value).length > 0) {
-                                        current[part] = mergeWizardPolicy(current[part], value);
-                                    } else if (typeof value !== "object") {
-                                        current[part] = value;
-                                    }
-                                } else {
-                                    // For intermediate parts, create empty object if it doesn't exist
-                                    if (!current[part]) {
-                                        current[part] = {};
-                                    }
-                                    current = current[part];
-                                }
-                            }
-                        } else {
-                            serviceDefinition[paramName] = mergeWizardPolicy(serviceDefinition[paramName], value);
-                        }
-                    }
-                }
-            });
-
-        if (Object.keys(serviceDefinition).length > 1) {
-            $("form#editServiceWizardForm")
-                .find("input,select")
-                .each(function () {
-                    const $input = $(this);
-                    const beforeGenerate = $input.data("beforeGenerate");
-                    if (typeof beforeGenerate === "function") {
-                        beforeGenerate($input, serviceDefinition);
-                    }
-                });
-
-            const contacts = [...(wizardContactSlots.get(serviceDefinition) ?? new Map()).entries()]
-                .sort(([left], [right]) => left - right)
-                .map(([, contact]) => contact)
-                .concat(wizardExtraContacts.map(contact => structuredClone(contact)));
-            if (contacts.length > 0) {
-                serviceDefinition.contacts = ["java.util.ArrayList", contacts];
-            }
-
-            Object.keys(serviceDefinition).forEach(key => {
-                if (
-                    key !== "@class" &&
-                    typeof serviceDefinition[key] === "object" &&
-                    serviceDefinition[key] !== null &&
-                    Object.keys(serviceDefinition[key]).length === 1 &&
-                    serviceDefinition[key].hasOwnProperty("@class")) {
-
-                    const classType = serviceDefinition[key]["@class"];
-                    const markerClass = $(`option[value='${classType}']`).data("markerClass");
-                    if (!markerClass) {
-                        // console.log("Deleting", serviceDefinition[key]);
-                        delete serviceDefinition[key];
-                    }
-                }
-            });
-            let remainingKeys = Object.keys(serviceDefinition);
-            if (remainingKeys.length === 1 && remainingKeys[0] === "@class") {
-                delete serviceDefinition["@class"];
-                editor.setValue("");
-            } else {
-                editor.setValue(JSON.stringify(serviceDefinition, null, 4));
-            }
-        } else {
-            editor.setValue("");
-        }
+        const serviceDefinition = buildWizardServiceDefinition();
+        editor.setValue(serviceDefinition === null ? "" : JSON.stringify(serviceDefinition, null, 4));
         editor.gotoLine(1);
         PalantirWizardValidity.refresh();
+        PalantirWizardChains.render();
     }, 10);
+}
+
+/**
+ * The definition the wizard's fields make, with each chain put back together around the member the fields hold.
+ *
+ * @returns {object|null} the definition, or null when the fields make nothing beyond the type of application
+ */
+function buildWizardServiceDefinition() {
+    let serviceDefinition = {
+        "@class": $("#serviceClassType").text().trim()
+    };
+
+    // Track which param names have been processed to avoid duplicates from hidden containers
+    const processedMappedFields = new Set();
+
+    // Get currently selected attribute release policy type for filtering
+    const $attrReleasePolicySelect = $("select#registeredServiceAttributeReleasePolicy");
+    const selectedAttrReleasePolicy = $attrReleasePolicySelect.length > 0 ? getLastWord($attrReleasePolicySelect.val()) : "";
+
+    $("form#editServiceWizardForm")
+        .find("input,select,textarea")
+        .each(function () {
+            const $input = $(this);
+            const paramName = $input.data("param-name");
+            const paramType = $input.data("param-type");
+            const skipWhenFalse = $input.data("param-skip-false");
+            const skipWhenTrue = $input.data("param-skip-true");
+
+            // Skip inputs in MapContainers (handled specially)
+            const $mapContainer = $input.closest("[id$='MapContainer']");
+            if ($mapContainer.length > 0) {
+                // For mapped fields, only process once per container
+                const containerKey = `${paramName}:${$mapContainer.attr("id")}`;
+                if (processedMappedFields.has(containerKey)) {
+                    return; // Already processed this container
+                }
+                processedMappedFields.add(containerKey);
+
+                // For attributeReleasePolicy.allowedAttributes, only process the container
+                // that matches the currently selected policy type
+                if (paramName === "attributeReleasePolicy.allowedAttributes") {
+                    // Check if this container has the class matching the selected policy
+                    if (selectedAttrReleasePolicy && !$mapContainer.hasClass(selectedAttrReleasePolicy)) {
+                        return; // Skip containers for other policy types
+                    }
+                }
+
+                // Check if this container has any non-empty values before processing
+                const $keyInputs = $mapContainer.find("input[data-mapped-field-role='key']");
+                const $allInputs = $mapContainer.find("input");
+                let hasNonEmptyValue = false;
+                if ($keyInputs.length > 0) {
+                    for (let i = 0; i < $keyInputs.length; i++) {
+                        const key = $($keyInputs[i]).val();
+                        if (key && key.trim().length > 0) {
+                            hasNonEmptyValue = true;
+                            break;
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < $allInputs.length; i += 2) {
+                        const key = $($allInputs[i]).val();
+                        if (key && key.trim().length > 0) {
+                            hasNonEmptyValue = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasNonEmptyValue) {
+                    return; // Skip empty containers
+                }
+            } else {
+                // For regular inputs/selects (not in MapContainer), check if they're in a hidden container
+                // This handles fields like ReturnAllowedAttributeReleasePolicy's allowedAttributes
+                const $fieldContainer = $input.closest("[id$='FieldContainer'], [id$='SelectContainer']");
+                if ($fieldContainer.length > 0 && isWizardContainerSwitchedOff($fieldContainer[0])) {
+                    // Don't skip if this is an advanced-option that has a value
+                    if (!$fieldContainer.hasClass("advanced-option")) {
+                        return; // Skip inputs in hidden field containers (except advanced-option)
+                    }
+                }
+
+                // For attributeReleasePolicy.allowedAttributes, check if this field matches the selected policy
+                if (paramName === "attributeReleasePolicy.allowedAttributes") {
+                    if (selectedAttrReleasePolicy && $fieldContainer.length > 0 && !$fieldContainer.hasClass(selectedAttrReleasePolicy)) {
+                        return; // Skip fields for other policy types
+                    }
+                }
+            }
+
+            let value = $input.val();
+
+            if (value && Array.isArray(value)) {
+                value = value.filter(v => v != null && v !== "").join(",");
+            }
+            if (paramName === "clientSecrets" && $input.attr("id") === "registeredServiceClientSecrets") {
+                value = "clientSecrets";
+            }
+            if (paramName && paramName.trim().length > 0 && value && String(value).trim().length > 0) {
+                if (skipWhenFalse && (value === "false" || value === false)) {
+                    console.debug(`Skipping parameter ${paramName} because its value is false`);
+                } else if (skipWhenTrue && (value === "true" || value === true)) {
+                    console.debug(`Skipping parameter ${paramName} because its value is true`);
+                } else {
+                    const renderer = $input.data("renderer");
+
+                    if (typeof renderer === "function") {
+                        value = renderer(String(value), $input, serviceDefinition);
+                    } else if (value === "true") {
+                        value = true;
+                    } else if (value === "false") {
+                        value = false;
+                    } else if (isNumeric(value) && !isWizardTextSetting($input, paramName)) {
+                        value = Number(value);
+                    }
+
+                    if (paramName.includes(".")) {
+                        const parts = paramName.split(".");
+                        let current = serviceDefinition;
+
+                        if (paramType && paramType.length > 0 && parts.length > 0) {
+                            if (!current[parts[0]]) {
+                                current[parts[0]] = {"@class": paramType};
+                            }
+                        }
+
+                        for (let i = 0; i < parts.length; i++) {
+                            let part = parts[i];
+                            const isLastPart = (i === parts.length - 1);
+
+                            if (isLastPart) {
+                                // Always set the value at the last part of the path
+                                if (typeof value === "object" && Object.keys(value).length > 0) {
+                                    current[part] = mergeWizardPolicy(current[part], value);
+                                } else if (typeof value !== "object") {
+                                    current[part] = value;
+                                }
+                            } else {
+                                // For intermediate parts, create empty object if it doesn't exist
+                                if (!current[part]) {
+                                    current[part] = {};
+                                }
+                                current = current[part];
+                            }
+                        }
+                    } else {
+                        serviceDefinition[paramName] = mergeWizardPolicy(serviceDefinition[paramName], value);
+                    }
+                }
+            }
+        });
+
+    if (Object.keys(serviceDefinition).length > 1) {
+        $("form#editServiceWizardForm")
+            .find("input,select")
+            .each(function () {
+                const $input = $(this);
+                const beforeGenerate = $input.data("beforeGenerate");
+                if (typeof beforeGenerate === "function") {
+                    beforeGenerate($input, serviceDefinition);
+                }
+            });
+
+        const contacts = [...(wizardContactSlots.get(serviceDefinition) ?? new Map()).entries()]
+            .sort(([left], [right]) => left - right)
+            .map(([, contact]) => contact)
+            .concat(wizardExtraContacts.map(contact => structuredClone(contact)));
+        if (contacts.length > 0) {
+            serviceDefinition.contacts = ["java.util.ArrayList", contacts];
+        }
+        PalantirWizardChains.pack(serviceDefinition);
+
+        Object.keys(serviceDefinition).forEach(key => {
+            if (
+                key !== "@class" &&
+                typeof serviceDefinition[key] === "object" &&
+                serviceDefinition[key] !== null &&
+                Object.keys(serviceDefinition[key]).length === 1 &&
+                serviceDefinition[key].hasOwnProperty("@class")) {
+
+                const classType = serviceDefinition[key]["@class"];
+                const markerClass = $(`option[value='${classType}']`).data("markerClass");
+                if (!markerClass) {
+                    // console.log("Deleting", serviceDefinition[key]);
+                    delete serviceDefinition[key];
+                }
+            }
+        });
+        const remainingKeys = Object.keys(serviceDefinition);
+        return remainingKeys.length === 1 && remainingKeys[0] === "@class" ? null : serviceDefinition;
+    }
+    return null;
 }
 
 /**
@@ -4264,7 +4270,8 @@ let isPopulatingWizard = false;
  * multi-select fields, and mapped fields.
  * @param {Object} serviceDefinition - The service definition JSON object
  */
-function populateWizardFromServiceDefinition(serviceDefinition) {
+function populateWizardFromServiceDefinition(definition, options = {}) {
+    const serviceDefinition = PalantirWizardChains.unpack(definition);
     const $wizardDialog = $("#editServiceWizardDialog").closest(".ui-dialog");
     $wizardDialog.addClass("is-populating").attr("aria-busy", "true");
 
@@ -4759,6 +4766,13 @@ function populateWizardFromServiceDefinition(serviceDefinition) {
 
         generateServiceDefinition();
         $wizardDialog.removeClass("is-populating").removeAttr("aria-busy");
+        PalantirWizardChains.render(true);
+        if (typeof options.done === "function") {
+            options.done();
+        }
+        if (options.focus === false) {
+            return;
+        }
 
         // Focus on the first visible input field after dialog is fully ready
         // Use a longer timeout to ensure MDC dialog animation is complete
@@ -4899,6 +4913,8 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
         }
 
         editServiceWizardDialog = createRegisteredServiceWizardDialog();
+        PalantirWizardChains.reset();
+        PalantirWizardChains.bind();
         $("#editServiceWizardGeneralContainer").find("input").val("");
         $(".jqueryui-multiselectmenu").each(function () {
             this.tomselect?.clear();

@@ -51,7 +51,7 @@ function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const source = configPropertySourceName(propertySource);
         Swal.fire({
-            titleText: `Are you sure you want to delete this entry from ${source}?`,
+            titleText: `Are You Sure You Want to Delete This Entry from ${source}?`,
             text: "Once removed, you may not be able to revert this.",
             icon: "question",
             showConfirmButton: true,
@@ -167,13 +167,13 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
         if (error?.status === 400) {
             Swal.fire({
                 icon: "error",
-                title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`,
+                title: `The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`,
                 text: error.responseText || "Check that configuration security is set up."
             });
         } else if (error?.status !== undefined) {
             displayBanner(error);
         } else {
-            Swal.fire({icon: "error", title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`, text: error.message});
+            Swal.fire({icon: "error", title: `The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, text: error.message});
         }
         return;
     }
@@ -268,7 +268,7 @@ function deleteAllConfigurationProperties(button) {
         deletePropertiesFromSource(PalantirDashboardConfiguration.mutablePropertySources()[0]);
     } else {
         Swal.fire({
-            title: "Which property source do you want to clear?",
+            title: "Which Property Source Do You Want to Clear?",
             input: "select",
             icon: "question",
             inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),

@@ -117,7 +117,7 @@ async function initializeLoggingOperations() {
                     icon: "question",
                     confirmButtonText: "Create Logger",
                     denyButtonText: "Cancel",
-                    title: "What's the name of the new logger?",
+                    title: "What's the Name of the New Logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
                     .then((result) => {

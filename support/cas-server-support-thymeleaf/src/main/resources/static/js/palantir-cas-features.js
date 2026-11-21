@@ -222,7 +222,7 @@ class CasFeatureToggles {
         const subject = CasFeatureToggles.subject(group, module);
         const value = enable ? "true" : "false";
         const result = await Swal.fire({
-            titleText: `${enable ? "Turn on" : "Turn off"} ${subject}?`,
+            titleText: `${enable ? "Turn On" : "Turn Off"} ${subject}?`,
             html: `
                 <p class="palantir-feature-toggle__note">${sources.length > 1 ? "Choose the configuration source to store" : "Palantir stores"}
                 ${properties.length === 1 ? "this feature flag" : "these feature flags"}${sources.length > 1 ? " in" : ` in <strong>${escapePalantirMarkup(sources[0])}</strong>`}:</p>
@@ -260,7 +260,7 @@ class CasFeatureToggles {
         }
         Swal.fire({
             icon: "success",
-            titleText: `${subject.charAt(0).toUpperCase()}${subject.slice(1)} is turned ${enable ? "on" : "off"} in ${source}`,
+            titleText: `${subject.charAt(0).toUpperCase()}${subject.slice(1)} Is Turned ${enable ? "On" : "Off"} in ${source}`,
             text: "Restart CAS for the change to take effect."
         });
     }
@@ -415,7 +415,7 @@ class CasFeatureToggles {
                     <p class="palantir-feature-toggle__note">CAS decides which features run when it starts, so the change takes effect once CAS restarts.</p>
                 </div>`,
             showCancelButton: true,
-            confirmButtonText: "Save changes",
+            confirmButtonText: "Save Changes",
             cancelButtonText: "Cancel",
             focusConfirm: false,
             didOpen: popup => {
@@ -456,7 +456,7 @@ class CasFeatureToggles {
         }
         Swal.fire({
             icon: "success",
-            titleText: `${group.title} is updated in ${source}`,
+            titleText: `${group.title} Is Updated in ${source}`,
             text: "Restart CAS for the change to take effect."
         });
     }

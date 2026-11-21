@@ -51,20 +51,16 @@ class CompressionUtilsTests {
             Files.writeString(file.toPath(), entry.toString());
             return file;
         }), "records");
+        final byte[] archive;
         try (val input = resource.getInputStream()) {
-            assertEquals(Set.copyOf(records), Set.copyOf(CompressionUtils.readZipEntries(input, 1024)));
+            archive = input.readAllBytes();
         }
-        try (val input = resource.getInputStream()) {
-            assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(input, 4));
-        }
-        try (val input = resource.getInputStream()) {
-            val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
-            assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(input, 1024, total - 1));
-        }
-        try (val input = resource.getInputStream()) {
-            val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
-            assertEquals(records.size(), CompressionUtils.readZipEntries(input, 1024, total).size());
-        }
+        assertFalse(resource.exists());
+        assertEquals(Set.copyOf(records), Set.copyOf(CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024)));
+        assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 4));
+        val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
+        assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, total - 1));
+        assertEquals(records.size(), CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, total).size());
     }
 
     @Test

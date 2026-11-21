@@ -221,7 +221,7 @@ class PalantirApplicationAccess {
             ? `<p>${skipped} selected application${skipped === 1 ? " is" : "s are"} already ${disable ? "disabled" : "enabled"} and ${skipped === 1 ? "is" : "are"} left as ${skipped === 1 ? "it is" : "they are"}.</p>`
             : "";
         const result = await Swal.fire({
-            titleText: `${verb} ${ids.length} application${ids.length === 1 ? "" : "s"}?`,
+            titleText: `${verb} ${ids.length} Application${ids.length === 1 ? "" : "s"}?`,
             html: `<p>${disable
                 ? "Nobody can sign in to these applications until they are enabled again."
                 : "People can sign in to these applications again, as their access strategies allow."}</p>
@@ -251,7 +251,7 @@ class PalantirApplicationAccess {
         const changed = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
-            titleText: `${changed} application${changed === 1 ? "" : "s"} ${disable ? "disabled" : "enabled"}`,
+            titleText: `${changed} Application${changed === 1 ? "" : "s"} ${disable ? "Disabled" : "Enabled"}`,
             text: failed.length === 0 ? "" : `These were not changed: ${failed.join(", ")}.`
         });
     }
@@ -442,7 +442,7 @@ class PalantirApplicationSelection {
             setTimeout(() => window.URL.revokeObjectURL(link.href), 1000);
             notyf.success(`Exported ${ids.length} application${ids.length === 1 ? "" : "s"}.`);
         } catch (error) {
-            Swal.fire({icon: "error", titleText: "The selected applications were not exported", text: String(error?.message ?? error)});
+            Swal.fire({icon: "error", titleText: "The Selected Applications Were Not Exported", text: String(error?.message ?? error)});
         } finally {
             button.prop("disabled", false);
         }
@@ -462,7 +462,7 @@ class PalantirApplicationSelection {
         const listed = names.slice(0, 8).map(name => `<li>${escapePalantirMarkup(name)}</li>`).join("");
         const more = names.length > 8 ? `<li>and ${names.length - 8} more</li>` : "";
         const result = await Swal.fire({
-            titleText: `Delete ${ids.length} application${ids.length === 1 ? "" : "s"}?`,
+            titleText: `Delete ${ids.length} Application${ids.length === 1 ? "" : "s"}?`,
             html: `<p>These applications are removed from the service registry. This cannot be undone.</p>
                    <ul class="palantir-selection-list">${listed}${more}</ul>`,
             icon: "warning",
@@ -494,7 +494,7 @@ class PalantirApplicationSelection {
         const deleted = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
-            titleText: `${deleted} application${deleted === 1 ? "" : "s"} deleted`,
+            titleText: `${deleted} Application${deleted === 1 ? "" : "s"} Deleted`,
             text: failed.length === 0 ? "" : `These were not deleted and stay selected: ${failed.join(", ")}.`
         });
     }
@@ -507,11 +507,11 @@ class PalantirApplicationSelection {
     static async deleteAll() {
         const count = registeredServicesById.size;
         if (count === 0) {
-            Swal.fire({icon: "info", titleText: "No applications are registered"});
+            Swal.fire({icon: "info", titleText: "No Applications Are Registered"});
             return;
         }
         const result = await Swal.fire({
-            titleText: `Delete all ${count} application${count === 1 ? "" : "s"}?`,
+            titleText: `Delete All ${count} Application${count === 1 ? "" : "s"}?`,
             text: "Every application is removed from the service registry, including its stored definition, and nobody can "
                 + "sign in to any of them. This cannot be undone; export them first if you may need them.",
             icon: "warning",
@@ -535,7 +535,7 @@ class PalantirApplicationSelection {
             PalantirApplicationSelection.selected.clear();
             await PalantirApplicationSelection.reload();
             PalantirProgress.close();
-            Swal.fire({icon: "success", titleText: "All applications are deleted"});
+            Swal.fire({icon: "success", titleText: "All Applications Are Deleted"});
         } catch (xhr) {
             PalantirProgress.close();
             if (xhr?.statusText !== PALANTIR_READ_ONLY) {

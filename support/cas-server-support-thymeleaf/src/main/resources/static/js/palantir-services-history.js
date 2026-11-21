@@ -113,7 +113,7 @@ class PalantirServiceHistory {
                 classes: {"ui-dialog": "ui-corner-all palantir-history-dialog"},
                 buttons: [
                     {
-                        text: "Restore this version",
+                        text: "Restore This Version",
                         "class": "palantir-history-restore",
                         "data-palantir-write": "entityHistory",
                         click: () => {
@@ -282,7 +282,7 @@ class PalantirServiceHistory {
         const previous = PalantirServiceHistory.versions[PalantirServiceHistory.selected + 1];
         const selected = {label: PalantirServiceHistory.label(version), text: version.text};
         const [left, right] = againstCurrent
-            ? [selected, {label: "Current definition", text: PalantirServiceHistory.current}]
+            ? [selected, {label: "Current Definition", text: PalantirServiceHistory.current}]
             : [previous ? {label: PalantirServiceHistory.label(previous), text: previous.text} : null, selected];
         const restore = $(".palantir-history-restore");
         if (restore.data("ui-button")) {
@@ -463,7 +463,7 @@ class PalantirServiceHistory {
      */
     static restore(serviceId, revisionId) {
         Swal.fire({
-            title: "Restore this version?",
+            title: "Restore This Version?",
             text: `Version ${revisionId} will replace the current definition of service ${serviceId}.`,
             icon: "question",
             showCancelButton: true,

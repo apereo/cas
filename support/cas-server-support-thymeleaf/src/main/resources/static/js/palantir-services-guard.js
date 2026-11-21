@@ -318,14 +318,14 @@ class PalantirServiceEditGuard {
         }
         const savedAt = new Date(draft.savedAt);
         const result = await Swal.fire({
-            title: "Resume your draft?",
+            title: "Resume Your Draft?",
             text: `Unsaved changes to this application were kept${Number.isNaN(savedAt.getTime()) ? "" : ` on ${savedAt.toLocaleString()}`}.`
                 + (stored.redacted ? " Drafts keep no secrets, such as client secrets or passwords: the saved application's are used, "
                     + "and any you had changed need to be entered again." : ""),
             icon: "question",
             showDenyButton: true,
-            confirmButtonText: "Resume draft",
-            denyButtonText: "Start over",
+            confirmButtonText: "Resume Draft",
+            denyButtonText: "Start Over",
             allowOutsideClick: false,
             allowEscapeKey: false
         });
@@ -429,13 +429,13 @@ class PalantirServiceEditGuard {
                     PalantirServiceHistory.canonical(current)))}</div>`
             : "";
         const result = await Swal.fire({
-            title: current ? "This application has changed" : "This application was deleted",
+            title: current ? "This Application Has Changed" : "This Application Was Deleted",
             html: `<p class="palantir-conflict__message">${escapePalantirMarkup(message)}</p>${diff}`,
             icon: "warning",
             width: Math.min(1100, $(window).width() - 32),
             showCancelButton: true,
-            confirmButtonText: "Save mine anyway",
-            cancelButtonText: "Keep editing",
+            confirmButtonText: "Save Mine Anyway",
+            cancelButtonText: "Keep Editing",
             focusCancel: true,
             customClass: {popup: "palantir-conflict"},
             didOpen: popup => {
@@ -617,7 +617,7 @@ class PalantirServiceEditGuard {
             return true;
         }
         Swal.fire({
-            title: "Discard your changes?",
+            title: "Discard Your Changes?",
             text: "This application has changes that are not saved.",
             icon: "warning",
             showDenyButton: true,

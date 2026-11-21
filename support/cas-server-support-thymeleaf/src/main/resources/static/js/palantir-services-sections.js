@@ -72,7 +72,7 @@ class RegisteredServiceSections {
         },
         {
             key: "access",
-            title: "Access & attributes",
+            title: "Access & Attributes",
             description: "Who may use the application, how they authenticate, and which attributes it receives.",
             groups: ["Attributes", "Access & Authentication"]
         },

@@ -200,7 +200,7 @@ async function initializePalantir() {
         if (visibleCount === 0 || selectedTab < 0) {
             $("#dashboard").hide();
             Swal.fire({
-                title: "Palantir is unavailable!",
+                title: "Palantir Is Unavailable!",
                 text: "Palantir requires a number of actuator endpoints to be enabled and exposed, "
                     + "and your CAS deployment fails to do so.",
                 icon: "warning",

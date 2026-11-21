@@ -378,7 +378,7 @@ async function initializeAuditEventsOperations() {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: "Event count"
+                                text: "Event Count"
                             },
                             ticks: {
                                 precision: 0

@@ -2,8 +2,10 @@ package org.apereo.cas.web.report;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.BaseRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.LogicalOperatorTypes;
 import org.apereo.cas.services.RegisteredService;
@@ -95,7 +97,7 @@ class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
                 .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isForbidden())
             .andExpect(jsonPath("$.allowed").value(false))
-            .andExpect(jsonPath("$.reason", startsWith("Required attributes: memberOf needs admins, and has none")))
+            .andExpect(jsonPath("$.reason", startsWith("Required Attributes: memberOf needs admins, and has none")))
             .andExpect(jsonPath("$.steps[?(@.id == 'required')].outcome", hasItem("FAILED")))
             .andExpect(jsonPath("$.steps[?(@.id == 'required')].rules[0].attribute", hasItem("memberOf")))
             .andExpect(jsonPath("$.steps[?(@.id == 'required')].rules[0].matched", hasItem(false)))
@@ -327,6 +329,31 @@ class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
             .andExpect(status().isInternalServerError())
             .andExpect(jsonPath("$.allowed").value(false))
             .andExpect(jsonPath("$.reason", startsWith("Access could not be checked")));
+    }
+
+    @Test
+    void verifyChainedActivationIsExplainedPerCondition() throws Throwable {
+        val activation = new ChainingRegisteredServiceAccessStrategyActivationCriteria();
+        activation.setOperator(LogicalOperatorTypes.OR);
+        activation.addConditions(
+            new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria().setRequiredAttributes(Map.of("memberOf", List.of("admins"))),
+            new AttributeBasedRegisteredServiceAccessStrategyActivationCriteria().setRequiredAttributes(Map.of("uid", List.of("cas"))));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://chained-activation.example.edu");
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()
+            .setRequiredAttributes(Map.of("phone", Set.of("123456789")))
+            .setActivationCriteria(activation));
+        servicesManager.save(registeredService);
+        mockMvc.perform(post("/actuator/serviceAccess")
+                .param("service", "https://chained-activation.example.edu")
+                .param("username", "casuser")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.steps[?(@.id == 'activation')].outcome", hasItem("PASSED")))
+            .andExpect(jsonPath("$.steps[?(@.id == 'activation')].detail", hasItem(startsWith("Any one of 2 conditions must hold"))))
+            .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[0].outcome", hasItem("FAILED")))
+            .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[1].outcome", hasItem("PASSED")))
+            .andExpect(jsonPath("$.steps[?(@.id == 'activation')].steps[1].title", hasItem("Attributes: uid")));
     }
 
     static class BrokenAccessStrategy extends BaseRegisteredServiceAccessStrategy {

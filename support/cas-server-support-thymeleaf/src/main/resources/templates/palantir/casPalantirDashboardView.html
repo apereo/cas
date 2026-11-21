@@ -133,6 +133,7 @@
     <script type="text/javascript" defer th:src="@{/js/palantir-services-history.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-guard.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard.js}"></script>
+    <script type="text/javascript" defer th:src="@{/js/palantir-services-chains.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-cas.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
@@ -146,7 +147,7 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="dashboard" class="d-none">
         <a class="palantir-skip-link" href="#palantirMainPanel">Skip to main content</a>
-        <h1 class="palantir-sr-only">Palantir dashboard</h1>
+        <h1 class="palantir-sr-only">Palantir Dashboard</h1>
         
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" id="palantirMainPanel" tabindex="-1">

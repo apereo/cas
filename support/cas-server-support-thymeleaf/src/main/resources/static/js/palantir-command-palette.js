@@ -298,7 +298,7 @@ class PalantirCommandPalette {
         const actions = [];
         if (visible(Tabs.APPLICATIONS.index) && typeof openRegisteredServiceWizardDialog === "function") {
             actions.push({
-                label: "New application",
+                label: "New Application",
                 detail: "Open the application wizard",
                 icon: "mdi-plus-circle-outline",
                 keywords: "add create register service wizard",
@@ -329,7 +329,7 @@ class PalantirCommandPalette {
             });
         }
         actions.push({
-            label: "Keyboard shortcuts",
+            label: "Keyboard Shortcuts",
             detail: "Every shortcut, also shown with ?",
             icon: "mdi-keyboard-outline",
             keywords: "keys hotkeys help accessibility",
@@ -348,7 +348,7 @@ class PalantirCommandPalette {
         const logout = $("#palantirLogoutButton");
         if (logout.length > 0) {
             actions.push({
-                label: "Sign out",
+                label: "Sign Out",
                 detail: "End this Palantir session",
                 icon: "mdi-logout-variant",
                 keywords: "logout log out exit",
@@ -418,7 +418,7 @@ class PalantirCommandPalette {
         if (trimmed && !/\s/.test(trimmed) && PalantirUserLookup.availableSources().length > 0) {
             grouped.push({
                 category: "Users",
-                label: `Look up user ${trimmed}`,
+                label: `Look Up User ${trimmed}`,
                 detail: "Sessions, devices, consent and activity",
                 icon: "mdi-account-search",
                 run: () => lookUpPalantirUser(trimmed)

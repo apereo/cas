@@ -500,7 +500,7 @@ async function openTopApplication(id) {
     if (palantirApplicationIsGone(id)) {
         Swal.fire({
             icon: "info",
-            title: "This application no longer exists",
+            title: "This Application No Longer Exists",
             text: `Application ${id} was deleted; what the audit log recorded about it is kept.`
         });
         return;
@@ -800,7 +800,7 @@ async function initializeSystemCharts() {
                 },
                 title: {
                     display: true,
-                    text: "System Health · time each check took"
+                    text: "System Health · Time Each Check Took"
                 }
             }
         }
@@ -875,7 +875,7 @@ async function initializeSystemCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: "Sign-ins · last 2 hours"
+                    text: "Sign-Ins · Last 2 Hours"
                 },
                 legend: {
                     labels: {

@@ -1,7 +1,7 @@
 function removeIdentityProvider(idp, type) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         Swal.fire({
-            title: `Are you sure you want to delete ${idp}?`,
+            title: `Are You Sure You Want to Delete ${idp}?`,
             text: `
                 Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source.
                 Once removed, you may not be able to revert this.
@@ -229,7 +229,7 @@ function createExternalIdentityProviderCard(name, identityProvider) {
     identity.append($("<i>", {class: "mdi mdi-account-key", "aria-hidden": "true"}));
     const titleGroup = $("<div>", {class: "ticket-item-title-group"});
     titleGroup.append($("<code>", {class: "ticket-item-title"}).text(name));
-    titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("External identity provider"));
+    titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("External Identity Provider"));
     identity.append(titleGroup);
     header.append(identity);
     header.append($("<span>", {class: "ticket-item-badge ticket-item-badge-catalog"})
@@ -242,7 +242,7 @@ function createExternalIdentityProviderCard(name, identityProvider) {
         .append($("<i>", {class: "mdi mdi-tag-multiple", "aria-hidden": "true"}))
         .append(document.createTextNode(`${properties.length} ${properties.length === 1 ? "field" : "fields"}`)));
     if (properties.length === 0) {
-        fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No additional fields"));
+        fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No Additional Fields"));
     } else {
         const fieldList = $("<dl>", {class: "ticket-card-field-list"});
         for (const [fieldName, value] of properties) {

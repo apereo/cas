@@ -25,7 +25,7 @@ function palantirSettings() {
  */
 async function resetPalantirPreferences() {
     const result = await Swal.fire({
-        titleText: "Reset all preferences?",
+        titleText: "Reset All Preferences?",
         text: "Everything Palantir keeps in this browser is removed: the theme, zen mode, refresh interval, last pages and tabs, "
             + "views and filters, editor and wizard options, and drafts of unsaved edits. You stay signed in, and "
             + "Palantir reloads with its defaults.",
