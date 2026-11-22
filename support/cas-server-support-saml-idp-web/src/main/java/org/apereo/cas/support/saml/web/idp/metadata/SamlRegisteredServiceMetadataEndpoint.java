@@ -15,12 +15,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -236,15 +236,16 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
 
     /**
      * Whether a manager goes by a name: its name, or the simple name of its class, which managers went by before they
-     * had names of their own; the class is the manager's own, not that of a proxy Spring puts around it, such as for a
-     * refreshable bean.
+     * had names of their own; the class is the manager's own, not that of a proxy Spring puts around it, such as the
+     * interface-based proxies that auditing and transactions put around managers, or a class-based one for a refreshable
+     * bean.
      *
      * @param manager the manager
      * @param name    the name
      * @return true when the manager goes by the name
      */
     private static boolean isNamed(final SamlRegisteredServiceMetadataManager manager, final String name) {
-        return manager.getName().equalsIgnoreCase(name) || ClassUtils.getUserClass(manager).getSimpleName().equals(name);
+        return manager.getName().equalsIgnoreCase(name) || AopProxyUtils.ultimateTargetClass(manager).getSimpleName().equals(name);
     }
 
     private static ResponseEntity store(final SamlRegisteredServiceMetadataManager manager, final SamlMetadataDocument document) {

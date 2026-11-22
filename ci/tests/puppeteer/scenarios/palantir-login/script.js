@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
    activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile,
-   PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog */
+   PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog,
+   PalantirLinks, PalantirPages, PalantirPanelFocus, registeredServicesById */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -561,7 +562,7 @@ async function verifyZenMode(page) {
     await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
     await page.evaluate(async () => {
         await initializeDashboardTab(Tabs.APPLICATIONS);
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
     });
     const focus = await page.evaluate(() => {
         const expected = PalantirPanelFocus.field(`#attribute-tab-${Tabs.APPLICATIONS.index}`)[0];

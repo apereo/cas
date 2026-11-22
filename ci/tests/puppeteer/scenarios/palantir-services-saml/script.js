@@ -161,7 +161,7 @@ async function verifyMetadataSourceTrust(page) {
 
     const plain = await page.evaluate(async () => {
         $("#registeredServiceMetadataLocation").val("https://sp.example.org/metadata.xml").trigger("input").trigger("change");
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return Swal.isVisible();
     });
     assert(!plain, "A metadata location for one service provider should not ask about accepting every one");

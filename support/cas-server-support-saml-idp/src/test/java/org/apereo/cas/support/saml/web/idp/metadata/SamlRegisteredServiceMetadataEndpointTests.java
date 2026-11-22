@@ -75,6 +75,10 @@ class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfiguratio
                 get("/actuator/samlIdPRegisteredServiceMetadata/managers/{name}", NamedMetadataManager.class.getSimpleName())
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+        mockMvc.perform(
+                get("/actuator/samlIdPRegisteredServiceMetadata/managers/{name}", InterfaceProxiedMetadataManager.class.getSimpleName())
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
     @Test
@@ -160,8 +164,22 @@ class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfiguratio
         }
     }
 
+    static class InterfaceProxiedMetadataManager extends InMemorySamlRegisteredServiceMetadataManager {
+        @Override
+        public String getName() {
+            return "Interface Proxied Store";
+        }
+    }
+
     @TestConfiguration(value = "SamlRegisteredServiceMetadataTestConfiguration", proxyBeanMethods = false)
     static class SamlRegisteredServiceMetadataTestConfiguration {
+        @Bean
+        public SamlRegisteredServiceMetadataManager interfaceProxiedSamlRegisteredServiceMetadataManager() {
+            val factory = new ProxyFactory(new InterfaceProxiedMetadataManager());
+            factory.setProxyTargetClass(false);
+            return (SamlRegisteredServiceMetadataManager) factory.getProxy();
+        }
+
         @Bean
         public SamlRegisteredServiceMetadataManager namedSamlRegisteredServiceMetadataManager() {
             val factory = new ProxyFactory(new NamedMetadataManager());

@@ -1,7 +1,8 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, RegisteredServiceSections,
    openRegisteredServiceWizardDialog, isPopulatingWizard, ace, currentActiveTab, Swal, applicationActionHandler,
    applicationRowContext, fetchServices, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
-   PalantirClientSecretRotation, registeredServicesById, initializeDashboardTab */
+   PalantirClientSecretRotation, registeredServicesById, initializeDashboardTab,
+   PalantirServiceEditGuard, mappedFieldValue */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -473,7 +474,7 @@ async function verifyTypePicker(page) {
         await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
         await page.evaluate(async () => {
             await initializeDashboardTab(Tabs.SYSTEM);
-            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
         });
         await page.keyboard.press("Escape");
         await page.keyboard.press("a");
@@ -1316,8 +1317,8 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
                 {"@class": remote, endpointUrl: "https://a.example.org", password: "first"},
                 {"@class": remote, endpointUrl: "https://b.example.org", password: "second"}]]}};
         const kept = PalantirServiceEditGuard.redact(source).accessStrategy.strategies[1];
-        const passwords = members => PalantirServiceEditGuard.restore({accessStrategy: {...source.accessStrategy,
-            strategies: ["java.util.ArrayList", members]}}, source).accessStrategy.strategies[1].map(member => member.password);
+        const passwords = (members) => PalantirServiceEditGuard.restore({accessStrategy: {...source.accessStrategy,
+            strategies: ["java.util.ArrayList", members]}}, source).accessStrategy.strategies[1].map((member) => member.password);
         return {
             moved: passwords([kept[1], kept[0]]),
             removed: passwords([kept[1]]),

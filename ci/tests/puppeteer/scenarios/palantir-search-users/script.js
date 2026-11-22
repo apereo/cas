@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
    registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, PalantirAccessCheck,
-   Swal */
+   Swal,
+   PalantirAttributeRelease */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -215,7 +216,7 @@ async function verifyUserLookup(page, failures) {
         }
         card.prop("open", true);
         $("#userReleaseApplication").val("").trigger("focus").autocomplete("search", "");
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const menu = $("#userReleaseApplication").autocomplete("widget");
         const shown = {
             styled: menu.hasClass("palantir-access__suggestions") && menu.is(":visible"),
@@ -534,8 +535,8 @@ async function verifyAccessCheck(page) {
             {"@class": "org.apereo.cas.support.saml.services.SamlRegisteredService", id: 91, name: "Every SP", serviceId: ".*", evaluationOrder: 0},
             {"@class": "org.apereo.cas.services.OidcRegisteredService", id: 92, name: "Every RP", serviceId: "^http.*", clientId: "Client-One", evaluationOrder: 1},
             {"@class": "org.apereo.cas.services.CasRegisteredService", id: 93, name: "Every Client", serviceId: "^http.*", evaluationOrder: 2}
-        ].forEach(service => registeredServicesById.set(String(service.id), service));
-        const resolved = value => {
+        ].forEach((service) => registeredServicesById.set(String(service.id), service));
+        const resolved = (value) => {
             const answer = PalantirAccessCheck.resolve(value);
             return `${answer.parameter?.name}:${answer.service?.id}`;
         };
@@ -559,13 +560,13 @@ async function verifyAccessCheck(page) {
         registeredServicesById.clear();
         saved.forEach((service, id) => registeredServicesById.set(id, service));
         registeredServicesVersion++;
-        return {url, client, entity, ambiguous: (pasted.choices ?? []).map(service => service.id), offered, picked, kept};
+        return {url, client, entity, ambiguous: (pasted.choices ?? []).map((service) => service.id), offered, picked, kept};
     });
     const unavailable = await page.evaluate(() => [
         PalantirAccessCheck.verdict({username: "casuser", label: "Portal"}, 404, null).style,
         PalantirAccessCheck.verdict({username: "casuser", label: "Portal"}, 500, {allowed: false, reason: "broken", steps: []}).style
     ]);
-    assert(unavailable.every(style => style === "is-unavailable"));
+    assert(unavailable.every((style) => style === "is-unavailable"));
     const repeated = await page.evaluate(() => {
         $("#accessCheckPassword").prop("checked", false).trigger("change");
         PalantirAccessCheck.repeat({label: "Portal", username: "casuser", password: true,

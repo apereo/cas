@@ -1,5 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
-   currentActiveTab, notyf, Tabs, PalantirModules, signInsChart */
+   currentActiveTab, notyf, Tabs, PalantirModules, signInsChart,
+   PalantirStartupTimeline */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
