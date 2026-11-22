@@ -47,13 +47,9 @@
     <script type="text/javascript" defer th:src="@{#{webjars.contextmenu.position.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.highlight.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.chart.js}}"></script>
-    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor.js}}"></script>
-    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
-    <script type="text/javascript" defer th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.sweet-alert.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.notyf.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.jsyaml.js}}"></script>
-    <script type="text/javascript" defer th:src="@{#{webjars.jsdiff.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.hotkeys.js}}"></script>
     <script type="text/javascript" defer th:src="@{#{webjars.tomselect.js}}"></script>
 
@@ -86,7 +82,26 @@
                 mutablePropertySourcesAvailable: mutablePropertySources.length > 0,
                 configurationEncryptionAvailable: /*[[${configurationEncryptionAvailable}]]*/ false,
                 trumbowygIconsPath: /*[[@{#{webjars.trumbowyg.icons}}]]*/ "",
-                mermaidScriptPath: /*[[@{#{webjars.mermaid.js}}]]*/ ""
+                mermaidScriptPath: /*[[@{#{webjars.mermaid.js}}]]*/ "",
+                scripts: Object.freeze({
+                    ace: [
+                        /*[[@{#{webjars.ace-editor.js}}]]*/ "",
+                        /*[[@{#{webjars.ace-editor-languagetools.js}}]]*/ "",
+                        /*[[@{#{webjars.ace-editor-beautify.js}}]]*/ ""
+                    ],
+                    diff: [
+                        /*[[@{#{webjars.jsdiff.js}}]]*/ ""
+                    ],
+                    wizard: [
+                        /*[[@{/js/palantir-services-wizard.js}]]*/ "",
+                        /*[[@{/js/palantir-services-chains.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-cas.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-oauth.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-oidc.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-saml2.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-wsfed.js}]]*/ ""
+                    ]
+                })
             });
         })();
         window.palantirWizardFieldBuilders = [];
@@ -132,13 +147,6 @@
     <script type="text/javascript" defer th:src="@{/js/palantir-services-sections.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-history.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-guard.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-chains.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-cas.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oauth.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-oidc.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-saml2.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-wizard-wsfed.js}"></script>
     
 </head>
 

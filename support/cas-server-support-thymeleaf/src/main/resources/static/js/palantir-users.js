@@ -4,8 +4,7 @@
  * Each source reads one endpoint the dashboard already calls from its own tab and draws one card.
  * Sources load in parallel and independently, so a slow or failing endpoint leaves the other cards
  * usable. A source whose endpoint is not enabled has no card, and the page itself is hidden when no
- * source is available. A lazy source, such as the OAuth tokens that take a scan of the ticket registry, is only read when
- * the operator asks for it with its button. A source with nothing recorded, lazy or not, has no visible card.
+ * source is available. A source with nothing recorded has no visible card.
  */
 class PalantirUserLookup {
 
@@ -70,7 +69,6 @@ class PalantirUserLookup {
                 key: "oauthTokens",
                 title: "OAuth & OIDC Tokens",
                 icon: "mdi-key-chain",
-                lazy: true,
                 available: () => Boolean(CasActuatorEndpoints.oauthTokens()),
                 load: async username => {
                     const tokens = await PalantirUserLookup.get(CasActuatorEndpoints.oauthTokens(), {username});
@@ -642,9 +640,8 @@ class PalantirUserLookup {
     }
 
     /**
-     * Summarize what the cards of a lookup found, once every card that loads by itself has answered, and again
-     * whenever a card loads later, such as a card read only when opened or one reloaded after an action. A card read
-     * only when opened is named as not read yet rather than counted as having found nothing.
+     * Summarize what the cards of a lookup found, once every card has answered, and again whenever a card loads later,
+     * such as one reloaded after an action.
      *
      * @param username the user being looked up
      * @param sequence the lookup the cards belong to
@@ -657,14 +654,10 @@ class PalantirUserLookup {
         const counts = PalantirUserLookup.counts;
         const found = sources.filter(source => counts.get(source.key) > 0 && source.counted !== false);
         const failed = sources.filter(source => counts.has(source.key) && counts.get(source.key) === null);
-        const unread = sources.filter(source => source.lazy && !counts.has(source.key));
         const parts = found.map(source => `${source.title} ${counts.get(source.key)}`);
-        const nothing = unread.length > 0 ? `Nothing is recorded for ${username} so far.` : `Nothing is recorded for ${username}.`;
         const summary = [
-            parts.length > 0 ? `${username}: ${parts.join(" · ")}` : nothing,
-            failed.length > 0 ? `${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.` : "",
-            unread.length > 0 ? `${unread.map(source => source.title).join(", ")} ${unread.length === 1 ? "is" : "are"} read on request.` : "",
-            ...sources.filter(source => source.lazy && counts.get(source.key) === 0).map(source => `No ${source.title} are recorded for ${username}.`)
+            parts.length > 0 ? `${username}: ${parts.join(" · ")}` : `Nothing is recorded for ${username}.`,
+            failed.length > 0 ? `${failed.length} ${failed.length === 1 ? "source" : "sources"} could not be read.` : ""
         ].filter(Boolean).join(" ");
         $("#userLookupSummary").text(summary);
     }
@@ -682,6 +675,7 @@ class PalantirUserLookup {
             return;
         }
         PalantirUserLookup.currentUsername = trimmed;
+        PalantirLinks.shown(Tabs.USERS, trimmed);
         PalantirUserLookup.tokens = new Map();
         PalantirUserLookup.resolvedAttributes = null;
         PalantirUserLookup.counts = new Map();
@@ -689,16 +683,9 @@ class PalantirUserLookup {
         const sources = PalantirUserLookup.availableSources();
         $("#userLookupResults table").filter((index, table) => $.fn.dataTable.isDataTable(table))
             .each((index, table) => $(table).DataTable().destroy());
-        const lazy = sources.filter(source => source.lazy);
-        const readers = lazy.length === 0 ? "" : `
-            <div class="palantir-user-lookup__readers">${lazy.map(source => `
-                <button type="button" class="palantir-button" data-user-read="${escapePalantirMarkup(source.key)}">
-                    <i class="mdi ${source.icon}" aria-hidden="true"></i>Look for ${escapePalantirMarkup(source.title)}</button>`).join("")}
-            </div>`;
-        $("#userLookupResults").html(readers + sources.map(source => PalantirUserLookup.card(source, source.lazy ? "empty" : "loading", null, trimmed)).join(""));
+        $("#userLookupResults").html(sources.map(source => PalantirUserLookup.card(source, "loading", null, trimmed)).join(""));
         $("#userLookupSummary").text(`Looking up ${trimmed}…`);
-        await Promise.all(sources.filter(source => !source.lazy)
-            .map(source => PalantirUserLookup.loadSource(source, trimmed, sequence)));
+        await Promise.all(sources.map(source => PalantirUserLookup.loadSource(source, trimmed, sequence)));
         if (sequence !== PalantirUserLookup.lookupSequence) {
             return;
         }
@@ -785,7 +772,9 @@ class PalantirUserLookup {
  * @returns {Promise<void>} resolved once the lookup has finished
  */
 async function lookUpPalantirUser(username) {
-    $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.USERS.index}]`).trigger("click");
+    if (currentActiveTab !== Tabs.USERS.index || !isDashboardTabInitialized(Tabs.USERS)) {
+        PalantirPages.open(Tabs.USERS);
+    }
     await initializeDashboardTab(Tabs.USERS);
     $("#userLookupUsername").val(username);
     await PalantirUserLookup.lookUp(username);
@@ -809,19 +798,6 @@ async function initializeUserLookupOperations() {
     });
     $("#userLookupResults").off("click").on("click", "[data-user-action]", event => {
         PalantirUserLookup.runAction(event.currentTarget);
-    });
-    $("#userLookupResults").on("click", "[data-user-read]", async event => {
-        const button = $(event.currentTarget).prop("disabled", true);
-        const source = PalantirUserLookup.availableSources().find(entry => entry.key === button.data("user-read"));
-        if (source) {
-            const sequence = PalantirUserLookup.lookupSequence;
-            await PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, sequence);
-            if (sequence === PalantirUserLookup.lookupSequence) {
-                button.remove();
-                $("#userLookupResults [data-user-source]").filter((index, card) => card.dataset.userSource === source.key && !card.hidden)
-                    .prop("open", true);
-            }
-        }
     });
     $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
         openInterruptInquiry(event.currentTarget.dataset.username);

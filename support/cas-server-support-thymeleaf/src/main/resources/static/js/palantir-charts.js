@@ -479,9 +479,11 @@ function palantirApplicationIsGone(id) {
 }
 
 /**
- * Open the definition of an application, from the Top applications chart, its list or the audit log, in the
- * application wizard, the way the Edit button of its card does, closing an enlarged copy of the chart first and
- * getting the applications page ready when it was not opened yet. An application that is gone says so instead.
+ * Open the definition of an application, from the Top applications chart, its list, the audit log or Home, in the
+ * application wizard, the way the Edit button of its card does, closing an enlarged copy of the chart first. Getting
+ * the applications page ready, building the wizard and reading the application's definition happen at the same time
+ * rather than one after the other, so the wizard shows as soon as the slowest of them is done. An application that is
+ * gone says so instead.
  *
  * @param {string} id the id of the application
  */
@@ -490,14 +492,19 @@ async function openTopApplication(id) {
         return;
     }
     $(".palantir-magnifier.ui-dialog-content").dialog("close");
+    const definition = Promise.resolve($.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`))
+        .then(response => ({response}), xhr => ({xhr}));
+    const preparing = [PalantirScripts.load("wizard").then(() => buildRegisteredServiceWizardFields(), () => undefined)];
     if (typeof applicationActionHandler !== "function" && typeof initializeDashboardTab === "function") {
-        await initializeDashboardTab(Tabs.APPLICATIONS);
-        const giveUpAt = Date.now() + 10000;
-        while (typeof applicationActionHandler !== "function" && Date.now() < giveUpAt) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
+        preparing.push(initializeDashboardTab(Tabs.APPLICATIONS));
     }
-    if (palantirApplicationIsGone(id)) {
+    await Promise.all(preparing);
+    const giveUpAt = Date.now() + 10000;
+    while (typeof applicationActionHandler !== "function" && Date.now() < giveUpAt) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    const {response, xhr} = await definition;
+    if (palantirApplicationIsGone(id) || xhr?.status === 404) {
         Swal.fire({
             icon: "info",
             title: "This Application No Longer Exists",
@@ -505,11 +512,11 @@ async function openTopApplication(id) {
         });
         return;
     }
-    if (typeof applicationActionHandler === "function") {
-        applicationActionHandler("editWizard", {rowData: {serviceId: id}});
-    } else if (typeof navigateToApplication === "function") {
-        navigateToApplication(id);
+    if (xhr) {
+        displayBanner(xhr);
+        return;
     }
+    PalantirServiceEditor.openApplicationInWizard(response);
 }
 
 /**

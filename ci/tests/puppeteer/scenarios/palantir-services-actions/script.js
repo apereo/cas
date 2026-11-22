@@ -278,10 +278,19 @@ async function verifyApplicationBulkActions(page) {
     });
     const cell = async (id) => (await page.waitForFunction((serviceId) => $(`#applicationsTable tbody tr:has([data-select-service="${serviceId}"]) > td:visible`)
         .not(".palantir-application-type").get(0), {timeout: 30000}, id)).asElement();
-    await (await cell(ids[0])).click();
-    await (await cell(ids[1])).click();
-    await page.waitForFunction(() => !$("#applicationsSelectionBar").prop("hidden")
-        && $(".palantir-selection-bar__count").text().startsWith("2 "), {timeout: 10000});
+    const selectBoth = async () => {
+        await page.waitForFunction(() => !Swal.isVisible() && $(".swal2-container").length === 0, {timeout: 10000});
+        await (await cell(ids[0])).click();
+        await (await cell(ids[1])).click();
+        await page.waitForFunction(() => !$("#applicationsSelectionBar").prop("hidden")
+            && $(".palantir-selection-bar__count").text().startsWith("2 "), {timeout: 10000});
+    };
+    const cleared = async (action) => {
+        await page.waitForFunction(() => PalantirApplicationSelection.selected.size === 0 && $("#applicationsSelectionBar").prop("hidden")
+            && $("#applicationsTable tbody tr.is-checked").length === 0, {timeout: 10000});
+        await cas.logg(`${action} the selection clears it and hides the selection bar`);
+    };
+    await selectBoth();
     await page.evaluate(() => notyf.dismissAll());
     const [exported] = await Promise.all([
         page.waitForResponse((response) => response.url().includes("/registeredServices/export?"), {timeout: 30000}),
@@ -298,9 +307,11 @@ async function verifyApplicationBulkActions(page) {
     }, exported.url());
     await cas.log(`The exported archive holds ${archive.size} bytes`);
     assert(archive.size > 0 && archive.signature === 0x04034b50);
+    await cleared("Exporting");
 
     for (const disable of [true, false]) {
         const button = disable ? "disableSelectedServices" : "enableSelectedServices";
+        await selectBoth();
         await page.waitForFunction((name) => !$(`button[name=${name}]`).prop("disabled"), {timeout: 10000}, button);
         await page.click(`button[name=${button}]`);
         await page.waitForSelector(".swal2-confirm", {visible: true});
@@ -311,9 +322,10 @@ async function verifyApplicationBulkActions(page) {
         const saved = [await strategy(ids[0]), await strategy(ids[1])];
         await cas.logg(`${disable ? "Disabled" : "Enabled"} the selection: ${JSON.stringify(saved)}`);
         assert(saved.every((value) => isDisabledAccessStrategy(value) === disable));
-        await page.waitForFunction((selected) => selected.every((id) => PalantirApplicationSelection.has(String(id))), {timeout: 10000}, [ids[0], ids[1]]);
+        await cleared(disable ? "Disabling" : "Enabling");
     }
 
+    await selectBoth();
     await page.click("button[name=deleteSelectedServices]");
     await page.waitForSelector(".swal2-confirm", {visible: true});
     await page.click(".swal2-confirm");
@@ -325,6 +337,7 @@ async function verifyApplicationBulkActions(page) {
     }, ids);
     await cas.logg(`After deleting the selection, the applications still registered: ${remaining.join(", ")}`);
     assert(!remaining[0] && !remaining[1] && remaining[2]);
+    await cleared("Deleting");
 
     await page.evaluate(async (id) => {
         Swal.close();

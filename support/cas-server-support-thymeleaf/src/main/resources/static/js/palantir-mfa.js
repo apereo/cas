@@ -12,8 +12,7 @@ function mfaProviderPropertiesMutable() {
  * @returns {Promise<void>} resolved once the panel is selected
  */
 async function switchToConfigurationDynamicSourcesTab() {
-    activateDashboardTab(Tabs.CONFIGURATION.index);
-    selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+    PalantirPages.open(Tabs.CONFIGURATION);
     await initializeDashboardTab(Tabs.CONFIGURATION);
     $("#configuration-tabs").tabs("option", "active", $("#mutableConfigSources").index());
 }

@@ -348,6 +348,98 @@ function loadPalantirScriptOnce(url) {
     return loading;
 }
 
+/**
+ * The editor, the diff library and the application wizard, fetched when something first needs them rather than on
+ * every visit, so Home, the page most visits land on, renders without them. Every page but Home waits for them before
+ * it is initialized, because its fields and editors are built with them; Home fetches them once the browser is idle,
+ * so opening the wizard from it does not wait either. The wizard brings the editor and the diff library along, and
+ * the scripts of a bundle are fetched together but run in the order they are listed. A script that ran is never
+ * fetched again, so trying again after a failed fetch only fetches what failed.
+ */
+class PalantirScripts {
+    static loading = new Map();
+
+    static scripts = new Map();
+
+    static load(...names) {
+        return Promise.all(names.map(name => PalantirScripts.bundle(name))).then(() => undefined);
+    }
+
+    static bundle(name) {
+        const existing = PalantirScripts.loading.get(name);
+        if (existing) {
+            return existing;
+        }
+        const needed = name === "wizard" ? [PalantirScripts.bundle("ace"), PalantirScripts.bundle("diff")] : [];
+        const urls = PalantirDashboardConfiguration.all().scripts?.[name] ?? [];
+        const loading = Promise.all([...needed, ...urls.map(url => PalantirScripts.script(url))])
+            .then(() => undefined)
+            .catch(error => {
+                PalantirScripts.loading.delete(name);
+                throw error;
+            });
+        PalantirScripts.loading.set(name, loading);
+        return loading;
+    }
+
+    static script(url) {
+        const existing = PalantirScripts.scripts.get(url);
+        if (existing) {
+            return existing;
+        }
+        const loading = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = url;
+            script.async = false;
+            script.addEventListener("load", () => resolve());
+            script.addEventListener("error", () => {
+                script.remove();
+                PalantirScripts.scripts.delete(url);
+                reject(new Error(`Unable to load ${url}`));
+            });
+            document.head.append(script);
+        });
+        PalantirScripts.scripts.set(url, loading);
+        return loading;
+    }
+
+    static forPage(tabIndex) {
+        return tabIndex === Tabs.HOME.index ? Promise.resolve() : PalantirScripts.load("wizard");
+    }
+
+    static whenIdle() {
+        return new Promise(resolve => {
+            if (typeof requestIdleCallback === "function") {
+                requestIdleCallback(() => resolve(), {timeout: 3000});
+            } else {
+                setTimeout(resolve, 500);
+            }
+        }).then(() => PalantirScripts.load("wizard"));
+    }
+
+    static failed(error) {
+        console.error("Unable to load the application wizard:", error);
+        displayBanner("The application wizard could not be loaded. Reload the page to try again.");
+    }
+}
+
+/**
+ * Open the application wizard, fetching it first when it has not been used yet.
+ *
+ * @param args what openRegisteredServiceWizardDialog takes
+ * @returns {Promise<boolean>} true once the wizard is open, false when it could not be fetched
+ */
+async function openPalantirWizard(...args) {
+    try {
+        await PalantirScripts.load("wizard");
+    } catch (error) {
+        PalantirScripts.failed(error);
+        return false;
+    }
+    await openRegisteredServiceWizardDialog(...args);
+    return true;
+}
+
 function hideBanner() {
     notyf.dismissAll();
 }
@@ -1009,15 +1101,36 @@ function initializeTabs(root) {
                 const tabId = $(this).attr("id");
                 if (tabId) {
                     const active = $(this).tabs("option", "active");
-                    const storedTabs = localStorage.getItem("ActiveTabs");
-                    const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
-                    activeTabs[tabId] = active;
-                    localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
+                    const panel = $(this).find("> ul > li").eq(active).attr("aria-controls");
+                    try {
+                        const activeTabs = JSON.parse(localStorage.getItem("ActiveTabs") ?? "{}") ?? {};
+                        activeTabs[tabId] = panel ?? active;
+                        localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
+                    } catch (error) {
+                        console.debug("The inner page shown is not remembered", error);
+                    }
                 }
                 notifyPalantirPollingContextChanged();
             }
         }).off().on("click", () => updateNavigationSidebar());
     });
+}
+
+/**
+ * The position of the inner page a container of jQuery UI tabs remembers: the page is remembered by the id of its
+ * panel, which does not change when pages are added or moved; a position remembered by an older version of Palantir
+ * is still read.
+ *
+ * @param tabs the container
+ * @param remembered the id of the panel, or the position
+ * @returns {number} the position of that page in the container, or -1 when it has no such page
+ */
+function palantirInnerTabIndex(tabs, remembered) {
+    if (typeof remembered === "number" || /^\d+$/.test(String(remembered ?? ""))) {
+        return Number(remembered);
+    }
+    return tabs.find("> ul > li").toArray().findIndex(item => item.getAttribute("aria-controls") === remembered
+        || $(item).find("a").attr("href") === `#${remembered}`);
 }
 
 function initializeMenus(root) {
@@ -1956,5 +2069,102 @@ class PalantirMagnifier {
             });
             return null;
         });
+    }
+}
+
+/**
+ * Put the cursor in the first field of a page or inner tab as soon as the operator switches to it, so typing a
+ * username, a query or a filter does not need another click. A field marked data-palantir-autofocus wins over the
+ * first one; one inside data-palantir-no-autofocus is never chosen, and neither is one that opens a calendar or a list of
+ * suggestions when it gets focus, unless it is marked.
+ *
+ * Focus is only moved when it is nowhere the operator is working: on the page, on the navigation or tab list that was
+ * just used, or on something that the switch hid. It stays put while a dialog is open over the page, while the arrow
+ * keys move along a tab list, and on touch screens, where focusing a field would pop up the keyboard. Escape in a field
+ * of a page lets go of it again, so the single-key shortcuts that typing in a field turns off work at once.
+ */
+class PalantirPanelFocus {
+    static FIELDS = [
+        "input:not([type])", "input[type=text]", "input[type=search]", "input[type=email]", "input[type=password]",
+        "input[type=number]", "input[type=url]", "input[type=tel]", "textarea"
+    ].join(", ");
+
+    static NAVIGATION = ".ui-tabs-nav, #palantirNavigation, nav.sidebar-navigation, #dashboardTabBar";
+
+    static POPUPS = ".hasDatepicker, .ui-autocomplete-input, .ts-wrapper input";
+
+    static arrowingTabs = false;
+
+    static placed = null;
+
+    static initialize() {
+        document.addEventListener("pointerdown", () => {
+            PalantirPanelFocus.arrowingTabs = false;
+        }, true);
+        document.addEventListener("keydown", event => {
+            const key = typeof event.key === "string" ? event.key : "";
+            PalantirPanelFocus.arrowingTabs = /^(Arrow|Home$|End$)/.test(key) && Boolean(event.target.closest?.(".ui-tabs-nav"));
+        }, true);
+        document.addEventListener("keydown", event => PalantirPanelFocus.release(event));
+        document.addEventListener("input", event => {
+            if (event.target === PalantirPanelFocus.placed) {
+                PalantirPanelFocus.placed = null;
+            }
+        }, true);
+        $(document).off("tabsactivate.palantirPanelFocus").on("tabsactivate.palantirPanelFocus", (_event, ui) => {
+            if (ui?.newPanel?.length) {
+                PalantirPanelFocus.into(ui.newPanel);
+            }
+        });
+    }
+
+    static usable(field) {
+        const element = $(field);
+        return !field.disabled && !field.readOnly && field.tabIndex >= 0 && element.is(":visible")
+            && element.closest("[data-palantir-no-autofocus], [aria-hidden='true'], [inert], .ace_editor").length === 0;
+    }
+
+    static field(panel) {
+        const root = $(panel);
+        const preferred = root.find("[data-palantir-autofocus]").filter((_, field) => PalantirPanelFocus.usable(field)).first();
+        return preferred.length ? preferred : root.find(PalantirPanelFocus.FIELDS)
+            .filter((_, field) => PalantirPanelFocus.usable(field) && !$(field).is(PalantirPanelFocus.POPUPS)).first();
+    }
+
+    static allowed(panel) {
+        if (PalantirPanelFocus.arrowingTabs || window.matchMedia?.("(pointer: coarse)")?.matches) {
+            return false;
+        }
+        if (typeof Swal !== "undefined" && Swal.isVisible()) {
+            return false;
+        }
+        const dialogs = $(".ui-dialog:visible");
+        if (dialogs.length && !$(panel).closest(dialogs.last()).length) {
+            return false;
+        }
+        const active = document.activeElement;
+        return !active || active === document.body || active === PalantirPanelFocus.placed || !$(active).is(":visible")
+            || $(active).closest(PalantirPanelFocus.NAVIGATION).length > 0;
+    }
+
+    static into(panel) {
+        requestAnimationFrame(() => {
+            const root = $(panel);
+            if (root.length && root.is(":visible") && PalantirPanelFocus.allowed(root)) {
+                PalantirPanelFocus.field(root).each((_, field) => {
+                    field.focus({preventScroll: true});
+                    PalantirPanelFocus.placed = field;
+                });
+            }
+        });
+    }
+
+    static release(event) {
+        const field = event.target;
+        if (event.key !== "Escape" || event.defaultPrevented || !(field instanceof HTMLElement) || !field.matches(PalantirPanelFocus.FIELDS)
+            || $(field).closest(".ui-dialog, .swal2-container, .ace_editor").length > 0 || !$(field).closest(".attribute-tab").length) {
+            return;
+        }
+        field.blur();
     }
 }

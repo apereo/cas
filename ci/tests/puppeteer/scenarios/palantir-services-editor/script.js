@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, RegisteredServiceSections,
    openRegisteredServiceWizardDialog, isPopulatingWizard, ace, currentActiveTab, Swal, applicationActionHandler,
-   applicationRowContext, fetchServices, Tabs, PalantirServiceEditor, PalantirServiceTemplates */
+   applicationRowContext, fetchServices, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
+   PalantirClientSecretRotation, registeredServicesById, initializeDashboardTab */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -470,6 +471,11 @@ async function verifyTypePicker(page) {
     if (systemShown) {
         await page.keyboard.press("s");
         await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+        await page.evaluate(async () => {
+            await initializeDashboardTab(Tabs.SYSTEM);
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        });
+        await page.keyboard.press("Escape");
         await page.keyboard.press("a");
         await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
         await cas.logg("The page shortcuts still work once the type picker is gone");
@@ -1381,6 +1387,135 @@ async function removeLeftoverApplications(page, names) {
 }
 
 /**
+ * Rotate the client secrets of an OpenID Connect application from its context menu: the new secret replaces the old
+ * one and is shown once, rotating only expired secrets keeps the valid one, and a public client has nothing to rotate.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyClientSecretRotation(page) {
+    await cas.separator();
+    const ids = await page.evaluate(async () => {
+        const create = async (body) => {
+            const response = await fetch(CasActuatorEndpoints.registeredServices(), {
+                method: "POST",
+                headers: {"Content-Type": "application/json", "Accept": "application/json"},
+                body: JSON.stringify(body)
+            });
+            return (await response.json()).id;
+        };
+        const confidential = await create({
+            "@class": "org.apereo.cas.services.OidcRegisteredService",
+            serviceId: "^https://rotation.example.org/.*",
+            name: "RotationExample",
+            clientId: "RotationClient",
+            clientSecret: "original-rotation-secret"
+        });
+        const publicClient = await create({
+            "@class": "org.apereo.cas.services.OidcRegisteredService",
+            serviceId: "^https://public-rotation.example.org/.*",
+            name: "PublicRotationExample",
+            clientId: "PublicRotationClient"
+        });
+        await fetchServices();
+        return {confidential, publicClient};
+    });
+    await page.waitForFunction((id) => $(`#applicationsTable span[serviceId=${id}]`).length > 0, {timeout: 30000}, ids.confidential);
+    const offered = await page.evaluate((id) => PalantirClientSecretRotation.applies(registeredServicesById.get(String(id))), ids.confidential);
+    await cas.log(`Rotate Client Secrets is offered for an OpenID Connect application: ${offered}`);
+    assert(offered);
+
+    await page.evaluate((id) => applicationActionHandler("rotateClientSecrets", applicationRowContext(String(id))), ids.confidential);
+    await waitForAlert(page, "Rotate Client Secrets of RotationExample?");
+    await page.evaluate(() => $("#clientSecretRotationExpireIn").val("soon"));
+    await page.click(".swal2-confirm");
+    await page.waitForFunction(() => $(".swal2-validation-message").is(":visible"), {timeout: 10000});
+    await cas.logg("A duration CAS cannot read is refused before anything is rotated");
+    await page.evaluate(() => $("#clientSecretRotationExpireIn").val("P30D"));
+    await page.click(".swal2-confirm");
+    await waitForAlert(page, "1 Client Secret Rotated");
+    const shown = await page.evaluate(() => $(".palantir-client-secret-rotation__secret code").first().text());
+    const stored = await page.evaluate(async (id) => {
+        const response = await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {headers: {"Accept": "application/json"}});
+        const service = await response.json();
+        const secrets = Array.isArray(service.clientSecrets?.[1]) ? service.clientSecrets[1] : service.clientSecrets ?? [];
+        return secrets.map((secret) => secret.value);
+    }, ids.confidential);
+    await cas.log(`Stored secrets after rotation: ${stored.length}`);
+    assert(shown.length > 0 && shown !== "original-rotation-secret");
+    assert(stored.includes(shown) && !stored.includes("original-rotation-secret"));
+    await cas.logg("Rotating replaces the client secret and shows the new one");
+    await page.click(".swal2-confirm");
+
+    await page.evaluate((id) => applicationActionHandler("rotateClientSecrets", applicationRowContext(String(id))), ids.confidential);
+    await waitForAlert(page, "Rotate Client Secrets of RotationExample?");
+    await page.evaluate(() => $("#clientSecretRotationExpiredOnly").prop("checked", true));
+    await page.click(".swal2-confirm");
+    await waitForAlert(page, "No Secrets Were Rotated");
+    await cas.logg("Rotating only expired secrets keeps a secret that is still valid");
+    await page.click(".swal2-confirm");
+
+    await page.evaluate((id) => applicationActionHandler("rotateClientSecrets", applicationRowContext(String(id))), ids.publicClient);
+    await waitForAlert(page, "This Application Has No Client Secrets");
+    await cas.logg("A public client has no secrets to rotate");
+    await page.click(".swal2-confirm");
+
+    await page.evaluate(async (all) => {
+        for (const id of Object.values(all)) {
+            await fetch(`${CasActuatorEndpoints.registeredServices()}/${id}`, {method: "DELETE", headers: {"Content-Type": "application/json"}});
+        }
+        await fetchServices();
+    }, ids);
+}
+
+/**
+ * Rotate and revoke the OpenID Connect keys on the Protocols page: both are sent as POST, and answering No to
+ * revoking sends nothing.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyOidcKeyOperations(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.oidcJwks()) && CAS_FEATURES.includes("OpenIDConnect"))) {
+        await cas.logy("The OpenID Connect keystore endpoint is not available; skipping");
+        return;
+    }
+    const sent = [];
+    const record = (request) => {
+        if (/\/oidcJwks\/(rotate|revoke)/i.test(request.url())) {
+            sent.push(`${request.method()} ${request.url().match(/(rotate|revoke)/i)[1]}`);
+        }
+    };
+    page.on("request", record);
+    await page.evaluate(async () => {
+        $("#protocolsTabButton").trigger("click");
+        await initializeDashboardTab(Tabs.PROTOCOLS);
+    });
+    await page.evaluate(() => $("#oidcKeyRotationButton").trigger("click"));
+    await waitForAlert(page, "Are You Sure You Want to Rotate Keys?");
+    await page.click(".swal2-confirm");
+    await waitForAlert(page, "Done!");
+    await cas.sleep(1500);
+
+    await page.evaluate(() => $("#oidcKeyRevocationButton").trigger("click"));
+    await waitForAlert(page, "Are You Sure You Want to Revoke Keys?");
+    await page.click(".swal2-deny");
+    await cas.sleep(1500);
+    const afterNo = sent.filter((entry) => entry.endsWith("revoke")).length;
+
+    await page.evaluate(() => $("#oidcKeyRevocationButton").trigger("click"));
+    await waitForAlert(page, "Are You Sure You Want to Revoke Keys?");
+    await page.click(".swal2-confirm");
+    await waitForAlert(page, "Done!");
+    await cas.sleep(1500);
+    page.off("request", record);
+    await cas.log(`Key requests sent: ${sent.join(", ")}`);
+    assert(afterNo === 0);
+    assert(sent.includes("POST rotate") && sent.includes("POST revoke") && sent.every((entry) => entry.startsWith("POST")));
+    await cas.logg("Rotating and revoking keys send POST, and answering No to revoking sends nothing");
+    await page.evaluate(() => $("#applicationsTabButton").trigger("click"));
+}
+
+/**
  * Open the Applications page and wait until its table is built. A new visit lands on Home, and the applications
  * steps of this scenario need the table, the cards and the applications loaded.
  *
@@ -1561,7 +1696,8 @@ async function verifyChainedPolicies(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
-    await removeLeftoverApplications(page, ["ConflictExample", "ConflictExampleEdited", "HandoffExample", "HandoffEdited"]);
+    await removeLeftoverApplications(page, ["ConflictExample", "ConflictExampleEdited", "HandoffExample", "HandoffEdited",
+        "RotationExample", "PublicRotationExample"]);
     await openApplications(page);
     await openNewApplicationMenu(page);
     await verifyPlainEditorDialog(page);
@@ -1573,6 +1709,8 @@ async function verifyChainedPolicies(page) {
     await verifyAdditionalPolicyTypesRoundTrip(page);
     await verifyChainedPolicies(page);
     await verifyEditorHandoffs(page);
+    await verifyClientSecretRotation(page);
+    await verifyOidcKeyOperations(page);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

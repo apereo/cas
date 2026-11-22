@@ -184,6 +184,8 @@ async function verifyUserLookup(page, failures) {
     await page.waitForFunction(() => currentActiveTab === 16
         && $("#userLookupResults .palantir-user-card").length > 0
         && $("#userLookupResults .palantir-user-card.is-loading").length === 0, {timeout: 60000});
+    await page.waitForFunction(() => document.activeElement?.id === "userLookupUsername", {timeout: 10000});
+    await cas.logg("The Users page puts the cursor in the username field");
     const lookup = await page.evaluate(() => ({
         sources: PalantirUserLookup.availableSources().length,
         cards: $("#userLookupResults .palantir-user-card").toArray()
@@ -194,21 +196,17 @@ async function verifyUserLookup(page, failures) {
     await cas.logg(lookup.summary);
     assert(lookup.cards.length === lookup.sources);
     assert(lookup.cards.every((card) => !card.endsWith(":error")), `Failed sources: ${lookup.cards.join(", ")}`);
-    const readers = await page.evaluate(() => {
-        const lazy = PalantirUserLookup.availableSources().filter((source) => source.lazy).map((source) => source.key);
-        const buttons = $("#userLookupResults [data-user-read]").map((index, button) => button.dataset.userRead).get();
-        const scanned = lazy.filter((key) => PalantirUserLookup.counts.has(key));
-        $("#userLookupResults [data-user-read]").trigger("click");
-        return {lazy, buttons, scanned};
-    });
-    await cas.log(`Sources read only on request: ${JSON.stringify(readers)}`);
-    assert(JSON.stringify(readers.lazy) === JSON.stringify(readers.buttons) && readers.scanned.length === 0);
-    await page.waitForFunction(() => PalantirUserLookup.availableSources().every((source) => PalantirUserLookup.counts.has(source.key)),
-        {timeout: 60000});
+    const tokens = await page.evaluate(() => ({
+        available: PalantirUserLookup.availableSources().some((source) => source.key === "oauthTokens"),
+        read: PalantirUserLookup.counts.has("oauthTokens"),
+        buttons: $("#userLookupResults [data-user-read]").length
+    }));
+    await cas.log(`OAuth and OpenID Connect tokens load with the other sources: ${JSON.stringify(tokens)}`);
+    assert(tokens.buttons === 0 && (!tokens.available || tokens.read));
     const empty = await page.evaluate(() => PalantirUserLookup.availableSources()
         .filter((source) => PalantirUserLookup.counts.get(source.key) === 0)
         .map((source) => ({key: source.key, hidden: $(`#userLookupResults [data-user-source="${source.key}"]`).prop("hidden") === true})));
-    await cas.log(`Sources with nothing recorded, such as OAuth tokens read on request, have no card: ${JSON.stringify(empty)}`);
+    await cas.log(`Sources with nothing recorded have no card: ${JSON.stringify(empty)}`);
     assert(empty.every((source) => source.hidden));
     const release = await page.evaluate(async () => {
         const card = $("#userLookupResults [data-user-source='release']");

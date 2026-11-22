@@ -97,9 +97,8 @@ function createRegisteredServiceProxyTicketPolicy() {
         name: "registeredServiceProxyTicketExpirationPolicyTimeToLive",
         paramName: "proxyTicketExpirationPolicy.timeToLive",
         required: false,
-        dataType: "number",
         containerId: "editServiceWizardMenuItemPTExpirationPolicy",
-        title: "Control how long the ticket should be valid, in seconds."
+        title: "Control how long the ticket should be valid: a number of seconds, or a duration such as PT30S."
     });
 }
 
@@ -134,9 +133,8 @@ function createRegisteredServiceServiceTicketPolicy() {
         name: "registeredServiceTicketExpirationPolicyTimeToLive",
         paramName: "serviceTicketExpirationPolicy.timeToLive",
         required: false,
-        dataType: "number",
         containerId: "editServiceWizardMenuItemSTExpirationPolicy",
-        title: "Control how long the ticket should be valid, in seconds."
+        title: "Control how long the ticket should be valid: a number of seconds, or a duration such as PT30S."
     });
 }
 

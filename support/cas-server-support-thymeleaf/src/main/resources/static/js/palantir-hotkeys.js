@@ -19,8 +19,10 @@ async function initializeHotKeyOperations() {
             break;
         case "w":
             event.preventDefault();
-            $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]:visible`).click();
-            openRegisteredServiceWizardDialog();
+            if (PalantirPages.available(Tabs.APPLICATIONS)) {
+                PalantirPages.open(Tabs.APPLICATIONS);
+            }
+            openPalantirWizard();
             break;
         case "n":
             if (currentActiveTab === Tabs.CONFIGURATION.index && PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
@@ -66,7 +68,7 @@ async function initializeHotKeyOperations() {
             }
             if (currentActiveTab === Tabs.APPLICATIONS.index) {
                 event.preventDefault();
-                openRegisteredServiceWizardDialog();
+                openPalantirWizard();
             }
             
             break;
@@ -76,7 +78,9 @@ async function initializeHotKeyOperations() {
             );
             if (tab) {
                 event.preventDefault();
-                $(`nav.sidebar-navigation ul li[data-tab-index=${tab.index}]:visible`).click();
+                if (PalantirPages.available(tab)) {
+                    PalantirPages.open(tab);
+                }
             }
         }
     });
@@ -126,6 +130,7 @@ function palantirShortcutGroups() {
             title: "Forms, Tables and Dialogs",
             items: [
                 {keys: [["Enter"]], label: "Submit the form you are typing in"},
+                {keys: [["Esc"]], label: "Leave the field you are typing in, so the single-key shortcuts work again"},
                 {keys: [["Tab"], ["Shift", "Tab"]], label: "Move to the next or previous control; focus stays inside an open dialog"},
                 {keys: [["Enter"]], label: "Sort by the focused column header, or choose the focused row"},
                 {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"},

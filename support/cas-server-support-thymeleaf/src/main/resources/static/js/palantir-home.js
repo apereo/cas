@@ -10,9 +10,9 @@ class PalantirHome {
     static MAX_SAMPLES = 30;
 
     static PAGES = {
-        system: () => Tabs.SYSTEM.index,
-        applications: () => Tabs.APPLICATIONS.index,
-        sessions: () => Tabs.SSO_SESSIONS.index
+        system: () => Tabs.SYSTEM,
+        applications: () => Tabs.APPLICATIONS,
+        sessions: () => Tabs.SSO_SESSIONS
     };
 
     static WIDGETS = [
@@ -108,6 +108,11 @@ class PalantirHome {
      * progress bar showing, rather than at the next refresh.
      */
     static activated() {
+        PalantirScripts.whenIdle().then(() => {
+            if (CasActuatorEndpoints.registeredServices()) {
+                prepareRegisteredServiceWizardWhenIdle();
+            }
+        }, error => console.debug("The application wizard was not fetched ahead of use", error));
         if (PalantirHome.summary !== null && Date.now() - PalantirHome.fetched > PalantirHome.FRESH_FOR) {
             PalantirHome.refresh({visible: true});
         }
@@ -163,7 +168,7 @@ class PalantirHome {
             .on("click", "[data-home-page]", event => {
                 const page = PalantirHome.PAGES[event.currentTarget.dataset.homePage];
                 if (page) {
-                    $(`nav.sidebar-navigation ul li[data-tab-index=${page()}]`).trigger("click");
+                    PalantirPages.open(page());
                 }
             })
             .on("dragstart", ".palantir-home__widget", event => {

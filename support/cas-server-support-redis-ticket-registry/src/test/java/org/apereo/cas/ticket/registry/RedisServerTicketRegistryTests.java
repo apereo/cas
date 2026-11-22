@@ -326,6 +326,12 @@ class RedisServerTicketRegistryTests {
                 .setPrincipal(authentication.getPrincipal().getId());
             assertEquals(decodedCriteria.getCount(), getNewTicketRegistry().query(decodedCriteria).size());
 
+            val otherAuthentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            getNewTicketRegistry().addTicket(Stream.generate(() -> new TicketGrantingTicketImpl(
+                    new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY).getNewTicketId(TicketGrantingTicket.PREFIX),
+                    otherAuthentication, NeverExpiresExpirationPolicy.INSTANCE))
+                .limit(3));
+
             ((Cleanable) getNewTicketRegistry()).clean();
             val criteria2 = new TicketRegistryQueryCriteria()
                 .setDecode(Boolean.TRUE)
@@ -333,6 +339,13 @@ class RedisServerTicketRegistryTests {
                 .setPrincipal(authentication.getPrincipal().getId());
             val queryResults = getNewTicketRegistry().query(criteria2);
             assertEquals(5, queryResults.size());
+            assertTrue(queryResults.stream().allMatch(ticket -> ((TicketGrantingTicket) ticket).getAuthentication()
+                .getPrincipal().getId().equals(authentication.getPrincipal().getId())));
+            val otherResults = getNewTicketRegistry().query(new TicketRegistryQueryCriteria()
+                .setDecode(Boolean.TRUE)
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(otherAuthentication.getPrincipal().getId()));
+            assertEquals(3, otherResults.size());
         }
 
         @RepeatedTest(2)

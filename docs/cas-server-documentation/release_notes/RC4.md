@@ -539,6 +539,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   registries that have no query of their own, such as Hazelcast before this change, now answer it by reading their
   tickets, and Hazelcast answers it from the map of the asked ticket type. With Redis, the keys of those tickets are
   now read from Redis in large batches rather than ten at a time, since finding them walks every key Redis holds.
+- {: .changed data-area="tickets"} Looking up the OAuth and OpenID Connect tokens of one user asks the ticket registry for
+  that user's access and refresh tokens instead of reading every ticket, so registries that keep track of users, such
+  as JPA, MongoDb, Hazelcast, DynamoDb, Cassandra, Ignite, Geode and Google Cloud Firestore, read only that user's
+  tokens, and Redis reads only the user each token records before reading the tokens of that user. Asking these
+  registries for the tickets of one type and user, as other features do, is answered the same way. [Palantir](../installation/Admin-Dashboard.html) shows the tokens of a user with the rest of the user's
+  records, without a separate button. How the user is matched, such as whether case matters, follows the registry.
 - {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in
   all and for every kind of ticket, such as sessions, service tickets or OAuth tokens, named after their definitions
   and counted in one pass, instead of reading every ticket and removing the expired ones on each call; expired tickets
@@ -1258,6 +1264,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="services"} With applications [defined in memory](../services/InMemory-Service-Management.html),
   deleting every application no longer fails, and deleting an application removes it even when the definition given
   differs from the stored one, where it used to report success and keep it.
+- {: .fixed data-area="ui"} Rotating and revoking the OpenID Connect keys in [Palantir](../installation/Admin-Dashboard.html)
+  work again; declining to revoke the keys no longer revokes them, and a key a client registered can be removed again.
+  OAuth and OpenID Connect applications can also rotate their client secrets from their menu.
 - {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html)'s application wizard offers only the
   access strategies this deployment carries, keeps the order of a default access strategy it leaves out when going back to
   the JSON editor, and keeps numbers and booleans in the maps it edits, such as a policy's context. Multifactor settings

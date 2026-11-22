@@ -132,7 +132,7 @@ function registerPalantirTabInitializers() {
 /**
  * Resolve the tab to open.
  *
- * A reload stays on the page this browser tab was showing; a new visit opens Home. Without Home, the
+ * A link to a page opens that page. A reload stays on the page this browser tab was showing; a new visit opens Home. Without Home, the
  * tab the operator last used is preferred, then Applications, then whichever destination the
  * deployment's enabled actuator endpoints actually left on the rail. Only the first visible entry
  * is guaranteed to exist, so it is the last resort rather than Applications, which a deployment
@@ -142,10 +142,13 @@ function registerPalantirTabInitializers() {
  */
 function resolveInitialDashboardTab() {
     const shown = value => {
-        const index = Number.parseInt(value, 10);
-        return Number.isInteger(index) && String(index) === String(value)
-            && $(`nav.sidebar-navigation ul li[data-tab-index=${index}]`).is(":visible") ? index : null;
+        const tab = Tabs.of(value);
+        return tab && tab.index < Tabs.SETTINGS.index && PalantirPages.available(tab) ? tab.index : null;
     };
+    const linked = PalantirLinks.parse(location.hash).tab;
+    if (linked && shown(linked) !== null) {
+        return linked.index;
+    }
     let reloadedTab = null;
     let storedTab = null;
     try {
@@ -165,7 +168,7 @@ function resolveInitialDashboardTab() {
     if (stored !== null) {
         return stored;
     }
-    if ($(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).is(":visible")) {
+    if (PalantirPages.available(Tabs.APPLICATIONS)) {
         return Tabs.APPLICATIONS.index;
     }
     const firstContentTab = $("nav.sidebar-navigation ul li:visible")
@@ -209,6 +212,9 @@ async function initializePalantir() {
             return;
         }
 
+        if (selectedTab !== Tabs.HOME.index) {
+            PalantirScripts.load("wizard").catch(error => console.debug("The page's scripts will be fetched again", error));
+        }
         registerPalantirTabInitializers();
         PalantirServiceEditGuard.removeExpiredDrafts();
 
@@ -216,8 +222,14 @@ async function initializePalantir() {
         initializeCommandPalette();
         await initializePalantirSession();
 
-        $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
-        await initializeDashboardTab(selectedTab);
+        PalantirLinks.bind();
+        const linked = PalantirLinks.parse(location.hash);
+        if (linked.tab?.index === selectedTab) {
+            await PalantirLinks.follow(location.hash);
+        } else {
+            PalantirPages.open(Tabs.byIndex(selectedTab));
+            await initializeDashboardTab(selectedTab);
+        }
     } catch (error) {
         console.error("An error occurred:", error);
     }
@@ -432,6 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
     PalantirTheme.initialize();
     PalantirZenMode.initialize();
     initializePalantirFocusRings();
+    PalantirPanelFocus.initialize();
     initializeSidebarSections();
     initializePalantirNavigationMenus();
     $("nav.sidebar-navigation ul li").off().on("click", function () {

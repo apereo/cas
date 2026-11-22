@@ -131,7 +131,7 @@ class PalantirCommandPalette {
     }
 
     static async goTo(index) {
-        $(`nav.sidebar-navigation ul li[data-tab-index=${index}]`).trigger("click");
+        PalantirPages.open(Tabs.byIndex(index));
         await initializeDashboardTab(index);
     }
 
@@ -296,7 +296,7 @@ class PalantirCommandPalette {
     static actionEntries(navigation) {
         const visible = index => navigation.some(item => item.index === index);
         const actions = [];
-        if (visible(Tabs.APPLICATIONS.index) && typeof openRegisteredServiceWizardDialog === "function") {
+        if (visible(Tabs.APPLICATIONS.index)) {
             actions.push({
                 label: "New Application",
                 detail: "Open the application wizard",
@@ -304,7 +304,7 @@ class PalantirCommandPalette {
                 keywords: "add create register service wizard",
                 run: async () => {
                     await PalantirCommandPalette.goTo(Tabs.APPLICATIONS.index);
-                    openRegisteredServiceWizardDialog();
+                    await openPalantirWizard();
                 }
             });
         }

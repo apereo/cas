@@ -419,11 +419,13 @@ function openNewConfigurationPropertyDialog(config) {
         height: "auto",
         buttons: {
             OK: async function () {
-                const nameElem = $("#newConfigPropertyName")[0];
-                const selectedValue = nameElem.tomselect.getValue();
-                const typedValue = nameElem.tomselect.control_input.value?.trim();
-                if (!selectedValue && typedValue) {
-                    nameElem.tomselect.setValue(typedValue);
+                const nameSelect = $("#newConfigPropertyName")[0].tomselect;
+                const typedValue = nameSelect.control_input.value?.trim();
+                if (!nameSelect.getValue() && typedValue) {
+                    if (!nameSelect.options[typedValue]) {
+                        nameSelect.addOption({id: typedValue, name: typedValue});
+                    }
+                    nameSelect.setValue(typedValue);
                 }
 
                 if (!$("#newConfigurationForm")[0].reportValidity()) {

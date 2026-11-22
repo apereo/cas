@@ -169,7 +169,7 @@ function renderSurrogateAccounts(username, accounts) {
  * @returns {Promise<void>} resolved once the lookup is asked for
  */
 async function resolveSurrogateAccountAttributes(account) {
-    $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.PERSON_DIRECTORY.index}]`).trigger("click");
+    PalantirPages.open(Tabs.PERSON_DIRECTORY);
     await initializeDashboardTab(Tabs.PERSON_DIRECTORY);
     const tabs = $("#attributes-tab");
     if (tabs.data("ui-tabs")) {
@@ -1033,17 +1033,101 @@ function reloadAuthenticationHandlersTable() {
         $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
             for (const handler of response) {
                 authenticationHandlersTable.row.add({
-                    0: `${handler.name}`,
-                    1: `${palantirCode(handler.type)}`,
-                    2: `${palantirCode(handler.state)}`,
-                    3: `${palantirCode(handler.order)}`
+                    0: escapePalantirMarkup(handler.name),
+                    1: escapePalantirMarkup(handler.type),
+                    2: escapePalantirMarkup(handler.state),
+                    3: escapePalantirMarkup(handler.order),
+                    handler
                 });
             }
+            $("#authenticationHandlersCards").data("loaded", true);
             authenticationHandlersTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            $("#authenticationHandlersCards").html("<p class=\"palantir-empty-state\">Authentication handlers could not be read just now.</p>");
             displayBanner(xhr);
         });
+    }
+}
+
+/**
+ * The icon that stands for an authentication handler, by the kind of store or protocol its type names.
+ *
+ * @param {string} type the handler's class name
+ * @returns {string} the icon class
+ */
+function authenticationHandlerIcon(type) {
+    const name = getLastWord(String(type ?? "")).toLowerCase();
+    const icons = [
+        [/ldap/, "mdi-folder-account-outline"],
+        [/jdbc|jpa|database|mongo|couchdb|dynamo|redis|cassandra|sql/, "mdi-database-outline"],
+        [/rest|http|api/, "mdi-api"],
+        [/x509|certificate/, "mdi-certificate-outline"],
+        [/radius|duo|totp|google|authenticator|webauthn|yubikey|token|mfa|multifactor/, "mdi-shield-key-outline"],
+        [/spnego|kerberos|ntlm/, "mdi-microsoft-windows"],
+        [/delegat|pac4j|client|saml|oidc|oauth|wsfed/, "mdi-transit-connection-variant"],
+        [/surrogate|trust|passwordless|groovy|script/, "mdi-script-text-outline"]
+    ];
+    return icons.find(([pattern]) => pattern.test(name))?.[1] ?? "mdi-account-key-outline";
+}
+
+/**
+ * One authentication handler as a card: its name and type, whether it is active, and its order.
+ *
+ * @param {object} handler the authentication handler, as the authentication handlers endpoint reports it
+ * @returns {string} the card markup
+ */
+function authenticationHandlerCard(handler) {
+    const escape = escapePalantirMarkup;
+    const type = String(handler.type ?? "");
+    const state = String(handler.state ?? "");
+    const active = state.toUpperCase() === "ACTIVE";
+    return `
+        <article class="palantir-record-card is-authn-handler" data-authn-handler="${escape(handler.name)}" aria-label="${escape(handler.name)}">
+            <header class="palantir-record-card__head">
+                <span class="palantir-protocol-badge is-authn-handler" title="${escape(type)}">
+                    <i class="mdi ${authenticationHandlerIcon(type)}" aria-hidden="true"></i>
+                </span>
+                <div class="palantir-record-card__title">
+                    <h4 title="${escape(handler.name)}">${escape(handler.name)}</h4>
+                    <p title="${escape(type)}">${escape(getLastWord(type) || type)}</p>
+                </div>
+            </header>
+            <ul class="palantir-record-card__flags">
+                <li class="${active ? "is-on" : ""}">
+                    <i class="mdi ${active ? "mdi-check-circle" : "mdi-pause-circle-outline"}" aria-hidden="true"></i>${escape(camelcaseToTitleCase(state.toLowerCase()) || "Unknown")}
+                </li>
+                <li class="is-on"><i class="mdi mdi-sort-numeric-ascending" aria-hidden="true"></i>Order ${escape(handler.order ?? "")}</li>
+            </ul>
+            <dl class="palantir-record-card__details">
+                <div><dt>Type</dt><dd class="is-wrap" title="${escape(type)}">${escape(type)}</dd></div>
+            </dl>
+        </article>`;
+}
+
+/**
+ * Draw one card per authentication handler on the current page of the table.
+ *
+ * @param {object} table the authentication handlers table
+ */
+function renderAuthenticationHandlerCards(table) {
+    const container = $("#authenticationHandlersCards");
+    if (container.length === 0) {
+        return;
+    }
+    if (container.data("loaded") !== true) {
+        container.html("<p class=\"palantir-empty-state\">Loading authentication handlers…</p>");
+        return;
+    }
+    const cards = table.rows({page: "current", search: "applied"}).data().toArray()
+        .filter(row => row.handler)
+        .map(row => authenticationHandlerCard(row.handler));
+    if (cards.length > 0) {
+        container.html(cards.join(""));
+    } else {
+        container.html(`<p class="palantir-empty-state">${table.search() === ""
+            ? "No authentication handlers are registered."
+            : "No authentication handler matches that search."}</p>`);
     }
 }
 
@@ -1238,28 +1322,17 @@ async function initializeAuthenticationOperations() {
         layout: {
             topStart: authnHandlersToolbar
         },
-        columnDefs: [
-            {visible: false, targets: 0},
-        ],
-        order: [0, "asc"],
-        drawCallback: settings => {
+        order: [],
+        drawCallback: function () {
             $("#authenticationHandlersTable tr").addClass("mdc-data-table__row");
             $("#authenticationHandlersTable td").addClass("mdc-data-table__cell");
-
-            const api = settings.api;
-            const rows = api.rows({page: "current"}).nodes();
-            let last = null;
-            api.column(0, {page: "current"})
-                .data()
-                .each((group, i) => {
-                    if (last !== group) {
-                        $(rows).eq(i).before(
-                            palantirTableGroupRow(group, 3));
-                        last = group;
-                    }
-                });
+            renderAuthenticationHandlerCards(this.api());
         }
     });
+    const authenticationHandlersTableRow = $("#authenticationHandlersTable").closest(".dt-layout-row");
+    if (authenticationHandlersTableRow.length > 0) {
+        $("#authenticationHandlersCards").insertAfter(authenticationHandlersTableRow);
+    }
 
     reloadAuthenticationHandlersTable();
 

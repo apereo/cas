@@ -2957,27 +2957,25 @@ async function initializeSystemOperations() {
         }
     });
 
-    const storedTabs = localStorage.getItem("ActiveTabs");
-    if (storedTabs) {
-        try {
-            const activeTabs = JSON.parse(storedTabs);
-            const startupTabIndex = $("#system-tabs ul li a[href='#casstartup-tab']").parent().index();
-            if (activeTabs["system-tabs"] === startupTabIndex) {
-                await configureStartupTimeline();
-            }
-            const httpTracesTabIndex = $("#system-tabs ul li a[href='#httptraces-tab']").parent().index();
-            if (activeTabs["system-tabs"] === httpTracesTabIndex) {
-                await configureHttpTraces();
-            }
-            const mappingsTabIndex = $("#system-tabs ul li a[href='#httprequestmappings-tab']").parent().index();
-            if (activeTabs["system-tabs"] === mappingsTabIndex) {
-                await loadHttpRequestMappings();
-            }
-            const systemInfoShown = (activeTabs["system-tabs"] ?? 0) === $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index();
-            if (systemInfoShown) {
-                refreshActiveSystemInfoTab();
-            }
-        } catch (e) { /* ignore */ }
+    let rememberedSystemTab = null;
+    try {
+        const remembered = JSON.parse(localStorage.getItem("ActiveTabs") ?? "{}")?.["system-tabs"];
+        const index = remembered === undefined ? 0 : palantirInnerTabIndex($("#system-tabs"), remembered);
+        rememberedSystemTab = index >= 0 ? $("#system-tabs > ul > li").eq(index).attr("aria-controls") ?? null : null;
+    } catch (error) {
+        console.debug("The System page shown last is not known", error);
+    }
+    if (rememberedSystemTab === "casstartup-tab") {
+        await configureStartupTimeline();
+    }
+    if (rememberedSystemTab === "httptraces-tab") {
+        await configureHttpTraces();
+    }
+    if (rememberedSystemTab === "httprequestmappings-tab") {
+        await loadHttpRequestMappings();
+    }
+    if (rememberedSystemTab === "systeminfo-tab") {
+        refreshActiveSystemInfoTab();
     }
 
 

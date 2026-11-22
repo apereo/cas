@@ -463,6 +463,12 @@ async function initializeServiceButtons() {
                 icon: contextMenuIcon("mdi-heart-pulse"),
                 visible: context => PalantirSamlMetadataHealth.applies(registeredServicesById.get(String(context.rowData.serviceId)))
             },
+            rotateClientSecrets: {
+                name: "Rotate Client Secrets",
+                write: "oauthClientSecrets",
+                icon: contextMenuIcon("mdi-key-change"),
+                visible: context => PalantirClientSecretRotation.applies(registeredServicesById.get(String(context.rowData.serviceId)))
+            },
             accessCheck: {
                 name: "Check Access",
                 icon: contextMenuIcon("mdi-shield-account-outline"),
@@ -483,7 +489,9 @@ async function initializeServiceButtons() {
                 name: "View Change Log",
                 icon: contextMenuIcon("mdi-delta"),
                 visible: () => CasActuatorEndpoints.entityHistory()
-            }
+            },
+            sep2: "---------",
+            copyLink: {name: "Copy Link", icon: contextMenuIcon("mdi-link-variant")}
         },
         callback: (key, context) => applicationActionHandler(key, context)
     });
@@ -508,8 +516,12 @@ async function initializeServiceButtons() {
             PalantirSamlMetadataHealth.open(serviceId);
         } else if (key === "releasePreview") {
             PalantirAttributeRelease.openForApplication(serviceId);
+        } else if (key === "rotateClientSecrets") {
+            PalantirClientSecretRotation.open(serviceId);
         } else if (key === "accessCheck") {
             PalantirAccessCheck.openFor(serviceId);
+        } else if (key === "copyLink") {
+            PalantirLinks.copy(Tabs.APPLICATIONS, serviceId);
         }
     };
 }
@@ -587,7 +599,9 @@ async function fetchServices(callback) {
 
             updateApplicationTypeFilter();
             applicationsTable.draw();
-            prepareRegisteredServiceWizardWhenIdle();
+            if (typeof prepareRegisteredServiceWizardWhenIdle === "function") {
+                prepareRegisteredServiceWizardWhenIdle();
+            }
 
             $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
             if (servicesChart) {
@@ -688,7 +702,7 @@ async function initializeFooterButtons() {
     });
 
     $("button[name=newServiceWizard]").off().on("click", () => {
-        openRegisteredServiceWizardDialog();
+        openPalantirWizard();
     });
 
     $("button[name=newServicePlain]").off().on("click", () => {

@@ -216,7 +216,7 @@ function initializeInterruptInquiry() {
  * @returns {Promise<void>} resolved once the inquiry has been sent
  */
 async function openInterruptInquiry(username, service = "") {
-    $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.AUTHENTICATION.index}]`).trigger("click");
+    PalantirPages.open(Tabs.AUTHENTICATION);
     await initializeDashboardTab(Tabs.AUTHENTICATION);
     const tabs = $("#authentication-tabs");
     if (tabs.data("ui-tabs")) {

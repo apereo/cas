@@ -51,6 +51,17 @@ General view, theme and template rules are in the `cas-ui` skill.
 - A row of a label, a jQuery UI selectmenu and buttons uses `.palantir-control-row` (centered, one height).
 - Keyboard shortcuts are listed from `palantirShortcutGroups()` (palantir-hotkeys.js) for both the `?` overlay and the
   Settings tab; add a new hotkey there too.
+- Ace (minified build), the diff library and the wizard scripts (`palantir-services-wizard*.js`, chains) are not
+  `<script>` tags: `PalantirScripts` (palantir-utils.js) fetches them from `scripts` in the dashboard configuration.
+  Every page but Home awaits them before its initializers; Home fetches them when idle. Code that can run from Home or
+  a global handler and uses Ace, `Diff` or a wizard function must await `PalantirScripts.load("wizard")` or call
+  `openPalantirWizard(...)`. A new wizard script goes in that list, not in the page.
+- In a `th:inline="javascript"` block, never write `[` directly before an inlined `/*[[...]]*/` (as in `[/*[[...]]*/]`):
+  Thymeleaf reads `[/` as a closing element and the page fails to render. Put the value on its own line.
+- `PalantirPanelFocus` (palantir-utils.js) focuses the first usable text field of a page or inner tab when it is shown;
+  don't add per-page focus calls on activation. Mark a better field `data-palantir-autofocus`, or keep a region out with
+  `data-palantir-no-autofocus`. Esc in a page field blurs it. A scenario that presses single-key shortcuts after switching
+  pages must press Escape (or blur) first.
 - `initializeTableAndDialogAccessibility()` (palantir-utils.js) names every DataTable and its pagination, names icon-only
   controls from their `title`, marks modal dialogs `aria-modal` and names jQuery UI select menus from their label (jQuery
   UI points the label's `for` at the button). Tables with a row context menu get focusable rows (Enter clicks, Shift+F10
@@ -183,6 +194,11 @@ General view, theme and template rules are in the `cas-ui` skill.
   reason and the wizard leaves the metadata location alone.
 - Old drafts are redacted at start-up (`removeExpiredDrafts`, marked `secretsLeftOut`), not only when written.
 
+- A Tom Select that accepts names it does not suggest (`create: true`), such as the configuration property name, sets
+  `addPrecedence: true`, so Enter takes what was typed and a suggestion is picked with the arrows or a click; an exact
+  match is still chosen. Search the id first (weighted `searchField`), and turn a typed but unchosen value into an
+  option before `setValue`, which ignores values that are not options.
+
 ### Switches and checkboxes
 
 - Every switch and checkbox in Palantir has one look: a pill track, `--palantir-toggle-off` grey and `--palantir-toggle-on`
@@ -211,8 +227,16 @@ General view, theme and template rules are in the `cas-ui` skill.
 
 ### Home
 
+- Users page sources all load together; a source that would need a scan of every ticket gets a by-user lookup on the
+  server (as `oauthTokens?username=` uses `TicketRegistry.query` by type and principal), never an on-request button.
+
 ## Applications table and cards
 
+- Per-application menu actions go in the `applicationsTable` context menu items (palantir-services.js) with `write` naming
+  the endpoint they change and `visible` deciding which applications get them, dispatched in `applicationActionHandler`;
+  e.g. Rotate Client Secrets (`PalantirClientSecretRotation`, palantir-services-actions.js) for OAuth and OIDC apps.
+  Actuator `@PostMapping` operations (such as oidcJwks rotate/revoke) must be called with POST, and a SweetAlert answer
+  is read from `result.isConfirmed`, never from the result being truthy.
 - The applications type filter is a `$.fn.dataTable.ext.search` function limited to `#applicationsTable`, so the cards,
   paging and summary follow it; `updateApplicationTypeFilter` rebuilds its choices in `fetchServices`. Filter the cards
   through the table, never on their own.
@@ -305,6 +329,11 @@ General view, theme and template rules are in the `cas-ui` skill.
 - Chart.js copies axis defaults into each chart when it is made, so theme colors are given as functions
   (`PalantirTheme.chartColors`), never as values read once; code that needs the grid or text color reads
   `PalantirTheme.chartColors`, not `Chart.defaults`.
+- Pages are named by their stable key (`Tabs.X.key`, rail `data-page`), not their index: show one with
+  `PalantirPages.open(Tabs.X)`, check it with `PalantirPages.available`, and never click a rail item by
+  `data-tab-index`. Links are `#<key>` and `#<key>/<detail>` (`PalantirLinks`); a page with details registers a
+  handler in `PalantirLinks.DETAILS` and calls `PalantirLinks.shown(tab, detail)` when it shows one. Inner jQuery UI
+  tabs are remembered by panel id (`palantirInnerTabIndex`).
 - Code that runs on every wizard generation or every key typed must not walk all wizard fields or compile a pattern per
   application: cache what only changes with the fields or the application type (`PalantirWizardChains.modeled()`), read
   a section's options once per drawing, and compile service id patterns once (`PalantirAccessCheck.pattern()`).

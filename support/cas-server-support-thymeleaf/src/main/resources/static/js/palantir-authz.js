@@ -1592,7 +1592,7 @@ class PalantirAccessCheck {
      * @returns {Promise<void>} resolved once the access check shows the application
      */
     static async openFor(serviceId) {
-        $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.ACCESS_STRATEGY.index}]`).trigger("click");
+        PalantirPages.open(Tabs.ACCESS_STRATEGY);
         await initializeDashboardTab(Tabs.ACCESS_STRATEGY);
         if ($("#accessstrategy-tabs").tabs("instance")) {
             $("#accessstrategy-tabs").tabs("option", "active", 0);

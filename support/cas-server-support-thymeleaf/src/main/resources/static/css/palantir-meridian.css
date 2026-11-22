@@ -3392,17 +3392,6 @@ html.palantir-page[data-theme="dark"] .palantir-feature-card mark {
     font-size: 14px;
 }
 
-.palantir-user-lookup__readers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-}
-
-.palantir-user-lookup__readers:empty {
-    display: none;
-}
-
 .palantir-user-lookup__summary:empty {
     display: none;
 }
@@ -7021,12 +7010,12 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
 }
 
 /* ==========================================================================
-   Record cards: attribute definitions, single sign-on sessions, Spring sessions and multifactor devices show one
-   card per record.
+   Record cards: attribute definitions, authentication handlers, single sign-on sessions, Spring sessions and
+   multifactor devices show one card per record.
    The table of each stays hidden underneath and keeps the search, length and paging controls, which the cards
    follow. Only the panel's own table is hidden, not the tables of the dialogs inside the panel.
    ========================================================================== */
-:is(#attributedefinitions-tab, #ssosessions-tab, #springsession-tab, #mfadevices-tab) > .dt-container > .dt-layout-row.dt-layout-table {
+:is(#attributedefinitions-tab, #ssosessions-tab, #springsession-tab, #mfadevices-tab, #authenticationhandlers-tab) > .dt-container > .dt-layout-row.dt-layout-table {
     display: none !important;
 }
 
@@ -7079,6 +7068,10 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
 
 .palantir-record-card.is-spring::before {
     background: var(--palantir-success-fill);
+}
+
+.palantir-record-card.is-authn-handler::before {
+    background: var(--palantir-proto-cas);
 }
 
 .palantir-record-card:hover {
@@ -7260,6 +7253,11 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
 .palantir-protocol-badge.is-spring {
     background: var(--palantir-success-bg);
     color: var(--palantir-success);
+}
+
+.palantir-protocol-badge.is-authn-handler {
+    background: var(--palantir-proto-cas-bg);
+    color: var(--palantir-proto-cas);
 }
 
 .palantir-record-card__apps {
@@ -9685,4 +9683,56 @@ html.palantir-page .palantir-access__suggestions .palantir-access__suggestions-h
 
 .palantir-access__gate-member.is-skipped {
     background: var(--palantir-border-strong);
+}
+
+/* Rotating the client secrets of an application: the choices, then the new secrets, one per row with a copy button. */
+.palantir-client-secret-rotation {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.palantir-client-secret-rotation > label:not(.palantir-feature-switch) {
+    margin-top: 8px;
+    color: var(--palantir-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.palantir-client-secret-rotation .swal2-input {
+    width: 100%;
+    margin: 0;
+}
+
+.palantir-client-secret-rotation__hint {
+    margin: 0;
+    color: var(--palantir-text-muted, var(--palantir-text));
+    font-size: 12px;
+}
+
+.palantir-client-secret-rotation__secrets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.palantir-client-secret-rotation__secret {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+}
+
+.palantir-client-secret-rotation__secret code {
+    overflow-wrap: anywhere;
+}
+
+.palantir-client-secret-rotation__secret small {
+    grid-column: 1 / -1;
+    color: var(--palantir-text-muted, var(--palantir-text));
 }

@@ -1,5 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
-   activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile */
+   activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile,
+   PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -61,6 +62,53 @@ function trackFailures(page) {
  *
  * @param page the puppeteer page
  */
+/**
+ * Pages and applications have links: showing a page puts its key in the address, Back and Forward move between pages,
+ * and opening a link shows the page, or reveals the application, it names. The page shown last is remembered by key.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyLinks(page) {
+    await cas.separator();
+    const available = await page.evaluate(() => ["system", "applications"].every((key) => PalantirPages.available(Tabs.byKey(key))));
+    if (!available) {
+        await cas.logy("The System or Applications page is not offered; skipping the links");
+        return;
+    }
+    await page.evaluate(() => PalantirPages.open(Tabs.SYSTEM));
+    await page.waitForFunction(() => location.hash === "#system" && currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+    await page.evaluate(() => PalantirPages.open(Tabs.APPLICATIONS));
+    await page.waitForFunction(() => location.hash === "#applications" && currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+    const remembered = await page.evaluate(() => localStorage.getItem("PalantirSelectedTab"));
+    assert(remembered === "applications", `The page shown last is remembered as ${remembered}`);
+    await page.goBack();
+    await page.waitForFunction(() => location.hash === "#system" && currentActiveTab === Tabs.SYSTEM.index, {timeout: 10000});
+    await page.goForward();
+    await page.waitForFunction(() => location.hash === "#applications" && currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+    await cas.logg("Showing pages puts their links in the address, and Back and Forward move between them");
+
+    const id = await page.evaluate(() => [...registeredServicesById.keys()][0] ?? null);
+    if (id === null) {
+        await cas.logy("No application to link to; skipping the application link");
+        return;
+    }
+    await cas.goto(page, `${DASHBOARD_URL}#applications/${id}`);
+    await waitForDashboard(page);
+    await page.waitForFunction((serviceId) => currentActiveTab === Tabs.APPLICATIONS.index
+        && location.hash === `#applications/${serviceId}`
+        && $("#applicationsTable").DataTable().rows(".selected").data().toArray().some((row) => String(row.serviceId) === serviceId),
+    {timeout: 30000}, id);
+    const link = await page.evaluate((serviceId) => PalantirLinks.url(Tabs.APPLICATIONS, serviceId), id);
+    assert(link.endsWith(`/palantir/dashboard#applications/${id}`), link);
+    await cas.logg(`A link to an application opens Applications with it selected: ${link}`);
+
+    await cas.goto(page, `${DASHBOARD_URL}#system`);
+    await waitForDashboard(page);
+    await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 30000});
+    await page.evaluate(() => PalantirPages.open(Tabs.APPLICATIONS));
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+}
+
 async function waitForDashboard(page) {
     await page.waitForFunction(() => {
         const dashboard = document.querySelector("#dashboard");
@@ -407,6 +455,99 @@ async function verifySettingsDialog(page) {
 }
 
 /**
+ * Check that the editor, the diff library and the application wizard are not part of the page itself but are fetched
+ * when first needed, with the editor in its minified build.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyScriptsOnFirstUse(page) {
+    await cas.separator();
+    const state = await page.evaluate(async () => {
+        const deferred = $("script[defer]").toArray().map((script) => script.src)
+            .filter((src) => /ace-builds|\/diff\/|palantir-services-wizard|palantir-services-chains/.test(src));
+        await PalantirScripts.load("wizard");
+        return {
+            deferred,
+            ace: typeof ace,
+            diff: typeof Diff,
+            wizard: typeof openRegisteredServiceWizardDialog,
+            minified: $("script[src*='ace-builds']").toArray().every((script) => script.src.includes("/src-min-noconflict/"))
+        };
+    });
+    await cas.log(`Scripts fetched on first use: ${JSON.stringify(state)}`);
+    assert(state.deferred.length === 0);
+    assert(state.ace === "object" && state.diff === "object" && state.wizard === "function" && state.minified);
+    await cas.logg("The editor, the diff library and the wizard are fetched on first use");
+}
+
+/**
+ * The authentication handlers show as cards, one per handler on the table's current page, with the table itself out
+ * of sight; searching narrows the cards.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyAuthenticationHandlerCards(page) {
+    await cas.separator();
+    if (!await page.evaluate(() => Boolean(CasActuatorEndpoints.authenticationHandlers()))) {
+        await cas.logy("The authentication handlers endpoint is not available; skipping");
+        return;
+    }
+    await page.evaluate(async () => {
+        $("#authenticationTabButton").trigger("click");
+        await initializeDashboardTab(Tabs.AUTHENTICATION);
+    });
+    await page.waitForFunction(() => $("#authenticationHandlersCards .palantir-record-card").length > 0, {timeout: 30000});
+    const shown = await page.evaluate(() => ({
+        cards: $("#authenticationHandlersCards .palantir-record-card").length,
+        rows: $("#authenticationHandlersTable").DataTable().rows({page: "current", search: "applied"}).count(),
+        tableVisible: $("#authenticationHandlersTable").is(":visible"),
+        first: $("#authenticationHandlersCards .palantir-record-card h4").first().text()
+    }));
+    await cas.log(`Authentication handlers as cards: ${JSON.stringify(shown)}`);
+    assert(shown.cards === shown.rows && !shown.tableVisible);
+    const narrowed = await page.evaluate((name) => {
+        $("#authenticationHandlersTable").DataTable().search(name).draw();
+        const count = $("#authenticationHandlersCards .palantir-record-card").length;
+        $("#authenticationHandlersTable").DataTable().search("").draw();
+        return count;
+    }, shown.first);
+    assert(narrowed >= 1 && narrowed <= shown.cards);
+    await cas.logg("Authentication handlers show as cards that follow the table's search");
+}
+
+/**
+ * Type property names in the new configuration property dialog and press Enter: the name typed is taken as it is,
+ * even when the suggestions hold longer names that start with it, and a name that is suggested exactly is taken too.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyPropertyNameEntry(page) {
+    await cas.separator();
+    await page.evaluate(async () => {
+        $("#configurationTabButton").trigger("click");
+        await initializeDashboardTab(Tabs.CONFIGURATION);
+        openNewConfigurationPropertyDialog({});
+    });
+    await page.waitForFunction(() => $("#newConfigurationDialog").dialog("isOpen"), {timeout: 10000});
+    for (const name of ["cas.server", "cas.server.name", "custom.example.setting"]) {
+        await page.evaluate(() => {
+            const select = $("#newConfigPropertyName")[0].tomselect;
+            select.clear(true);
+            select.focus();
+        });
+        await page.keyboard.type(name);
+        await cas.sleep(500);
+        await page.keyboard.press("Enter");
+        await cas.sleep(500);
+        const chosen = await page.evaluate(() => $("#newConfigPropertyName")[0].tomselect.getValue());
+        await cas.log(`Typing ${name} and pressing Enter chooses ${chosen}`);
+        assert(chosen === name);
+    }
+    await cas.logg("The property name typed is the one chosen when Enter is pressed");
+    await page.evaluate(() => $("#newConfigurationDialog").dialog("close"));
+}
+
+/**
  * Turn zen mode on with Shift+Z from the Applications page, check that it hides the header, navigation and footer while
  * the page shortcuts still work, then leave it again.
  *
@@ -417,6 +558,22 @@ async function verifyZenMode(page) {
         document.activeElement?.blur();
         $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).trigger("click");
     });
+    await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+    await page.evaluate(async () => {
+        await initializeDashboardTab(Tabs.APPLICATIONS);
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    });
+    const focus = await page.evaluate(() => {
+        const expected = PalantirPanelFocus.field(`#attribute-tab-${Tabs.APPLICATIONS.index}`)[0];
+        return {expected: expected ? expected.id || expected.className : null, focused: expected ? document.activeElement === expected : null};
+    });
+    await cas.log(`Opening the Applications page gives focus to ${JSON.stringify(focus)}`);
+    if (focus.expected !== null) {
+        assert(focus.focused);
+        await page.keyboard.press("Escape");
+        await page.waitForFunction(() => document.activeElement === document.body || document.activeElement === null, {timeout: 10000});
+        await cas.logg("Opening a page puts the cursor in its first field, and Escape leaves it so the shortcuts work again");
+    }
     await page.keyboard.down("Shift");
     await page.keyboard.press("KeyZ");
     await page.keyboard.up("Shift");
@@ -546,11 +703,15 @@ async function verifyShortcutsOverlay(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
+    await verifyScriptsOnFirstUse(page);
     await verifyHome(page);
     await verifyRegisteredServices(page);
     await verifyTheme(page);
     await verifyTabs(page);
+    await verifyLinks(page);
     await verifyFeatureCatalog(page);
+    await verifyPropertyNameEntry(page);
+    await verifyAuthenticationHandlerCards(page);
     await verifySettingsDialog(page);
     await verifyZenMode(page);
     await verifyShortcutsOverlay(page);

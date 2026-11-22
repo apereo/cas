@@ -717,13 +717,21 @@ class PalantirServiceEditor {
             PalantirServiceEditor.showProblem("The application type is missing", "Add an \"@class\" property, or start from a template, to open the definition in the wizard.", 0);
             return;
         }
+        try {
+            await PalantirScripts.load("wizard");
+        } catch (error) {
+            PalantirScripts.failed(error);
+            return;
+        }
         const isNew = PalantirServiceEditor.isNew;
         const editorKey = PalantirServiceEditGuard.key("editor", isNew ? null : definition.id);
         const original = isNew ? null : PalantirServiceEditGuard.originals.get(editorKey) ?? null;
         const unsaved = PalantirServiceEditGuard.isDirty("editor");
         const editorState = PalantirServiceEditGuard.handOver("editor");
         getEditServiceDialogInstance().close();
-        await openRegisteredServiceWizardDialog(definition, {...(isNew ? {asNew: true} : {}), unsaved: unsaved});
+        if (!await openPalantirWizard(definition, {...(isNew ? {asNew: true} : {}), unsaved: unsaved})) {
+            return;
+        }
         if (editorState) {
             PalantirServiceEditGuard.removeDraft(editorState.key);
         }
@@ -732,7 +740,7 @@ class PalantirServiceEditor {
             PalantirServiceEditGuard.originals.set(wizardState.key, original);
         }
         const dropped = await PalantirServiceEditor.droppedByWizard(definition);
-        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Back to the JSON editor", handed => {
+        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Back to the JSON Editor", handed => {
             PalantirServiceEditor.reopen(PalantirServiceEditor.carry(definition, handed.text, handed.modeled, handed.maps, handed.offered), isNew);
             const kept = handed.original ?? original;
             if (!isNew && kept !== null) {
@@ -751,9 +759,11 @@ class PalantirServiceEditor {
      */
     static async openApplicationInWizard(definition, options = {}) {
         const isNew = options.duplicate === true || options.asNew === true;
-        await openRegisteredServiceWizardDialog(definition, options);
+        if (!await openPalantirWizard(definition, options)) {
+            return;
+        }
         const dropped = await PalantirServiceEditor.droppedByWizard(definition);
-        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Continue in the JSON editor", handed => {
+        await PalantirServiceEditor.offerJsonEditorWhenDropped(dropped, "Continue in the JSON Editor", handed => {
             PalantirServiceEditor.reopen(PalantirServiceEditor.carry(definition, handed.text, handed.modeled, handed.maps, handed.offered), isNew);
             if (!isNew) {
                 const editorKey = PalantirServiceEditGuard.key("editor", definition.id);

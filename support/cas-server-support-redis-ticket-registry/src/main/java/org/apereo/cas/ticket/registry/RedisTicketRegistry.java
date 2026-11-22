@@ -496,7 +496,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             : redisKeyGenerator.forPrefixAndId(queryCriteria.getType(), "*");
 
         if (queryCriteria.isDecode()) {
-            try (val scanResults = fetchKeysForTickets(redisTicketsKey)) {
+            val ofPrincipal = StringUtils.isNotBlank(queryCriteria.getPrincipal()) && StringUtils.isBlank(queryCriteria.getId());
+            try (val scannedKeys = ofPrincipal
+                ? casRedisTemplates.getTicketsRedisTemplate().scanAll(redisTicketsKey)
+                : fetchKeysForTickets(redisTicketsKey)) {
+                val scanResults = ofPrincipal ? keysOfPrincipal(scannedKeys, queryCriteria.getPrincipal()) : scannedKeys;
                 return scanResults
                     .parallel()
                     .map(key -> {
@@ -535,6 +539,51 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public void clean() {
         ticketCache.ifAvailable(Cache::invalidateAll);
         messagePublisher.ifAvailable(RedisTicketRegistryMessagePublisher::deleteAll);
+    }
+
+    /**
+     * The keys of the tickets that belong to a principal, found by reading only the principal each ticket document
+     * records, a window of keys per round trip, so that the documents of other principals are never read or decoded.
+     * The keys are taken from the scan a window at a time, so only one window and the matching keys are held at once,
+     * however many tickets Redis holds; a key the scan returns more than once is kept once.
+     *
+     * @param keys        the keys to look through
+     * @param principalId the principal id
+     * @return the keys of that principal's tickets
+     */
+    private Stream<String> keysOfPrincipal(final Stream<String> keys, final String principalId) {
+        val window = 1000;
+        val target = digestIdentifier(principalId);
+        val iterator = keys.iterator();
+        val matching = new LinkedHashSet<String>();
+        val windowKeys = new ArrayList<String>(window);
+        while (iterator.hasNext()) {
+            windowKeys.add(iterator.next());
+            if (windowKeys.size() >= window || !iterator.hasNext()) {
+                matching.addAll(keysOfPrincipalInWindow(windowKeys, target));
+                windowKeys.clear();
+            }
+        }
+        return matching.stream();
+    }
+
+    private List<String> keysOfPrincipalInWindow(final List<String> windowKeys, final String target) {
+        val principals = casRedisTemplates.getTicketsRedisTemplate()
+            .executePipelined((RedisCallback<Object>) conn -> {
+                for (val key : windowKeys) {
+                    conn.hashCommands().hGet(key.getBytes(StandardCharsets.UTF_8),
+                        RedisTicketDocument.FIELD_NAME_PRINCIPAL.getBytes(StandardCharsets.UTF_8));
+                }
+                return null;
+            }, new StringRedisSerializer());
+        val matching = new ArrayList<String>();
+        for (var index = 0; index < windowKeys.size(); index++) {
+            val givenPrincipal = principals.get(index);
+            if (givenPrincipal != null && Strings.CI.equals(target, givenPrincipal.toString())) {
+                matching.add(windowKeys.get(index));
+            }
+        }
+        return matching;
     }
 
     private Stream<String> fetchKeysForTickets() {

@@ -79,6 +79,11 @@ the server widget then says only that CAS is running when the health widget is h
 a widget whose data comes from an actuator endpoint that is not exposed is left out. Reloading Palantir stays on the
 page that was showing.
 
+Every page has a link, such as `/palantir/dashboard#system`, and so do applications and users:
+`#applications/42` opens *Applications* with application 42 selected, and `#users/casuser` looks that user up. The
+link of the page shown is in the address bar, so it can be copied and pasted into a ticket, and the browser's *Back*
+and *Forward* move between the pages shown. An application's menu offers *Copy Link*.
+
 The search button in the navigation bar, also opened with `Ctrl+K` (`⌘K` on macOS) or `/`, finds any page or
 section of Palantir, including the sections inside a section such as the key rotation of OpenID Connect, a registered application by its name, identifier or service id, and common actions such as
 creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
@@ -91,8 +96,8 @@ account, password history, throttled login attempts, the interrupt the user woul
 recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
 removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
 actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is. OAuth and
-OpenID Connect tokens take a scan of the ticket registry, so they are only read when asked for with their button, and
-have no card when the user holds none. The attribute release preview picks its application the way the access check does:
+OpenID Connect tokens load with the other cards: the ticket registry is asked for that user's tokens only, which
+registries backed by a database or a cache look up by user. The attribute release preview picks its application the way the access check does:
 typing a name, service id, client id or id suggests the matching applications.
 
 <kbd>Shift</kbd>+<kbd>Z</kbd> turns zen mode on and off: the CAS header, the navigation bar and the footer are put away so
@@ -237,13 +242,19 @@ it the way it does at login, with its signature and validity checks, and when th
 provider publishes expire, warning a month ahead. The metadata that was read is shown. Nothing is registered, stored
 or removed from the metadata cache.
 
+*Rotate Client Secrets*, in the menu of an OAuth or OpenID Connect application, replaces every client secret, or only
+the expired ones, with new random secrets that expire after the chosen duration, and shows the new secrets once so they
+can be handed to the application. A public client, without secrets, has nothing to rotate.
+
 An application can be disabled from its context menu, and enabled again, after confirming; disabled applications are
 marked in the table and the cards. An access strategy that has no switch of its own is combined with a disabled
 default strategy while the application is disabled, and left as it was once it is enabled again. Applications can be
 selected by clicking their card or row, and clicked again to deselect them, with Shift to select a range, or all of
 those the search and type filter show at once, and the selection exported,
 as a zip of their definitions that *Import* accepts, disabled or enabled together (those already in that state are
-left alone), or deleted together; *Delete All* removes every application from the service registry after the operator confirms.
+left alone), or deleted together; *Delete All* removes every application from the service registry after the operator confirms. Once an action
+succeeds for every selected application, the selection is cleared; if it fails for any of them, the selection is kept
+so the action can be tried again.
 
 *Access Check*, under the access pages, tells whether a user may access an application and why, the way CAS decides
 at sign-in. The application field takes a service URL, a client id or an entity id, and suggests registered
@@ -267,6 +278,8 @@ Secrets are left out of drafts and put back from the saved application when a dr
 moved or removed in the draft gets back its own secret, or none when it can no longer be told apart from the others. A draft
 is dropped once it is thirty days old.
 
+Switching to a page or to a tab inside it puts the cursor in its first field, such as the username of a lookup, so
+typing can start at once. `Esc` leaves the field again, and the single-key shortcuts work as before.
 Pressing `?` outside a text field, or choosing *Keyboard shortcuts* in the search palette, lists every keyboard shortcut.
 Rows with actions in Palantir's tables can be reached with the keyboard: `Enter` chooses the focused row and `Shift+F10`
 opens its actions, as a right click does. When a new application asks for its type, the number shown on each type

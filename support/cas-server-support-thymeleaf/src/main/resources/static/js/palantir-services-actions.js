@@ -248,17 +248,22 @@ class PalantirApplicationAccess {
         PalantirProgress.update("Refreshing the applications...", null);
         await PalantirApplicationSelection.reload();
         PalantirProgress.close();
+        if (failed.length === 0) {
+            PalantirApplicationSelection.clear();
+        }
         const changed = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
             titleText: `${changed} Application${changed === 1 ? "" : "s"} ${disable ? "Disabled" : "Enabled"}`,
-            text: failed.length === 0 ? "" : `These were not changed: ${failed.join(", ")}.`
+            text: failed.length === 0 ? "" : `These were not changed, and the selection is kept: ${failed.join(", ")}.`
         });
     }
 }
 
 /**
  * Selecting applications, in the table or as cards, and deleting them: the selected ones, or every application.
+ * Once an action on the selection succeeds for every selected application, the selection is cleared and its bar goes
+ * away; when it fails for any of them, the selection is kept so the action can be tried again.
  */
 class PalantirApplicationSelection {
     static selected = new Set();
@@ -441,6 +446,7 @@ class PalantirApplicationSelection {
             link.remove();
             setTimeout(() => window.URL.revokeObjectURL(link.href), 1000);
             notyf.success(`Exported ${ids.length} application${ids.length === 1 ? "" : "s"}.`);
+            PalantirApplicationSelection.clear();
         } catch (error) {
             Swal.fire({icon: "error", titleText: "The Selected Applications Were Not Exported", text: String(error?.message ?? error)});
         } finally {
@@ -491,6 +497,9 @@ class PalantirApplicationSelection {
         PalantirProgress.update("Refreshing the applications...", null);
         await PalantirApplicationSelection.reload();
         PalantirProgress.close();
+        if (failed.length === 0) {
+            PalantirApplicationSelection.clear();
+        }
         const deleted = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
@@ -586,5 +595,161 @@ class PalantirApplicationSelection {
         $("button[name=clearServiceSelection]").off("click").on("click", () => PalantirApplicationSelection.clear());
         $("button[name=deleteAllServices]").off("click").on("click", () => PalantirApplicationSelection.deleteAll());
         PalantirApplicationSelection.refresh();
+    }
+}
+
+/**
+ * Rotating the client secrets of an OAuth or OpenID Connect application from its context menu, through the client
+ * secrets endpoint: every secret, or only the expired ones, is replaced by a new random secret that expires after the
+ * chosen duration. The new secrets are shown once, to be handed to the application, and the applications are read
+ * again. A public client, without secrets, is told so instead.
+ */
+class PalantirClientSecretRotation {
+    static DEFAULT_EXPIRATION = "P90D";
+
+    static applies(service) {
+        const type = String(service?.["@class"] ?? "");
+        return (type.includes("OAuthRegisteredService") || type.includes("OidcRegisteredService"))
+            && Boolean(CasActuatorEndpoints.oauthClientSecrets());
+    }
+
+    /**
+     * The address that rotates the secrets of a client.
+     *
+     * @param clientId the client id
+     * @param options expiredOnly to replace only expired secrets, expireIn for how long the new secrets last
+     * @returns {string} the endpoint address with its query
+     */
+    static url(clientId, {expiredOnly = false, expireIn = ""} = {}) {
+        const encodedClientId = encodeURIComponent(clientId);
+        let endpoint = CasActuatorEndpoints.oauthClientSecrets();
+        if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
+            endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
+        } else {
+            endpoint = `${endpoint}/${encodedClientId}`;
+        }
+        const query = new URLSearchParams({expiredOnly: String(expiredOnly)});
+        if (String(expireIn ?? "").trim()) {
+            query.append("expireIn", String(expireIn).trim());
+        }
+        return `${endpoint}?${query}`;
+    }
+
+    static secrets(service) {
+        return PalantirApplicationAccess.entries(service?.clientSecrets)
+            .map(secret => typeof secret === "string" ? {value: secret} : secret)
+            .filter(secret => secret?.value);
+    }
+
+    /**
+     * Whether a duration is one CAS reads: an ISO-8601 duration such as P90D or PT12H, or a number of seconds.
+     *
+     * @param value the duration
+     * @returns {boolean} true when it can be sent
+     */
+    static validDuration(value) {
+        return /^(P(?=\d|T\d)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?|\d+)$/i.test(String(value ?? "").trim());
+    }
+
+    static async open(serviceId) {
+        let service;
+        try {
+            service = await $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`);
+        } catch (xhr) {
+            displayBanner(xhr);
+            return;
+        }
+        const name = service?.name ?? String(serviceId);
+        const secrets = PalantirClientSecretRotation.secrets(service);
+        if (!service?.clientId || secrets.length === 0) {
+            await Swal.fire({
+                icon: "info",
+                titleText: "This Application Has No Client Secrets",
+                text: `${name} is a public client, so it has no secrets to rotate.`
+            });
+            return;
+        }
+        const result = await Swal.fire({
+            titleText: `Rotate Client Secrets of ${name}?`,
+            html: `
+                <form class="palantir-client-secret-rotation" onsubmit="return false;">
+                    <p>Each secret is replaced by a new one at once; ${escapePalantirMarkup(service.clientId)} stops working with the
+                       replaced secrets until it is given the new ones.</p>
+                    <label class="palantir-feature-switch" for="clientSecretRotationExpiredOnly">
+                        <input type="checkbox" role="switch" id="clientSecretRotationExpiredOnly">
+                        <span class="palantir-feature-switch__track" aria-hidden="true"></span>
+                        <span class="palantir-feature-switch__text">
+                            <strong>Only Expired Secrets</strong>
+                            <small>Keep the secrets that are still valid and replace only the expired ones.</small>
+                        </span>
+                    </label>
+                    <label for="clientSecretRotationExpireIn">New Secrets Expire In</label>
+                    <input id="clientSecretRotationExpireIn" class="swal2-input" autocomplete="off" spellcheck="false"
+                           value="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}" placeholder="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}">
+                    <p class="palantir-client-secret-rotation__hint">A duration such as P90D or PT12H, or a number of seconds.</p>
+                </form>`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Rotate Secrets",
+            focusConfirm: false,
+            preConfirm: () => {
+                const expireIn = String($("#clientSecretRotationExpireIn").val() ?? "").trim() || PalantirClientSecretRotation.DEFAULT_EXPIRATION;
+                if (!PalantirClientSecretRotation.validDuration(expireIn)) {
+                    Swal.showValidationMessage("Enter a duration such as P90D or PT12H, or a number of seconds.");
+                    return false;
+                }
+                return {expireIn, expiredOnly: $("#clientSecretRotationExpiredOnly").prop("checked") === true};
+            }
+        });
+        if (!result.isConfirmed) {
+            return;
+        }
+        let updated;
+        try {
+            updated = await $.ajax({
+                url: PalantirClientSecretRotation.url(service.clientId, result.value),
+                type: "POST",
+                headers: {"Content-Type": "application/json"}
+            });
+        } catch (xhr) {
+            displayBanner(xhr);
+            return;
+        }
+        const before = new Set(secrets.map(secret => secret.value));
+        const fresh = PalantirClientSecretRotation.secrets(updated).filter(secret => !before.has(secret.value));
+        await fetchServices();
+        await PalantirClientSecretRotation.show(name, fresh);
+    }
+
+    static async show(name, fresh) {
+        if (fresh.length === 0) {
+            await Swal.fire({
+                icon: "info",
+                titleText: "No Secrets Were Rotated",
+                text: `None of the secrets of ${name} had expired, so they were all kept.`
+            });
+            return;
+        }
+        const rows = fresh.map((secret, index) => `
+            <li class="palantir-client-secret-rotation__secret">
+                <code>${escapePalantirMarkup(secret.value)}</code>
+                <button type="button" class="mdc-button mdc-button--outlined" data-client-secret="${index}">
+                    <i class="mdi mdi-content-copy" aria-hidden="true"></i><span class="mdc-button__label">Copy</span>
+                </button>
+                ${secret.expiration ? `<small>Expires ${escapePalantirMarkup(palantirRecordDate(secret.expiration)
+        ? palantirRecordWhen(palantirRecordDate(secret.expiration)) : secret.expiration)}</small>` : ""}
+            </li>`).join("");
+        await Swal.fire({
+            icon: "success",
+            titleText: `${fresh.length} Client Secret${fresh.length === 1 ? "" : "s"} Rotated`,
+            html: `<p>Give the new secret${fresh.length === 1 ? "" : "s"} to ${escapePalantirMarkup(name)} now; they are not shown again.</p>
+                   <ul class="palantir-client-secret-rotation__secrets">${rows}</ul>`,
+            didOpen: popup => {
+                $(popup).on("click", "[data-client-secret]", event => {
+                    const secret = fresh[Number(event.currentTarget.dataset.clientSecret)];
+                    copyToClipboard(secret.value).then(() => notyf.success("Copied the client secret."));
+                });
+            }
+        });
     }
 }

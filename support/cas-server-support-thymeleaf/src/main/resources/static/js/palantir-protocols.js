@@ -75,8 +75,7 @@ function protocolConfigurationPropertiesMutable() {
  * @returns {Promise<void>} resolved once the configuration tab is ready
  */
 async function switchToConfigurationDynamicSourcesTabFromProtocol() {
-    activateDashboardTab(Tabs.CONFIGURATION.index);
-    selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+    PalantirPages.open(Tabs.CONFIGURATION);
     await initializeDashboardTab(Tabs.CONFIGURATION);
 }
 
@@ -90,8 +89,7 @@ let pendingSamlMetadataManager = null;
  */
 async function showSamlMetadataManager(sourceId) {
     pendingSamlMetadataManager = sourceId;
-    activateDashboardTab(Tabs.PROTOCOLS.index);
-    selectSidebarMenuTab(Tabs.PROTOCOLS.index);
+    PalantirPages.open(Tabs.PROTOCOLS);
     await initializeDashboardTab(Tabs.PROTOCOLS);
     const outer = $("#protocols-tabs");
     const protocol = outer.find("> ul > li").index($("#saml2protocol").closest("li"));
@@ -419,23 +417,10 @@ function showOidcJwks() {
 }
 
 function buildOidcClientSecretRotationEndpoint() {
-    const clientId = $("#oidcClientSecretRotationClientId").val()?.trim();
-    const expireIn = $("#oidcClientSecretRotationExpireIn").val()?.trim();
-    const expiredOnly = $("#oidcClientSecretRotationExpiredOnly").val() === "true";
-    const encodedClientId = encodeURIComponent(clientId);
-    let endpoint = CasActuatorEndpoints.oauthClientSecrets();
-    if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
-        endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
-    } else {
-        endpoint = `${endpoint}/${encodedClientId}`;
-    }
-    const query = new URLSearchParams();
-    query.append("expiredOnly", expiredOnly);
-    if (expireIn) {
-        query.append("expireIn", expireIn);
-    }
-    const queryString = query.toString();
-    return `${endpoint}${queryString ? `?${queryString}` : ""}`;
+    return PalantirClientSecretRotation.url($("#oidcClientSecretRotationClientId").val()?.trim(), {
+        expiredOnly: $("#oidcClientSecretRotationExpiredOnly").val() === "true",
+        expireIn: $("#oidcClientSecretRotationExpireIn").val()?.trim()
+    });
 }
 
 function renderOidcClientSecretRotationResult(response) {
@@ -554,7 +539,7 @@ async function initializeOidcProtocolOperations() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $("#oidcKeyRotationButton").prop("disabled", true);
-                        $.get(`${CasActuatorEndpoints.oidcJwks()}/rotate`, response => {
+                        $.post(`${CasActuatorEndpoints.oidcJwks()}/rotate`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully rotated.",
@@ -580,10 +565,10 @@ async function initializeOidcProtocolOperations() {
                 showConfirmButton: true,
                 showDenyButton: true
             })
-                .then((willDo) => {
-                    if (willDo) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $("#oidcKeyRevocationButton").prop("disabled", true);
-                        $.get(`${CasActuatorEndpoints.oidcJwks()}/revoke`, response => {
+                        $.post(`${CasActuatorEndpoints.oidcJwks()}/revoke`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully revoked.",
@@ -685,7 +670,7 @@ async function initializeOidcProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const oidcConfigurationPropsTable = $("#oidcConfigurationPropsTable").DataTable({
-        deferRender: true,
+                deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {
@@ -736,7 +721,7 @@ async function initializeOidcProtocolOperations() {
             });
 
             function deleteOidcClientJwksEntry(context) {
-                const jkt = context.rowData.jkt;
+                const {jkt, clientId} = context.rowData;
                 Swal.fire({
                     title: "Are you sure you want to delete this client JWKS entry?",
                     text: "Once deleted, the change will take effect immediately.",
@@ -746,7 +731,7 @@ async function initializeOidcProtocolOperations() {
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.oidcJwks()}/clients/${jkt}`,
+                            url: `${CasActuatorEndpoints.oidcJwks()}/clients/${encodeURIComponent(clientId)}/${encodeURIComponent(jkt)}`,
                             type: "DELETE",
                             success: (response, textStatus, jqXHR) => {
                                 Swal.fire({
@@ -784,10 +769,12 @@ async function initializeOidcProtocolOperations() {
                 oidcClientJwksTable.clear();
                 for (const entry of response) {
                     oidcClientJwksTable.row.add({
-                        0: `${palantirCode(entry.jkt)}`,
-                        1: `${palantirCode(entry.createdAt)}`,
-                        2: `${palantirCode(entry.jwk)}`,
-                        jkt: entry.jkt
+                        0: `${palantirCode(entry.clientId)}`,
+                        1: `${palantirCode(entry.jkt)}`,
+                        2: `${palantirCode(entry.createdAt)}`,
+                        3: `${palantirCode(entry.jwk)}`,
+                        jkt: entry.jkt,
+                        clientId: entry.clientId
                     });
                 }
                 oidcClientJwksTable.draw();
@@ -1007,9 +994,8 @@ async function initializeSAML2ProtocolOperations() {
                         "serviceId": entityIdValue,
                         "metadataLocation": "mongodb://"
                     };
-                    activateDashboardTab(Tabs.APPLICATIONS.index);
-                    selectSidebarMenuTab(Tabs.APPLICATIONS.index);
-                    setTimeout(() => openRegisteredServiceWizardDialog(partialService), 150);
+                    PalantirPages.open(Tabs.APPLICATIONS);
+                    setTimeout(() => openPalantirWizard(partialService), 150);
                 } else {
                     displayBanner("CAS is unable to register this entry as a SAML2 Service Provider");
                 }
@@ -1133,7 +1119,7 @@ async function initializeSAML2ProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
-        deferRender: true,
+                deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {
