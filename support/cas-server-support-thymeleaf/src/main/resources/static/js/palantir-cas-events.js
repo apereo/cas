@@ -52,6 +52,65 @@ async function initializeCasEventsOperations() {
     }
 }
 
+/**
+ * What an audit record was for: an application, by name, that opens its definition, or another target, such as a
+ * multifactor provider, as it is recorded. Shared by the audit log and the activity of a user on the Users page.
+ *
+ * @param {string} target the target, or nothing
+ * @returns {string} the cell
+ */
+function palantirAuditTarget(target) {
+    if (!target) {
+        return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
+    }
+    const value = String(target);
+    if (/^\d+$/.test(value) && CasActuatorEndpoints.registeredServices()) {
+        const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(value)?.name : null;
+        return `<button type="button" class="audit-target-application" data-audit-application="${escapePalantirMarkup(value)}"
+                    title="Open application ${escapePalantirMarkup(value)}">
+                    <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                    <span>${escapePalantirMarkup(name ?? `Application ${value}`)}</span>
+                </button>`;
+    }
+    return `<code class="audit-target-value">${escapePalantirMarkup(value)}</code>`;
+}
+
+/**
+ * Name the applications of the audit targets shown in a table that Palantir has not listed yet, reading each once, and
+ * mark the ones that no longer exist.
+ *
+ * @param {string} table the table
+ */
+function namePalantirAuditTargetApplications(table) {
+    if (typeof palantirApplicationName !== "function") {
+        return;
+    }
+    $(table).find("[data-audit-application]").each((index, button) => {
+        const id = button.dataset.auditApplication;
+        palantirApplicationName(id).then(name => {
+            $(button).find("span").text(name);
+            if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
+                $(button).addClass("is-gone").attr("title", "This application no longer exists");
+            }
+        });
+    });
+}
+
+/**
+ * Open the application an audit target names, from any table that shows audit targets.
+ *
+ * @param {Event} event the click on the target
+ */
+function openPalantirAuditTargetApplication(event) {
+    event.stopPropagation();
+    const id = event.currentTarget.dataset.auditApplication;
+    if (typeof openTopApplication === "function") {
+        openTopApplication(id);
+    } else if (typeof navigateToApplication === "function") {
+        navigateToApplication(id);
+    }
+}
+
 async function initializeAuditEventsOperations() {
     if (CasActuatorEndpoints.auditLog()) {
         function escapeHtml(str) {
@@ -219,46 +278,6 @@ async function initializeAuditEventsOperations() {
                         <i class="mdi mdi-account" aria-hidden="true"></i>
                         <code>${parts.join("<wbr>")}</code>
                     </span>`;
-        }
-
-        /**
-         * What an audit record was for: an application, by name, that opens its definition, or another target, such
-         * as a multifactor provider, as it is recorded.
-         *
-         * @param {string} target the target, or nothing
-         * @returns {string} the cell
-         */
-        function renderAuditTarget(target) {
-            if (!target) {
-                return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
-            }
-            if (/^\d+$/.test(target) && CasActuatorEndpoints.registeredServices()) {
-                const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(target)?.name : null;
-                return `<button type="button" class="audit-target-application" data-audit-application="${escapeHtml(target)}"
-                            title="Open application ${escapeHtml(target)}">
-                            <i class="mdi mdi-application-outline" aria-hidden="true"></i>
-                            <span>${escapeHtml(name ?? `Application ${target}`)}</span>
-                        </button>`;
-            }
-            return `<code class="audit-target-value">${escapeHtml(target)}</code>`;
-        }
-
-        /**
-         * Name the applications of the rows shown that Palantir has not listed yet, reading each once.
-         */
-        function nameAuditTargetApplications() {
-            if (typeof palantirApplicationName !== "function") {
-                return;
-            }
-            $("#auditEventsTable [data-audit-application]").each((index, button) => {
-                const id = button.dataset.auditApplication;
-                palantirApplicationName(id).then(name => {
-                    $(button).find("span").text(name);
-                    if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
-                        $(button).addClass("is-gone").attr("title", "This application no longer exists");
-                    }
-                });
-            });
         }
 
         function renderAuditResourceSummary(data, row) {
@@ -446,7 +465,7 @@ async function initializeAuditEventsOperations() {
                 {
                     data: "target",
                     width: "11rem",
-                    render: (data, type) => type === "display" ? renderAuditTarget(data) : data
+                    render: (data, type) => type === "display" ? palantirAuditTarget(data) : data
                 },
                 {
                     data: "date",
@@ -467,19 +486,11 @@ async function initializeAuditEventsOperations() {
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
-                nameAuditTargetApplications();
+                namePalantirAuditTargetApplications("#auditEventsTable");
                 updateAuditActionsChart();
             }
         });
-        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", event => {
-            event.stopPropagation();
-            const id = event.currentTarget.dataset.auditApplication;
-            if (typeof openTopApplication === "function") {
-                openTopApplication(id);
-            } else if (typeof navigateToApplication === "function") {
-                navigateToApplication(id);
-            }
-        });
+        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", openPalantirAuditTargetApplication);
         updateAuditActionsChart();
 
         let auditEventsRequestInFlight = false;

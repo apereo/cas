@@ -58,6 +58,9 @@ General view, theme and template rules are in the `cas-ui` skill.
   `openPalantirWizard(...)`. A new wizard script goes in that list, not in the page.
 - In a `th:inline="javascript"` block, never write `[` directly before an inlined `/*[[...]]*/` (as in `[/*[[...]]*/]`):
   Thymeleaf reads `[/` as a closing element and the page fails to render. Put the value on its own line.
+- A page whose link can name something (`PalantirLinks.DETAILS`) also clears it when its bare link is followed
+  (`PalantirLinks.CLEARED`), so Back to `#users` shows no user; decide whether an application exists from its own
+  read, never from the list read earlier.
 - `PalantirPanelFocus` (palantir-utils.js) focuses the first usable text field of a page or inner tab when it is shown;
   don't add per-page focus calls on activation. Mark a better field `data-palantir-autofocus`, or keep a region out with
   `data-palantir-no-autofocus`. Esc in a page field blurs it. A scenario that presses single-key shortcuts after switching

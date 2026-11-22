@@ -1208,7 +1208,6 @@ class PalantirSamlMetadataImport {
         set("attributeReleasePolicy", "Attribute Release Policy", policy ? {"@class": policy} : null);
 
         const contacts = [...children(entity, ns.md, "ContactPerson"), ...children(provider, ns.md, "ContactPerson")]
-            .slice(0, 3)
             .map(person => {
                 const text = name => children(person, ns.md, name).map(element => element.textContent.trim()).find(Boolean) ?? "";
                 const contact = {"@class": "org.apereo.cas.services.DefaultRegisteredServiceContact"};

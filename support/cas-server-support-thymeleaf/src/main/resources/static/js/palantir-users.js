@@ -215,8 +215,14 @@ class PalantirUserLookup {
                     </div>`,
                 afterRender: async () => {
                     PalantirAttributeRelease.selected = null;
-                    PalantirAttributeRelease.choices = await PalantirAttributeRelease.applications();
-                    const input = $("#userReleaseApplication");
+                    const sequence = PalantirUserLookup.lookupSequence;
+                    const field = document.getElementById("userReleaseApplication");
+                    const choices = await PalantirAttributeRelease.applications();
+                    if (sequence !== PalantirUserLookup.lookupSequence || !field?.isConnected || $(field).autocomplete("instance")) {
+                        return;
+                    }
+                    PalantirAttributeRelease.choices = choices;
+                    const input = $(field);
                     PalantirApplicationSuggestions.attach(input, {
                         field: "#userReleaseApplicationField",
                         source: term => PalantirAttributeRelease.choices.filter(service => PalantirApplicationSuggestions.matches(service, term)),
@@ -325,6 +331,7 @@ class PalantirUserLookup {
                         <tr class="mdc-data-table__header-row">
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">When</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Action</th>
+                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Target</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Resource</th>
                             <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client</th>
                         </tr>
@@ -343,21 +350,29 @@ class PalantirUserLookup {
                                 render: (data, type) => type === "display"
                                     ? escapePalantirMarkup(PalantirUserLookup.when(data)) : data
                             },
-                            {targets: 2, className: "palantir-user-card__resource"}
+                            {
+                                targets: 2,
+                                render: (data, type) => type === "display" ? palantirAuditTarget(data) : data
+                            },
+                            {targets: 3, className: "palantir-user-card__resource"}
                         ],
                         drawCallback: () => {
                             $("#userLookupActivityTable tr").addClass("mdc-data-table__row");
                             $("#userLookupActivityTable td").addClass("mdc-data-table__cell");
+                            namePalantirAuditTargetApplications("#userLookupActivityTable");
                         }
                     });
+                    $("#userLookupActivityTable").off("click.auditTarget")
+                        .on("click.auditTarget", "[data-audit-application]", openPalantirAuditTargetApplication);
                     for (const record of records) {
                         const resource = typeof record.resourceOperatedUpon === "string"
                             ? record.resourceOperatedUpon : JSON.stringify(record.resourceOperatedUpon ?? "");
                         table.row.add({
                             0: String(record.whenActionWasPerformed ?? ""),
                             1: `${palantirCode(record.actionPerformed ?? "")}`,
-                            2: escapePalantirMarkup(resource),
-                            3: escapePalantirMarkup(record.clientInfo?.clientIpAddress ?? "")
+                            2: record.target ? String(record.target) : "",
+                            3: escapePalantirMarkup(resource),
+                            4: escapePalantirMarkup(record.clientInfo?.clientIpAddress ?? "")
                         });
                     }
                     table.draw();
@@ -663,6 +678,23 @@ class PalantirUserLookup {
     }
 
     /**
+     * Show no user: what an earlier lookup found is taken off the page, and the answers it is still waiting for are
+     * dropped when they arrive.
+     */
+    static clear() {
+        PalantirUserLookup.lookupSequence++;
+        PalantirUserLookup.currentUsername = "";
+        PalantirUserLookup.tokens = new Map();
+        PalantirUserLookup.resolvedAttributes = null;
+        PalantirUserLookup.counts = new Map();
+        $("#userLookupResults table").filter((index, table) => $.fn.dataTable.isDataTable(table))
+            .each((index, table) => $(table).DataTable().destroy());
+        $("#userLookupResults").empty();
+        $("#userLookupSummary").text("");
+        $("#userLookupUsername").val("");
+    }
+
+    /**
      * Look up a user: draw a loading card per available source, load them all in parallel, then
      * summarize what was found.
      *
@@ -695,7 +727,10 @@ class PalantirUserLookup {
     }
 
     /**
-     * Run a card action after the operator confirms it, then reload that card.
+     * Run a card action after the operator confirms it, then reload that card. What the action changes is settled when
+     * its button is clicked, for the user then shown and named in the question, so going Back or looking up someone
+     * else while the question is open never turns it on another user; the card is reloaded only if that user is still
+     * shown.
      *
      * @param button the action button that was clicked
      */
@@ -741,6 +776,9 @@ class PalantirUserLookup {
         if (!action || !source) {
             return;
         }
+        const username = PalantirUserLookup.currentUsername;
+        const sequence = PalantirUserLookup.lookupSequence;
+        const urls = action.urls ? action.urls() : [action.url()];
         Swal.fire({
             titleText: action.title,
             text: action.text ?? "This cannot be undone.",
@@ -751,7 +789,6 @@ class PalantirUserLookup {
             if (!result.isConfirmed) {
                 return;
             }
-            const urls = action.urls ? action.urls() : [action.url()];
             for (const url of urls) {
                 try {
                     await $.ajax({url: url, type: "DELETE", contentType: "application/x-www-form-urlencoded"});
@@ -760,7 +797,9 @@ class PalantirUserLookup {
                     break;
                 }
             }
-            await PalantirUserLookup.loadSource(source, PalantirUserLookup.currentUsername, PalantirUserLookup.lookupSequence);
+            if (sequence === PalantirUserLookup.lookupSequence) {
+                await PalantirUserLookup.loadSource(source, username, sequence);
+            }
         });
     }
 }

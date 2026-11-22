@@ -97,11 +97,15 @@ class PalantirPages {
  * Forward, shows what it names.
  */
 class PalantirLinks {
-    static applying = false;
+    static following = null;
 
     static DETAILS = {
         applications: id => navigateToApplication(id),
         users: username => lookUpPalantirUser(username)
+    };
+
+    static CLEARED = {
+        users: () => PalantirUserLookup.clear()
     };
 
     /**
@@ -140,15 +144,24 @@ class PalantirLinks {
     }
 
     /**
-     * Put what is shown in the address bar, unless a link is being followed, which is already there.
+     * Put what is shown in the address bar, unless it is what a link being followed shows, which is already there. Any
+     * other page or detail shown meanwhile, such as the operator opening another page while a user is still being
+     * looked up, takes over from that link, so the address follows what is on screen.
      *
      * @param tab the page shown
      * @param detail what on it, if anything
      */
     static shown(tab, detail = null) {
         const page = Tabs.of(tab);
-        if (PalantirLinks.applying || !page || page.index >= Tabs.SETTINGS.index) {
+        if (!page || page.index >= Tabs.SETTINGS.index) {
             return;
+        }
+        const following = PalantirLinks.following;
+        if (following !== null) {
+            if (following.tab === page && (detail === null || String(detail) === following.detail)) {
+                return;
+            }
+            PalantirLinks.following = null;
         }
         const current = PalantirLinks.parse(location.hash);
         if (detail === null && current.tab === page) {
@@ -163,7 +176,10 @@ class PalantirLinks {
     }
 
     /**
-     * Show what a link names: its page, then the application or user it names on that page.
+     * Show what a link names: its page, then the application or user it names on that page. A link to a page that
+     * names nothing on it, such as going Back to #users after looking someone up, leaves nothing named shown.
+     * A link another navigation took over from while its page was being prepared, such as the operator opening another
+     * page, stops there instead of bringing its page back.
      *
      * @param hash the fragment of the link
      * @returns {Promise<boolean>} true when the link named a page that is offered here
@@ -173,17 +189,25 @@ class PalantirLinks {
         if (!tab || !PalantirPages.available(tab)) {
             return false;
         }
-        PalantirLinks.applying = true;
+        const following = {tab, detail};
+        PalantirLinks.following = following;
         try {
             if (currentActiveTab !== tab.index || !isDashboardTabInitialized(tab)) {
                 PalantirPages.open(tab);
             }
             await initializeDashboardTab(tab);
+            if (PalantirLinks.following !== following) {
+                return true;
+            }
             if (detail !== null && PalantirLinks.DETAILS[tab.key]) {
                 await PalantirLinks.DETAILS[tab.key](detail);
+            } else if (detail === null && PalantirLinks.CLEARED[tab.key]) {
+                PalantirLinks.CLEARED[tab.key]();
             }
         } finally {
-            PalantirLinks.applying = false;
+            if (PalantirLinks.following === following) {
+                PalantirLinks.following = null;
+            }
         }
         return true;
     }
@@ -278,6 +302,8 @@ function registerDashboardTabInitializers(dashboardTab, ...initializers) {
  *
  * Failures are logged rather than rethrown: one tab that cannot initialize -- an actuator endpoint
  * that answers 403, say -- must not stop the operator from using the rest of the dashboard.
+ * A tab whose scripts could not be fetched is not initialized at all, and not marked as initialized, so going back to
+ * it tries again instead of leaving its controls unbound.
  *
  * @param dashboardTab the tab, or its numeric index
  * @returns {Promise<void>} resolved once the tab's initializers have run
@@ -294,6 +320,8 @@ function initializeDashboardTab(dashboardTab) {
             await PalantirScripts.forPage(tabIndex);
         } catch (e) {
             PalantirScripts.failed(e);
+            palantirTabInitialization.delete(tabIndex);
+            return;
         }
         initializePalantirWidgets(document.getElementById(`attribute-tab-${tabIndex}`));
         const shownEarly = showStoredTabs();
@@ -720,17 +748,26 @@ async function updateNavigationSidebar() {
     updatePalantirNavigationGroups();
 }
 
+let palantirApplicationNavigation = 0;
+
 /**
  * Select a registered service on the applications tab, revealing that tab first. The applications are read again
- * when the service is not among them yet, such as when it was just saved.
+ * when the service is not among them yet, such as when it was just saved. When the operator moves to another page, or
+ * to another application, while the applications are prepared or read, nothing is selected and the address is left to
+ * the newer navigation.
  *
  * @param serviceIdToFind the registered service id to look for
  */
 async function navigateToApplication(serviceIdToFind) {
+    const navigation = ++palantirApplicationNavigation;
     if (currentActiveTab !== Tabs.APPLICATIONS.index) {
         PalantirPages.open(Tabs.APPLICATIONS);
     }
+    const stillShown = () => currentActiveTab === Tabs.APPLICATIONS.index && navigation === palantirApplicationNavigation;
     await initializeDashboardTab(Tabs.APPLICATIONS);
+    if (!stillShown()) {
+        return;
+    }
     const tabs = $("#applications-tabs");
     if (tabs.data("ui-tabs")) {
         tabs.tabs("option", "active", 0);
@@ -738,6 +775,9 @@ async function navigateToApplication(serviceIdToFind) {
     const id = String(serviceIdToFind);
     if (!registeredServicesById.has(id)) {
         await fetchServices();
+        if (!stillShown()) {
+            return;
+        }
     }
     if (!revealApplicationRow(id)) {
         displayBanner(`Could not find a registered service with id ${id}`);

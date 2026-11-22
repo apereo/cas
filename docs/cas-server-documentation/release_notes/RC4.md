@@ -542,7 +542,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .changed data-area="tickets"} Looking up the OAuth and OpenID Connect tokens of one user asks the ticket registry for
   that user's access and refresh tokens instead of reading every ticket, so registries that keep track of users, such
   as JPA, MongoDb, Hazelcast, DynamoDb, Cassandra, Ignite, Geode and Google Cloud Firestore, read only that user's
-  tokens, and Redis reads only the user each token records before reading the tokens of that user. Asking these
+  tokens. Redis keeps an index of each user's OAuth and OpenID Connect tokens and codes, as it does for single sign-on
+  sessions, and reads only those. Asking these
   registries for the tickets of one type and user, as other features do, is answered the same way. [Palantir](../installation/Admin-Dashboard.html) shows the tokens of a user with the rest of the user's
   records, without a separate button. How the user is matched, such as whether case matters, follows the registry.
 - {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in

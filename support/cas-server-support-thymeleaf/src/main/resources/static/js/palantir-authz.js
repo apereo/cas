@@ -2012,6 +2012,9 @@ class PalantirAccessCheck {
             const response = await $.get(CasActuatorEndpoints.registeredServices());
             (Array.isArray(response?.[1]) ? response[1] : []).forEach(service => registeredServicesById.set(String(service.id), service));
             registeredServicesVersion++;
+            if (typeof palantirListedApplications === "function") {
+                palantirListedApplications();
+            }
         } catch (error) {
             console.debug("Palantir could not read the registered applications for the access check", error);
         }

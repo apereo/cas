@@ -469,6 +469,22 @@ class PalantirCommandPalette {
         });
     }
 
+    static POSITION = {my: "center", at: "center", of: window, collision: "fit"};
+
+    /**
+     * The size of the palette: wide and tall enough to read long section paths and many results at once, within the
+     * window. Its height is fixed rather than following its results, so it stays in the middle of the screen as they
+     * change while typing.
+     *
+     * @returns {{width: number, height: number}} the size
+     */
+    static size() {
+        return {
+            width: Math.min(880, window.innerWidth - 32),
+            height: Math.min(640, window.innerHeight - 48)
+        };
+    }
+
     static dialog() {
         let dialog = $("#palantirCommandPalette");
         if (dialog.length > 0) {
@@ -492,10 +508,12 @@ class PalantirCommandPalette {
         dialog.dialog({
             autoOpen: false,
             modal: true,
-            width: Math.min(640, window.innerWidth - 32),
+            ...PalantirCommandPalette.size(),
             classes: {"ui-dialog": "palantir-command-palette-dialog"},
-            position: {my: "center top", at: "center top+80", of: window},
+            position: PalantirCommandPalette.POSITION,
             open: () => {
+                $(window).off("resize.palantirCommandPalette").on("resize.palantirCommandPalette",
+                    () => dialog.dialog("option", {...PalantirCommandPalette.size(), position: PalantirCommandPalette.POSITION}));
                 const input = $("#palantirCommandPaletteInput");
                 const {query} = PalantirCommandPalette.remembered();
                 PalantirCommandPalette.restoring = true;
@@ -504,6 +522,7 @@ class PalantirCommandPalette {
                 input.paletteautocomplete("search", query);
             },
             close: () => {
+                $(window).off("resize.palantirCommandPalette");
                 const input = $("#palantirCommandPaletteInput");
                 PalantirCommandPalette.restoring = false;
                 PalantirCommandPalette.remember({query: String(input.val() ?? "")});

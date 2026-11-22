@@ -102,6 +102,18 @@ async function verifyCommandPalette(page) {
     await page.keyboard.press("k");
     await page.keyboard.up("Control");
     const first = await searchCommandPalette(page, target.label);
+    const placement = await page.evaluate(() => {
+        const box = $(".palantir-command-palette-dialog")[0].getBoundingClientRect();
+        return {
+            width: Math.round(box.width),
+            expectedWidth: Math.min(880, window.innerWidth - 32),
+            offsetX: Math.round(box.left + box.width / 2 - window.innerWidth / 2),
+            offsetY: Math.round(box.top + box.height / 2 - window.innerHeight / 2)
+        };
+    });
+    await cas.log(`Command palette placement: ${JSON.stringify(placement)}`);
+    assert(Math.abs(placement.width - placement.expectedWidth) <= 2 && Math.abs(placement.offsetX) <= 2 && Math.abs(placement.offsetY) <= 2);
+    await cas.logg("The command palette is large and in the middle of the screen");
     await cas.logg(`Command palette offers ${first} first for "${target.label}"`);
     assert(first === target.label);
     await page.keyboard.press("Enter");
@@ -232,10 +244,33 @@ async function verifyUserLookup(page, failures) {
         assert(release.styled && /Application/.test(release.header) && release.first);
         assert(release.selected !== null && release.picked === release.selected && release.select === 0);
     }
+    const activity = await page.evaluate(() => ({
+        shown: $("#userLookupActivityTable").length > 0,
+        headers: $("#userLookupActivityTable thead th").toArray().map((cell) => cell.textContent.trim()),
+        targets: $("#userLookupActivityTable tbody td:nth-child(3)").toArray()
+            .filter((cell) => $(cell).find(".audit-target-application, .audit-target-value, .audit-target-none").length > 0).length,
+        rows: $("#userLookupActivityTable tbody tr").not(":has(.dt-empty)").length
+    }));
+    await cas.log(`Recent activity of the user: ${JSON.stringify(activity)}`);
+    if (activity.shown) {
+        assert(JSON.stringify(activity.headers) === JSON.stringify(["When", "Action", "Target", "Resource", "Client"]));
+        assert(activity.targets === activity.rows);
+        await cas.logg("Recent activity lists the target of each record, as the audit log does");
+    }
+    await cas.screenshot(page);
+    const linked = await page.evaluate(() => location.hash);
+    assert(linked.startsWith("#users/"), `The lookup is linked as ${linked}`);
+    await page.evaluate(() => history.back());
+    await page.waitForFunction(() => location.hash === "#users" && $("#userLookupResults").children().length === 0
+        && $("#userLookupSummary").text() === "" && $("#userLookupUsername").val() === "", {timeout: 10000});
+    await cas.logg(`Going Back from ${linked} to #users clears the user that was shown`);
+    await page.evaluate(() => history.forward());
+    await page.waitForFunction((hash) => location.hash === hash && $("#userLookupResults .palantir-user-card").length > 0,
+        {timeout: 60000}, linked);
+    await cas.logg(`Going Forward to ${linked} shows that user again`);
     const unexpected = failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
         && !/status of 404/.test(failure));
     failures.push(...unexpected);
-    await cas.screenshot(page);
 }
 
 /**

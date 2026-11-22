@@ -176,19 +176,48 @@ class PalantirServiceEditGuard {
      *
      * @param value the draft definition or part of it
      * @param source the same part of the definition the dialog opens with
+     * @param secret whether this part lies under a secret, such as the entries of the client secrets, which the draft
+     *        left out whole
      * @returns {*} the definition with its secrets
      */
-    static restore(value, source) {
+    static restore(value, source, secret = false) {
         if (value === PalantirServiceEditGuard.REDACTED) {
             return typeof source === "string" && source !== PalantirServiceEditGuard.REDACTED ? source : "";
         }
         if (Array.isArray(value)) {
-            const counterparts = PalantirServiceEditGuard.counterparts(value, Array.isArray(source) ? source : []);
-            return value.map((entry, index) => PalantirServiceEditGuard.restore(entry, counterparts[index]));
+            const counterparts = PalantirServiceEditGuard.counterparts(value, Array.isArray(source) ? source : [], secret);
+            return value.map((entry, index) => PalantirServiceEditGuard.restore(entry, counterparts[index], secret));
         }
         if (value !== null && typeof value === "object") {
             const from = source !== null && typeof source === "object" && !Array.isArray(source) ? source : {};
-            return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, PalantirServiceEditGuard.restore(entry, from[key])]));
+            return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, key === "@class"
+                ? entry
+                : PalantirServiceEditGuard.restore(entry, from[key], secret || PalantirServiceEditGuard.isSecret(key))]));
+        }
+        return value;
+    }
+
+    /**
+     * Put back the secrets of the saved definition an edit started from, each from the very same place in the definition
+     * the dialog opens with. That saved definition is only compared with the application as it is now, to tell whether
+     * someone else changed it: where nobody did, the two are the same place for place, so its secrets come back exactly,
+     * however alike its entries are; where somebody did, the comparison finds the change anyway.
+     *
+     * @param value the saved definition as the draft kept it, or part of it
+     * @param source the same part of the definition the dialog opens with
+     * @returns {*} the saved definition with its secrets
+     */
+    static restoreInPlace(value, source) {
+        if (value === PalantirServiceEditGuard.REDACTED) {
+            return typeof source === "string" && source !== PalantirServiceEditGuard.REDACTED ? source : "";
+        }
+        if (Array.isArray(value)) {
+            const from = Array.isArray(source) ? source : [];
+            return value.map((entry, index) => PalantirServiceEditGuard.restoreInPlace(entry, from[index]));
+        }
+        if (value !== null && typeof value === "object") {
+            const from = source !== null && typeof source === "object" && !Array.isArray(source) ? source : {};
+            return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key, PalantirServiceEditGuard.restoreInPlace(entry, from[key])]));
         }
         return value;
     }
@@ -196,28 +225,32 @@ class PalantirServiceEditGuard {
     /**
      * The entry of the definition the dialog opens with that each entry of a list in a draft came from. Entries such as
      * the policies of a chain may have been moved or removed in the draft, so an object is matched to an object of its
-     * type it still equals once secrets are left out. The one object changed in the draft is matched to the object at
-     * its place only when the list was neither reordered nor shortened: it kept its length and every other object still
-     * equals the one at its own place. Otherwise, as when several objects changed, an entry that matches nothing gets
+     * type it still equals once secrets are left out, whatever the order of their keys, except in maps that keep their
+     * order. When several such objects equal it, it gets no secret at all: a draft cannot tell those objects apart, not
+     * even by place, since swapping them leaves the draft as it was. The one object changed in the draft is matched to
+     * the object at its place only when the list was neither reordered nor shortened: it kept its length and every
+     * other object still equals the one at its own place. Otherwise, as when several objects changed, an entry that matches nothing gets
      * no secret, rather than possibly the secret of another.
      *
      * @param value the list in the draft
      * @param source the same list in the definition the dialog opens with
+     * @param secret whether the list lies under a secret, so its entries are compared left out as the draft left them
      * @returns {Array} the counterpart of each entry, or undefined
      */
-    static counterparts(value, source) {
+    static counterparts(value, source, secret = false) {
         const isObject = entry => entry !== null && typeof entry === "object" && !Array.isArray(entry);
-        const redacted = source.map(candidate => isObject(candidate) ? JSON.stringify(PalantirServiceEditGuard.redact(candidate)) : null);
+        const canonical = entry => PalantirServiceHistory.canonical(entry);
+        const redacted = source.map(candidate => isObject(candidate) ? canonical(PalantirServiceEditGuard.redact(candidate, secret)) : null);
         const used = new Set();
         const found = value.map((entry, index) => isObject(entry) ? undefined : source[index]);
         value.forEach((entry, index) => {
             if (!isObject(entry)) {
                 return;
             }
-            const shape = JSON.stringify(entry);
+            const shape = canonical(entry);
             const candidates = source.map((candidate, at) => at)
                 .filter(at => !used.has(at) && isObject(source[at]) && source[at]["@class"] === entry["@class"] && redacted[at] === shape);
-            const at = candidates.includes(index) ? index : candidates[0];
+            const at = candidates.length === 1 ? candidates[0] : undefined;
             if (at !== undefined) {
                 used.add(at);
                 found[index] = source[at];
@@ -393,7 +426,7 @@ class PalantirServiceEditGuard {
      * @returns {object} the draft with its secrets
      */
     static withSecretsFrom(draft, source) {
-        const fill = text => {
+        const fill = (text, restore) => {
             try {
                 let from = null;
                 try {
@@ -401,7 +434,7 @@ class PalantirServiceEditGuard {
                 } catch (error) {
                     from = null;
                 }
-                return JSON.stringify(PalantirServiceEditGuard.restore(JSON.parse(text), from), null, 4);
+                return JSON.stringify(restore(JSON.parse(text), from), null, 4);
             } catch (error) {
                 return text;
             }
@@ -412,8 +445,10 @@ class PalantirServiceEditGuard {
         }
         return {
             ...draft,
-            text: fill(draft.text),
-            original: draft.original?.text ? {...draft.original, text: fill(draft.original.text)} : draft.original
+            text: fill(draft.text, PalantirServiceEditGuard.restore),
+            original: draft.original?.text
+                ? {...draft.original, text: fill(draft.original.text, PalantirServiceEditGuard.restoreInPlace)}
+                : draft.original
         };
     }
 

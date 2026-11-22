@@ -221,6 +221,21 @@ async function verifySamlMetadataManage(page) {
     assert(names.uploaded !== "" && names.displayName === "Example Portal" && names.organization === "Example Org");
     assert(names.host === "wiki.example.org" && names.urn === "portal" && names.broken === "");
 
+    const contacts = await page.evaluate(() => {
+        const md = "urn:oasis:names:tc:SAML:2.0:metadata";
+        const person = (type, name, email = "") => `<md:ContactPerson contactType="${type}"><md:GivenName>${name}</md:GivenName>${
+            email ? `<md:EmailAddress>mailto:${email}</md:EmailAddress>` : ""}</md:ContactPerson>`;
+        const xml = `<md:EntityDescriptor xmlns:md="${md}" entityID="https://contacts.example.org/sp">
+            <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"/>
+            ${person("technical", "One", "one@example.org")}${person("support", "Two")}${person("administrative", "Three")}${person("other", "Four")}
+            </md:EntityDescriptor>`;
+        const entity = new DOMParser().parseFromString(xml, "application/xml").documentElement;
+        const imported = PalantirSamlMetadataImport.describe(entity, "").definition.contacts?.[1] ?? [];
+        return imported.map((contact) => contact.name);
+    });
+    await cas.log(`Contacts imported from metadata: ${JSON.stringify(contacts)}`);
+    assert(JSON.stringify(contacts) === JSON.stringify(["One", "Two", "Three", "Four"]));
+
     const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
     await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
     await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard

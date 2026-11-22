@@ -540,6 +540,9 @@ async function fetchServices(callback) {
             applicationsTable.clear();
             registeredServicesById.clear();
             registeredServicesVersion++;
+            if (typeof palantirListedApplications === "function") {
+                palantirListedApplications();
+            }
 
             for (const service of response[1]) {
                 registeredServicesById.set(String(service.id), service);

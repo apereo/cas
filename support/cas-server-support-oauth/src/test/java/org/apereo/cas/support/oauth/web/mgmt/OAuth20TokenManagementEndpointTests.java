@@ -115,7 +115,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    void verifyTokensOfUserAreQueriedByTypeAndUser() {
+    void verifyTokensOfUserAreQueriedByTypeAndUserAndListedOnce() {
         val criteria = new ArrayList<TicketRegistryQueryCriteria>();
         val registry = mock(TicketRegistry.class);
         val issued = mock(OAuth20AccessToken.class);
@@ -131,7 +131,7 @@ class OAuth20TokenManagementEndpointTests extends AbstractOAuth20Tests {
         when(registry.query(any(TicketRegistryQueryCriteria.class))).thenAnswer(invocation -> {
             val given = invocation.getArgument(0, TicketRegistryQueryCriteria.class);
             criteria.add(given);
-            return OAuth20AccessToken.PREFIX.equals(given.getType()) ? List.of(issued) : List.of(expired, other);
+            return OAuth20AccessToken.PREFIX.equals(given.getType()) ? List.of(issued) : List.of(issued, expired, other);
         });
         val endpoint = new OAuth20TokenManagementEndpoint(casProperties, new DirectObjectProvider<>(registry),
             new DirectObjectProvider<>(mock(JwtBuilder.class)), TransactionOperations.withoutTransaction());

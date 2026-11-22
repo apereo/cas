@@ -527,6 +527,11 @@ async function verifyServiceWizard(page) {
 
         await page.waitForFunction((expected) => !isPopulatingWizard
             && $("#registeredServiceName").val() === expected, {timeout: 30000}, name);
+        const idLabel = await page.evaluate(() => $("#registeredServiceIdLabel span.mdc-floating-label").text().trim());
+        const expectedLabel = {SamlRegisteredService: "Entity ID", OAuthRegisteredService: "Redirect URI",
+            OidcRegisteredService: "Redirect URI"}[name] ?? "Service ID";
+        await cas.log(`${name}: the service id is labelled ${idLabel}`);
+        assert(idLabel === expectedLabel, `${name} labels its service id ${idLabel}`);
 
         for (const hideAdvanced of [true, false]) {
             const errors = await inspectWizard(page, serviceClass, hideAdvanced);
@@ -1305,7 +1310,8 @@ async function verifyMappedValueTypes(page) {
 
 /**
  * A draft whose chained policies were moved or removed gets back the secret of each policy it kept, never the secret
- * of another one: a policy that cannot be told apart from the others is left without its secret.
+ * of another one: a policy that cannot be told apart from the others, such as one of two that differ only in their
+ * secrets, is left without its secret, even where nothing moved, since swapping them leaves the draft as it was.
  *
  * @param page the puppeteer page
  */
@@ -1324,7 +1330,29 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
             removed: passwords([kept[1]]),
             removedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}]),
             changedInPlace: passwords([{...kept[0], endpointUrl: "https://c.example.org"}, kept[1]]),
-            swappedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}, {...kept[0], endpointUrl: "https://d.example.org"}])
+            swappedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}, {...kept[0], endpointUrl: "https://d.example.org"}]),
+            ...(() => {
+                const twins = {accessStrategy: {"@class": "org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy",
+                    strategies: ["java.util.ArrayList", [
+                        {"@class": remote, endpointUrl: "https://same.example.org", password: "first"},
+                        {"@class": remote, endpointUrl: "https://same.example.org", password: "second"}]]}};
+                const keptTwins = PalantirServiceEditGuard.redact(twins).accessStrategy.strategies[1];
+                const twinPasswords = (members) => PalantirServiceEditGuard.restore({accessStrategy: {...twins.accessStrategy,
+                    strategies: ["java.util.ArrayList", members]}}, twins).accessStrategy.strategies[1].map((member) => member.password);
+                return {
+                    twinsUnchanged: twinPasswords([keptTwins[0], keptTwins[1]]),
+                    twinRemoved: twinPasswords([keptTwins[1]]),
+                    baselineKept: JSON.stringify(PalantirServiceEditGuard.restoreInPlace(PalantirServiceEditGuard.redact(twins), twins))
+                        === JSON.stringify(twins),
+                    clientSecrets: (() => {
+                        const secretClass = "org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret";
+                        const client = {name: "Client", clientSecrets: ["java.util.ArrayList", [
+                            {"@class": secretClass, value: "one", expiration: "1800000000"}, {"@class": secretClass, value: "two"}]]};
+                        const renamed = {...PalantirServiceEditGuard.redact(client), name: "Renamed"};
+                        return PalantirServiceEditGuard.restore(renamed, client).clientSecrets[1].map((secret) => secret.value);
+                    })()
+                };
+            })()
         };
     });
     await cas.log(`Draft secrets after moving and removing chained policies: ${JSON.stringify(restored)}`);
@@ -1333,6 +1361,10 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
     assert(JSON.stringify(restored.removedAndChanged) === JSON.stringify([""]));
     assert(JSON.stringify(restored.changedInPlace) === JSON.stringify(["first", "second"]));
     assert(JSON.stringify(restored.swappedAndChanged) === JSON.stringify(["", ""]));
+    assert(JSON.stringify(restored.twinsUnchanged) === JSON.stringify(["", ""]));
+    assert(JSON.stringify(restored.twinRemoved) === JSON.stringify([""]));
+    assert(restored.baselineKept, "The saved definition an edit started from gets its secrets back place for place");
+    assert(JSON.stringify(restored.clientSecrets) === JSON.stringify(["one", "two"]), `Client secrets: ${JSON.stringify(restored.clientSecrets)}`);
 }
 
 /**

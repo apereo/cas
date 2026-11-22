@@ -4779,7 +4779,8 @@ let wizardExtraContacts = [];
 
 /**
  * Fill the contact fields of the wizard from the contacts of a definition, which are a Java list of contact objects:
- * the first three, one per contact tab. The others are kept to be saved as they are.
+ * the first three, one per contact tab. The others are kept to be saved as they are. Every contact field is emptied
+ * first, so filling a wizard that is already open, as from metadata, leaves nothing of the contacts it held.
  *
  * @param serviceDefinition the definition
  * @param floatLabel floats the label of a filled text field
@@ -4791,6 +4792,15 @@ function populateRegisteredServiceContacts(serviceDefinition, floatLabel) {
         list = contacts.length === 2 && typeof contacts[0] === "string" && Array.isArray(contacts[1]) ? contacts[1] : contacts;
     }
     wizardExtraContacts = list.slice(3).filter(contact => contact !== null && typeof contact === "object");
+    [1, 2, 3].forEach(position => ["name", "email", "phone", "department", "type"].forEach(detail => {
+        const $input = $(`#registeredServiceContact${capitalize(detail)}${position}`);
+        if ($input.length > 0 && $input.val() !== "") {
+            $input.val("");
+            const field = $input.closest(".mdc-text-field")[0];
+            field?.classList.remove("mdc-text-field--label-floating");
+            field?.querySelector(".mdc-notched-outline")?.classList.remove("mdc-notched-outline--notched");
+        }
+    }));
     list.slice(0, 3).forEach((contact, position) => {
         ["name", "email", "phone", "department", "type"].forEach(detail => {
             const $input = $(`#registeredServiceContact${capitalize(detail)}${position + 1}`);
@@ -5002,16 +5012,16 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
         }
         toggleJsonEditorVisibility();
 
+        $("#registeredServiceIdLabel span.mdc-floating-label").text(({
+            SamlRegisteredService: "Entity ID",
+            OAuthRegisteredService: "Redirect URI",
+            OidcRegisteredService: "Redirect URI"
+        })[className] ?? "Service ID");
         switch (className) {
-        case "CasRegisteredService":
-            $("#registeredServiceIdLabel span.mdc-floating-label").text("Service ID");
-            break;
         case "SamlRegisteredService":
-            $("#registeredServiceIdLabel span.mdc-floating-label").text("Entity ID");
             createSamlRegisteredServiceAttributeReleasePolicy();
             break;
         case "OAuthRegisteredService":
-            $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
             $(`h3.class-${className}`).each(function () {
                 const original = $(this).text();
                 const updated = original.replace(/^(?:OAuth \/ OpenID Connect|OpenID Connect) /, "OAuth ");
@@ -5020,7 +5030,6 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             RegisteredServiceSections.refresh();
             break;
         case "OidcRegisteredService":
-            $("#registeredServiceIdLabel span.mdc-floating-label").text("Redirect URI");
             $(`h3.class-${className}`).each(function () {
                 const original = $(this).text();
                 const updated = original.replace(/^(?:OAuth \/ OpenID Connect|OAuth) /, "OpenID Connect ");

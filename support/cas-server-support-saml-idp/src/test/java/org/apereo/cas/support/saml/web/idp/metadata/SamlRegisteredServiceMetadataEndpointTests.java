@@ -63,6 +63,10 @@ class SamlRegisteredServiceMetadataEndpointTests extends BaseSamlIdPConfiguratio
                 get("/actuator/samlIdPRegisteredServiceMetadata/managers/{name}", InMemorySamlRegisteredServiceMetadataManager.class.getSimpleName())
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+        mockMvc.perform(
+                get("/actuator/samlIdPRegisteredServiceMetadata/managers/{name}", "InMemoryMetadataManager")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
     @Test

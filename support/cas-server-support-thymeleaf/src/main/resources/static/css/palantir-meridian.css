@@ -3731,13 +3731,20 @@ html.palantir-page .ui-dialog.palantir-command-palette-dialog {
     outline: none;
 }
 
+/* The palette has a fixed height so it stays centered while its results change; the results fill what the search
+   field and the hint leave, and the menu scrolls itself, as jQuery UI expects when it brings the active entry into view. */
 .palantir-command-palette__results {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     min-height: 0;
 }
 
 .palantir-command-palette__results .ui-autocomplete.palantir-command-palette__menu {
     position: static !important;
-    max-height: min(420px, 60vh);
+    flex: 1;
+    min-height: 0;
+    max-height: none;
     margin: 0;
     padding: 0;
     overflow-y: auto;

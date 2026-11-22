@@ -426,7 +426,7 @@ class PalantirHome {
             const read = ++PalantirHome.reads;
             PalantirHome.sample(PalantirHome.apply(await PalantirHome.read(wanted, fresh), read));
             PalantirHome.fetched = Date.now();
-            $("#homeUpdated").text(`Updated ${new Date().toLocaleTimeString()} · every ${Math.round(palantirSettings().refreshInterval / 1000)} s`);
+            $("#homeUpdated").text(`Updated ${new Date().toLocaleTimeString()} · every ${Math.round(palantirSettings().refreshInterval / 1000)}s`);
             if (currentActiveTab === Tabs.HOME.index) {
                 $("#palantirPageTitle").text(palantirGreeting());
             }

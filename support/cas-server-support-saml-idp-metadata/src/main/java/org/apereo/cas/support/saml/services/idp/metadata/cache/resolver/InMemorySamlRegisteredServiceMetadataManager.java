@@ -10,6 +10,10 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
  * @since 8.0.0
  */
 public class InMemorySamlRegisteredServiceMetadataManager implements SamlRegisteredServiceMetadataManager {
+    private static final String NAME = "In Memory";
+
+    private static final String HISTORICAL_NAME = "InMemoryMetadataManager";
+
     private final Map<Long, SamlMetadataDocument> store = new LinkedHashMap<>();
 
     @Override
@@ -58,6 +62,11 @@ public class InMemorySamlRegisteredServiceMetadataManager implements SamlRegiste
 
     @Override
     public String getName() {
-        return "In Memory";
+        return NAME;
+    }
+
+    @Override
+    public Set<String> getAliases() {
+        return NAME.equals(getName()) ? Set.of(HISTORICAL_NAME) : Set.of();
     }
 }

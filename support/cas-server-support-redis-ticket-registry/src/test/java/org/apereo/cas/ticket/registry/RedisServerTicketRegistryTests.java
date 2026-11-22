@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -346,6 +347,15 @@ class RedisServerTicketRegistryTests {
                 .setType(TicketGrantingTicket.PREFIX)
                 .setPrincipal(otherAuthentication.getPrincipal().getId()));
             assertEquals(3, otherResults.size());
+        }
+
+        @RepeatedTest(2)
+        void verifyTicketsTrackedByPrincipal() {
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(TicketGrantingTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ProxyGrantingTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ServiceTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ProxyTicket.class));
+            assertTrue(RedisTicketRegistry.isTrackedByPrincipal(TicketGrantingTicketAwareTicket.class));
         }
 
         @RepeatedTest(2)

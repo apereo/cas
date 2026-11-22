@@ -495,6 +495,9 @@ function addRegisteredServiceClientSecretRow(secret = {}) {
     const $expirationDate = $(`#${expirationDateId}`);
     $secret.val(secret.value || "");
     $expirationDate.val(secret.expirationDate || "");
+    if (secret.expiration && secret.expirationDate) {
+        $expirationDate.data("recorded", {date: secret.expirationDate, expiration: String(secret.expiration)});
+    }
 
     row.find("input").on("input change", () => generateServiceDefinition());
     $(`#${generateButtonId}`).on("click", () => {
@@ -534,6 +537,12 @@ function buildRegisteredServiceClientSecretsDefinition() {
     })];
 }
 
+/**
+ * The client secrets the wizard shows, each with its expiration. An expiration CAS recorded keeps its exact time while
+ * its date is left as it was, since the date field holds only the day; choosing another date replaces it.
+ *
+ * @returns {Array<{value: string, expiration: string}>} the secrets
+ */
 function getRegisteredServiceClientSecretRows() {
     return $(".registered-service-client-secret-row")
         .map(function () {
@@ -542,10 +551,12 @@ function getRegisteredServiceClientSecretRows() {
             if (!value) {
                 return null;
             }
-            const expirationDate = $row.find("input.registered-service-client-secret-expiration-date").val()?.trim();
+            const $expirationDate = $row.find("input.registered-service-client-secret-expiration-date");
+            const expirationDate = $expirationDate.val()?.trim();
+            const recorded = $expirationDate.data("recorded");
             return {
                 value,
-                expiration: expirationDate || ""
+                expiration: recorded && recorded.date === expirationDate ? recorded.expiration : expirationDate || ""
             };
         })
         .get()
@@ -590,6 +601,7 @@ function extractRegisteredServiceClientSecrets(serviceDefinition) {
         .filter(secret => secret && secret.value)
         .map(secret => ({
             value: secret.value,
+            expiration: secret.expiration,
             ...parseRegisteredServiceClientSecretExpiration(secret.expiration)
         }));
 }

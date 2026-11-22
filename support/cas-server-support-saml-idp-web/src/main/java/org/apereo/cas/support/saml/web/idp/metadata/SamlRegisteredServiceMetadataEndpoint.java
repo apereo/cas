@@ -235,8 +235,8 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
     }
 
     /**
-     * Whether a manager goes by a name: its name, or the simple name of its class, which managers went by before they
-     * had names of their own; the class is the manager's own, not that of a proxy Spring puts around it, such as the
+     * Whether a manager goes by a name: its name, one of its aliases such as a name it had before, or the simple name of
+     * its class, which managers went by before they had names of their own; the class is the manager's own, not that of a proxy Spring puts around it, such as the
      * interface-based proxies that auditing and transactions put around managers, or a class-based one for a refreshable
      * bean.
      *
@@ -245,7 +245,9 @@ public class SamlRegisteredServiceMetadataEndpoint extends BaseCasRestActuatorEn
      * @return true when the manager goes by the name
      */
     private static boolean isNamed(final SamlRegisteredServiceMetadataManager manager, final String name) {
-        return manager.getName().equalsIgnoreCase(name) || AopProxyUtils.ultimateTargetClass(manager).getSimpleName().equals(name);
+        return manager.getName().equalsIgnoreCase(name)
+            || manager.getAliases().stream().anyMatch(alias -> alias.equalsIgnoreCase(name))
+            || AopProxyUtils.ultimateTargetClass(manager).getSimpleName().equals(name);
     }
 
     private static ResponseEntity store(final SamlRegisteredServiceMetadataManager manager, final SamlMetadataDocument document) {

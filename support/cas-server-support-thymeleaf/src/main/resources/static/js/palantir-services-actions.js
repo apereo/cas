@@ -617,10 +617,11 @@ class PalantirClientSecretRotation {
      * The address that rotates the secrets of a client.
      *
      * @param clientId the client id
-     * @param options expiredOnly to replace only expired secrets, expireIn for how long the new secrets last
+     * @param options expiredOnly to replace only expired secrets, expireIn for how long the new secrets last, and id for
+     *        the registration that must carry the client id, so that no other registration of that client id is changed
      * @returns {string} the endpoint address with its query
      */
-    static url(clientId, {expiredOnly = false, expireIn = ""} = {}) {
+    static url(clientId, {expiredOnly = false, expireIn = "", id = null} = {}) {
         const encodedClientId = encodeURIComponent(clientId);
         let endpoint = CasActuatorEndpoints.oauthClientSecrets();
         if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
@@ -632,6 +633,9 @@ class PalantirClientSecretRotation {
         if (String(expireIn ?? "").trim()) {
             query.append("expireIn", String(expireIn).trim());
         }
+        if (id !== null && id !== undefined && String(id) !== "") {
+            query.append("id", String(id));
+        }
         return `${endpoint}?${query}`;
     }
 
@@ -642,13 +646,24 @@ class PalantirClientSecretRotation {
     }
 
     /**
-     * Whether a duration is one CAS reads: an ISO-8601 duration such as P90D or PT12H, or a number of seconds.
+     * Whether a duration is one CAS reads: a number of seconds, or an ISO-8601 duration of days, hours, minutes and
+     * seconds such as P90D or PT12H, of at least one whole second, since secrets that expire at once would replace the
+     * working ones with nothing usable. Months, years and weeks are not durations CAS reads.
      *
      * @param value the duration
      * @returns {boolean} true when it can be sent
      */
     static validDuration(value) {
-        return /^(P(?=\d|T\d)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d)(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?|\d+)$/i.test(String(value ?? "").trim());
+        const text = String(value ?? "").trim();
+        if (/^\d+$/.test(text)) {
+            return Number(text) >= 1;
+        }
+        const parts = text.match(/^P(?=\d|T\d)(?:(\d+)D)?(?:T(?=\d)(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:[.,]\d+)?S)?)?$/i);
+        if (parts === null) {
+            return false;
+        }
+        const [, days, hours, minutes, seconds] = parts.map(part => Number(part ?? 0));
+        return days * 86400 + hours * 3600 + minutes * 60 + seconds >= 1;
     }
 
     static async open(serviceId) {
@@ -686,7 +701,7 @@ class PalantirClientSecretRotation {
                     <label for="clientSecretRotationExpireIn">New Secrets Expire In</label>
                     <input id="clientSecretRotationExpireIn" class="swal2-input" autocomplete="off" spellcheck="false"
                            value="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}" placeholder="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}">
-                    <p class="palantir-client-secret-rotation__hint">A duration such as P90D or PT12H, or a number of seconds.</p>
+                    <p class="palantir-client-secret-rotation__hint">Days, hours, minutes or seconds, such as P90D or PT12H, or a number of seconds.</p>
                 </form>`,
             icon: "warning",
             showCancelButton: true,
@@ -695,7 +710,7 @@ class PalantirClientSecretRotation {
             preConfirm: () => {
                 const expireIn = String($("#clientSecretRotationExpireIn").val() ?? "").trim() || PalantirClientSecretRotation.DEFAULT_EXPIRATION;
                 if (!PalantirClientSecretRotation.validDuration(expireIn)) {
-                    Swal.showValidationMessage("Enter a duration such as P90D or PT12H, or a number of seconds.");
+                    Swal.showValidationMessage("Enter days, hours, minutes or seconds, such as P90D or PT12H, or a number of seconds.");
                     return false;
                 }
                 return {expireIn, expiredOnly: $("#clientSecretRotationExpiredOnly").prop("checked") === true};
@@ -707,7 +722,7 @@ class PalantirClientSecretRotation {
         let updated;
         try {
             updated = await $.ajax({
-                url: PalantirClientSecretRotation.url(service.clientId, result.value),
+                url: PalantirClientSecretRotation.url(service.clientId, {...result.value, id: service.id ?? serviceId}),
                 type: "POST",
                 headers: {"Content-Type": "application/json"}
             });
@@ -719,6 +734,18 @@ class PalantirClientSecretRotation {
         const fresh = PalantirClientSecretRotation.secrets(updated).filter(secret => !before.has(secret.value));
         await fetchServices();
         await PalantirClientSecretRotation.show(name, fresh);
+    }
+
+    /**
+     * When a secret expires, as a date: CAS records it as epoch seconds, sent as text, or as a date.
+     *
+     * @param expiration the expiration as recorded
+     * @returns {string} the date, or the expiration as recorded when it cannot be read as one
+     */
+    static expires(expiration) {
+        const text = String(expiration).trim();
+        const date = palantirRecordDate(/^\d+$/.test(text) ? Number(text) : text);
+        return date ? palantirRecordWhen(date) : text;
     }
 
     static async show(name, fresh) {
@@ -736,8 +763,7 @@ class PalantirClientSecretRotation {
                 <button type="button" class="mdc-button mdc-button--outlined" data-client-secret="${index}">
                     <i class="mdi mdi-content-copy" aria-hidden="true"></i><span class="mdc-button__label">Copy</span>
                 </button>
-                ${secret.expiration ? `<small>Expires ${escapePalantirMarkup(palantirRecordDate(secret.expiration)
-        ? palantirRecordWhen(palantirRecordDate(secret.expiration)) : secret.expiration)}</small>` : ""}
+                ${secret.expiration ? `<small>Expires ${escapePalantirMarkup(PalantirClientSecretRotation.expires(secret.expiration))}</small>` : ""}
             </li>`).join("");
         await Swal.fire({
             icon: "success",
