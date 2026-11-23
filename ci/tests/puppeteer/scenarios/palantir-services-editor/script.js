@@ -1326,6 +1326,7 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
         const passwords = (members) => PalantirServiceEditGuard.restore({accessStrategy: {...source.accessStrategy,
             strategies: ["java.util.ArrayList", members]}}, source).accessStrategy.strategies[1].map((member) => member.password);
         return {
+            marker: PalantirServiceEditGuard.REDACTED,
             moved: passwords([kept[1], kept[0]]),
             removed: passwords([kept[1]]),
             removedAndChanged: passwords([{...kept[1], endpointUrl: "https://c.example.org"}]),
@@ -1349,8 +1350,21 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
                         const client = {name: "Client", clientSecrets: ["java.util.ArrayList", [
                             {"@class": secretClass, value: "one", expiration: "1800000000"}, {"@class": secretClass, value: "two"}]]};
                         const renamed = {...PalantirServiceEditGuard.redact(client), name: "Renamed"};
-                        return PalantirServiceEditGuard.restore(renamed, client).clientSecrets[1].map((secret) => secret.value);
-                    })()
+                        renamed.clientSecrets[1][0].expiration = "1850000000";
+                        return PalantirServiceEditGuard.restore(renamed, client).clientSecrets[1]
+                            .map((secret) => `${secret.value}@${secret.expiration ?? ""}`);
+                    })(),
+                    copiedSecret: (() => {
+                        const secretClass = "org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret";
+                        const client = {clientSecrets: ["java.util.ArrayList", [
+                            {"@class": secretClass, value: "one", expiration: "1800000000"}, {"@class": secretClass, value: "two", expiration: "1900000000"}]]};
+                        const kept = PalantirServiceEditGuard.redact(client).clientSecrets[1];
+                        return PalantirServiceEditGuard.restore({clientSecrets: ["java.util.ArrayList", [kept[0], kept[0], kept[1]]]}, client)
+                            .clientSecrets[1].map((secret) => secret.value);
+                    })(),
+                    markerRefused: !PalantirServiceEditGuard.refuseLeftOutSecrets(
+                        JSON.stringify({clientSecret: PalantirServiceEditGuard.REDACTED})) && (Swal.close() ?? true),
+                    plainAccepted: PalantirServiceEditGuard.refuseLeftOutSecrets(JSON.stringify({clientSecret: "typed-again"}))
                 };
             })()
         };
@@ -1358,13 +1372,111 @@ async function verifyDraftSecretsFollowTheirPolicies(page) {
     await cas.log(`Draft secrets after moving and removing chained policies: ${JSON.stringify(restored)}`);
     assert(JSON.stringify(restored.moved) === JSON.stringify(["second", "first"]));
     assert(JSON.stringify(restored.removed) === JSON.stringify(["second"]));
-    assert(JSON.stringify(restored.removedAndChanged) === JSON.stringify([""]));
+    assert(JSON.stringify(restored.removedAndChanged) === JSON.stringify([restored.marker]));
     assert(JSON.stringify(restored.changedInPlace) === JSON.stringify(["first", "second"]));
-    assert(JSON.stringify(restored.swappedAndChanged) === JSON.stringify(["", ""]));
-    assert(JSON.stringify(restored.twinsUnchanged) === JSON.stringify(["", ""]));
-    assert(JSON.stringify(restored.twinRemoved) === JSON.stringify([""]));
+    assert(JSON.stringify(restored.swappedAndChanged) === JSON.stringify([restored.marker, restored.marker]));
+    assert(JSON.stringify(restored.twinsUnchanged) === JSON.stringify([restored.marker, restored.marker]));
+    assert(JSON.stringify(restored.twinRemoved) === JSON.stringify([restored.marker]));
     assert(restored.baselineKept, "The saved definition an edit started from gets its secrets back place for place");
-    assert(JSON.stringify(restored.clientSecrets) === JSON.stringify(["one", "two"]), `Client secrets: ${JSON.stringify(restored.clientSecrets)}`);
+    assert(JSON.stringify(restored.clientSecrets) === JSON.stringify(["one@1850000000", "two@"]),
+        `Client secrets: ${JSON.stringify(restored.clientSecrets)}`);
+    assert(JSON.stringify(restored.copiedSecret) === JSON.stringify([restored.marker, restored.marker, "two"]),
+        `A copied client secret, and the one it was copied from, wait for the operator to enter theirs: ${JSON.stringify(restored.copiedSecret)}`);
+    assert(restored.markerRefused, "A definition still holding a left-out secret is not saved");
+    assert(restored.plainAccepted, "A definition with its secrets entered again is saved");
+}
+
+/**
+ * Check that definition text that is not valid JSON yet keeps its secrets out of a draft, whether the value is still
+ * being typed, written as a bare word, or followed by what reads like the name of the next setting.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyIncompleteDraftsLeaveOutSecrets(page) {
+    const kept = await page.evaluate(() => [
+        "{\"clientSecret\": \"typing-secret",
+        "{\"clientSecret\": bare-secret, \"name\": \"Kept\"",
+        "{\"clientSecret\": \"colon-secret\": 1",
+        "{\"clientSecret\":\n  \"next-line-secret\": 1",
+        "{\"clientSecret\": \"split\nline-secret\", \"name\": \"Kept\"",
+        "{clientSecret: hjson secret words\n  name: Kept",
+        "{\"clientSecrets\": [\"java.util.ArrayList\", [{\"value\": \"listed-secret\", \"expiration\": \"1800000000\"",
+        "{\"password\": \"org.apereo-secret\", \"clientSecrets\": [\"java.util.ArrayList\", [{\"value\": \"java.lang-secret\""
+    ].map((text) => PalantirServiceEditGuard.withoutSecrets(text).text));
+    await cas.log(`Incomplete drafts: ${JSON.stringify(kept)}`);
+    for (const text of kept) {
+        assert(!/secret"|-secret|secret words|listed-secret/.test(text.replace(/"clientSecrets?"|clientSecret/g, "")),
+            `A secret stays out of the draft: ${text}`);
+    }
+    assert(kept[1].includes("\"Kept\"") && kept[5].includes("Kept"), "The rest of the definition stays in the draft");
+    assert(kept[6].includes("1800000000"), "When a client secret expires stays in the draft");
+    assert(kept[7].includes("\"java.util.ArrayList\""), "The type that opens a list stays in the draft");
+
+    const upgraded = await page.evaluate(() => {
+        const key = "upgrade-check";
+        const storageKey = PalantirServiceEditGuard.STORAGE_PREFIX + key;
+        window.localStorage.setItem(storageKey, JSON.stringify({
+            text: "{\"clientSecret\": bare-earlier-secret, \"name\": \"Kept\"",
+            redacted: true,
+            secretsLeftOut: true,
+            savedAt: new Date().toISOString(),
+            original: null
+        }));
+        const read = PalantirServiceEditGuard.readDraft(key);
+        const stored = window.localStorage.getItem(storageKey);
+        PalantirServiceEditGuard.removeDraft(key);
+        return {read: read?.text ?? "", stored};
+    });
+    await cas.log(`A draft kept the earlier way: ${JSON.stringify(upgraded)}`);
+    assert(!upgraded.read.includes("bare-earlier-secret") && !upgraded.stored.includes("bare-earlier-secret"),
+        "A draft kept by an earlier way of leaving secrets out is left out again, in the browser too");
+    assert(upgraded.read.includes("\"Kept\""));
+
+    const confirmed = await page.evaluate(() => ({
+        page: palantirSavedApplication("<html><body>Log In</body></html>"),
+        empty: palantirSavedApplication({}),
+        saved: palantirSavedApplication({"@class": "org.apereo.cas.services.CasRegisteredService", id: 42})
+    }));
+    assert(!confirmed.page && !confirmed.empty && confirmed.saved, `Only the saved application confirms a save: ${JSON.stringify(confirmed)}`);
+
+    const migration = await page.evaluate(() => {
+        const key = "upgrade-full";
+        const storageKey = PalantirServiceEditGuard.STORAGE_PREFIX + key;
+        window.localStorage.setItem(storageKey, JSON.stringify({
+            text: "{\"clientSecret\": \"earlier-secret\"}", redacted: false, secretsLeftOut: true,
+            savedAt: new Date().toISOString(), original: null
+        }));
+        const setItem = Storage.prototype.setItem;
+        Storage.prototype.setItem = function () {
+            throw new DOMException("Full", "QuotaExceededError");
+        };
+        let read;
+        try {
+            read = PalantirServiceEditGuard.readDraft(key);
+        } finally {
+            Storage.prototype.setItem = setItem;
+        }
+        const left = window.localStorage.getItem(storageKey);
+        PalantirServiceEditGuard.removeDraft(key);
+        return {read: read?.text ?? "", left};
+    });
+    assert(!migration.read.includes("earlier-secret") && migration.left === null,
+        `A draft that cannot be kept again without its secrets is removed: ${JSON.stringify(migration)}`);
+
+    const counts = await page.evaluate(() => ["{\"imported\": 0, \"skipped\": 0}", "{\"imported\": 2, \"skipped\": 1}", "", "{}"]
+        .map((text) => palantirArchiveCounts({responseText: text})));
+    assert(JSON.stringify(counts) === JSON.stringify([{imported: 0, skipped: 0}, {imported: 2, skipped: 1},
+        {imported: null, skipped: null}, {imported: null, skipped: null}]), `Unknown counts are not zero: ${JSON.stringify(counts)}`);
+
+    const held = await page.evaluate(() => {
+        const release = PalantirServiceEditGuard.holdWhileSaving("editor");
+        const dialog = document.querySelector("#editServiceDialog").closest(".ui-dialog") ?? document.querySelector("#editServiceDialog");
+        const during = dialog.inert;
+        release();
+        release();
+        return {during, after: dialog.inert};
+    });
+    assert(held.during && !held.after, `The editor is held still while a save is on its way: ${JSON.stringify(held)}`);
 }
 
 /**
@@ -1381,6 +1493,7 @@ async function verifyEditorHandoffs(page) {
     await verifyCarryOfOmittedPolicy(page);
     await verifyMappedValueTypes(page);
     await verifyDraftSecretsFollowTheirPolicies(page);
+    await verifyIncompleteDraftsLeaveOutSecrets(page);
     await page.evaluate(async (serviceId) => {
         await fetch(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, {
             method: "DELETE",

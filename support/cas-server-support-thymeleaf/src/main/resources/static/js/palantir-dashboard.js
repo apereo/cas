@@ -108,6 +108,13 @@ class PalantirLinks {
         users: () => PalantirUserLookup.clear()
     };
 
+    static CANCELLED = {
+        applications: () => {
+            palantirApplicationNavigation++;
+            clearApplicationRowSelection();
+        }
+    };
+
     /**
      * What a link names: the page and what on it, if anything.
      *
@@ -177,7 +184,9 @@ class PalantirLinks {
 
     /**
      * Show what a link names: its page, then the application or user it names on that page. A link to a page that
-     * names nothing on it, such as going Back to #users after looking someone up, leaves nothing named shown.
+     * names nothing on it, such as going Back to #users after looking someone up, leaves nothing named shown, and
+     * stops what was still on its way to being shown there, such as an application whose page was still being read,
+     * and selects nothing there, such as the application that was selected.
      * A link another navigation took over from while its page was being prepared, such as the operator opening another
      * page, stops there instead of bringing its page back.
      *
@@ -191,6 +200,9 @@ class PalantirLinks {
         }
         const following = {tab, detail};
         PalantirLinks.following = following;
+        if (detail === null && PalantirLinks.CANCELLED[tab.key]) {
+            PalantirLinks.CANCELLED[tab.key]();
+        }
         try {
             if (currentActiveTab !== tab.index || !isDashboardTabInitialized(tab)) {
                 PalantirPages.open(tab);

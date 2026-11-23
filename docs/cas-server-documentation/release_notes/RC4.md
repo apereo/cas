@@ -539,6 +539,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   registries that have no query of their own, such as Hazelcast before this change, now answer it by reading their
   tickets, and Hazelcast answers it from the map of the asked ticket type. With Redis, the keys of those tickets are
   now read from Redis in large batches rather than ten at a time, since finding them walks every key Redis holds.
+- {: .fixed data-area="oidc"} An OpenID Connect application with a custom scope is saved without the attribute release
+  settings it leaves at their defaults, as applications with standard scopes are; they used to be written out in full.
 - {: .changed data-area="tickets"} Looking up the OAuth and OpenID Connect tokens of one user asks the ticket registry for
   that user's access and refresh tokens instead of reading every ticket, so registries that keep track of users, such
   as JPA, MongoDb, Hazelcast, DynamoDb, Cassandra, Ignite, Geode and Google Cloud Firestore, read only that user's
@@ -592,7 +594,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   column and an index on `AUD_DATE` and `AUD_ACTION` to the audit table. CAS adds them when it updates the schema
   itself; otherwise add them to the existing table before upgrading, or recording audit events fails.
 - {: .fixed data-area="services"} Importing an archive of application definitions reads and saves each definition once;
-  each one was read by every available format and could be saved twice, which doubled the time an import took.
+  each one was read by every available format and could be saved twice, which doubled the time an import took. A
+  definition in the archive that cannot be read no longer stops the rest, and the import now says how many definitions
+  were saved and how many were left out. Archives are held to the same size limits as other imports.
 - {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
   each proxy of a chain once; a ticket obtained through several proxies listed each of them as many times as there were proxies.
 - {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a

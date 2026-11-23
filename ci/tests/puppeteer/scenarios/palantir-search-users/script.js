@@ -274,6 +274,91 @@ async function verifyUserLookup(page, failures) {
 }
 
 /**
+ * Draw an SSO session and tokens of two applications and check that each is a card of its own with labelled facts,
+ * the applications and scopes as chips, the tokens grouped by application, and only shortened ids on show.
+ *
+ * @param page the puppeteer page
+ */
+async function verifySessionAndTokenCards(page) {
+    const drawn = await page.evaluate(() => {
+        const now = Date.now();
+        const ticket = "TGT-1-abcdefghijklmnopqrstuvwxyz0123456789-example";
+        const session = PalantirUserLookup.sessionCards([{
+            authentication_date: new Date(now - 600000).toISOString(),
+            number_of_uses: 3,
+            ticket_granting_ticket: ticket,
+            remember_me: true,
+            authentication_attributes: {clientIpAddress: ["127.0.0.1"]},
+            expiration_policy: {maxExpirationTime: new Date(now + 3600000).toISOString()},
+            authenticated_services: {"ST-1": {originalUrl: "https://app.example.org/home"}}
+        }]);
+        const secret = "AT-1-abcdefghijklmnopqrstuvwxyz0123456789-example";
+        const tokens = PalantirUserLookup.tokenGroups([
+            {id: secret, clientId: "client-one", scopes: ["openid", "profile"], grantType: "AUTHORIZATION_CODE",
+                creationTime: new Date(now - 60000).toISOString(), expirationPolicy: {timeToLive: 3600, timeToIdle: 600}},
+            {id: "RT-1-abcdefghijklmnopqrstuvwxyz-example", "@class": "OAuth20DefaultRefreshToken", clientId: "client-one",
+                scopes: ["offline_access"], creationTime: new Date(now - 60000).toISOString()},
+            {id: "AT-2-zyxwvutsrqponmlkjihgfedcba-example", clientId: "client-two", scopes: ["openid"],
+                creationTime: new Date(now - 120000).toISOString()}
+        ]);
+        const sessionView = $(`<div>${session}</div>`);
+        const tokenView = $(`<div>${tokens}</div>`);
+        return {
+            sessionLabels: sessionView.find(".palantir-identity-facts dt").toArray().map((label) => label.textContent.trim()),
+            badges: sessionView.find(".palantir-identity-badge").toArray().map((badge) => badge.textContent.trim()),
+            applications: sessionView.find(".palantir-identity-chip").toArray().map((chip) => chip.textContent.trim()),
+            ends: sessionView.find(".palantir-identity-facts__fact:contains('Ends') dd").text().trim(),
+            ticketShown: sessionView.find(".palantir-identity-item__code").text().includes(ticket),
+            ticketCopied: sessionView.find("[data-user-copy]").attr("data-user-copy") === ticket,
+            end: sessionView.find("[data-user-action='end-session']").text().trim(),
+            clients: tokenView.find(".palantir-token-client__name").toArray().map((name) => name.textContent.trim()),
+            kinds: tokenView.find(".palantir-token .palantir-identity-item__name").toArray().map((name) => name.textContent.trim()),
+            scopes: tokenView.find(".palantir-identity-chip.is-scope").length,
+            grant: tokenView.find(".palantir-identity-facts__fact:contains('Grant') dd").first().text().trim(),
+            secretShown: tokenView.text().includes(secret),
+            revokeAll: tokenView.find("[data-user-action='revoke-all-tokens']").text().trim(),
+            revokes: tokenView.find("[data-user-action='revoke-token']").length
+        };
+    });
+    await cas.log(`Session and token cards: ${JSON.stringify(drawn)}`);
+    assert(JSON.stringify(drawn.sessionLabels) === JSON.stringify(["IP Address", "Ends", "Uses"]));
+    assert(JSON.stringify(drawn.badges) === JSON.stringify(["Active", "Remember Me"]));
+    assert(JSON.stringify(drawn.applications) === JSON.stringify(["app.example.org/home"]));
+    assert(drawn.ends.length > 0 && !drawn.ticketShown && drawn.ticketCopied && drawn.end === "End Session");
+    assert(JSON.stringify(drawn.clients) === JSON.stringify(["client-one", "client-two"]));
+    assert(JSON.stringify(drawn.kinds) === JSON.stringify(["Access Token", "Refresh Token", "Access Token"]));
+    assert(drawn.scopes === 4 && drawn.grant === "Authorization Code" && !drawn.secretShown);
+    assert(drawn.revokeAll === "Revoke All Tokens" && drawn.revokes === 3);
+    await cas.logg("SSO sessions and tokens are drawn as cards with labelled facts, grouped tokens and shortened ids");
+
+    const accounts = await page.evaluate(() => {
+        const account = $(`<div>${PalantirUserLookup.accountCards([{username: "casuser", name: "Example User", email: "casuser@example.org",
+            phone: "+15550100", source: "json", multifactorAuthenticationEligible: "TRUE", delegatedAuthenticationEligible: "UNDEFINED",
+            requestPassword: false, allowedDelegatedClients: ["GitHubClient"], attributes: {department: ["engineering"]}}])}</div>`);
+        const devices = $(`<div>${PalantirUserLookup.deviceCards([
+            {id: "1", name: "Phone", type: "Mobile", source: "Duo Security", details: {providerId: "mfa-duo"}},
+            {id: "2", name: "Key", source: "WebAuthn FIDO2", details: {providerId: "mfa-webauthn"}}], "casuser")}</div>`);
+        return {
+            avatar: account.find(".palantir-account__avatar").text().trim(),
+            contacts: account.find(".palantir-account__contact").toArray().map((contact) => contact.textContent.trim()),
+            facts: account.find(".palantir-identity-facts__fact").toArray()
+                .map((fact) => `${$(fact).find("dt").text().trim()}=${$(fact).find("dd").text().trim()}`),
+            chips: account.find(".palantir-identity-chip").length,
+            kinds: devices.find(".palantir-device").toArray().map((device) => device.className.match(/is-(\w+)/)[1]),
+            removes: devices.find("[data-user-action='remove-mfa-device']").toArray()
+                .map((button) => `${button.dataset.provider}/${button.dataset.key}/${button.textContent.trim()}`)
+        };
+    });
+    await cas.log(`Passwordless account and MFA device cards: ${JSON.stringify(accounts)}`);
+    assert(accounts.avatar === "EU" && JSON.stringify(accounts.contacts) === JSON.stringify(["casuser@example.org", "+15550100"]));
+    assert(JSON.stringify(accounts.facts) === JSON.stringify(["MFA Eligible=Yes", "Delegated Sign-In=Default",
+        "Asks For Password=No", "Selection Menu=Hidden"]) && accounts.chips === 2);
+    assert(JSON.stringify(accounts.kinds) === JSON.stringify(["duo", "webauthn"]));
+    assert(JSON.stringify(accounts.removes) === JSON.stringify(["mfa-duo/1/Remove", "mfa-webauthn/2/Remove"]));
+    await cas.logg("Passwordless accounts and MFA devices are drawn as cards with labelled facts");
+}
+
+/**
  * Ask the Interrupts section of the Authentication page which interrupt a user would see, and check that it
  * reports the resolved user and the answer of every interrupt source.
  *
@@ -669,6 +754,7 @@ async function waitForApplications(page) {
     await waitForApplications(page);
     await verifyCommandPalette(page);
     await verifyUserLookup(page, failures);
+    await verifySessionAndTokenCards(page);
     await verifyInterruptInquiry(page);
     await verifyImpersonationAccounts(page);
     await verifyThrottlesUsername(page);

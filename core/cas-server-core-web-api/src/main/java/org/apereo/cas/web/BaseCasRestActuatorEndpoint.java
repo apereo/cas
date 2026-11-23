@@ -83,8 +83,26 @@ public abstract class BaseCasRestActuatorEndpoint extends BaseCasActuatorEndpoin
     protected static ResponseEntity<Map<String, Integer>> importArchive(final InputStream input,
                                                                         final Predicate<String> importer)
             throws IOException {
+        return importArchive(input, name -> true, importer);
+    }
+
+    /**
+     * Import the records of a zip archive whose files are accepted by name, one record per file, with the same limits
+     * and answer as {@link #importArchive(InputStream, Predicate)}. A file whose name is not accepted is passed over,
+     * and counts neither as imported nor as skipped.
+     *
+     * @param input    the archive
+     * @param accepted whether a file, by its name in the archive, holds a record
+     * @param importer stores one record and tells whether it was stored
+     * @return how many records were stored and how many were not
+     * @throws IOException when the archive cannot be read
+     */
+    protected static ResponseEntity<Map<String, Integer>> importArchive(final InputStream input,
+                                                                        final Predicate<String> accepted,
+                                                                        final Predicate<String> importer)
+            throws IOException {
         try {
-            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE, MAXIMUM_IMPORTED_ARCHIVE_SIZE);
+            val records = CompressionUtils.readZipEntries(input, MAXIMUM_IMPORTED_RECORD_SIZE, MAXIMUM_IMPORTED_ARCHIVE_SIZE, accepted);
             val imported = (int) records.stream().filter(importer).count();
             return importedRecords(imported, records.size() - imported);
         } catch (final IllegalArgumentException e) {

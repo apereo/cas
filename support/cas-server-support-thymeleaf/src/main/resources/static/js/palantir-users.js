@@ -54,16 +54,7 @@ class PalantirUserLookup {
                         `${CasActuatorEndpoints.ssoSessions()}/users/${encodeURIComponent(username)}`);
                     return response?.activeSsoSessions ?? [];
                 },
-                render: sessions => PalantirUserLookup.list(sessions.map(session => ({
-                    primary: PalantirUserLookup.when(session.authentication_date),
-                    secondary: [
-                        session.authentication_attributes?.clientIpAddress?.[0],
-                        PalantirUserLookup.count(Object.keys(session.authenticated_services ?? {}).length, "application"),
-                        session.remember_me === true ? "remember me" : null
-                    ],
-                    code: session.ticket_granting_ticket,
-                    action: {name: "end-session", label: "End", data: {ticket: session.ticket_granting_ticket}}
-                })))
+                render: sessions => PalantirUserLookup.sessionCards(sessions)
             },
             {
                 key: "oauthTokens",
@@ -74,25 +65,7 @@ class PalantirUserLookup {
                     const tokens = await PalantirUserLookup.get(CasActuatorEndpoints.oauthTokens(), {username});
                     return (Array.isArray(tokens) ? tokens : []).filter(token => typeof token?.id === "string");
                 },
-                render: tokens => {
-                    PalantirUserLookup.tokens = new Map(tokens.map((token, index) => [String(index), token.id]));
-                    const rows = tokens.map((token, index) => ({
-                        primary: `${PalantirUserLookup.tokenKind(token)} for ${token.clientId ?? "an unknown client"}`,
-                        secondary: [
-                            [].concat(token.scopes ?? []).join(" "),
-                            token.grantType ? String(token.grantType).toLowerCase().replaceAll("_", " ") : null,
-                            token.creationTime ? `issued ${PalantirUserLookup.when(token.creationTime)}` : null,
-                            token.lastTimeUsed ? `last used ${PalantirUserLookup.when(token.lastTimeUsed)}` : null
-                        ],
-                        code: PalantirUserLookup.maskToken(token.id),
-                        action: {name: "revoke-token", label: "Revoke", data: {token: String(index)}}
-                    }));
-                    return `${PalantirUserLookup.list(rows)}
-                        <button type="button" class="palantir-button palantir-user-card__bulk" data-user-action="revoke-all-tokens"
-                                data-palantir-write="oauthTokens">
-                            <i class="mdi mdi-key-remove" aria-hidden="true"></i>Revoke all ${tokens.length === 1 ? "" : `${tokens.length} `}tokens
-                        </button>`;
-                }
+                render: tokens => PalantirUserLookup.tokenGroups(tokens)
             },
             {
                 key: "mfaDevices",
@@ -102,15 +75,7 @@ class PalantirUserLookup {
                     && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
                 load: async username => Object.values(await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`) ?? {}),
-                render: (devices, username) => PalantirUserLookup.list(devices.map(device => ({
-                    primary: device.name ?? device.type ?? device.id,
-                    secondary: [device.type, device.source, device.lastUsedDateTime ? `last used ${PalantirUserLookup.when(device.lastUsedDateTime)}` : null],
-                    action: {
-                        name: "remove-mfa-device",
-                        label: "Remove",
-                        data: {username: username, provider: device?.details?.providerId ?? "Unknown", key: device.id}
-                    }
-                })))
+                render: (devices, username) => PalantirUserLookup.deviceCards(devices, username)
             },
             {
                 key: "trustedDevices",
@@ -264,10 +229,7 @@ class PalantirUserLookup {
                     const account = await PalantirUserLookup.get(CasActuatorEndpoints.passwordless(), {username});
                     return account && typeof account === "object" ? [account] : [];
                 },
-                render: accounts => PalantirUserLookup.list(accounts.map(account => ({
-                    primary: account.name ?? account.username,
-                    secondary: [account.email, account.phoneNumber, account.source]
-                })))
+                render: accounts => PalantirUserLookup.accountCards(accounts)
             },
             {
                 key: "passwordHistory",
@@ -387,6 +349,368 @@ class PalantirUserLookup {
      * @param token the token
      * @returns {string} the kind of token
      */
+    /**
+     * Draw each SSO session as a card: when the user signed in and how long ago, what the session is marked as, the
+     * facts an operator looks for (where from, when last used, when it ends, how often it was used, how the user
+     * signed in), the applications it signed the user in to, and its ticket, shortened, with a way to copy it whole.
+     *
+     * @param sessions the sessions of the user
+     * @returns {string} the markup
+     */
+    static sessionCards(sessions) {
+        const cards = sessions.map(session => {
+            const ticket = String(session.ticket_granting_ticket ?? "");
+            const attributes = session.authentication_attributes ?? {};
+            const policy = session.expiration_policy ?? {};
+            const ends = PalantirUserLookup.earliest([policy.idleExpirationTime, policy.maxExpirationTime]);
+            const services = Object.values(session.authenticated_services ?? {})
+                .map(service => String(service?.originalUrl ?? service?.id ?? service ?? ""))
+                .filter(url => url !== "");
+            const handlers = [].concat(attributes.successfulAuthenticationHandlers ?? []);
+            const badges = [
+                {label: "Active", style: "is-success"},
+                session.remember_me === true ? {label: "Remember Me", style: "is-accent"} : null,
+                session.is_proxied === true ? {label: "Proxied", style: "is-warn"} : null
+            ].filter(Boolean);
+            const facts = [
+                {label: "IP Address", value: [].concat(attributes.clientIpAddress ?? [])[0], mono: true},
+                {label: "Last Used", value: session.last_used_date_formatted},
+                {label: "Ends", value: ends === null ? null : PalantirUserLookup.ago(ends), hint: ends === null ? null : PalantirUserLookup.when(ends)},
+                {label: "Uses", value: session.number_of_uses},
+                {label: "Signed In With", value: handlers.join(", ")}
+            ];
+            return `
+                <article class="palantir-identity-item palantir-session">
+                    <header class="palantir-identity-item__head">
+                        <span class="palantir-identity-item__icon" aria-hidden="true"><i class="mdi mdi-monitor-account"></i></span>
+                        <div class="palantir-identity-item__title">
+                            <span class="palantir-identity-item__name">${escapePalantirMarkup(PalantirUserLookup.when(session.authentication_date) || "Unknown Sign-In Time")}</span>
+                            <span class="palantir-identity-item__when">${escapePalantirMarkup(PalantirUserLookup.ago(session.authentication_date))}</span>
+                        </div>
+                        <span class="palantir-identity-item__badges">${PalantirUserLookup.badges(badges)}</span>
+                        <button type="button" class="palantir-button is-danger palantir-identity-item__action" data-user-action="end-session"
+                                data-palantir-write="ssoSessions" data-ticket="${escapePalantirMarkup(ticket)}">
+                            <i class="mdi mdi-logout" aria-hidden="true"></i>End Session
+                        </button>
+                    </header>
+                    ${PalantirUserLookup.facts(facts)}
+                    <div class="palantir-identity-item__section">
+                        <span class="palantir-identity-item__label">Applications <span class="palantir-identity-item__count">${services.length}</span></span>
+                        ${services.length === 0
+                            ? "<span class=\"palantir-identity-item__none\">None Yet</span>"
+                            : `<span class="palantir-identity-item__chips">${services.map(url => PalantirUserLookup.serviceChip(url)).join("")}</span>`}
+                    </div>
+                    <footer class="palantir-identity-item__foot">
+                        <span class="palantir-identity-item__label">Ticket</span>
+                        <code class="palantir-identity-item__code" title="${escapePalantirMarkup(ticket)}">${escapePalantirMarkup(PalantirUserLookup.maskToken(ticket))}</code>
+                        <button type="button" class="palantir-identity-item__copy" data-user-copy="${escapePalantirMarkup(ticket)}"
+                                title="Copy Ticket" aria-label="Copy Ticket"><i class="mdi mdi-content-copy" aria-hidden="true"></i></button>
+                    </footer>
+                </article>`;
+        });
+        return `<div class="palantir-identity-list">${cards.join("")}</div>`;
+    }
+
+    /**
+     * Draw the tokens of the user grouped by the application they were issued to, newest first: each token says what
+     * kind it is, what it allows, how it was obtained, when it was issued, last used and ends, and shows its id
+     * shortened only, since the id is the token itself.
+     *
+     * @param tokens the tokens of the user
+     * @returns {string} the markup
+     */
+    static tokenGroups(tokens) {
+        PalantirUserLookup.tokens = new Map(tokens.map((token, index) => [String(index), token.id]));
+        const groups = new Map();
+        tokens.forEach((token, index) => {
+            const client = String(token.clientId ?? "Unknown Application");
+            const group = groups.get(client);
+            if (group) {
+                group.push({token, index});
+            } else {
+                groups.set(client, [{token, index}]);
+            }
+        });
+        const time = value => PalantirUserLookup.dateOf(value)?.getTime() ?? 0;
+        const sections = [...groups.entries()].map(([client, entries]) => {
+            const items = entries
+                .sort((first, second) => time(second.token.creationTime) - time(first.token.creationTime))
+                .map(({token, index}) => {
+                    const refresh = PalantirUserLookup.tokenKind(token) === "Refresh token";
+                    const scopes = [].concat(token.scopes ?? []).filter(scope => scope !== null && scope !== "");
+                    const ends = PalantirUserLookup.tokenEnds(token);
+                    const facts = [
+                        {label: "Grant", value: token.grantType ? PalantirUserLookup.titleCase(String(token.grantType).toLowerCase().replaceAll("_", " ")) : null},
+                        {label: "Issued", value: PalantirUserLookup.ago(token.creationTime), hint: PalantirUserLookup.when(token.creationTime)},
+                        {label: "Last Used", value: PalantirUserLookup.ago(token.lastTimeUsed), hint: PalantirUserLookup.when(token.lastTimeUsed)},
+                        {label: "Ends", value: ends === null ? null : PalantirUserLookup.ago(ends), hint: ends === null ? null : PalantirUserLookup.when(ends)}
+                    ];
+                    return `
+                        <article class="palantir-identity-item palantir-token ${refresh ? "is-refresh" : "is-access"}">
+                            <header class="palantir-identity-item__head">
+                                <span class="palantir-identity-item__icon" aria-hidden="true"><i class="mdi ${refresh ? "mdi-autorenew" : "mdi-key-variant"}"></i></span>
+                                <div class="palantir-identity-item__title">
+                                    <span class="palantir-identity-item__name">${refresh ? "Refresh Token" : "Access Token"}</span>
+                                    <code class="palantir-identity-item__code">${escapePalantirMarkup(PalantirUserLookup.maskToken(token.id))}</code>
+                                </div>
+                                <button type="button" class="palantir-button is-danger palantir-identity-item__action" data-user-action="revoke-token"
+                                        data-palantir-write="oauthTokens" data-token="${index}">
+                                    <i class="mdi mdi-key-remove" aria-hidden="true"></i>Revoke
+                                </button>
+                            </header>
+                            <div class="palantir-identity-item__section">
+                                <span class="palantir-identity-item__label">Scopes</span>
+                                ${scopes.length === 0
+                                    ? "<span class=\"palantir-identity-item__none\">None</span>"
+                                    : `<span class="palantir-identity-item__chips">${scopes.map(scope =>
+                                        `<span class="palantir-identity-chip is-scope">${escapePalantirMarkup(scope)}</span>`).join("")}</span>`}
+                            </div>
+                            ${PalantirUserLookup.facts(facts)}
+                        </article>`;
+                }).join("");
+            return `
+                <section class="palantir-token-client">
+                    <header class="palantir-token-client__head">
+                        <i class="mdi mdi-application-braces-outline" aria-hidden="true"></i>
+                        <span class="palantir-token-client__name">${escapePalantirMarkup(client)}</span>
+                        <span class="palantir-identity-item__count">${PalantirUserLookup.count(entries.length, "token")}</span>
+                    </header>
+                    <div class="palantir-identity-list">${items}</div>
+                </section>`;
+        });
+        return `
+            <div class="palantir-token-summary">
+                <span class="palantir-token-summary__text">
+                    <strong>${PalantirUserLookup.count(tokens.length, "token")}</strong>
+                    issued to ${PalantirUserLookup.count(groups.size, "application")}
+                </span>
+                <button type="button" class="palantir-button is-danger palantir-user-card__bulk" data-user-action="revoke-all-tokens"
+                        data-palantir-write="oauthTokens">
+                    <i class="mdi mdi-key-remove" aria-hidden="true"></i>Revoke All Tokens
+                </button>
+            </div>
+            ${sections.join("")}`;
+    }
+
+    /**
+     * Draw each MFA device as a card: what it is and which provider it belongs to, with an icon for that provider, the
+     * facts recorded for it, such as its model, number, when it was last used and when it expires, and a way to
+     * remove it.
+     *
+     * @param devices the devices of the user
+     * @param username the user
+     * @returns {string} the markup
+     */
+    static deviceCards(devices, username) {
+        const cards = devices.map(device => {
+            const provider = String(device?.details?.providerId ?? "Unknown");
+            const kind = PalantirUserLookup.deviceKind(device);
+            const facts = [
+                {label: "Type", value: device.type},
+                {label: "Model", value: device.model},
+                {label: "Number", value: device.number, mono: true},
+                {label: "Last Used", value: PalantirUserLookup.ago(device.lastUsedDateTime), hint: PalantirUserLookup.when(device.lastUsedDateTime)},
+                {label: "Expires", value: PalantirUserLookup.ago(device.expirationDateTime), hint: PalantirUserLookup.when(device.expirationDateTime)}
+            ];
+            return `
+                <article class="palantir-identity-item palantir-device is-${kind.style}">
+                    <header class="palantir-identity-item__head">
+                        <span class="palantir-identity-item__icon" aria-hidden="true"><i class="mdi ${kind.icon}"></i></span>
+                        <div class="palantir-identity-item__title">
+                            <span class="palantir-identity-item__name">${escapePalantirMarkup(device.name ?? device.type ?? device.id ?? "Unnamed Device")}</span>
+                            <span class="palantir-identity-item__when">${escapePalantirMarkup(device.source ?? provider)}</span>
+                        </div>
+                        <button type="button" class="palantir-button is-danger palantir-identity-item__action" data-user-action="remove-mfa-device"
+                                data-palantir-write="mfaDevices" data-username="${escapePalantirMarkup(username)}"
+                                data-provider="${escapePalantirMarkup(provider)}" data-key="${escapePalantirMarkup(device.id ?? "")}">
+                            <i class="mdi mdi-delete-outline" aria-hidden="true"></i>Remove
+                        </button>
+                    </header>
+                    ${PalantirUserLookup.facts(facts)}
+                </article>`;
+        });
+        return `<div class="palantir-identity-list">${cards.join("")}</div>`;
+    }
+
+    /**
+     * The icon and accent of a device, by the provider it belongs to.
+     *
+     * @param device the device
+     * @returns {{icon: string, style: string}} the icon and the accent
+     */
+    static deviceKind(device) {
+        const text = `${device?.details?.providerId ?? ""} ${device?.source ?? ""} ${device?.type ?? ""}`.toLowerCase();
+        const kinds = [
+            {match: /webauthn|fido|passkey/, icon: "mdi-fingerprint", style: "webauthn"},
+            {match: /yubi/, icon: "mdi-usb-flash-drive-outline", style: "yubikey"},
+            {match: /duo/, icon: "mdi-cellphone-message", style: "duo"},
+            {match: /gauth|google|authenticator|totp/, icon: "mdi-shield-key-outline", style: "totp"},
+            {match: /sms|email|simple|text/, icon: "mdi-message-lock-outline", style: "message"}
+        ];
+        return kinds.find(kind => kind.match.test(text)) ?? {icon: "mdi-cellphone-key", style: "other"};
+    }
+
+    /**
+     * Draw the passwordless account of the user as a card: who the user is, how CAS reaches them, where the account
+     * comes from, and how they sign in without a password, each choice in words.
+     *
+     * @param accounts the account of the user, if there is one
+     * @returns {string} the markup
+     */
+    static accountCards(accounts) {
+        const choice = value => {
+            const text = String(value ?? "").toUpperCase();
+            return text === "TRUE" ? "Yes" : text === "FALSE" ? "No" : text === "" || text === "UNDEFINED" ? "Default" : PalantirUserLookup.titleCase(text.toLowerCase());
+        };
+        const cards = accounts.map(account => {
+            const name = account.name || account.username || "Unnamed Account";
+            const initials = String(name).split(/[\s._@-]+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join("");
+            const phone = account.phone ?? account.phoneNumber;
+            const contacts = [
+                account.email ? {icon: "mdi-email-outline", value: account.email} : null,
+                phone ? {icon: "mdi-phone-outline", value: phone} : null
+            ].filter(Boolean);
+            const clients = [].concat(account.allowedDelegatedClients ?? []).filter(Boolean);
+            const attributes = Object.keys(account.attributes ?? {});
+            const facts = [
+                {label: "MFA Eligible", value: choice(account.multifactorAuthenticationEligible)},
+                {label: "Delegated Sign-In", value: choice(account.delegatedAuthenticationEligible)},
+                {label: "Asks For Password", value: account.requestPassword === true ? "Yes" : "No"},
+                {label: "Selection Menu", value: account.allowSelectionMenu === true ? "Shown" : "Hidden"}
+            ];
+            return `
+                <article class="palantir-identity-item palantir-account">
+                    <header class="palantir-identity-item__head">
+                        <span class="palantir-identity-item__icon palantir-account__avatar" aria-hidden="true">${escapePalantirMarkup(initials || "?")}</span>
+                        <div class="palantir-identity-item__title">
+                            <span class="palantir-identity-item__name">${escapePalantirMarkup(name)}</span>
+                            ${account.username && account.username !== name
+                                ? `<span class="palantir-identity-item__when">${escapePalantirMarkup(account.username)}</span>` : ""}
+                        </div>
+                        ${account.source ? `<span class="palantir-identity-item__badges">${PalantirUserLookup.badges([{label: account.source, style: "is-accent"}])}</span>` : ""}
+                    </header>
+                    ${contacts.length === 0 ? "" : `<div class="palantir-account__contacts">${contacts.map(contact => `
+                        <span class="palantir-account__contact"><i class="mdi ${contact.icon}" aria-hidden="true"></i>${escapePalantirMarkup(contact.value)}</span>`).join("")}
+                    </div>`}
+                    ${PalantirUserLookup.facts(facts)}
+                    ${clients.length === 0 ? "" : `
+                    <div class="palantir-identity-item__section">
+                        <span class="palantir-identity-item__label">Identity Providers <span class="palantir-identity-item__count">${clients.length}</span></span>
+                        <span class="palantir-identity-item__chips">${clients.map(client =>
+                            `<span class="palantir-identity-chip"><i class="mdi mdi-account-arrow-right-outline" aria-hidden="true"></i>${escapePalantirMarkup(client)}</span>`).join("")}</span>
+                    </div>`}
+                    ${attributes.length === 0 ? "" : `
+                    <div class="palantir-identity-item__section">
+                        <span class="palantir-identity-item__label">Attributes <span class="palantir-identity-item__count">${attributes.length}</span></span>
+                        <span class="palantir-identity-item__chips">${attributes.map(attribute =>
+                            `<span class="palantir-identity-chip" title="${escapePalantirMarkup([].concat(account.attributes[attribute] ?? []).join(", "))}">${escapePalantirMarkup(attribute)}</span>`).join("")}</span>
+                    </div>`}
+                </article>`;
+        });
+        return `<div class="palantir-identity-list">${cards.join("")}</div>`;
+    }
+
+    /**
+     * Facts about a session or token as labelled values; a fact with no value is left out.
+     *
+     * @param facts each with a label, a value, an optional hint shown on hover and whether the value is monospaced
+     * @returns {string} the markup
+     */
+    static facts(facts) {
+        const shown = facts.filter(fact => fact.value !== null && fact.value !== undefined && String(fact.value) !== "");
+        return shown.length === 0 ? "" : `<dl class="palantir-identity-facts">${shown.map(fact => `
+            <div class="palantir-identity-facts__fact">
+                <dt>${escapePalantirMarkup(fact.label)}</dt>
+                <dd class="${fact.mono ? "is-mono" : ""}" ${fact.hint ? `title="${escapePalantirMarkup(fact.hint)}"` : ""}>${escapePalantirMarkup(String(fact.value))}</dd>
+            </div>`).join("")}</dl>`;
+    }
+
+    static badges(badges) {
+        return badges.map(badge => `<span class="palantir-identity-badge ${badge.style}">${escapePalantirMarkup(badge.label)}</span>`).join("");
+    }
+
+    /**
+     * An application a session signed the user in to, shown by its host and path, with the whole address on hover.
+     *
+     * @param url the address of the application
+     * @returns {string} the markup
+     */
+    static serviceChip(url) {
+        let shown = url;
+        try {
+            const parsed = new URL(url);
+            shown = `${parsed.host}${parsed.pathname === "/" ? "" : parsed.pathname}`;
+        } catch (error) {
+            shown = url;
+        }
+        return `<span class="palantir-identity-chip" title="${escapePalantirMarkup(url)}"><i class="mdi mdi-web" aria-hidden="true"></i>${escapePalantirMarkup(shown)}</span>`;
+    }
+
+    /**
+     * When a token ends: when it has lived as long as it may, or sooner when it is not used for as long as it may stay
+     * unused, as far as its expiration policy says.
+     *
+     * @param token the token
+     * @returns {Date|null} when it ends, or null when that is not known
+     */
+    static tokenEnds(token) {
+        const policy = token.expirationPolicy ?? {};
+        const after = (start, seconds) => {
+            const date = PalantirUserLookup.dateOf(start);
+            const amount = Number(seconds);
+            return date && Number.isFinite(amount) && amount > 0 ? new Date(date.getTime() + amount * 1000) : null;
+        };
+        return PalantirUserLookup.earliest([
+            after(token.creationTime, policy.timeToLive),
+            after(token.lastTimeUsed ?? token.creationTime, policy.timeToIdle)
+        ]);
+    }
+
+    static earliest(values) {
+        const dates = values.map(value => PalantirUserLookup.dateOf(value)).filter(Boolean);
+        return dates.length === 0 ? null : new Date(Math.min(...dates.map(date => date.getTime())));
+    }
+
+    static titleCase(text) {
+        return String(text).replace(/\b\w/g, letter => letter.toUpperCase());
+    }
+
+    /**
+     * How long ago, or how soon, a moment is, in the words of the browser's locale.
+     *
+     * @param value a date as {@link #dateOf} reads it
+     * @returns {string} such as "5 minutes ago" or "in 2 hours", or an empty string when it is not a date
+     */
+    static ago(value) {
+        const date = PalantirUserLookup.dateOf(value);
+        if (date === null) {
+            return "";
+        }
+        const seconds = Math.round((date.getTime() - Date.now()) / 1000);
+        const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+        const format = new Intl.RelativeTimeFormat(undefined, {numeric: "auto"});
+        const unit = units.find(([, size]) => Math.abs(seconds) >= size);
+        return unit ? format.format(Math.round(seconds / unit[1]), unit[0]) : format.format(0, "second");
+    }
+
+    /**
+     * Read a date as CAS writes one: an ISO date, an epoch in milliseconds, or the parts of a date as a list.
+     *
+     * @param value the date
+     * @returns {Date|null} the date, or null when it is none
+     */
+    static dateOf(value) {
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+        if (value instanceof Date) {
+            return Number.isNaN(value.getTime()) ? null : value;
+        }
+        const date = new Date(Array.isArray(value) ? Date.UTC(value[0], (value[1] ?? 1) - 1, value[2] ?? 1,
+            value[3] ?? 0, value[4] ?? 0, value[5] ?? 0) : value);
+        return Number.isNaN(date.getTime()) ? null : date;
+    }
+
     static tokenKind(token) {
         return /^RT-/.test(token.id) || /RefreshToken/.test(token["@class"] ?? "") ? "Refresh token" : "Access token";
     }
@@ -837,6 +1161,15 @@ async function initializeUserLookupOperations() {
     });
     $("#userLookupResults").off("click").on("click", "[data-user-action]", event => {
         PalantirUserLookup.runAction(event.currentTarget);
+    }).on("click", "[data-user-copy]", async event => {
+        const button = event.currentTarget;
+        try {
+            await navigator.clipboard.writeText(button.dataset.userCopy);
+            button.classList.add("is-copied");
+            setTimeout(() => button.classList.remove("is-copied"), 1500);
+        } catch (error) {
+            console.debug("The ticket could not be copied", error);
+        }
     });
     $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
         openInterruptInquiry(event.currentTarget.dataset.username);

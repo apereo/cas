@@ -156,8 +156,11 @@ definitions as JSON files in a folder that the dashboard reads every time it is 
 {% include_cached casproperties.html properties="cas.palantir.templates-directory" %}
 
 *Import* accepts an application definition in JSON or YAML, or a zip of JSON definitions such as the one *Export*
-produces; an imported application replaces one with the same id. While the file uploads and CAS imports it, the
-dashboard shows the progress of the upload and that the server is busy.
+produces; an imported application replaces one with the same id. Several JSON or several YAML definitions can be
+chosen at once and are imported one after another, naming any that could not be imported; an archive is imported on
+its own, and the dashboard says how many of its definitions were imported and how many could not be read. An import
+stops once CAS no longer accepts it, such as after the session expired, and says which files were left. While the file uploads and CAS imports it, the dashboard shows the progress of the upload and that the server
+is busy.
 
 Before changes to an existing application are saved, the application is read again. When someone else saved or
 deleted it after the edit started, also when the edit was kept as a draft and resumed later, the dashboard shows what

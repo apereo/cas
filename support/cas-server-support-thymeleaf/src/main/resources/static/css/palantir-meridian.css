@@ -1683,6 +1683,16 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
     margin: 0 0 12px;
 }
 
+.palantir-dialog--saving {
+    cursor: progress;
+}
+
+.palantir-dialog--saving .ui-dialog-content,
+.palantir-dialog--saving .ui-dialog-buttonpane {
+    opacity: 0.72;
+    transition: opacity 0.15s ease;
+}
+
 .palantir-conflict__diff {
     max-height: min(55vh, 520px);
     overflow: auto;
@@ -8035,6 +8045,363 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
 
 .palantir-user-card__bulk {
     margin-top: 10px;
+}
+
+/* ==========================================================================
+   Users: SSO sessions and OAuth and OIDC tokens, each drawn as a small card of its own with labelled facts, so an
+   operator reads what a session or token is, where it is used and when it ends at a glance.
+   ========================================================================== */
+.palantir-identity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.palantir-identity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--palantir-border);
+    border-left: 3px solid var(--palantir-accent);
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-token.is-refresh {
+    border-left-color: var(--palantir-chart-3);
+}
+
+.palantir-identity-item__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.palantir-identity-item__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-size: 20px;
+}
+
+.palantir-token.is-refresh .palantir-identity-item__icon {
+    background: color-mix(in srgb, var(--palantir-chart-3) 18%, transparent);
+    color: var(--palantir-chart-3);
+}
+
+.palantir-identity-item__title {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.palantir-identity-item__name {
+    color: var(--palantir-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.palantir-identity-item__when {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-identity-item__badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.palantir-identity-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.palantir-identity-badge.is-success {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success-text);
+}
+
+.palantir-identity-badge.is-success::before {
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: var(--palantir-success);
+    content: "";
+}
+
+.palantir-identity-badge.is-accent {
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+}
+
+.palantir-identity-badge.is-warn {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-identity-item__action {
+    flex: none;
+}
+
+.palantir-identity-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px 16px;
+    margin: 0;
+}
+
+.palantir-identity-facts__fact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.palantir-identity-facts dt {
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.palantir-identity-facts dd {
+    margin: 0;
+    overflow: hidden;
+    color: var(--palantir-text);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-facts dd.is-mono,
+.palantir-identity-item__code {
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.palantir-identity-item__section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.palantir-identity-item__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.palantir-identity-item__count {
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.palantir-identity-item__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.palantir-identity-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    padding: 3px 10px;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-chip.is-scope {
+    border-color: var(--palantir-accent-line);
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.palantir-identity-item__none {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.palantir-identity-item__foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--palantir-divider);
+    min-width: 0;
+}
+
+.palantir-identity-item__code {
+    overflow: hidden;
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-item__copy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--palantir-text-muted);
+    cursor: pointer;
+}
+
+.palantir-identity-item__copy:hover,
+.palantir-identity-item__copy:focus-visible {
+    background: var(--palantir-hover);
+    color: var(--palantir-text);
+}
+
+.palantir-identity-item__copy.is-copied {
+    color: var(--palantir-success);
+}
+
+.palantir-device.is-webauthn,
+.palantir-device.is-yubikey {
+    --palantir-device-accent: var(--palantir-chart-3);
+}
+
+.palantir-device.is-duo {
+    --palantir-device-accent: var(--palantir-proto-oauth);
+}
+
+.palantir-device.is-message {
+    --palantir-device-accent: var(--palantir-warn);
+}
+
+.palantir-device.is-webauthn,
+.palantir-device.is-yubikey,
+.palantir-device.is-duo,
+.palantir-device.is-message {
+    border-left-color: var(--palantir-device-accent);
+}
+
+.palantir-device.is-webauthn .palantir-identity-item__icon,
+.palantir-device.is-yubikey .palantir-identity-item__icon,
+.palantir-device.is-duo .palantir-identity-item__icon,
+.palantir-device.is-message .palantir-identity-item__icon {
+    background: color-mix(in srgb, var(--palantir-device-accent) 18%, transparent);
+    color: var(--palantir-device-accent);
+}
+
+.palantir-account__avatar {
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.palantir-account__contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+}
+
+.palantir-account__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--palantir-text);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-account__contact .mdi {
+    color: var(--palantir-text-muted);
+    font-size: 16px;
+}
+
+.palantir-token-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: var(--palantir-text-2);
+    font-size: 13px;
+}
+
+.palantir-token-summary .palantir-user-card__bulk {
+    margin-top: 0;
+}
+
+.palantir-token-client + .palantir-token-client {
+    margin-top: 16px;
+}
+
+.palantir-token-client__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--palantir-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.palantir-token-client__head .mdi {
+    color: var(--palantir-text-muted);
+    font-size: 18px;
+}
+
+@media (max-width: 640px) {
+    .palantir-identity-item__head {
+        flex-wrap: wrap;
+    }
+
+    .palantir-identity-item__action {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* ==========================================================================

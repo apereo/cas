@@ -495,8 +495,8 @@ function addRegisteredServiceClientSecretRow(secret = {}) {
     const $expirationDate = $(`#${expirationDateId}`);
     $secret.val(secret.value || "");
     $expirationDate.val(secret.expirationDate || "");
-    if (secret.expiration && secret.expirationDate) {
-        $expirationDate.data("recorded", {date: secret.expirationDate, expiration: String(secret.expiration)});
+    if (secret.expiration) {
+        $expirationDate.data("recorded", {date: secret.expirationDate || "", expiration: String(secret.expiration)});
     }
 
     row.find("input").on("input change", () => generateServiceDefinition());
@@ -538,8 +538,9 @@ function buildRegisteredServiceClientSecretsDefinition() {
 }
 
 /**
- * The client secrets the wizard shows, each with its expiration. An expiration CAS recorded keeps its exact time while
- * its date is left as it was, since the date field holds only the day; choosing another date replaces it.
+ * The client secrets the wizard shows, each with its expiration. An expiration CAS recorded keeps its exact time and
+ * offset while its date is left as it was, since the date field holds only the day, and so does one the date field
+ * cannot show; choosing another date replaces it.
  *
  * @returns {Array<{value: string, expiration: string}>} the secrets
  */
@@ -614,7 +615,8 @@ function parseRegisteredServiceClientSecretExpiration(expiration) {
     if (/^\d+$/.test(value)) {
         return formatRegisteredServiceClientSecretExpirationDate(new Date(Number(value) * 1000));
     }
-    const isoDate = new Date(value.endsWith("Z") ? value : `${value}Z`);
+    const instant = value.replace(/\[[^\]]*\]$/, "");
+    const isoDate = new Date(/(Z|[+-]\d{2}:?\d{2})$/i.test(instant) ? instant : `${instant}Z`);
     if (!Number.isNaN(isoDate.getTime())) {
         return formatRegisteredServiceClientSecretExpirationDate(isoDate);
     }

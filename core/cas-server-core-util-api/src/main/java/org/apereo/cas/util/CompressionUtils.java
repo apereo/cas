@@ -277,11 +277,29 @@ public class CompressionUtils {
     public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize,
                                               final long maximumTotalSize)
             throws IOException {
+        return readZipEntries(input, maximumEntrySize, maximumTotalSize, name -> true);
+    }
+
+    /**
+     * The text of the files of a zip archive whose names are accepted, in the order the archive holds them, with the
+     * same limits as {@link #readZipEntries(InputStream, int, long)}. A file whose name is not accepted is passed over
+     * without being read, and does not count toward the total.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, a file in the archive may have at most
+     * @param maximumTotalSize the size, in bytes, the accepted files of the archive may have together at most
+     * @param accepted         whether a file, by its name in the archive, is read
+     * @return the text of each accepted file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize,
+                                              final long maximumTotalSize, final Predicate<String> accepted)
+            throws IOException {
         val entries = new ArrayList<String>();
         var total = 0L;
         try (val zip = new ZipInputStream(input, StandardCharsets.UTF_8)) {
             for (var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
-                if (!entry.isDirectory()) {
+                if (!entry.isDirectory() && accepted.test(entry.getName())) {
                     val content = zip.readNBytes(maximumEntrySize + 1);
                     if (content.length > maximumEntrySize) {
                         throw new IllegalArgumentException("Archive entry %s is larger than %s bytes".formatted(entry.getName(), maximumEntrySize));

@@ -88,12 +88,10 @@ public class CasMcpAuditInterceptor implements MethodInterceptor {
     private static Map<String, String> arguments(final MethodInvocation invocation) {
         val parameters = invocation.getMethod().getParameters();
         val values = invocation.getArguments();
-        val arguments = new LinkedHashMap<String, String>();
-        for (var i = 0; i < parameters.length && i < values.length; i++) {
-            if (values[i] != null) {
-                arguments.put(parameters[i].getName(), StringUtils.abbreviate(String.valueOf(values[i]), MAX_ARGUMENT_LENGTH));
-            }
-        }
-        return arguments;
+        return IntStream.iterate(0, i -> i < parameters.length && i < values.length, i -> i + 1)
+            .filter(i -> values[i] != null)
+            .boxed()
+            .collect(Collectors.toMap(i -> parameters[i].getName(),
+                i -> StringUtils.abbreviate(String.valueOf(values[i]), MAX_ARGUMENT_LENGTH), (a, b) -> b, LinkedHashMap::new));
     }
 }

@@ -219,6 +219,100 @@ async function verifyServiceImport(page) {
         });
     }, serviceId);
     fs.rmSync(path.dirname(file), {recursive: true, force: true});
+
+    await cas.separator();
+    const names = ["MultiImportOne", "MultiImportTwo", "MultiImportThree"];
+    await removeLeftoverApplications(page, names);
+    const folder = fs.mkdtempSync(path.join(os.tmpdir(), "palantir-import-many-"));
+    try {
+        const definitions = names.map((name, index) => {
+            const definition = path.join(folder, `${name}.json`);
+            fs.writeFileSync(definition, JSON.stringify({
+                "@class": "org.apereo.cas.services.CasRegisteredService",
+                serviceId: `^https://multi-import-${index}.example.org/.*`,
+                name: name
+            }));
+            return definition;
+        });
+        const broken = path.join(folder, "Broken.json");
+        fs.writeFileSync(broken, "{ not json");
+        const archive = path.join(folder, "Archive.zip");
+        fs.writeFileSync(archive, "PK");
+
+        await (await page.$("#serviceFileInput")).uploadFile(definitions[0], archive);
+        await page.waitForFunction(() => $(".swal2-title").text() === "Choose Files of One Kind", {timeout: 10000});
+        await cas.logg("A JSON file and an archive together are refused before anything is sent");
+        await page.evaluate(() => Swal.close());
+
+        await (await page.$("#serviceFileInput")).uploadFile(...definitions, broken);
+        await page.waitForFunction(() => $(".swal2-title").text() === "Import 4 Applications?", {timeout: 10000});
+        await page.click(".swal2-confirm");
+        await page.waitForFunction(() => $(".swal2-title").text() === "3 Applications Imported", {timeout: 60000});
+        const summary = await page.evaluate(() => $(".swal2-html-container").text());
+        await cas.logg(`Importing several JSON files: ${summary}`);
+        assert(summary.includes("Broken.json"));
+        await page.evaluate(() => Swal.close());
+        const many = await page.evaluate((imported) => [...registeredServicesById.values()]
+            .filter((service) => imported.includes(String(service.name))).map((service) => service.id), names);
+        assert(many.length === 3, `Imported applications: ${JSON.stringify(many)}`);
+    } finally {
+        await removeLeftoverApplications(page, names);
+        fs.rmSync(folder, {recursive: true, force: true});
+    }
+    await verifyImportsStopWithTheSession(page);
+}
+
+/**
+ * Answer imports as an expired session does, with the login page instead of the application CAS created, and check
+ * that a batch stops sending files and a single file is not reported as imported.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyImportsStopWithTheSession(page) {
+    const answered = await page.evaluate(async () => {
+        const ajax = $.ajax;
+        const sent = [];
+        const confirm = async (title) => {
+            const until = Date.now() + 10000;
+            while (!(Swal.isVisible() && $(".swal2-title").text() === title) && Date.now() < until) {
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+            Swal.clickConfirm();
+        };
+        $.ajax = (options) => {
+            sent.push(options.data.name);
+            const expired = sent.length >= 2;
+            const deferred = $.Deferred();
+            const request = deferred.promise();
+            request.status = expired ? 200 : 201;
+            request.getResponseHeader = (name) => name.toLowerCase() === "id"
+                ? (expired ? null : "987654")
+                : (expired ? "text/html;charset=UTF-8" : "application/json");
+            deferred.resolve("");
+            return request;
+        };
+        try {
+            const files = ["StopOne.json", "StopTwo.json", "StopThree.json"].map((name) => new File(["{}"], name, {type: "application/json"}));
+            const batch = importServiceFiles(files);
+            await confirm("Import 3 Applications?");
+            await batch;
+            const stopped = {sent: [...sent], title: $(".swal2-title").text(), text: $(".swal2-html-container").text()};
+            Swal.close();
+            const single = importServiceFile(new File(["{}"], "StopSingle.json", {type: "application/json"}));
+            await confirm("Import StopSingle.json?");
+            await single;
+            const refused = $(".swal2-title").text();
+            Swal.close();
+            return {stopped, refused};
+        } finally {
+            $.ajax = ajax;
+        }
+    });
+    await cas.log(`Imports once the session expired: ${JSON.stringify(answered)}`);
+    assert(JSON.stringify(answered.stopped.sent) === JSON.stringify(["StopOne.json", "StopTwo.json"]), "The batch stops sending files");
+    assert(answered.stopped.title === "Import Stopped" && answered.stopped.text.includes("StopThree.json"));
+    assert(answered.refused === "Nothing Imported", "A single file the login page answered is not reported as imported");
+    await cas.logg("Imports stop once CAS answers with the login page");
 }
 
 /**
@@ -308,6 +402,23 @@ async function verifyApplicationBulkActions(page) {
     await cas.log(`The exported archive holds ${archive.size} bytes`);
     assert(archive.size > 0 && archive.signature === 0x04034b50);
     await cleared("Exporting");
+
+    const reimported = await page.evaluate(async (url) => {
+        const bytes = await (await fetch(url, {credentials: "include"})).arrayBuffer();
+        const importing = importServiceFile(new File([bytes], "services.zip", {type: "application/zip"}));
+        const until = Date.now() + 10000;
+        while (!(Swal.isVisible() && $(".swal2-title").text() === "Import services.zip?") && Date.now() < until) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        Swal.clickConfirm();
+        await importing;
+        const answer = {title: $(".swal2-title").text(), text: $(".swal2-html-container").text()};
+        Swal.close();
+        return answer;
+    }, exported.url());
+    await cas.log(`Importing the exported archive: ${JSON.stringify(reimported)}`);
+    assert(reimported.title === "Imported" && reimported.text.startsWith("2 applications from services.zip are imported"),
+        `The archive import says what CAS imported: ${JSON.stringify(reimported)}`);
 
     for (const disable of [true, false]) {
         const button = disable ? "disableSelectedServices" : "enableSelectedServices";
@@ -457,7 +568,8 @@ async function openApplications(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
-    await removeLeftoverApplications(page, ["HistoryExample", "ImportExample", "BulkExampleOne", "BulkExampleTwo", "BulkExampleThree"]);
+    await removeLeftoverApplications(page, ["HistoryExample", "ImportExample", "BulkExampleOne", "BulkExampleTwo", "BulkExampleThree",
+        "MultiImportOne", "MultiImportTwo", "MultiImportThree"]);
     await openApplications(page);
     await verifyServiceHistory(page);
     await verifyServiceImport(page);

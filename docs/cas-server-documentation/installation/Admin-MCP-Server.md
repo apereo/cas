@@ -112,8 +112,6 @@ can identify themselves with [client ID metadata documents](../authentication/OI
 which the MCP authorization specification recommends, or register through
 [dynamic client registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).
 
-{% include_cached featuretoggles.html features="AI.mcp-oauth" %}
-
 ## Tools
 
 The following tools are available. All tools are read-only and are advertised to clients with the
@@ -274,8 +272,6 @@ Clients that support [argument completion](https://modelcontextprotocol.io/speci
 can complete the setting name of `cas://settings/{name}` from at least two typed characters, and the service id of
 `cas://services/{id}` from the first digits of the id or part of the service name. MCP completion applies to resource
 templates and prompts only, not to tool parameters. Completion is turned on by default and requires the `ROLE_MCP_ADMIN` role/authority.
-
-{% include_cached featuretoggles.html features="AI.mcp-settings" %}
 
 ## Client Configuration
 

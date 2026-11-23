@@ -147,13 +147,6 @@ function serviceImportContentType(file) {
 }
 
 /**
- * Import a JSON or YAML application definition, or a zip of JSON definitions as exported by Palantir, once the
- * operator confirms it.
- *
- * @param file the chosen file
- * @returns {Promise<void>} resolved once the import is sent or declined
- */
-/**
  * Say why CAS refused an application definition when it said why, and fall back to the usual banner otherwise.
  *
  * @param xhr the failed request
@@ -172,6 +165,194 @@ function showUnreadableDefinition(xhr, title) {
     }
 }
 
+/**
+ * What CAS answered to an import. A definition is imported once CAS answers that it created the application and names
+ * its id, and an archive once CAS answers that it created its applications, unless it says it saved none. An answer of 401 or 403, or the login page an
+ * expired session is sent to instead, means nothing more can be imported in this session.
+ *
+ * @param request the import request, answered or failed
+ * @param archive whether an archive was imported
+ * @returns {string} imported, stopped, or failed
+ */
+function palantirImportOutcome(request, archive = false) {
+    const status = request?.status;
+    const page = /text\/html/i.test(request?.getResponseHeader?.("Content-Type") ?? "");
+    if (status === 401 || status === 403 || (page && status >= 200 && status < 300)) {
+        return "stopped";
+    }
+    const imported = archive
+        ? status === 201 && palantirArchiveCounts(request).imported !== 0
+        : status === 201 && Boolean(request?.getResponseHeader?.("id"));
+    return imported ? "imported" : "failed";
+}
+
+/**
+ * Whether CAS answered a save with the application it saved, which names its id.
+ *
+ * @param response the answer to the save
+ * @returns {boolean} true when the application was saved
+ */
+function palantirSavedApplication(response) {
+    return response !== null && typeof response === "object" && !Array.isArray(response)
+        && response.id !== null && response.id !== undefined && String(response.id) !== "";
+}
+
+/**
+ * Tell the operator that CAS did not confirm a save, as when the session expired and the login page answered instead.
+ * The dialog stays open and the draft is kept, so nothing typed is lost.
+ */
+function showUnconfirmedSave() {
+    Swal.fire({
+        icon: "warning",
+        title: "Not Saved",
+        text: "CAS did not confirm that it saved the application, and your session may have expired. Your changes and their "
+            + "draft are kept: sign in again, then save once more."
+    });
+}
+
+/**
+ * How many definitions of an imported archive CAS saved and how many it did not, as its answer says. A count the
+ * answer does not give is unknown, which is not the same as none.
+ *
+ * @param request the answered import request
+ * @returns {{imported: number|null, skipped: number|null}} the counts, each null when unknown
+ */
+function palantirArchiveCounts(request) {
+    let answer = null;
+    try {
+        answer = JSON.parse(request?.responseText ?? "");
+    } catch (error) {
+        answer = null;
+    }
+    const count = value => Number.isInteger(value) && value >= 0 ? value : null;
+    return {imported: count(answer?.imported), skipped: count(answer?.skipped)};
+}
+
+/**
+ * What an imported archive saved, as CAS counted it: how many definitions were imported, and how many were left out.
+ * When CAS did not say how many, the archive is only said to be imported.
+ *
+ * @param name the name of the archive
+ * @param request the answered import request
+ * @returns {string} the summary
+ */
+function palantirArchiveImported(name, request) {
+    const {imported, skipped} = palantirArchiveCounts(request);
+    const saved = imported === null
+        ? `The applications in ${name} are imported.`
+        : `${imported} application${imported === 1 ? "" : "s"} from ${name} ${imported === 1 ? "is" : "are"} imported.`;
+    return saved + (skipped > 0
+        ? ` CAS could not read or save ${skipped} definition${skipped === 1 ? "" : "s"} in it, which ${skipped === 1 ? "was" : "were"} left out.`
+        : "");
+}
+
+/**
+ * Import several application definition files of the same kind, JSON or YAML, once the operator confirms them: one
+ * after another, showing the progress, then reading the applications again once. A file counts as imported only when
+ * CAS answers that it created the application and names its id; a file CAS cannot read, or that fails to save, does
+ * not stop the others, and is named at the end. Once CAS no longer accepts imports, as when the session expired, the
+ * rest are not sent, and the operator is told which were imported and which were left. Several files of different kinds, or with an
+ * archive among them, are refused before anything is sent, since an archive is imported on its own.
+ *
+ * @param files the chosen files
+ * @returns {Promise<void>} resolved once they are imported or declined
+ */
+async function importServiceFiles(files) {
+    const kinds = new Set(files.map(file => serviceImportContentType(file)));
+    if (kinds.has("application/octet-stream") || kinds.size > 1) {
+        Swal.fire({
+            icon: "info",
+            titleText: "Choose Files of One Kind",
+            text: "Several JSON definitions, or several YAML definitions, can be imported together; an archive is imported on its own."
+        });
+        return;
+    }
+    const contentType = [...kinds][0];
+    const listed = files.slice(0, 8).map(file => `<li>${escapePalantirMarkup(file.name)}</li>`).join("");
+    const more = files.length > 8 ? `<li>and ${files.length - 8} more</li>` : "";
+    const result = await Swal.fire({
+        titleText: `Import ${files.length} Applications?`,
+        html: `<p>Each application takes effect immediately, replacing an application with the same id.</p>
+               <ul class="palantir-selection-list">${listed}${more}</ul>`,
+        icon: "question",
+        showDenyButton: true,
+        confirmButtonText: `Import ${files.length}`,
+        denyButtonText: "Cancel"
+    });
+    if (!result.isConfirmed) {
+        return;
+    }
+    const button = $("button[name=importService]");
+    const wasDisabled = button.prop("disabled");
+    button.prop("disabled", true);
+    const failed = [];
+    const imported = [];
+    PalantirProgress.open("Importing applications", `Importing ${files[0].name}...`, `${files.length} files`, 0);
+    try {
+        let stopped = false;
+        let settled = 0;
+        for (let index = 0; index < files.length && !stopped; index++) {
+            const file = files[index];
+            PalantirProgress.update(`Importing ${file.name} (${index + 1} of ${files.length})...`, index / files.length * 100);
+            let request = null;
+            try {
+                request = $.ajax({
+                    url: `${CasActuatorEndpoints.registeredServices()}/import`,
+                    type: "POST",
+                    contentType: contentType,
+                    data: file,
+                    processData: false,
+                    dataType: "text"
+                });
+                await request;
+            } catch (xhr) {
+                if (xhr?.statusText === PALANTIR_READ_ONLY) {
+                    PalantirProgress.close();
+                    return;
+                }
+            }
+            const outcome = palantirImportOutcome(request);
+            stopped = outcome === "stopped";
+            if (outcome === "imported") {
+                imported.push(file.name);
+            } else if (outcome === "failed") {
+                failed.push(file.name);
+            }
+            settled += stopped ? 0 : 1;
+        }
+        if (stopped) {
+            PalantirProgress.close();
+            const left = files.slice(settled).map(file => file.name);
+            Swal.fire({
+                icon: "warning",
+                titleText: "Import Stopped",
+                text: `CAS no longer accepts imports in this session, which may have expired. ${imported.length} of ${files.length} `
+                    + `were imported; sign in again to import the rest: ${left.join(", ")}.`
+                    + (failed.length === 0 ? "" : ` CAS could not read or save these: ${failed.join(", ")}.`)
+            });
+            return;
+        }
+        PalantirProgress.update("Refreshing the applications...", null);
+        await PalantirApplicationSelection.reload();
+        PalantirProgress.close();
+        Swal.fire({
+            icon: failed.length === 0 ? "success" : imported.length === 0 ? "error" : "warning",
+            titleText: `${imported.length} Application${imported.length === 1 ? "" : "s"} Imported`,
+            text: failed.length === 0 ? "" : `CAS could not read or save these, and they were not imported: ${failed.join(", ")}.`
+        });
+    } finally {
+        PalantirProgress.close();
+        button.prop("disabled", wasDisabled);
+    }
+}
+
+/**
+ * Import a JSON or YAML application definition, or a zip of JSON definitions as exported by Palantir, once the
+ * operator confirms it.
+ *
+ * @param file the chosen file
+ * @returns {Promise<void>} resolved once the import is sent or declined
+ */
 async function importServiceFile(file) {
     const contentType = serviceImportContentType(file);
     const archive = contentType === "application/octet-stream";
@@ -216,6 +397,20 @@ async function importServiceFile(file) {
             }
         });
         await request;
+        const outcome = palantirImportOutcome(request, archive);
+        if (outcome !== "imported") {
+            PalantirProgress.close();
+            Swal.fire({
+                title: "Nothing Imported",
+                text: outcome === "stopped"
+                    ? `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`
+                    : archive && palantirArchiveCounts(request).imported === 0
+                        ? `CAS found no application definition in ${file.name}.`
+                        : `CAS did not confirm that it saved ${file.name}.`,
+                icon: "error"
+            });
+            return;
+        }
         PalantirProgress.update("Refreshing the applications...");
         await PalantirApplicationSelection.reload();
         PalantirProgress.close();
@@ -223,16 +418,31 @@ async function importServiceFile(file) {
         Swal.fire({
             title: "Imported",
             text: archive
-                ? `The applications in ${file.name} are imported.`
+                ? palantirArchiveImported(file.name, request)
                 : `${file.name} is imported${id ? ` as application ${id}` : ""}.`,
-            icon: "success"
+            icon: archive && palantirArchiveCounts(request).skipped > 0 ? "warning" : "success"
         });
     } catch (xhr) {
         PalantirProgress.close();
-        if (xhr?.status === 400) {
+        if (palantirImportOutcome(xhr, archive) === "stopped") {
             Swal.fire({
                 title: "Nothing Imported",
-                text: `CAS could not read ${file.name} as an application definition.`,
+                text: `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`,
+                icon: "error"
+            });
+        } else if (xhr?.status === 400 || xhr?.status === 422) {
+            const skipped = archive ? palantirArchiveCounts(xhr).skipped : null;
+            Swal.fire({
+                title: "Nothing Imported",
+                text: archive
+                    ? `CAS could not read or save ${skipped === null ? "the definitions" : `any of the ${skipped} definition${skipped === 1 ? "" : "s"}`} in ${file.name}.`
+                    : `CAS could not read ${file.name} as an application definition.`,
+                icon: "error"
+            });
+        } else if (xhr?.status === 413) {
+            Swal.fire({
+                title: "Nothing Imported",
+                text: `${file.name} is larger than an import allows, or holds a definition that is, so none of it was imported.`,
                 icon: "error"
             });
         } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
@@ -358,8 +568,19 @@ async function initializeServiceButtons() {
             }
 
             const mode = saveButton.attr("name") === "saveServiceWizard" ? "wizard" : "editor";
-            const conflict = isNewService ? "save" : await PalantirServiceEditGuard.checkConflict(mode, value);
+            if (!PalantirServiceEditGuard.refuseLeftOutSecrets(value)) {
+                return;
+            }
+            const release = PalantirServiceEditGuard.holdWhileSaving(mode);
+            let conflict;
+            try {
+                conflict = isNewService ? "save" : await PalantirServiceEditGuard.checkConflict(mode, value);
+            } catch (error) {
+                release();
+                throw error;
+            }
             if (conflict === "cancel") {
+                release();
                 return;
             }
             const confirmation = conflict === "overwrite"
@@ -373,13 +594,22 @@ async function initializeServiceButtons() {
                 });
             confirmation
                 .then((result) => {
-                    if (result.isConfirmed) {
+                    if (!result.isConfirmed) {
+                        release();
+                    } else {
                         $.ajax({
                             url: `${CasActuatorEndpoints.registeredServices()}`,
                             type: isNewService ? "POST" : "PUT",
                             contentType: "application/json",
+                            dataType: "json",
+                            headers: {"Accept": "application/json"},
                             data: value,
                             success: async response => {
+                                release();
+                                if (!palantirSavedApplication(response)) {
+                                    showUnconfirmedSave();
+                                    return;
+                                }
                                 PalantirServiceEditGuard.saved(mode);
                                 dialogInstance["close"]();
                                 await fetchServices(() => {
@@ -393,7 +623,12 @@ async function initializeServiceButtons() {
                                 });
                             },
                             error: (xhr, status, error) => {
+                                release();
                                 console.error("Update failed:", error);
+                                if (status === "parsererror" || palantirImportOutcome(xhr) === "stopped") {
+                                    showUnconfirmedSave();
+                                    return;
+                                }
                                 const reason = xhr?.status === 400 ? xhr.responseJSON?.error : null;
                                 if (mode === "editor" && reason) {
                                     PalantirServiceEditor.showProblem("Not saved", `CAS cannot read this definition: ${reason}`, PalantirServiceEditor.rowOf(reason));
@@ -722,12 +957,15 @@ async function initializeFooterButtons() {
 
     $("#serviceFileInput")
         .attr("accept", ".json,.yaml,.yml,.zip")
+        .prop("multiple", true)
         .off("change.import")
         .on("change.import", event => {
-            const file = event.target.files[0];
+            const files = [...event.target.files];
             $(event.target).val("");
-            if (file) {
-                importServiceFile(file);
+            if (files.length === 1) {
+                importServiceFile(files[0]);
+            } else if (files.length > 1) {
+                importServiceFiles(files);
             }
         });
 
@@ -838,6 +1076,16 @@ function revealApplicationRow(serviceId) {
     node?.classList.add("selected");
     node?.scrollIntoView({block: "center"});
     return true;
+}
+
+/**
+ * Select no application, in the table and as cards, as when the operator goes back to the applications without one.
+ */
+function clearApplicationRowSelection() {
+    if ($.fn.dataTable.isDataTable("#applicationsTable")) {
+        $("#applicationsTable").DataTable().rows(".selected").nodes().to$().removeClass("selected");
+    }
+    $("#applicationsCards .palantir-application-card.is-selected").removeClass("is-selected");
 }
 
 /**
