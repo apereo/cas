@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
    currentActiveTab, notyf, Tabs, PalantirModules, signInsChart,
-   PalantirStartupTimeline */
+   PalantirStartupTimeline, initializeDashboardTab */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -99,8 +99,9 @@ async function verifyReadOnlyEndpoint(page) {
  * details, as local builds do not, reports none, and the tab says so.
  */
 async function verifyCasModules(page) {
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
         $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.SYSTEM.index}]`).trigger("click");
+        await initializeDashboardTab(Tabs.SYSTEM);
         $("#system-tabs").tabs("option", "active", $("#system-tabs ul li a[href='#systeminfo-tab']").parent().index());
         $("#system-info-tabs").tabs("option", "active", $("#system-info-tabs ul li a[href='#casmodules-tab']").parent().index());
     });

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.Strings;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jspecify.annotations.Nullable;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -42,6 +43,10 @@ public class TenantRoutingFilter implements Filter {
                     if (Strings.CI.equals(request.getServerName(), tenantHostname)) {
                         val dispatch = "/tenants/" + tenantDefinition.getId() + servletPath;
                         LOGGER.info("Routing request [{}] to tenant [{}] at [{}]", request.getRequestURI(), tenantDefinition.getId(), dispatch);
+                        val clientInfo = ClientInfoHolder.getClientInfo();
+                        if (clientInfo != null) {
+                            clientInfo.setTenant(tenantDefinition.getId());
+                        }
                         val dispatcher = request.getRequestDispatcher(dispatch);
                         dispatcher.forward(request, response);
                         return;

@@ -173,11 +173,13 @@ async function verifyServiceHistory(page) {
 
 /**
  * Import a YAML application definition through the Import button's file input, check that it is imported once
- * and shows up in the applications table, and delete it afterwards.
+ * and shows up in the applications table, and delete it afterwards. Importing several files includes one CAS cannot
+ * read, which CAS refuses with 400; that refusal is expected, so it is not counted as a browser error.
  *
  * @param page the puppeteer page
+ * @param failures the failures recorded so far
  */
-async function verifyServiceImport(page) {
+async function verifyServiceImport(page, failures) {
     await cas.separator();
     const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "palantir-import-")), "ImportExample.yml");
     fs.writeFileSync(file, [
@@ -245,6 +247,7 @@ async function verifyServiceImport(page) {
         await cas.logg("A JSON file and an archive together are refused before anything is sent");
         await page.evaluate(() => Swal.close());
 
+        const before = failures.length;
         await (await page.$("#serviceFileInput")).uploadFile(...definitions, broken);
         await page.waitForFunction(() => $(".swal2-title").text() === "Import 4 Applications?", {timeout: 10000});
         await page.click(".swal2-confirm");
@@ -252,6 +255,8 @@ async function verifyServiceImport(page) {
         const summary = await page.evaluate(() => $(".swal2-html-container").text());
         await cas.logg(`Importing several JSON files: ${summary}`);
         assert(summary.includes("Broken.json"));
+        const unexpected = failures.splice(before).filter((failure) => !/registeredServices\/import/.test(failure));
+        failures.push(...unexpected);
         await page.evaluate(() => Swal.close());
         const many = await page.evaluate((imported) => [...registeredServicesById.values()]
             .filter((service) => imported.includes(String(service.name))).map((service) => service.id), names);
@@ -674,7 +679,7 @@ async function openApplications(page) {
         "MultiImportOne", "MultiImportTwo", "MultiImportThree"]);
     await openApplications(page);
     await verifyServiceHistory(page);
-    await verifyServiceImport(page);
+    await verifyServiceImport(page, failures);
     await verifyApplicationBulkActions(page);
     await verifyEnableKeepsChain(page);
 

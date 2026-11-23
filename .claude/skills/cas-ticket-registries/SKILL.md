@@ -45,6 +45,12 @@ description: "Review and change ticket registries: stateless (compact tickets), 
 - Maintainer decision: the stateless registry stays 100% stateless, in the spirit of the Shibboleth IdP client-side
   storage. Never propose a server-side replay, nonce or single-use store as the fix for anything here; fixes must be
   expressible in the ticket or client storage itself (encoding, binding, lifetimes, key versioning).
+- Service, proxy and proxy-granting tickets store the service tenant right after the service
+  (`ServiceTicketCompactor.compactService`/`expandService`, `TENANT_INDEX`), so tenant checks still hold after expansion. The
+  TGT compactor writes the ticket's tenant into the compacted authentication's `tenant` attribute, from which the TGT factory
+  restores it, since a TGT's tenant may come from the service rather than that attribute. Format version 2 is still
+  unreleased (8.1.0-RC4), so these fields were added without bumping it. `BaseTicketRegistryTests.verifyTicketsKeepTheirTenant`
+  checks that every registry keeps the tenant of TGTs and STs.
 - `CompactTicketCodecTests`, `StatelessTicketRegistryTests.verifyServiceTicketFieldsCannotBeInjectedThroughService`,
   `verifyServiceTicketForDistinguishedNamePrincipal` and `verifyExpandedTicketsCarryTheirStatelessIds` guard the format.
 - The stateless TGT is carried by the TGC exactly as with any other registry: `SendTicketGrantingTicketAction` sets the

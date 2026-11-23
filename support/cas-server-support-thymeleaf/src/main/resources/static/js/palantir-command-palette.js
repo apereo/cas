@@ -566,7 +566,7 @@ class PalantirCommandPalette {
         PalantirCommandPalette.readApplications();
         const dialog = PalantirCommandPalette.dialog();
         if (!dialog.dialog("isOpen")) {
-            dialog.dialog("option", "width", Math.min(640, window.innerWidth - 32));
+            dialog.dialog("option", {...PalantirCommandPalette.size(), position: PalantirCommandPalette.POSITION});
             dialog.dialog("open");
         }
     }

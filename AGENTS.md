@@ -119,6 +119,17 @@ When you learn something new, record it in the skill that owns the area, or here
 - `SubjectConfirmationData.Address` identifies the presenter, not the ACS server. Use trusted proxy-aware client information or omit it; never perform a synchronous DNS lookup of the ACS host while building assertions.
 - Scope caches that contain service-specific metadata, keys, validation filters, or trust policy to the registered-service boundary. Address entries by their complete key; do not scan unrelated cached values for a matching entity.
 - When replacing a library that verifies tokens, check what it does when nothing is configured: pac4j's `JwtAuthenticator` with no signature configuration skipped verification and accepted unsigned tokens, which let any `sub` log in through JWT authentication. Token validation in CAS refuses everything when the service defines no signing secret (`TokenAuthenticationSecurity`); keep it that way.
+- Multitenancy isolation: every ticket carries the tenant it was created in (`getTenantId()`), taken from the request
+  (`TenantExtractor`: `X-Tenant-Id` header, else the `/tenants/{id}` path; a header naming another tenant than the path is
+  an `UnknownTenantException`, answered with 400 by `ClientInfoThreadLocalFilter`). CAS grants service and proxy tickets only
+  when the granting ticket's tenant equals the requested service's tenant, and validation compares the service ticket's
+  tenant with the validating service's tenant both ways; no tenant only matches no tenant. A cross-tenant refusal is
+  `UnauthorizedSsoServiceException`, never `InvalidTicketException`, which makes the webflow destroy the TGT that is still
+  valid in its own tenant. SSO participation compares the TGT's tenant with the `ClientInfo` tenant, which
+  `TenantRoutingFilter` sets for requests it routes to a tenant by host name (the filter that records `ClientInfo` runs
+  before it, on the original path), and a TGT created without a service takes the `ClientInfo` tenant through the `tenant`
+  authentication attribute. Anything that builds a new `Service` from a request's service (selection strategies,
+  compactors) must copy the tenant over.
 - A string cipher executor (`BaseStringCipherExecutor`) refuses a value whose signature cannot be verified by returning
   null from `decode` rather than throwing. Callers that turn the decoded value into an identity must reject a null or
   blank result themselves; `SimplePrincipal` accepts a null id, so a handler that relied on the exception

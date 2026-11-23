@@ -650,7 +650,7 @@ async function verifyMfaProviders(page) {
             await page.type("#mfaDuoUsername", "duocode");
             await page.click(".palantir-mfa-duo__lookup button[type=submit]");
             await page.waitForFunction(() => $(".palantir-mfa-duo .palantir-mfa-duo__status").length === 1
-                || $(".palantir-mfa-duo .palantir-mfa-duo__note").length > 0, {timeout: 30000});
+                || $(".palantir-mfa-duo .palantir-mfa-duo__note.is-alert").length > 0, {timeout: 30000});
             const account = await page.evaluate(() => ({
                 signIn: $(".palantir-mfa-duo__status .palantir-mfa-providers__chip").text().trim(),
                 facts: $(".palantir-mfa-duo .palantir-mfa-providers__fact small").toArray().map((label) => label.textContent),

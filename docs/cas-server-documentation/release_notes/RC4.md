@@ -120,6 +120,11 @@ release:
       text: that use both the browser and the geolocation components with their default order now place geolocation before the browser; devices trusted before the upgrade are asked for multifactor authentication once more. Set `cas.authn.mfa.trusted.device-fingerprint.geolocation.order=6` to keep the previous fingerprint.
       section: Multifactor Authentication
       area: mfa
+    - type: action
+      title: Multitenancy
+      text: keeps tickets in their tenant; applications of a tenant validate tickets and request proxy tickets at that tenant's URL, and an `X-Tenant-Id` header that names another tenant than the URL is refused.
+      section: Authentication and Session Security
+      area: tickets
     - type: changed
       title: etcd configuration source
       text: keeps the values it read at startup or at the last refresh and no longer defines an `etcdClient` bean; custom code that used that bean opens its own client.
@@ -636,9 +641,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   to be dropped.
 - {: .action data-area="tickets"} The compact form of tickets kept by the
   [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) now carries the resources of OAuth codes,
-  access tokens, refresh tokens, device codes and pushed authorization requests, and the audience of exchanged access
-  tokens; its format version changes: tickets and tokens issued before the upgrade can no longer be read, so users sign in
-  again and clients obtain new tokens.
+  access tokens, refresh tokens, device codes and pushed authorization requests, the audience of exchanged access
+  tokens and the tenant of ticket-granting, service, proxy and proxy-granting tickets; its format version changes: tickets and tokens
+  issued before the upgrade can no longer be read, so users sign in again and clients obtain new tokens.
 - {: .removed data-area="tickets"} The deprecated Azure CosmosDb ticket registry is removed, along with its settings.
   Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
 - {: .changed data-area="tickets"} A [logout](../installation/Logout-Single-Signout.html) request now looks up its
@@ -1087,6 +1092,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   or that has no audience or issuer, instead of failing with an error.
 - {: .fixed data-area="authentication"} [Surrogate authentication](../authentication/Surrogate-Authentication.html) SMS and email
   notifications are sent when multitenancy is not in use.
+- {: .fixed data-area="tickets"} Security: with [multitenancy](../multitenancy/Multitenancy-Overview.html#tenant-isolation),
+  a single sign-on session of one tenant could obtain service tickets that another tenant accepted, by replaying its
+  cookie or through the REST API with a tenant header. Tickets now stay in the tenant that issued them: single sign-on,
+  service and proxy tickets and ticket validation are refused across tenants, a tenant header that names another tenant
+  than the URL is refused, and the proxy endpoint is also available under the tenant URL.
 
 ### SAML2
 {: .changed data-area="saml"}

@@ -442,6 +442,24 @@ public abstract class BaseTicketRegistryTests {
             () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
     }
 
+    @RepeatedTest(2)
+    void verifyTicketsKeepTheirTenant() throws Throwable {
+        val tenant = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketGrantingTicket.setTenantId(tenant);
+        val service = RegisteredServiceTestUtils.getService("https://tenant.example.org/" + UUID.randomUUID());
+        service.setTenant(tenant);
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+            service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val addedTicketGrantingTicket = ticketRegistry.addTicket(ticketGrantingTicket);
+        val addedServiceTicket = ticketRegistry.addTicket(serviceTicket);
+        assertEquals(tenant, ticketRegistry.getTicket(addedTicketGrantingTicket.getId()).getTenantId(),
+            () -> "Ticket-granting ticket lost its tenant. useEncryption[" + useEncryption + ']');
+        assertEquals(tenant, ticketRegistry.getTicket(addedServiceTicket.getId()).getTenantId(),
+            () -> "Service ticket lost its tenant. useEncryption[" + useEncryption + ']');
+    }
+
     /**
      * Exercise block of code in {@link AbstractTicketRegistry#getTicket(String ticketId)} that runs when
      * the method encounters a {@link Ticket} created in the future.

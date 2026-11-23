@@ -38,6 +38,17 @@ curl --location
     --header 'X-Tenant-Id: {TENANT_ID}'
 ```
 
+A request that carries a tenant header and a tenant url naming different tenants is refused with a bad request.
+
+## Tenant Isolation
+
+Tickets and single sign-on sessions belong to the tenant in which they were created. A single sign-on session
+established at one tenant's url, or outside of any tenant, does not carry over to another tenant: the user is asked
+to log in again, and the existing session cannot obtain service or proxy tickets for the applications of another tenant.
+Applications that belong to a tenant validate service tickets and request proxy tickets at the url of that tenant,
+such as `/cas/tenants/{TENANT_ID}/p3/serviceValidate` and `/cas/tenants/{TENANT_ID}/proxy`, or by passing the tenant
+header; a service ticket issued for one tenant, or outside of any tenant, is refused elsewhere.
+
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
