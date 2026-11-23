@@ -290,7 +290,7 @@ async function verifySessionAndTokenCards(page) {
             remember_me: true,
             authentication_attributes: {clientIpAddress: ["127.0.0.1"]},
             expiration_policy: {maxExpirationTime: new Date(now + 3600000).toISOString()},
-            authenticated_services: {"ST-1": {originalUrl: "https://app.example.org/home"}}
+            authenticated_services: {"ST-1": {originalUrl: "https://app.example.org/home"}, "ST-2": {originalUrl: "https://app.example.org/home"}}
         }]);
         const secret = "AT-1-abcdefghijklmnopqrstuvwxyz0123456789-example";
         const tokens = PalantirUserLookup.tokenGroups([
@@ -337,7 +337,8 @@ async function verifySessionAndTokenCards(page) {
             requestPassword: false, allowedDelegatedClients: ["GitHubClient"], attributes: {department: ["engineering"]}}])}</div>`);
         const devices = $(`<div>${PalantirUserLookup.deviceCards([
             {id: "1", name: "Phone", type: "Mobile", source: "Duo Security", details: {providerId: "mfa-duo"}},
-            {id: "2", name: "Key", source: "WebAuthn FIDO2", details: {providerId: "mfa-webauthn"}}], "casuser")}</div>`);
+            {id: "2", name: "Key", source: "Web Authn", details: {providerId: "mfa-campus-key"}, lastUsedDateTime: new Date().toISOString()}],
+        "casuser")}</div>`);
         return {
             avatar: account.find(".palantir-account__avatar").text().trim(),
             contacts: account.find(".palantir-account__contact").toArray().map((contact) => contact.textContent.trim()),
@@ -345,6 +346,7 @@ async function verifySessionAndTokenCards(page) {
                 .map((fact) => `${$(fact).find("dt").text().trim()}=${$(fact).find("dd").text().trim()}`),
             chips: account.find(".palantir-identity-chip").length,
             kinds: devices.find(".palantir-device").toArray().map((device) => device.className.match(/is-(\w+)/)[1]),
+            dated: devices.find(".palantir-device.is-webauthn dt").toArray().map((label) => label.textContent.trim()),
             removes: devices.find("[data-user-action='remove-mfa-device']").toArray()
                 .map((button) => `${button.dataset.provider}/${button.dataset.key}/${button.textContent.trim()}`)
         };
@@ -354,7 +356,8 @@ async function verifySessionAndTokenCards(page) {
     assert(JSON.stringify(accounts.facts) === JSON.stringify(["MFA Eligible=Yes", "Delegated Sign-In=Default",
         "Asks For Password=No", "Selection Menu=Hidden"]) && accounts.chips === 2);
     assert(JSON.stringify(accounts.kinds) === JSON.stringify(["duo", "webauthn"]));
-    assert(JSON.stringify(accounts.removes) === JSON.stringify(["mfa-duo/1/Remove", "mfa-webauthn/2/Remove"]));
+    assert(JSON.stringify(accounts.dated) === JSON.stringify(["Registered"]), `A WebAuthn device shows when it was registered: ${accounts.dated}`);
+    assert(JSON.stringify(accounts.removes) === JSON.stringify(["mfa-duo/1/Remove", "mfa-campus-key/2/Remove"]));
     await cas.logg("Passwordless accounts and MFA devices are drawn as cards with labelled facts");
 }
 

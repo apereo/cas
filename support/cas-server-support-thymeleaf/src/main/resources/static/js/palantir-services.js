@@ -108,7 +108,7 @@ function getEditServiceDialogInstance() {
                 let serviceId = null;
                 if (element.attr("newService") !== "true") {
                     try {
-                        serviceId = JSON.parse(text).id;
+                        serviceId = palantirParseJson(text).id;
                     } catch (error) {
                         serviceId = null;
                     }
@@ -167,12 +167,15 @@ function showUnreadableDefinition(xhr, title) {
 
 /**
  * What CAS answered to an import. A definition is imported once CAS answers that it created the application and names
- * its id, and an archive once CAS answers that it created its applications, unless it says it saved none. An answer of 401 or 403, or the login page an
- * expired session is sent to instead, means nothing more can be imported in this session.
+ * its id, and an archive once CAS answers that it created its applications, unless it says it saved none; an earlier
+ * CAS answers an archive with an empty 200 instead, which is taken as imported without a count. An answer of 401 or
+ * 403, or the login page an expired session is sent to instead, means nothing more can be imported in this session.
+ * No answer at all, as when the connection drops, or a server error, which CAS or a gateway can give after the
+ * application was saved, leaves it unknown whether CAS saved what it was sent.
  *
  * @param request the import request, answered or failed
  * @param archive whether an archive was imported
- * @returns {string} imported, stopped, or failed
+ * @returns {string} imported, stopped, unknown, or failed
  */
 function palantirImportOutcome(request, archive = false) {
     const status = request?.status;
@@ -180,8 +183,11 @@ function palantirImportOutcome(request, archive = false) {
     if (status === 401 || status === 403 || (page && status >= 200 && status < 300)) {
         return "stopped";
     }
+    if (request && (status === 0 || status >= 500)) {
+        return "unknown";
+    }
     const imported = archive
-        ? status === 201 && palantirArchiveCounts(request).imported !== 0
+        ? (status === 201 && palantirArchiveCounts(request).imported !== 0) || status === 200
         : status === 201 && Boolean(request?.getResponseHeader?.("id"));
     return imported ? "imported" : "failed";
 }
@@ -239,7 +245,7 @@ function palantirArchiveCounts(request) {
 function palantirArchiveImported(name, request) {
     const {imported, skipped} = palantirArchiveCounts(request);
     const saved = imported === null
-        ? `The applications in ${name} are imported.`
+        ? `The applications in ${name} are imported; CAS did not say how many.`
         : `${imported} application${imported === 1 ? "" : "s"} from ${name} ${imported === 1 ? "is" : "are"} imported.`;
     return saved + (skipped > 0
         ? ` CAS could not read or save ${skipped} definition${skipped === 1 ? "" : "s"} in it, which ${skipped === 1 ? "was" : "were"} left out.`
@@ -247,10 +253,42 @@ function palantirArchiveImported(name, request) {
 }
 
 /**
+ * Download what an export of CAS answers. Only an answer CAS gives as a download is saved: a redirect, a 401 or 403,
+ * or a page that is not an attachment, such as the login page an expired session is sent to, is refused instead of
+ * being saved as the export.
+ *
+ * @param url the export to download
+ * @param fallbackName the file name to use when CAS does not give one
+ * @returns {Promise<void>} resolved once the download is handed to the browser
+ */
+async function palantirDownloadExport(url, fallbackName) {
+    const response = await fetch(url, {credentials: "include", redirect: "manual"});
+    const expired = "CAS did not answer with the export, and your session may have expired. Sign in again, then export once more.";
+    if (response.type === "opaqueredirect" || response.status === 401 || response.status === 403) {
+        throw new Error(expired);
+    }
+    if (!response.ok) {
+        throw new Error(`CAS answered ${response.status} ${response.statusText}`.trim());
+    }
+    if (!/attachment/i.test(response.headers.get("Content-Disposition") ?? "")) {
+        throw new Error(expired);
+    }
+    const blob = await response.blob();
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = response.headers.get("filename") || fallbackName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => window.URL.revokeObjectURL(link.href), 1000);
+}
+
+/**
  * Import several application definition files of the same kind, JSON or YAML, once the operator confirms them: one
  * after another, showing the progress, then reading the applications again once. A file counts as imported only when
  * CAS answers that it created the application and names its id; a file CAS cannot read, or that fails to save, does
- * not stop the others, and is named at the end. Once CAS no longer accepts imports, as when the session expired, the
+ * not stop the others, and is named at the end, apart from a file CAS did not answer for, which may have been imported
+ * and is named so the operator checks before importing it again. Once CAS no longer accepts imports, as when the session expired, the
  * rest are not sent, and the operator is told which were imported and which were left. Several files of different kinds, or with an
  * archive among them, are refused before anything is sent, since an archive is imported on its own.
  *
@@ -287,6 +325,10 @@ async function importServiceFiles(files) {
     button.prop("disabled", true);
     const failed = [];
     const imported = [];
+    const unknown = [];
+    const unanswered = () => unknown.length === 0 ? ""
+        : ` CAS did not answer for ${unknown.join(", ")}, so ${unknown.length === 1 ? "it" : "they"} may already be imported: `
+            + "check the applications before importing again, or an application may be created twice.";
     PalantirProgress.open("Importing applications", `Importing ${files[0].name}...`, `${files.length} files`, 0);
     try {
         let stopped = false;
@@ -315,6 +357,8 @@ async function importServiceFiles(files) {
             stopped = outcome === "stopped";
             if (outcome === "imported") {
                 imported.push(file.name);
+            } else if (outcome === "unknown") {
+                unknown.push(file.name);
             } else if (outcome === "failed") {
                 failed.push(file.name);
             }
@@ -329,16 +373,18 @@ async function importServiceFiles(files) {
                 text: `CAS no longer accepts imports in this session, which may have expired. ${imported.length} of ${files.length} `
                     + `were imported; sign in again to import the rest: ${left.join(", ")}.`
                     + (failed.length === 0 ? "" : ` CAS could not read or save these: ${failed.join(", ")}.`)
+                    + unanswered()
             });
             return;
         }
         PalantirProgress.update("Refreshing the applications...", null);
-        await PalantirApplicationSelection.reload();
+        await PalantirApplicationSelection.reload(imported.length > 0);
         PalantirProgress.close();
         Swal.fire({
-            icon: failed.length === 0 ? "success" : imported.length === 0 ? "error" : "warning",
+            icon: failed.length === 0 && unknown.length === 0 ? "success" : imported.length === 0 && unknown.length === 0 ? "error" : "warning",
             titleText: `${imported.length} Application${imported.length === 1 ? "" : "s"} Imported`,
-            text: failed.length === 0 ? "" : `CAS could not read or save these, and they were not imported: ${failed.join(", ")}.`
+            text: ((failed.length === 0 ? "" : `CAS could not read or save these, and they were not imported: ${failed.join(", ")}.`)
+                + unanswered()).trim()
         });
     } finally {
         PalantirProgress.close();
@@ -424,7 +470,15 @@ async function importServiceFile(file) {
         });
     } catch (xhr) {
         PalantirProgress.close();
-        if (palantirImportOutcome(xhr, archive) === "stopped") {
+        if (palantirImportOutcome(xhr, archive) === "unknown") {
+            await PalantirApplicationSelection.reload(false);
+            Swal.fire({
+                title: "Import Outcome Unknown",
+                text: `CAS did not answer for ${file.name}, so it may already be imported. Check the applications before `
+                    + "importing it again, or an application may be created twice.",
+                icon: "warning"
+            });
+        } else if (palantirImportOutcome(xhr, archive) === "stopped") {
             Swal.fire({
                 title: "Nothing Imported",
                 text: `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`,
@@ -527,7 +581,7 @@ async function initializeServiceButtons() {
                     PalantirServiceEditor.openApplicationInWizard(response);
                     return;
                 }
-                const value = JSON.stringify(response, null, 4);
+                const value = palantirStringifyJson(response, 4);
                 PalantirServiceEditGuard.remember(PalantirServiceEditGuard.key("editor", response.id), response);
                 serviceEditorInstance.setValue(value, -1);
                 serviceEditorInstance.gotoLine(1);
@@ -550,6 +604,7 @@ async function initializeServiceButtons() {
             const saveButton = $(this);
             switch (saveButton.attr("name")) {
             case "saveServiceWizard":
+                flushServiceDefinition();
                 if (!PalantirWizardValidity.report()) {
                     return;
                 }
@@ -761,102 +816,147 @@ async function initializeServiceButtons() {
     };
 }
 
+let palantirServicesRequest = 0;
+
+let palantirServicesLatest = Promise.resolve(true);
+
 /**
- * Read the registered services into the applications table.
+ * Read the registered services into the applications table. When the applications are read again before an earlier
+ * read is answered, only the latest is shown: an earlier answer arriving late is dropped, with its callback, so an
+ * older list never replaces a newer one, and it resolves as the latest does.
  *
  * @param callback called with the table once it holds the services
  * @returns {Promise<boolean>} resolved once the services are in the table, with true, or could not be read, with false
  */
 async function fetchServices(callback) {
     if (CasActuatorEndpoints.registeredServices()) {
-        return new Promise(resolve => $.get(CasActuatorEndpoints.registeredServices(), response => {
-            let serviceCountByType = [0, 0, 0, 0, 0];
-            let applicationsTable = $("#applicationsTable").DataTable();
-            applicationsTable.clear();
-            registeredServicesById.clear();
-            registeredServicesVersion++;
-            if (typeof palantirListedApplications === "function") {
-                palantirListedApplications();
+        const sequence = ++palantirServicesRequest;
+        const superseded = () => sequence !== palantirServicesRequest;
+        const answer = new Promise(resolve => $.ajax({
+            url: CasActuatorEndpoints.registeredServices(),
+            dataType: "json",
+            headers: {"Accept": "application/json"}
+        }).done(response => {
+            if (superseded()) {
+                resolve(palantirServicesLatest);
+                return;
             }
-
-            for (const service of response[1]) {
-                registeredServicesById.set(String(service.id), service);
-                let icon = "mdi-web-box";
-                const serviceClass = service["@class"];
-                if (serviceClass.includes("CasRegisteredService")) {
-                    icon = "mdi-alpha-c-box-outline";
-                    serviceCountByType[0]++;
-                } else if (serviceClass.includes("SamlRegisteredService")) {
-                    icon = "mdi-alpha-s-box-outline";
-                    serviceCountByType[1]++;
-                } else if (serviceClass.includes("OAuthRegisteredService")) {
-                    icon = "mdi-alpha-o-circle-outline";
-                    serviceCountByType[2]++;
-                } else if (serviceClass.includes("OidcRegisteredService")) {
-                    icon = "mdi-alpha-o-box-outline";
-                    serviceCountByType[3]++;
-                } else if (serviceClass.includes("WSFederationRegisteredService")) {
-                    icon = "mdi-alpha-w-box-outline";
-                    serviceCountByType[4]++;
-                }
-
-                const name = escapePalantirMarkup(service.name ?? "");
-                const links = [
-                    applicationLink(service.informationUrl, "Information URL"),
-                    applicationLink(service.privacyUrl, "Privacy URL")
-                ].filter(Boolean);
-                let serviceDetails = `<span serviceId="${service.id}" title="${name}">${name}</span>`;
-                if (PalantirApplicationAccess.isDisabled(service.accessStrategy)) {
-                    serviceDetails += " <span class=\"palantir-status-tag is-disabled\"><i class=\"mdi mdi-cancel\" aria-hidden=\"true\"></i>Disabled</span>";
-                }
-                if (links.length > 0) {
-                    serviceDetails += `<div class="palantir-application-links">${links.join("")}</div>`;
-                }
-
-                let serviceIdDetails = `<span serviceId="${service.id}" class="text-wrap">${escapePalantirMarkup(service.serviceId ?? "")}</span>`;
-                const metadataLink = serviceClass.includes("SamlRegisteredService")
-                    ? samlMetadataLocationMarkup(service.metadataLocation)
-                    : null;
-                if (metadataLink) {
-                    serviceIdDetails += `<div class="palantir-application-links">${metadataLink}</div>`;
-                }
-
-                applicationsTable.row.add({
-                    0: `${PalantirApplicationSelection.checkbox(service.id, service.name ?? service.id)}<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
-                    1: `${serviceDetails}`,
-                    2: `${serviceIdDetails}`,
-                    3: `<span serviceId='${service.id}' class="text-wrap palantir-application-description">${renderPalantirDescription(service.description)}</span>`,
-                    4: `${service.id}`,
-                    serviceId: service.id
-                });
+            if (!Array.isArray(response) || !Array.isArray(response[1])) {
+                console.warn("CAS did not answer with the applications, and the session may have expired", response);
+                displayBanner("CAS did not answer with the applications. Your session may have expired; sign in again to see them.");
+                resolve(false);
+                return;
             }
-
-            applicationsTable.off("draw.palantirServiceButtons").on("draw.palantirServiceButtons", async () => {
-                await initializeServiceButtons();
-            });
-
-            updateApplicationTypeFilter();
-            applicationsTable.draw();
-            if (typeof prepareRegisteredServiceWizardWhenIdle === "function") {
-                prepareRegisteredServiceWizardWhenIdle();
-            }
-
-            $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
-            if (servicesChart) {
-                servicesChart.data.datasets[0].data = serviceCountByType;
-                servicesChart.update();
-            }
-
-            if (callback !== undefined) {
-                callback(applicationsTable);
+            try {
+                renderRegisteredServices(response[1], callback);
+                resolve(true);
+            } catch (error) {
+                console.error("The applications could not be shown", error);
+                resolve(false);
             }
         }).fail((xhr, status, error) => {
+            if (superseded()) {
+                resolve(palantirServicesLatest);
+                return;
+            }
             console.error("Error fetching data:", error);
             $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
             displayBanner(xhr);
-        }).done(() => resolve(true)).fail(() => resolve(false)));
+            resolve(false);
+        }));
+        palantirServicesLatest = answer;
+        return answer;
     } else {
         $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", true);
+    }
+}
+
+/**
+ * Show the applications CAS listed, replacing those shown, in the table, the cards and the chart.
+ *
+ * @param services the applications
+ * @param callback called with the table once it is drawn, if given
+ */
+function renderRegisteredServices(services, callback) {
+    let serviceCountByType = [0, 0, 0, 0, 0];
+    let applicationsTable = $("#applicationsTable").DataTable();
+    applicationsTable.clear();
+    registeredServicesById.clear();
+    registeredServicesVersion++;
+    if (typeof palantirListedApplications === "function") {
+        palantirListedApplications();
+    }
+
+    for (const service of services) {
+        registeredServicesById.set(String(service.id), service);
+        let icon = "mdi-web-box";
+        const serviceClass = service["@class"];
+        if (serviceClass.includes("CasRegisteredService")) {
+            icon = "mdi-alpha-c-box-outline";
+            serviceCountByType[0]++;
+        } else if (serviceClass.includes("SamlRegisteredService")) {
+            icon = "mdi-alpha-s-box-outline";
+            serviceCountByType[1]++;
+        } else if (serviceClass.includes("OAuthRegisteredService")) {
+            icon = "mdi-alpha-o-circle-outline";
+            serviceCountByType[2]++;
+        } else if (serviceClass.includes("OidcRegisteredService")) {
+            icon = "mdi-alpha-o-box-outline";
+            serviceCountByType[3]++;
+        } else if (serviceClass.includes("WSFederationRegisteredService")) {
+            icon = "mdi-alpha-w-box-outline";
+            serviceCountByType[4]++;
+        }
+
+        const name = escapePalantirMarkup(service.name ?? "");
+        const links = [
+            applicationLink(service.informationUrl, "Information URL"),
+            applicationLink(service.privacyUrl, "Privacy URL")
+        ].filter(Boolean);
+        let serviceDetails = `<span serviceId="${service.id}" title="${name}">${name}</span>`;
+        if (PalantirApplicationAccess.isDisabled(service.accessStrategy)) {
+            serviceDetails += " <span class=\"palantir-status-tag is-disabled\"><i class=\"mdi mdi-cancel\" aria-hidden=\"true\"></i>Disabled</span>";
+        }
+        if (links.length > 0) {
+            serviceDetails += `<div class="palantir-application-links">${links.join("")}</div>`;
+        }
+
+        let serviceIdDetails = `<span serviceId="${service.id}" class="text-wrap">${escapePalantirMarkup(service.serviceId ?? "")}</span>`;
+        const metadataLink = serviceClass.includes("SamlRegisteredService")
+            ? samlMetadataLocationMarkup(service.metadataLocation)
+            : null;
+        if (metadataLink) {
+            serviceIdDetails += `<div class="palantir-application-links">${metadataLink}</div>`;
+        }
+
+        applicationsTable.row.add({
+            0: `${PalantirApplicationSelection.checkbox(service.id, service.name ?? service.id)}<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
+            1: `${serviceDetails}`,
+            2: `${serviceIdDetails}`,
+            3: `<span serviceId='${service.id}' class="text-wrap palantir-application-description">${renderPalantirDescription(service.description)}</span>`,
+            4: `${service.id}`,
+            serviceId: service.id
+        });
+    }
+
+    applicationsTable.off("draw.palantirServiceButtons").on("draw.palantirServiceButtons", async () => {
+        await initializeServiceButtons();
+    });
+
+    updateApplicationTypeFilter();
+    applicationsTable.draw();
+    if (typeof prepareRegisteredServiceWizardWhenIdle === "function") {
+        prepareRegisteredServiceWizardWhenIdle();
+    }
+
+    $("#servicesChartTitle").closest(".palantir-chart-card").prop("hidden", registeredServicesById.size === 0);
+    if (servicesChart) {
+        servicesChart.data.datasets[0].data = serviceCountByType;
+        servicesChart.update();
+    }
+
+    if (callback !== undefined) {
+        callback(applicationsTable);
     }
 }
 
@@ -885,11 +985,13 @@ async function initializeFooterButtons() {
             wizardValidityTimer = setTimeout(() => PalantirWizardValidity.refresh(), 150);
         });
     $("button[name=copyServiceDefinitionWizard]").off().on("click", () => {
+        flushServiceDefinition();
         const editor = initializeAceEditor("wizardServiceEditor");
         copyToClipboard(editor.getValue());
     });
 
     $("button[name=validateServiceWizard]").off().on("click", () => {
+        flushServiceDefinition();
         let valid = true;
         const originalKey = RegisteredServiceSections.currentKey();
         const wasReviewing = RegisteredServiceSections.reviewing;
@@ -975,46 +1077,25 @@ async function initializeFooterButtons() {
         }
     });
 
-    $("button[name=exportService]").off().on("click", () => {
+    $("button[name=exportService]").off().on("click", async () => {
         if (CasActuatorEndpoints.registeredServices()) {
-            let serviceId = $(exportServiceButton).attr("serviceId");
-            fetch(`${CasActuatorEndpoints.registeredServices()}/export/${serviceId}`, {
-                credentials: 'include'
-            })
-                .then(response => {
-                    const filename = response.headers.get("filename");
-                    response.blob().then(blob => {
-                        const link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    });
-
-                })
-                .catch(error => console.error("Error fetching file:", error));
+            const serviceId = $(exportServiceButton).attr("serviceId");
+            try {
+                await palantirDownloadExport(`${CasActuatorEndpoints.registeredServices()}/export/${encodeURIComponent(serviceId)}`,
+                    `${serviceId}.json`);
+            } catch (error) {
+                Swal.fire({icon: "error", titleText: "The Application Was Not Exported", text: String(error?.message ?? error)});
+            }
         }
     });
 
-    $("button[name=exportAll]").off().on("click", () => {
+    $("button[name=exportAll]").off().on("click", async () => {
         if (CasActuatorEndpoints.registeredServices()) {
-            fetch(`${CasActuatorEndpoints.registeredServices()}/export`, {
-                credentials: 'include'
-            })
-                .then(response => {
-                    const filename = response.headers.get("filename");
-                    response.blob().then(blob => {
-                        const link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    });
-
-                })
-                .catch(error => console.error("Error fetching file:", error));
+            try {
+                await palantirDownloadExport(`${CasActuatorEndpoints.registeredServices()}/export`, "services.zip");
+            } catch (error) {
+                Swal.fire({icon: "error", titleText: "The Applications Were Not Exported", text: String(error?.message ?? error)});
+            }
         }
     });
 }

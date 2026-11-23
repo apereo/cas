@@ -41,12 +41,16 @@ class PalantirServiceEditGuard {
     static initialized = false;
 
     /**
-     * The definition in a mode's JSON editor.
+     * The definition in a mode's JSON editor. The wizard's is first generated from any field edit still waiting on its
+     * preview, so a field changed just before the dialog closes, is saved or handed over counts as an edit.
      *
      * @param mode wizard or editor
      * @returns {string} the definition text
      */
     static value(mode) {
+        if (mode === "wizard" && typeof flushServiceDefinition === "function") {
+            flushServiceDefinition();
+        }
         const element = document.getElementById(PalantirServiceEditGuard.MODES[mode].editor);
         return element?.classList.contains("ace_editor") ? ace.edit(element).getValue() : "";
     }
@@ -60,7 +64,7 @@ class PalantirServiceEditGuard {
      */
     static normalize(text) {
         try {
-            return JSON.stringify(PalantirServiceHistory.sortKeys(JSON.parse(text)));
+            return palantirStringifyJson(PalantirServiceHistory.sortKeys(palantirParseJson(text)));
         } catch (error) {
             return String(text ?? "").trim();
         }
@@ -328,7 +332,7 @@ class PalantirServiceEditGuard {
      */
     static withoutSecrets(text) {
         try {
-            const kept = JSON.stringify(PalantirServiceEditGuard.redact(JSON.parse(text)), null, 4);
+            const kept = palantirStringifyJson(PalantirServiceEditGuard.redact(palantirParseJson(text)), 4);
             return kept.includes(JSON.stringify(PalantirServiceEditGuard.REDACTED))
                 ? {text: kept, redacted: true}
                 : {text: String(text), redacted: false};
@@ -523,11 +527,11 @@ class PalantirServiceEditGuard {
             try {
                 let from = null;
                 try {
-                    from = source === null || source === undefined ? null : JSON.parse(source);
+                    from = source === null || source === undefined ? null : palantirParseJson(source);
                 } catch (error) {
                     from = null;
                 }
-                return JSON.stringify(restore(JSON.parse(text), from), null, 4);
+                return palantirStringifyJson(restore(palantirParseJson(text), from), 4);
             } catch (error) {
                 return text;
             }
@@ -553,7 +557,7 @@ class PalantirServiceEditGuard {
      */
     static remember(key, definition) {
         if (definition?.id !== null && definition?.id !== undefined) {
-            PalantirServiceEditGuard.originals.set(key, {id: String(definition.id), text: JSON.stringify(definition)});
+            PalantirServiceEditGuard.originals.set(key, {id: String(definition.id), text: palantirStringifyJson(definition)});
         }
     }
 
@@ -631,7 +635,7 @@ class PalantirServiceEditGuard {
         const original = state ? PalantirServiceEditGuard.originals.get(state.key) : null;
         let id;
         try {
-            id = String(JSON.parse(text).id);
+            id = String(palantirParseJson(text).id);
         } catch (error) {
             id = null;
         }
@@ -650,7 +654,7 @@ class PalantirServiceEditGuard {
                 return "save";
             }
         }
-        if (current && PalantirServiceEditGuard.normalize(JSON.stringify(current)) === PalantirServiceEditGuard.normalize(original.text)) {
+        if (current && PalantirServiceEditGuard.normalize(palantirStringifyJson(current)) === PalantirServiceEditGuard.normalize(original.text)) {
             return "save";
         }
         const message = current
@@ -658,7 +662,7 @@ class PalantirServiceEditGuard {
             : "Someone deleted this application after you started editing it. Saving yours creates it again.";
         const diff = current
             ? `<div class="palantir-conflict__diff">${PalantirServiceHistory.table("When you started editing", "Saved since",
-                PalantirServiceHistory.compare(PalantirServiceHistory.canonical(JSON.parse(original.text)),
+                PalantirServiceHistory.compare(PalantirServiceHistory.canonical(palantirParseJson(original.text)),
                     PalantirServiceHistory.canonical(current)))}</div>`
             : "";
         const result = await Swal.fire({

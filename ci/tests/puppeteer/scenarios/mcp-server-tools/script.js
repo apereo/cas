@@ -91,6 +91,19 @@ async function failLogin(username, expectedStatus) {
 
     await cas.separator();
     const sessionId = await initialize(MCP_ADMIN);
+    await cas.log("The MCP endpoint offers no stream of server-initiated messages");
+    await cas.doRequest(MCP_ENDPOINT, "GET", {
+        "Accept": "text/event-stream",
+        "Authorization": MCP_ADMIN,
+        "Mcp-Session-Id": sessionId
+    }, 405, undefined, async (res) => assert.equal(res.headers["allow"], "POST, DELETE"));
+    await cas.log("Messages the transport refuses are answered with a JSON-RPC error response");
+    const refused = JSON.parse(await cas.doRequest(MCP_ENDPOINT, "POST", mcpHeaders(MCP_ADMIN), 400, jsonRpc("tools/list", {})));
+    await cas.log(`Refused message: ${JSON.stringify(refused)}`);
+    assert.deepStrictEqual(Object.keys(refused).sort(), ["error", "id", "jsonrpc"]);
+    assert(refused.id === null);
+    assert(refused.error.code === -32601);
+    assert(refused.error.message === "Session ID missing");
     const tools = await send(MCP_ADMIN, sessionId, "tools/list", {});
     const names = tools.tools.map((tool) => tool.name);
     await cas.log(`Available tools: ${names}`);

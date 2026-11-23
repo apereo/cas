@@ -2,7 +2,8 @@
    openRegisteredServiceWizardDialog, isPopulatingWizard, ace, currentActiveTab, Swal, applicationActionHandler,
    applicationRowContext, fetchServices, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
    PalantirClientSecretRotation, registeredServicesById, initializeDashboardTab,
-   PalantirServiceEditGuard, mappedFieldValue */
+   PalantirServiceEditGuard, mappedFieldValue, palantirSavedApplication, palantirArchiveCounts, palantirParseJson,
+   palantirStringifyJson, flushServiceDefinition */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -411,6 +412,37 @@ async function discardUnsavedChanges(page, name) {
         await page.click(".swal2-deny");
         await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
     }
+}
+
+/**
+ * An application id too large for an exact JavaScript number keeps every digit through formatting and opening in the
+ * JSON editor and through the definition the wizard builds.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyLargeIdsSurviveEditing(page) {
+    await cas.separator();
+    const large = "9007199254740993";
+    const service = {"@class": "org.apereo.cas.services.CasRegisteredService", id: large, name: "LargeId",
+        serviceId: "^https://large-id.example.org/.*"};
+    const formatted = await page.evaluate((text) => palantirStringifyJson(palantirParseJson(text), 4), `{"id": ${large}, "name": "LargeId"}`);
+    assert(formatted.includes(`"id": ${large}`), `Formatting keeps the id: ${formatted}`);
+    await page.evaluate((definition) => PalantirServiceEditor.openApplicationInWizard(definition), service);
+    await cas.sleep(1000);
+    if (await page.evaluate(() => $(".swal2-popup:visible").length > 0)) {
+        await page.click(".swal2-deny");
+    }
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
+    const generated = await page.evaluate(() => {
+        flushServiceDefinition();
+        return ace.edit("wizardServiceEditor").getValue();
+    });
+    await cas.log(`The wizard's definition of an application with a large id: ${generated}`);
+    assert(generated.includes(`"id": ${large}`), "The wizard keeps every digit of the id");
+    await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
+    await discardUnsavedChanges(page, "Large id");
+    await page.waitForFunction(() => !$("#editServiceWizardDialog").dialog("isOpen"), {timeout: 15000});
+    await cas.logg("Large application ids keep every digit in the JSON editor and the wizard");
 }
 
 /**
@@ -1213,7 +1245,19 @@ async function verifyWizardDraftToJsonEditor(page, id) {
     await page.click(".swal2-deny");
     await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
     await cas.sleep(1500);
-    await page.evaluate(() => $("#registeredServiceName").val("HandoffEdited").trigger("input"));
+    const guarded = await page.evaluate(() => {
+        const clean = PalantirServiceEditGuard.state.wizard?.baseline !== null && !PalantirServiceEditGuard.isDirty("wizard");
+        $("#registeredServiceName").val("HandoffEdited").trigger("input");
+        const allowed = PalantirServiceEditGuard.beforeClose("wizard");
+        const asked = Swal.isVisible() && $(".swal2-title").text() === "Discard Your Changes?";
+        Swal.close();
+        return {clean, allowed, asked, name: JSON.parse(ace.edit("wizardServiceEditor").getValue()).name};
+    });
+    await cas.log(`Closing the wizard right after its first edit: ${JSON.stringify(guarded)}`);
+    assert(guarded.clean, "The wizard starts with nothing to save");
+    assert(!guarded.allowed && guarded.asked, "Closing right after the first field edit asks first, before the preview catches up");
+    assert(guarded.name === "HandoffEdited", `The preview holds the edit once it is read: ${guarded.name}`);
+    await page.waitForFunction(() => !Swal.isVisible() && $("#editServiceWizardDialog").dialog("isOpen"), {timeout: 10000});
     await page.evaluate(() => document.getElementById("accessStrategySsoEnabledButton").click());
     await cas.sleep(1500);
     await page.evaluate(() => $("#cancelServiceWizard").trigger("click"));
@@ -1490,6 +1534,7 @@ async function verifyEditorHandoffs(page) {
     await verifyWizardContacts(page, id);
     await verifyJsonEditorToWizard(page, id);
     await verifyWizardDraftToJsonEditor(page, id);
+    await verifyLargeIdsSurviveEditing(page);
     await verifyCarryOfOmittedPolicy(page);
     await verifyMappedValueTypes(page);
     await verifyDraftSecretsFollowTheirPolicies(page);

@@ -3217,18 +3217,31 @@ function generateServiceDefinition() {
         return;
     }
 
-    generateServiceDefinitionTimer = setTimeout(function () {
-        generateServiceDefinitionTimer = null;
-        if (!document.getElementById("wizardServiceEditor")) {
-            return;
-        }
-        const editor = initializeAceEditor("wizardServiceEditor");
-        const serviceDefinition = buildWizardServiceDefinition();
-        editor.setValue(serviceDefinition === null ? "" : JSON.stringify(serviceDefinition, null, 4));
-        editor.gotoLine(1);
-        PalantirWizardValidity.refresh();
-        PalantirWizardChains.render();
-    }, 10);
+    generateServiceDefinitionTimer = setTimeout(runServiceDefinitionGeneration, 10);
+}
+
+/**
+ * Generate the definition now if fields changed since it was last generated, so what is read from the preview, such as
+ * the definition about to be saved, holds the latest edit of every field.
+ */
+function flushServiceDefinition() {
+    if (generateServiceDefinitionTimer !== null) {
+        runServiceDefinitionGeneration();
+    }
+}
+
+function runServiceDefinitionGeneration() {
+    clearTimeout(generateServiceDefinitionTimer);
+    generateServiceDefinitionTimer = null;
+    if (!document.getElementById("wizardServiceEditor")) {
+        return;
+    }
+    const editor = initializeAceEditor("wizardServiceEditor");
+    const serviceDefinition = buildWizardServiceDefinition();
+    editor.setValue(serviceDefinition === null ? "" : palantirStringifyJson(serviceDefinition, 4));
+    editor.gotoLine(1);
+    PalantirWizardValidity.refresh();
+    PalantirWizardChains.render();
 }
 
 /**
@@ -3342,7 +3355,7 @@ function buildWizardServiceDefinition() {
                     } else if (value === "false") {
                         value = false;
                     } else if (isNumeric(value) && !isWizardTextSetting($input, paramName)) {
-                        value = Number(value);
+                        value = /^-?\d+$/.test(String(value).trim()) && !Number.isSafeInteger(Number(value)) ? String(value).trim() : Number(value);
                     }
 
                     if (paramName.includes(".")) {
@@ -4892,11 +4905,11 @@ async function openRegisteredServiceWizardDialog(existingService = null, options
             PalantirServiceEditGuard.remember(draftKey, serviceData);
         }
         const draft = await PalantirServiceEditGuard.offerDraft(draftKey,
-            serviceData === null || isNewService ? null : JSON.stringify(serviceData));
+            serviceData === null || isNewService ? null : palantirStringifyJson(serviceData));
         let draftDefinition = null;
         if (draft !== null) {
             try {
-                draftDefinition = JSON.parse(draft);
+                draftDefinition = palantirParseJson(draft);
             } catch (error) {
                 PalantirServiceEditGuard.removeDraft(draftKey);
             }

@@ -1,6 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
    currentActiveTab, registeredServicesById, PalantirServiceHistory, Swal, applicationActionHandler,
-   applicationRowContext, fetchServices, notyf, PalantirApplicationAccess, Tabs, PalantirApplicationSelection */
+   applicationRowContext, fetchServices, notyf, PalantirApplicationAccess, Tabs, PalantirApplicationSelection,
+   importServiceFiles, importServiceFile, palantirParseJson */
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -260,6 +261,65 @@ async function verifyServiceImport(page) {
         fs.rmSync(folder, {recursive: true, force: true});
     }
     await verifyImportsStopWithTheSession(page);
+    await verifyListAndExportGuards(page);
+}
+
+/**
+ * Check that an older read of the applications answered late never replaces a newer one, that large ids are kept
+ * exactly, and that a login page answered to an export is not saved as one.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyListAndExportGuards(page) {
+    const guarded = await page.evaluate(() => {
+        const ajax = $.ajax;
+        const pending = [];
+        const listing = (options) => typeof options === "object" && String(options.url ?? "") === CasActuatorEndpoints.registeredServices()
+            && String(options.type ?? "GET").toUpperCase() === "GET";
+        $.ajax = function (options) {
+            if (!listing(options)) {
+                return ajax.apply(this, arguments);
+            }
+            const deferred = $.Deferred();
+            pending.push(deferred);
+            return deferred.promise();
+        };
+        const service = (id, name) => ({"@class": "org.apereo.cas.services.CasRegisteredService", id, name, serviceId: `^https://${name}.example.org`});
+        const older = fetchServices();
+        const newer = fetchServices();
+        $.ajax = ajax;
+        pending[1].resolve(["java.util.ArrayList", [service("9007199254740993", "Newer")]]);
+        pending[0].resolve(["java.util.ArrayList", [service("9007199254740992", "Older")]]);
+        return Promise.all([older, newer]).then(() => {
+            const shown = [...registeredServicesById.values()].map((entry) => entry.name);
+            const exact = palantirParseJson("[{\"id\": 9007199254740993}, {\"id\": 42}]").map((entry) => entry.id);
+            return {shown, exact};
+        });
+    });
+    await cas.log(`Reading the applications in overlapping requests: ${JSON.stringify(guarded)}`);
+    assert(JSON.stringify(guarded.shown) === JSON.stringify(["Newer"]), "An older list answered late does not replace a newer one");
+    assert(JSON.stringify(guarded.exact) === JSON.stringify(["9007199254740993", 42]), "Large ids are kept exactly");
+    await page.evaluate(() => fetchServices());
+
+    const exported = await page.evaluate(() => {
+        const id = [...registeredServicesById.keys()][0];
+        const original = window.fetch;
+        window.fetch = (url, options) => String(url).includes("/registeredServices/export")
+            ? Promise.resolve(new Response("<html><body>Log In</body></html>", {status: 200, headers: {"Content-Type": "text/html"}}))
+            : original(url, options);
+        PalantirApplicationSelection.set(id, true);
+        return PalantirApplicationSelection.exportSelected()
+            .then(() => ({title: $(".swal2-title").text(), kept: PalantirApplicationSelection.selected.has(String(id))}))
+            .finally(() => {
+                window.fetch = original;
+                Swal.close();
+                PalantirApplicationSelection.clear();
+            });
+    });
+    await cas.log(`Exporting when the login page answers: ${JSON.stringify(exported)}`);
+    assert(exported.title === "The Selected Applications Were Not Exported" && exported.kept,
+        "A login page is not saved as an export, and the selection is kept");
+    await cas.logg("Late lists, large ids and login pages answered to exports are handled");
 }
 
 /**
@@ -272,6 +332,10 @@ async function verifyImportsStopWithTheSession(page) {
     const answered = await page.evaluate(async () => {
         const ajax = $.ajax;
         const sent = [];
+        const importing = (answer) => function (options) {
+            const imports = typeof options === "object" && options?.type === "POST" && String(options.url ?? "").endsWith("/import");
+            return imports ? answer(options) : ajax.apply(this, arguments);
+        };
         const confirm = async (title) => {
             const until = Date.now() + 10000;
             while (!(Swal.isVisible() && $(".swal2-title").text() === title) && Date.now() < until) {
@@ -279,7 +343,7 @@ async function verifyImportsStopWithTheSession(page) {
             }
             Swal.clickConfirm();
         };
-        $.ajax = (options) => {
+        $.ajax = importing((options) => {
             sent.push(options.data.name);
             const expired = sent.length >= 2;
             const deferred = $.Deferred();
@@ -290,7 +354,7 @@ async function verifyImportsStopWithTheSession(page) {
                 : (expired ? "text/html;charset=UTF-8" : "application/json");
             deferred.resolve("");
             return request;
-        };
+        });
         try {
             const files = ["StopOne.json", "StopTwo.json", "StopThree.json"].map((name) => new File(["{}"], name, {type: "application/json"}));
             const batch = importServiceFiles(files);
@@ -303,7 +367,41 @@ async function verifyImportsStopWithTheSession(page) {
             await single;
             const refused = $(".swal2-title").text();
             Swal.close();
-            return {stopped, refused};
+
+            $.ajax = importing((options) => {
+                const deferred = $.Deferred();
+                const request = deferred.promise();
+                const dropped = options.data.name === "DropTwo.json";
+                request.status = dropped ? 0 : 201;
+                request.getResponseHeader = (name) => name.toLowerCase() === "id" && !dropped ? "987655" : null;
+                if (dropped) {
+                    deferred.reject(request);
+                } else {
+                    deferred.resolve("");
+                }
+                return request;
+            });
+            const dropping = importServiceFiles(["DropOne.json", "DropTwo.json"].map((name) => new File(["{}"], name, {type: "application/json"})));
+            await confirm("Import 2 Applications?");
+            await dropping;
+            const dropped = {title: $(".swal2-title").text(), text: $(".swal2-html-container").text()};
+            Swal.close();
+
+            $.ajax = importing(() => {
+                const deferred = $.Deferred();
+                const request = deferred.promise();
+                request.status = 200;
+                request.responseText = "";
+                request.getResponseHeader = () => null;
+                deferred.resolve("");
+                return request;
+            });
+            const legacy = importServiceFile(new File([new Uint8Array([80, 75])], "legacy.zip", {type: "application/zip"}));
+            await confirm("Import legacy.zip?");
+            await legacy;
+            const earlier = {title: $(".swal2-title").text(), text: $(".swal2-html-container").text()};
+            Swal.close();
+            return {stopped, refused, dropped, earlier};
         } finally {
             $.ajax = ajax;
         }
@@ -312,7 +410,11 @@ async function verifyImportsStopWithTheSession(page) {
     assert(JSON.stringify(answered.stopped.sent) === JSON.stringify(["StopOne.json", "StopTwo.json"]), "The batch stops sending files");
     assert(answered.stopped.title === "Import Stopped" && answered.stopped.text.includes("StopThree.json"));
     assert(answered.refused === "Nothing Imported", "A single file the login page answered is not reported as imported");
-    await cas.logg("Imports stop once CAS answers with the login page");
+    assert(answered.dropped.title === "1 Application Imported" && answered.dropped.text.includes("DropTwo.json")
+        && answered.dropped.text.includes("may already be imported"), "A file CAS did not answer for is not reported as rejected");
+    assert(answered.earlier.title === "Imported" && answered.earlier.text.includes("did not say how many"),
+        "An archive an earlier CAS imported without a count is reported as imported");
+    await cas.logg("Imports stop once CAS answers with the login page, and say when CAS did not answer");
 }
 
 /**

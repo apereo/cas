@@ -64,6 +64,55 @@ class CompressionUtilsTests {
     }
 
     @Test
+    void verifySkippedZipEntriesCountTowardTotal() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            zip.putNextEntry(new ZipEntry("kept.json"));
+            zip.write("{}".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+            zip.putNextEntry(new ZipEntry("skipped.bin"));
+            zip.write(new byte[64 * 1024]);
+            zip.closeEntry();
+            zip.finish();
+            val archive = out.toByteArray();
+            val accepted = (Predicate<String>) name -> name.endsWith(".json");
+            assertEquals(List.of("{}"), CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 128 * 1024, accepted));
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 32 * 1024, accepted));
+        }
+    }
+
+    @Test
+    void verifyZipFolderDataCountsTowardTotal() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            zip.putNextEntry(new ZipEntry("folder/"));
+            zip.write(new byte[64 * 1024]);
+            zip.closeEntry();
+            zip.finish();
+            val archive = out.toByteArray();
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 32 * 1024, name -> true));
+            assertTrue(CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 128 * 1024, name -> true).isEmpty());
+        }
+    }
+
+    @Test
+    void verifyTooManyZipEntries() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            for (var index = 0; index <= CompressionUtils.MAXIMUM_ZIP_ENTRIES; index++) {
+                zip.putNextEntry(new ZipEntry("folder-" + index + '/'));
+                zip.closeEntry();
+            }
+            zip.finish();
+            val archive = out.toByteArray();
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 1024, name -> true));
+        }
+    }
+
+    @Test
     void verifyInflation() {
         val source = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                      + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "

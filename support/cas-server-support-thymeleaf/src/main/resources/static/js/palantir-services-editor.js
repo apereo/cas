@@ -440,7 +440,7 @@ class PalantirServiceEditor {
         file.text()
             .then(text => {
                 try {
-                    PalantirServiceEditor.startFrom(JSON.stringify(JSON.parse(text), null, 4));
+                    PalantirServiceEditor.startFrom(palantirStringifyJson(palantirParseJson(text), 4));
                 } catch (error) {
                     PalantirServiceEditor.startFrom(text);
                 }
@@ -478,7 +478,7 @@ class PalantirServiceEditor {
         const editor = PalantirServiceEditor.editor();
         try {
             const cursor = editor.getCursorPosition();
-            editor.setValue(JSON.stringify(JSON.parse(editor.getValue()), null, 4), -1);
+            editor.setValue(palantirStringifyJson(palantirParseJson(editor.getValue()), 4), -1);
             editor.moveCursorTo(cursor.row, cursor.column);
         } catch (error) {
             PalantirServiceEditor.check();
@@ -502,7 +502,7 @@ class PalantirServiceEditor {
             return;
         }
         try {
-            const definition = JSON.parse(text);
+            const definition = palantirParseJson(text);
             status.text("Valid JSON").attr("data-state", "ok");
             PalantirServiceEditor.updateIdentity(definition);
             if ($("#serviceEditorProblem").data("kind") === "syntax") {
@@ -707,7 +707,7 @@ class PalantirServiceEditor {
         const text = editor.getValue();
         let definition;
         try {
-            definition = JSON.parse(text);
+            definition = palantirParseJson(text);
         } catch (error) {
             PalantirServiceEditor.check();
             PalantirServiceEditor.revealProblem();
@@ -908,9 +908,9 @@ class PalantirServiceEditor {
     static carry(definition, wizardText, modeled = [], maps = [], offered = {}) {
         let generated;
         try {
-            generated = JSON.parse(wizardText);
+            generated = palantirParseJson(wizardText);
         } catch (error) {
-            return JSON.stringify(definition, null, 4);
+            return palantirStringifyJson(definition, 4);
         }
         const plain = value => value !== null && typeof value === "object" && !Array.isArray(value);
         const owned = path => modeled.includes(path);
@@ -959,7 +959,7 @@ class PalantirServiceEditor {
             });
             return merged;
         };
-        return JSON.stringify(merge(generated, definition, ""), null, 4);
+        return palantirStringifyJson(merge(generated, definition, ""), 4);
     }
 
     /**
@@ -977,7 +977,7 @@ class PalantirServiceEditor {
         await settle(400);
         let generated;
         try {
-            generated = JSON.parse(ace.edit("wizardServiceEditor").getValue());
+            generated = palantirParseJson(ace.edit("wizardServiceEditor").getValue());
         } catch (error) {
             return [];
         }

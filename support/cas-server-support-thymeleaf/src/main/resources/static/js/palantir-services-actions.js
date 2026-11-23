@@ -404,22 +404,27 @@ class PalantirApplicationSelection {
 
     /**
      * Read the applications again once they were changed, and wait for them. When they cannot be read, the change
-     * itself was still made: the operator is told the list may be out of date rather than kept waiting.
+     * itself was still made: the operator is told the list may be out of date rather than kept waiting. When it is not
+     * known whether the change was made, as when CAS did not answer, the caller says so, and only the list is spoken of.
      *
+     * @param confirmed whether CAS confirmed the change
      * @returns {Promise<boolean>} resolved once the applications are read again, with whether they could be
      */
-    static async reload() {
+    static async reload(confirmed = true) {
         const refreshed = await fetchServices(() => updateNavigationSidebar());
         PalantirApplicationSelection.refresh();
         if (refreshed === false) {
-            notyf.error("The change is saved, but the applications could not be read again; the list may be out of date.");
+            notyf.error(confirmed
+                ? "The change is saved, but the applications could not be read again; the list may be out of date."
+                : "The applications could not be read again; the list may be out of date.");
         }
         return refreshed !== false;
     }
 
     /**
      * Download the selected applications: the definition itself when one is selected, otherwise a zip of their
-     * definitions that Import accepts as it is.
+     * definitions that Import accepts as it is. Only an answer CAS gives as a download is saved, so a login page an
+     * expired session is sent to is never saved as the export, and the selection is kept.
      *
      * @returns {Promise<void>} resolved once the download is handed to the browser
      */
@@ -433,18 +438,7 @@ class PalantirApplicationSelection {
             : `${CasActuatorEndpoints.registeredServices()}/export?${ids.map(id => `ids=${encodeURIComponent(id)}`).join("&")}`;
         const button = $("button[name=exportSelectedServices]").prop("disabled", true);
         try {
-            const response = await fetch(url, {credentials: "include"});
-            if (!response.ok) {
-                throw new Error(`CAS answered ${response.status} ${response.statusText}`.trim());
-            }
-            const blob = await response.blob();
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = response.headers.get("filename") || (ids.length === 1 ? `${ids[0]}.json` : "services.zip");
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setTimeout(() => window.URL.revokeObjectURL(link.href), 1000);
+            await palantirDownloadExport(url, ids.length === 1 ? `${ids[0]}.json` : "services.zip");
             notyf.success(`Exported ${ids.length} application${ids.length === 1 ? "" : "s"}.`);
             PalantirApplicationSelection.clear();
         } catch (error) {

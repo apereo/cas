@@ -22,6 +22,8 @@ class PalantirUserLookup {
 
     static settled = 0;
 
+    static relativeTime = null;
+
     static ACTION_ENDPOINTS = {
         "end-session": "ssoSessions",
         "revoke-token": "oauthTokens",
@@ -366,6 +368,7 @@ class PalantirUserLookup {
             const services = Object.values(session.authenticated_services ?? {})
                 .map(service => String(service?.originalUrl ?? service?.id ?? service ?? ""))
                 .filter(url => url !== "");
+            const applications = [...new Set(services)];
             const handlers = [].concat(attributes.successfulAuthenticationHandlers ?? []);
             const badges = [
                 {label: "Active", style: "is-success"},
@@ -395,10 +398,10 @@ class PalantirUserLookup {
                     </header>
                     ${PalantirUserLookup.facts(facts)}
                     <div class="palantir-identity-item__section">
-                        <span class="palantir-identity-item__label">Applications <span class="palantir-identity-item__count">${services.length}</span></span>
-                        ${services.length === 0
+                        <span class="palantir-identity-item__label">Applications <span class="palantir-identity-item__count">${applications.length}</span></span>
+                        ${applications.length === 0
                             ? "<span class=\"palantir-identity-item__none\">None Yet</span>"
-                            : `<span class="palantir-identity-item__chips">${services.map(url => PalantirUserLookup.serviceChip(url)).join("")}</span>`}
+                            : `<span class="palantir-identity-item__chips">${applications.map(url => PalantirUserLookup.serviceChip(url)).join("")}</span>`}
                     </div>
                     <footer class="palantir-identity-item__foot">
                         <span class="palantir-identity-item__label">Ticket</span>
@@ -509,7 +512,8 @@ class PalantirUserLookup {
                 {label: "Type", value: device.type},
                 {label: "Model", value: device.model},
                 {label: "Number", value: device.number, mono: true},
-                {label: "Last Used", value: PalantirUserLookup.ago(device.lastUsedDateTime), hint: PalantirUserLookup.when(device.lastUsedDateTime)},
+                {label: kind.registeredOnly ? "Registered" : "Last Used", value: PalantirUserLookup.ago(device.lastUsedDateTime),
+                    hint: PalantirUserLookup.when(device.lastUsedDateTime)},
                 {label: "Expires", value: PalantirUserLookup.ago(device.expirationDateTime), hint: PalantirUserLookup.when(device.expirationDateTime)}
             ];
             return `
@@ -533,16 +537,17 @@ class PalantirUserLookup {
     }
 
     /**
-     * The icon and accent of a device, by the provider it belongs to.
+     * The icon and accent of a device, by the provider it belongs to, and whether the provider records only when the
+     * device was registered rather than when it was last used, as WebAuthn and YubiKey do.
      *
      * @param device the device
-     * @returns {{icon: string, style: string}} the icon and the accent
+     * @returns {{icon: string, style: string, registeredOnly?: boolean}} the icon, the accent and how its date reads
      */
     static deviceKind(device) {
         const text = `${device?.details?.providerId ?? ""} ${device?.source ?? ""} ${device?.type ?? ""}`.toLowerCase();
         const kinds = [
-            {match: /webauthn|fido|passkey/, icon: "mdi-fingerprint", style: "webauthn"},
-            {match: /yubi/, icon: "mdi-usb-flash-drive-outline", style: "yubikey"},
+            {match: /web\s*authn|fido|passkey/, icon: "mdi-fingerprint", style: "webauthn", registeredOnly: true},
+            {match: /yubi/, icon: "mdi-usb-flash-drive-outline", style: "yubikey", registeredOnly: true},
             {match: /duo/, icon: "mdi-cellphone-message", style: "duo"},
             {match: /gauth|google|authenticator|totp/, icon: "mdi-shield-key-outline", style: "totp"},
             {match: /sms|email|simple|text/, icon: "mdi-message-lock-outline", style: "message"}
@@ -688,7 +693,8 @@ class PalantirUserLookup {
         }
         const seconds = Math.round((date.getTime() - Date.now()) / 1000);
         const units = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
-        const format = new Intl.RelativeTimeFormat(undefined, {numeric: "auto"});
+        PalantirUserLookup.relativeTime ??= new Intl.RelativeTimeFormat(undefined, {numeric: "auto"});
+        const format = PalantirUserLookup.relativeTime;
         const unit = units.find(([, size]) => Math.abs(seconds) >= size);
         return unit ? format.format(Math.round(seconds / unit[1]), unit[0]) : format.format(0, "second");
     }

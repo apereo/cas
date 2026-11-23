@@ -2000,7 +2000,9 @@ class PalantirAccessCheck {
     }
 
     /**
-     * Read the registered applications to suggest, unless the applications page has read them already.
+     * Read the registered applications to suggest, unless the applications page has read them already. When the
+     * applications page reads them meanwhile, its list is the one kept: this answer is dropped rather than mixed into
+     * or laid over it.
      *
      * @returns {Promise<void>} resolved once they are read or could not be
      */
@@ -2008,9 +2010,14 @@ class PalantirAccessCheck {
         if (registeredServicesById.size > 0 || !CasActuatorEndpoints.registeredServices()) {
             return;
         }
+        const latest = () => typeof palantirServicesRequest === "undefined" ? 0 : palantirServicesRequest;
+        const sequence = latest();
         try {
-            const response = await $.get(CasActuatorEndpoints.registeredServices());
-            (Array.isArray(response?.[1]) ? response[1] : []).forEach(service => registeredServicesById.set(String(service.id), service));
+            const response = await $.ajax({url: CasActuatorEndpoints.registeredServices(), dataType: "json", headers: {"Accept": "application/json"}});
+            if (sequence !== latest() || registeredServicesById.size > 0 || !Array.isArray(response?.[1])) {
+                return;
+            }
+            response[1].forEach(service => registeredServicesById.set(String(service.id), service));
             registeredServicesVersion++;
             if (typeof palantirListedApplications === "function") {
                 palantirListedApplications();

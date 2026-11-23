@@ -451,6 +451,37 @@ function closeAllDialogs() {
 const PALANTIR_READ_ONLY = "palantir-read-only";
 
 /**
+ * Read JSON keeping every id exactly as CAS wrote it. CAS ids, such as those of applications, are 64-bit numbers, and
+ * JavaScript numbers are exact only up to 2^53, so two neighbouring large ids would read as the same number and an
+ * action on one could reach the other. An id too large to be exact is read as the text of its digits instead; ids that
+ * fit stay numbers.
+ *
+ * @param text the JSON text
+ * @returns {*} the value it holds
+ */
+function palantirParseJson(text) {
+    return JSON.parse(String(text).replace(/("id"\s*:\s*)(-?\d{16,})(?=\s*[,}\]])/g,
+        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}"${digits}"`));
+}
+
+/**
+ * Write JSON the way CAS reads it: an id kept as the text of its digits by {@link palantirParseJson}, because it is too
+ * large for an exact JavaScript number, is written as the number it is.
+ *
+ * @param value the value
+ * @param indent the indentation, as JSON.stringify takes it
+ * @returns {string} the JSON text
+ */
+function palantirStringifyJson(value, indent) {
+    return JSON.stringify(value, null, indent).replace(/("id"\s*:\s*)"(-?\d{16,})"/g,
+        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}${digits}`);
+}
+
+if (typeof $ !== "undefined" && $.ajaxSetup) {
+    $.ajaxSetup({converters: {"text json": palantirParseJson}});
+}
+
+/**
  * A modal progress dialog for work the operator has to wait for: a message saying what is happening, a bar that
  * shows how far along it is or, when the server does not say, that it is busy, and how long it has taken so far.
  */

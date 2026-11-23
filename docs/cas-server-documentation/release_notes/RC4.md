@@ -982,6 +982,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   feature toggle, and require the new `MCP_OPERATOR` role. With an OAuth access token, that role also requires the
   `mcp:write` scope and the principal attributes listed in `cas.mcp.oauth.operator-required-attributes`{: .cas-setting},
   which match nobody by default.
+- {: .fixed data-area="operations"} The [MCP server](../installation/Admin-MCP-Server.html#transport) answers requests to
+  open a stream of server-initiated messages with `405 Method Not Allowed`, as the Streamable HTTP transport allows. Such
+  requests used to stay open without a response status, so clients that wait for it before finishing initialization,
+  such as Antigravity, never connected. Messages the transport refuses, such as a request without a session, are answered
+  with a JSON-RPC error response instead of the serialized server exception and its stack trace.
 
 ### Attribute Release
 {: .fixed data-area="attributes"}
