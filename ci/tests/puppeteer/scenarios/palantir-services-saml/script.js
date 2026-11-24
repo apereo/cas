@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
    isPopulatingWizard, ace, currentActiveTab, Swal, fetchServices, PalantirSamlMetadataImport, PalantirSamlMetadataNames, PalantirSamlMetadataUpload,
-   Tabs, PalantirScripts, RegisteredServiceSections */
+   Tabs, PalantirScripts, RegisteredServiceSections, registeredServicesById, PalantirSamlMetadataHealth */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -360,7 +360,38 @@ async function verifySamlMetadataHealth(page) {
     const menu = `#applicationsCards .palantir-application-card[data-service-id="${serviceId}"] [data-application-action="menu"]`;
     await page.waitForSelector(menu, {visible: true, timeout: 30000});
     await page.click(menu);
-    await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").click();
+    try {
+        await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").setTimeout(15000).click();
+    } catch (error) {
+        const state = await page.evaluate((id) => {
+            const service = registeredServicesById.get(String(id));
+            const items = $(".context-menu-list .context-menu-item").filter((index, item) => $(item).text().includes("Metadata Health"));
+            return {
+                viewport: {width: window.innerWidth, height: window.innerHeight, scrollY: window.scrollY},
+                lists: $(".context-menu-list").length,
+                visibleLists: $(".context-menu-list:visible").length,
+                visibleItems: $(".context-menu-list:visible .context-menu-item:visible").map((index, item) => $(item).text().trim()).get(),
+                healthItems: items.map((index, item) => ({
+                    display: getComputedStyle(item).display,
+                    visible: $(item).is(":visible"),
+                    disabled: $(item).hasClass("context-menu-disabled"),
+                    rect: JSON.stringify(item.getBoundingClientRect())
+                })).get(),
+                serviceKnown: Boolean(service),
+                serviceClass: service?.["@class"] ?? null,
+                cacheEndpoint: Boolean(CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache()),
+                applies: typeof PalantirSamlMetadataHealth === "undefined" ? "undefined" : PalantirSamlMetadataHealth.applies(service),
+                rowFound: $("#applicationsTable tbody tr").filter((index, row) => {
+                    const data = $("#applicationsTable").DataTable().row(row).data();
+                    return String(data?.serviceId) === String(id);
+                }).length,
+                layer: $("#context-menu-layer:visible").length
+            };
+        }, serviceId);
+        await cas.logr(`Check Metadata Health could not be clicked: ${JSON.stringify(state)}`);
+        await cas.screenshot(page);
+        throw error;
+    }
     await page.waitForFunction(() => $("#samlMetadataHealthDialog").dialog("instance") !== undefined
         && $("#samlMetadataHealthDialog").dialog("isOpen")
         && ["ok", "warn", "fail"].includes($("#samlMetadataHealthSummary").attr("data-status")), {timeout: 60000});

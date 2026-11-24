@@ -54,8 +54,7 @@ The expiration policy of the service metadata is controlled using the following 
 Whichever applies, cached metadata is loaded again once the `validUntil` of the service provider, or of the aggregate that
 holds it, has passed, rather than turning requests away as no longer valid until the cache entry expires.
 
-A service provider whose own metadata entry has passed its `validUntil` is always refused. The
-`cas.authn.saml-idp.metadata.core.require-valid-metadata`{: .cas-setting} setting, turned on by default, decides whether
+A service provider whose own metadata entry has passed its `validUntil` is always refused. BY default CAS decides whether
 metadata whose validity has otherwise lapsed is still used, such as an aggregate whose `validUntil` has passed while
 the entries within it carry none of their own. Turning it off removes the protection that `validUntil` gives against
 stale metadata, such as keys that have since been replaced, and is not recommended.
