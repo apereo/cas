@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
-   isPopulatingWizard, ace, currentActiveTab, Swal, fetchServices, PalantirSamlMetadataImport, PalantirSamlMetadataUpload,
-   Tabs */
+   isPopulatingWizard, ace, currentActiveTab, Swal, fetchServices, PalantirSamlMetadataImport, PalantirSamlMetadataNames, PalantirSamlMetadataUpload,
+   Tabs, PalantirScripts */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -47,8 +47,9 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
+    await page.evaluate(() => PalantirScripts.load("applications"));
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);
     assert(features > 0);
@@ -207,14 +208,14 @@ async function verifySamlMetadataManage(page) {
         const provider = (entityId, inside = "", after = "") => `<md:EntityDescriptor xmlns:md="${md}" xmlns:mdui="${ui}" entityID="${entityId}">
             <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">${inside}</md:SPSSODescriptor>${after}</md:EntityDescriptor>`;
         return {
-            uploaded: PalantirSamlMetadataImport.documentName(preview.metadata),
-            displayName: PalantirSamlMetadataImport.documentName(provider("https://sp.example.org/shibboleth",
+            uploaded: PalantirSamlMetadataNames.documentName(preview.metadata),
+            displayName: PalantirSamlMetadataNames.documentName(provider("https://sp.example.org/shibboleth",
                 "<md:Extensions><mdui:UIInfo><mdui:DisplayName xml:lang=\"en\">Example Portal</mdui:DisplayName></mdui:UIInfo></md:Extensions>")),
-            organization: PalantirSamlMetadataImport.documentName(provider("https://sp.example.org/shibboleth", "",
+            organization: PalantirSamlMetadataNames.documentName(provider("https://sp.example.org/shibboleth", "",
                 "<md:Organization><md:OrganizationName xml:lang=\"en\">Example Org</md:OrganizationName></md:Organization>")),
-            host: PalantirSamlMetadataImport.documentName(provider("https://www.wiki.example.org/sp")),
-            urn: PalantirSamlMetadataImport.documentName(provider("urn:mace:example.org:sp:portal")),
-            broken: PalantirSamlMetadataImport.documentName("<md:EntityDescriptor")
+            host: PalantirSamlMetadataNames.documentName(provider("https://www.wiki.example.org/sp")),
+            urn: PalantirSamlMetadataNames.documentName(provider("urn:mace:example.org:sp:portal")),
+            broken: PalantirSamlMetadataNames.documentName("<md:EntityDescriptor")
         };
     });
     await cas.log(`Names suggested for uploaded metadata: ${JSON.stringify(names)}`);

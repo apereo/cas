@@ -259,7 +259,7 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add("/favicon.ico");
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
-        patterns.add(webEndpointProperties.getBasePath());
+        FunctionUtils.doIfNotBlank(webEndpointProperties.getBasePath(), patterns::add);
         FunctionUtils.doIfNotBlank(managementServerProperties.getBasePath(), patterns::add);
         patterns.addAll(casProperties.getMonitor().getEndpoints().getIgnoredEndpoints());
         return patterns;

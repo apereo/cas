@@ -106,6 +106,122 @@ async function showSamlMetadataManager(sourceId) {
 }
 
 /**
+ * How SAML2 metadata names what it describes, shared by the metadata upload here and the wizard's metadata import, so
+ * an uploaded document is named without fetching the wizard.
+ */
+class PalantirSamlMetadataNames {
+    static NAMESPACES = {
+        md: "urn:oasis:names:tc:SAML:2.0:metadata",
+        mdui: "urn:oasis:names:tc:SAML:metadata:ui",
+        mdattr: "urn:oasis:names:tc:SAML:metadata:attribute",
+        saml: "urn:oasis:names:tc:SAML:2.0:assertion",
+        xml: "http://www.w3.org/XML/1998/namespace"
+    };
+
+    /**
+     * Parse metadata XML.
+     *
+     * @param text the XML
+     * @returns {Document} the document
+     */
+    static parse(text) {
+        const document = new DOMParser().parseFromString(text, "application/xml");
+        if (document.getElementsByTagName("parsererror").length > 0) {
+            throw new Error("This is not well-formed XML.");
+        }
+        return document;
+    }
+
+    /**
+     * The entities of a metadata document that are SAML2 service providers.
+     *
+     * @param document the metadata document
+     * @returns {Element[]} their EntityDescriptor elements
+     */
+    static serviceProviders(document) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        return Array.from(document.getElementsByTagNameNS(ns.md, "EntityDescriptor"))
+            .filter(entity => entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor").length > 0);
+    }
+
+    /**
+     * The name a service provider gives itself in its metadata: its display name, else the display name or the name of
+     * its organization, else a readable form of its entity id.
+     *
+     * @param entity the provider's EntityDescriptor
+     * @returns {string} the name, or an empty string
+     */
+    static nameOf(entity) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        const children = (parent, namespace, name) => Array.from(parent?.children ?? [])
+            .filter(child => child.namespaceURI === namespace && child.localName === name);
+        const provider = entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor")[0];
+        const uiInfo = provider?.getElementsByTagNameNS(ns.mdui, "UIInfo")[0];
+        const displayNames = uiInfo ? Array.from(uiInfo.getElementsByTagNameNS(ns.mdui, "DisplayName")) : [];
+        const organization = children(entity, ns.md, "Organization")[0];
+        return PalantirSamlMetadataNames.localized(displayNames)
+            || PalantirSamlMetadataNames.localized(children(organization, ns.md, "OrganizationDisplayName"))
+            || PalantirSamlMetadataNames.localized(children(organization, ns.md, "OrganizationName"))
+            || PalantirSamlMetadataNames.readableEntityId(entity.getAttribute("entityID"));
+    }
+
+    /**
+     * The text of the element in the operator's language, else in English, else the first one.
+     *
+     * @param elements the elements, one per language
+     * @returns {string} the text, or an empty string
+     */
+    static localized(elements) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        const languages = [String(navigator.language ?? "en").toLowerCase().split("-")[0], "en"];
+        const language = element => String(element.getAttributeNS(ns.xml, "lang") || element.getAttribute("xml:lang") || "").toLowerCase();
+        const chosen = languages.map(code => elements.find(element => language(element).split("-")[0] === code)).find(Boolean)
+            ?? elements[0];
+        return String(chosen?.textContent ?? "").trim();
+    }
+
+    /**
+     * A readable form of an entity id: the host of a URL, without www, or the last part of a URN.
+     *
+     * @param entityId the entity id
+     * @returns {string} the readable form, or the entity id as it is
+     */
+    static readableEntityId(entityId) {
+        const value = String(entityId ?? "").trim();
+        if (/^urn:/i.test(value)) {
+            return value.split(":").filter(Boolean).pop() ?? value;
+        }
+        try {
+            return new URL(value).hostname.replace(/^www\./i, "") || value;
+        } catch (error) {
+            return value;
+        }
+    }
+
+    /**
+     * The name to keep uploaded metadata under: the name of its one service provider, else the name the aggregate
+     * gives itself, else the name of its first service provider.
+     *
+     * @param text the metadata XML
+     * @returns {string} the name, or an empty string when the metadata names no service provider
+     */
+    static documentName(text) {
+        try {
+            const document = PalantirSamlMetadataNames.parse(String(text ?? ""));
+            const providers = PalantirSamlMetadataNames.serviceProviders(document);
+            const root = document.documentElement;
+            const aggregate = root?.localName === "EntitiesDescriptor" ? String(root.getAttribute("Name") ?? "").trim() : "";
+            if (providers.length === 1) {
+                return PalantirSamlMetadataNames.nameOf(providers[0]);
+            }
+            return aggregate || (providers.length > 0 ? PalantirSamlMetadataNames.nameOf(providers[0]) : "");
+        } catch (error) {
+            return "";
+        }
+    }
+}
+
+/**
  * Upload SAML2 service provider metadata to a metadata manager: a name, the metadata XML file and, optionally, its
  * signature, shown side by side once chosen. The same dialog serves the metadata management section under Protocols
  * and the application wizard; when there are several managers to choose from, it asks which one.
@@ -182,7 +298,7 @@ class PalantirSamlMetadataUpload {
         const suggestName = content => {
             const field = $("#saml2MetadataUploadName");
             const typed = String(field.val() ?? "").trim();
-            const found = typeof PalantirSamlMetadataImport === "undefined" ? "" : PalantirSamlMetadataImport.documentName(content);
+            const found = PalantirSamlMetadataNames.documentName(content);
             if (found !== "" && (typed === "" || typed === suggested)) {
                 suggested = found;
                 field.val(found).trigger("input");
@@ -212,7 +328,7 @@ class PalantirSamlMetadataUpload {
                 })
                 .catch(error => {
                     if (current(editor, read)) {
-                        Swal.fire({icon: "error", titleText: "The File Could Not Be Read", text: String(error?.message ?? error)});
+                        PalantirDialogs.error("The File Could Not Be Read", String(error?.message ?? error));
                     }
                 })
                 .finally(() => {
@@ -417,7 +533,7 @@ function showOidcJwks() {
 }
 
 function buildOidcClientSecretRotationEndpoint() {
-    return PalantirClientSecretRotation.url($("#oidcClientSecretRotationClientId").val()?.trim(), {
+    return PalantirAvailability.clientSecretsUrl($("#oidcClientSecretRotationClientId").val()?.trim(), {
         expiredOnly: $("#oidcClientSecretRotationExpiredOnly").val() === "true",
         expireIn: $("#oidcClientSecretRotationExpireIn").val()?.trim()
     });
@@ -465,12 +581,9 @@ function initializeOidcClientSecretRotationOperations() {
                 return false;
             }
 
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to rotate client secrets?",
-                text: "Once rotated, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once rotated, the change will take effect immediately."
             }).then((result) => {
                 if (result.isConfirmed) {
                     $("#oidcClientSecretRotationButton").prop("disabled", true);
@@ -529,12 +642,9 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRotationButton]").off().on("click", () => {
             hideBanner();
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are You Sure You Want to Rotate Keys?",
-                text: "Once rotated, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once rotated, the change will take effect immediately."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -558,12 +668,9 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
             hideBanner();
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are You Sure You Want to Revoke Keys?",
-                text: "Once revoked, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once revoked, the change will take effect immediately."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -722,12 +829,9 @@ async function initializeOidcProtocolOperations() {
 
             function deleteOidcClientJwksEntry(context) {
                 const {jkt, clientId} = context.rowData;
-                Swal.fire({
+                PalantirDialogs.confirm({
                     title: "Are you sure you want to delete this client JWKS entry?",
-                    text: "Once deleted, the change will take effect immediately.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
+                    text: "Once deleted, the change will take effect immediately."
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
@@ -867,12 +971,9 @@ async function initializeSAML2ProtocolOperations() {
             hideBanner();
             hideElements("#saml2MetadataCacheEditorContainer");
 
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to invalidate the cache entry?",
-                text: "Once deleted, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once deleted, the change will take effect immediately."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -1002,12 +1103,9 @@ async function initializeSAML2ProtocolOperations() {
             }
 
             function deleteSaml2MetadataManagerEntry(entryId, managerName) {
-                Swal.fire({
+                PalantirDialogs.confirm({
                     title: "Are you sure you want to delete this metadata entry?",
-                    text: "Once deleted, the change will take effect immediately.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
+                    text: "Once deleted, the change will take effect immediately."
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({

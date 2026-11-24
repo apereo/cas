@@ -60,7 +60,9 @@ Palantir follows the light or dark appearance of the operating system. The theme
 bar switches between light and dark, and the settings dialog can return Palantir to the operating system's choice;
 the choice is remembered by the browser. *Reset preferences*, in the settings dialog, removes everything Palantir keeps
 in the browser, such as the theme, views, filters, editor options and drafts of unsaved edits, and reloads Palantir
-with its defaults; the sign-in session is kept.
+with its defaults; the sign-in session is kept. The pages that refresh on their own, such as events, logs and metrics,
+refresh only while they are shown and the browser tab is in view, one request at a time, as often as the settings
+dialog says; changing how often applies at once, without reloading.
 
 Palantir opens on *Home* (<kbd>g</kbd>), a page of widgets: the server and its health, the health checks charted as on
 the system page, heap and processor use, HTTP requests (a minute, average and slowest time, errors), the URLs that
@@ -157,7 +159,8 @@ NameIDs, public OpenID Connect clients with PKCE or pairwise subject identifiers
 searched, or the definition can start blank, be pasted or be read from a file. The editor then checks the JSON as it is
 typed, marks the line of a problem CAS reports when validating or saving, and can switch to the wizard, listing any
 setting the wizard does not cover with a way back. Templates of your own can be offered by placing application
-definitions as JSON files in a folder that the dashboard reads every time it is shown.
+definitions as JSON files in a folder; the dashboard reads them again whenever a file in the folder is added, removed
+or changed, so a new or edited template is offered the next time the dashboard is shown.
 
 {% include_cached casproperties.html properties="cas.palantir.templates-directory" %}
 

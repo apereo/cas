@@ -50,7 +50,7 @@ class PalantirUserLookup {
                 key: "sessions",
                 title: "SSO Sessions",
                 icon: "mdi-account-key",
-                available: () => Boolean(CasActuatorEndpoints.ssoSessions()),
+                available: PalantirAvailability.USER_LOOKUP.sessions,
                 load: async username => {
                     const response = await PalantirUserLookup.get(
                         `${CasActuatorEndpoints.ssoSessions()}/users/${encodeURIComponent(username)}`);
@@ -62,7 +62,7 @@ class PalantirUserLookup {
                 key: "oauthTokens",
                 title: "OAuth & OIDC Tokens",
                 icon: "mdi-key-chain",
-                available: () => Boolean(CasActuatorEndpoints.oauthTokens()),
+                available: PalantirAvailability.USER_LOOKUP.oauthTokens,
                 load: async username => {
                     const tokens = await PalantirUserLookup.get(CasActuatorEndpoints.oauthTokens(), {username});
                     return (Array.isArray(tokens) ? tokens : []).filter(token => typeof token?.id === "string");
@@ -73,8 +73,7 @@ class PalantirUserLookup {
                 key: "mfaDevices",
                 title: "MFA Devices",
                 icon: "mdi-cellphone-key",
-                available: () => Boolean(CasActuatorEndpoints.mfaDevices())
-                    && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
+                available: PalantirAvailability.USER_LOOKUP.mfaDevices,
                 load: async username => Object.values(await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`) ?? {}),
                 render: (devices, username) => PalantirUserLookup.deviceCards(devices, username)
@@ -83,8 +82,7 @@ class PalantirUserLookup {
                 key: "trustedDevices",
                 title: "Trusted Devices",
                 icon: "mdi-shield-check",
-                available: () => Boolean(CasActuatorEndpoints.multifactorTrustedDevices())
-                    && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
+                available: PalantirAvailability.USER_LOOKUP.trustedDevices,
                 load: async username => Object.values(await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(username)}`) ?? {}),
                 render: devices => PalantirUserLookup.list(devices.map(device => ({
@@ -98,7 +96,7 @@ class PalantirUserLookup {
                 key: "consent",
                 title: "Consent Decisions",
                 icon: "mdi-check-decagram",
-                available: () => Boolean(CasActuatorEndpoints.attributeConsent()) && CAS_FEATURES.includes("Consent"),
+                available: PalantirAvailability.USER_LOOKUP.consent,
                 load: async username => await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.attributeConsent()}/${encodeURIComponent(username)}`) ?? [],
                 render: entries => PalantirUserLookup.list(entries.map(entry => ({
@@ -116,7 +114,7 @@ class PalantirUserLookup {
                 key: "attributes",
                 title: "Attributes",
                 icon: "mdi-card-account-details",
-                available: () => Boolean(CasActuatorEndpoints.personDirectory()),
+                available: PalantirAvailability.USER_LOOKUP.attributes,
                 load: async (username, sequence) => {
                     const response = await PalantirUserLookup.get(
                         `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`);
@@ -159,7 +157,7 @@ class PalantirUserLookup {
                 title: "Attribute Release",
                 icon: "mdi-account-eye",
                 counted: false,
-                available: () => PalantirAttributeRelease.available(),
+                available: PalantirAvailability.USER_LOOKUP.release,
                 load: async () => [true],
                 render: () => `
                     <div class="palantir-user-release">
@@ -214,7 +212,7 @@ class PalantirUserLookup {
                 key: "impersonation",
                 title: "Impersonation",
                 icon: "mdi-account-switch",
-                available: () => Boolean(CasActuatorEndpoints.impersonation()),
+                available: PalantirAvailability.USER_LOOKUP.impersonation,
                 load: async username => await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.impersonation()}/${encodeURIComponent(username)}`) ?? [],
                 render: accounts => PalantirUserLookup.list(accounts.map(account => ({
@@ -226,7 +224,7 @@ class PalantirUserLookup {
                 key: "passwordless",
                 title: "Passwordless Account",
                 icon: "mdi-email-fast",
-                available: () => Boolean(CasActuatorEndpoints.passwordless()),
+                available: PalantirAvailability.USER_LOOKUP.passwordless,
                 load: async username => {
                     const account = await PalantirUserLookup.get(CasActuatorEndpoints.passwordless(), {username});
                     return account && typeof account === "object" ? [account] : [];
@@ -237,7 +235,7 @@ class PalantirUserLookup {
                 key: "passwordHistory",
                 title: "Password History",
                 icon: "mdi-form-textbox-password",
-                available: () => Boolean(CasActuatorEndpoints.passwordManagement()),
+                available: PalantirAvailability.USER_LOOKUP.passwordHistory,
                 load: async username => await PalantirUserLookup.get(
                     `${CasActuatorEndpoints.passwordManagement()}/history/${encodeURIComponent(username)}`) ?? [],
                 render: records => PalantirUserLookup.list(records.map(record => ({
@@ -249,7 +247,7 @@ class PalantirUserLookup {
                 key: "interrupts",
                 title: "Interrupts",
                 icon: "mdi-alert-octagon-outline",
-                available: () => Boolean(CasActuatorEndpoints.interrupts()),
+                available: PalantirAvailability.USER_LOOKUP.interrupts,
                 load: async username => {
                     const report = await PalantirUserLookup.get(`${CasActuatorEndpoints.interrupts()}/${encodeURIComponent(username)}`);
                     const failed = (report?.inquirers ?? []).some(inquirer => inquirer.error);
@@ -261,7 +259,7 @@ class PalantirUserLookup {
                 key: "throttles",
                 title: "Throttled Attempts",
                 icon: "mdi-timer-lock",
-                available: () => Boolean(CasActuatorEndpoints.throttles()),
+                available: PalantirAvailability.USER_LOOKUP.throttles,
                 load: async username => {
                     const records = await PalantirUserLookup.get(CasActuatorEndpoints.throttles(), {username});
                     return Array.isArray(records) ? records : [];
@@ -278,7 +276,7 @@ class PalantirUserLookup {
                 key: "activity",
                 title: "Recent Activity",
                 icon: "mdi-history",
-                available: () => Boolean(CasActuatorEndpoints.auditLog()),
+                available: PalantirAvailability.USER_LOOKUP.activity,
                 load: async username => {
                     const records = await PalantirUserLookup.get(CasActuatorEndpoints.auditLog(), {
                         interval: $("#userLookupAuditWindow").val() || "P7D",
@@ -1109,12 +1107,9 @@ class PalantirUserLookup {
         const username = PalantirUserLookup.currentUsername;
         const sequence = PalantirUserLookup.lookupSequence;
         const urls = action.urls ? action.urls() : [action.url()];
-        Swal.fire({
-            titleText: action.title,
-            text: action.text ?? "This cannot be undone.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+        PalantirDialogs.confirm({
+            title: action.title,
+            text: action.text ?? "This cannot be undone."
         }).then(async result => {
             if (!result.isConfirmed) {
                 return;
@@ -1132,21 +1127,6 @@ class PalantirUserLookup {
             }
         });
     }
-}
-
-/**
- * Open the Users page and look up the given user, as the command palette does.
- *
- * @param username the user to look up
- * @returns {Promise<void>} resolved once the lookup has finished
- */
-async function lookUpPalantirUser(username) {
-    if (currentActiveTab !== Tabs.USERS.index || !isDashboardTabInitialized(Tabs.USERS)) {
-        PalantirPages.open(Tabs.USERS);
-    }
-    await initializeDashboardTab(Tabs.USERS);
-    $("#userLookupUsername").val(username);
-    await PalantirUserLookup.lookUp(username);
 }
 
 /**
@@ -1177,8 +1157,11 @@ async function initializeUserLookupOperations() {
             console.debug("The ticket could not be copied", error);
         }
     });
-    $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", event => {
-        openInterruptInquiry(event.currentTarget.dataset.username);
+    $("#userLookupResults").on("click", "[data-user-navigate=interrupts]", async event => {
+        const username = event.currentTarget.dataset.username;
+        if (await PalantirScripts.ready("authentication")) {
+            await openInterruptInquiry(username);
+        }
     });
     $("#userLookupResults").on("click", "[data-user-release]", async event => {
         const picked = PalantirAttributeRelease.picked(String($("#userReleaseApplication").val() ?? ""));
@@ -1241,9 +1224,7 @@ class PalantirAttributeRelease {
      * @returns {boolean} true when the preview can run
      */
     static available() {
-        return Boolean(CasActuatorEndpoints.releaseAttributes())
-            && Boolean(CasActuatorEndpoints.registeredServices())
-            && CasActuatorEndpoints.writable("releaseAttributes");
+        return PalantirAvailability.attributeRelease();
     }
 
     /**

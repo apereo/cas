@@ -107,14 +107,11 @@ async function initializeLoggingOperations() {
             loggersTable.draw();
 
             $("#newLoggerButton").off().on("click", () =>
-                Swal.fire({
+                PalantirDialogs.confirm({
                     input: "text",
                     inputAttributes: {
                         autocapitalize: "off"
                     },
-                    showConfirmButton: true,
-                    showDenyButton: true,
-                    icon: "question",
                     confirmButtonText: "Create Logger",
                     denyButtonText: "Cancel",
                     title: "What's the Name of the New Logger?",
@@ -230,10 +227,9 @@ async function initializeLoggingOperations() {
             });
         }
 
-        const refreshActiveLogStreams = palantirOneAtATime(() => Promise.all([refreshLogData(), refreshLogFile()]));
+        const refreshActiveLogStreams = PalantirPolling.every("log streams", () => Promise.all([refreshLogData(), refreshLogFile()]),
+            {tab: Tabs.LOGGING, panel: "#logdatastream-tab"});
 
-        setInterval(refreshActiveLogStreams, palantirSettings().refreshInterval);
-        window.addEventListener(palantirPollingContextEvent, refreshActiveLogStreams);
         refreshActiveLogStreams();
 
         $("#downloadLogsButton").off().on("click", () => {

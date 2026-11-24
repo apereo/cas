@@ -491,15 +491,13 @@ class PalantirServiceEditGuard {
         }
         const savedAt = new Date(draft.savedAt);
         const unmatched = PalantirServiceEditGuard.leftOut(draft.text);
-        const result = await Swal.fire({
+        const result = await PalantirDialogs.confirm({
             title: "Resume Your Draft?",
             text: `Unsaved changes to this application were kept${Number.isNaN(savedAt.getTime()) ? "" : ` on ${savedAt.toLocaleString()}`}.`
                 + (stored.redacted ? " Drafts keep no secrets, such as client secrets or passwords: the saved application's are used, "
                     + "and any you had changed need to be entered again." : "")
                 + (unmatched > 0 ? ` ${unmatched} secret${unmatched === 1 ? "" : "s"} could not be told apart from the saved application, `
                     + "and still show as left out: enter each again, or remove its setting, before saving." : ""),
-            icon: "question",
-            showDenyButton: true,
             confirmButtonText: "Resume Draft",
             denyButtonText: "Start Over",
             allowOutsideClick: false,

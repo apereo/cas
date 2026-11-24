@@ -51,11 +51,22 @@ General view, theme and template rules are in the `cas-ui` skill.
 - A row of a label, a jQuery UI selectmenu and buttons uses `.palantir-control-row` (centered, one height).
 - Keyboard shortcuts are listed from `palantirShortcutGroups()` (palantir-hotkeys.js) for both the `?` overlay and the
   Settings tab; add a new hotkey there too.
-- Ace (minified build), the diff library and the wizard scripts (`palantir-services-wizard*.js`, chains) are not
-  `<script>` tags: `PalantirScripts` (palantir-utils.js) fetches them from `scripts` in the dashboard configuration.
-  Every page but Home awaits them before its initializers; Home fetches them when idle. Code that can run from Home or
-  a global handler and uses Ace, `Diff` or a wizard function must await `PalantirScripts.load("wizard")` or call
-  `openPalantirWizard(...)`. A new wizard script goes in that list, not in the page.
+- Only the scripts every page uses are `<script>` tags (theme, palantir, dashboard, endpoints, utils, settings, charts,
+  discovery, features, command palette, hotkeys, edit guard). Every page's own scripts, Ace (minified build) and the
+  diff library are bundles under `scripts` in the dashboard configuration, fetched by `PalantirScripts`
+  (palantir-utils.js): `PalantirScripts.PAGES` names each page's bundles, `PalantirScripts.NEEDS` the bundles a bundle
+  needs (a page with an Ace field needs `ace`; a page building dialogs with the wizard's field builders needs
+  `fields`). A new page script goes in its page's bundle, never in the static list.
+- Scripts share one global scope, so core code (and a page reaching into another page) never names another bundle's
+  function directly: register tab initializers as `() => initializeX()`; answer "can this be offered" from
+  `PalantirAvailability` (palantir-endpoints.js), not from the page's class; before calling into another page, open it
+  with `initializeDashboardTab` or `await PalantirScripts.ready("bundle")`; when the other page only needs refreshing
+  if it was opened, guard with `typeof x === "function"`. State or helpers several pages use (`registeredServicesById`,
+  `applicationProtocolOf`, audit targets, `refreshCasServerConfiguration`) live in core. Page scripts run no code at
+  load other than declarations, because they may load after `DOMContentLoaded`.
+- Check cross-bundle references after moving code with a dependency analysis (espree and eslint-scope from
+  `ci/tests/puppeteer/node_modules`): every reference from one bundle into another not in its `NEEDS` must be guarded,
+  lazy, or behind a page init.
 - In a `th:inline="javascript"` block, never write `[` directly before an inlined `/*[[...]]*/` (as in `[/*[[...]]*/]`):
   Thymeleaf reads `[/` as a closing element and the page fails to render. Put the value on its own line.
 - A page whose link can name something (`PalantirLinks.DETAILS`) also clears it when its bare link is followed
@@ -198,6 +209,18 @@ General view, theme and template rules are in the `cas-ui` skill.
   same-origin `$.ajax` and `fetch` write; a form posted by script, such as Logout, calls `PalantirCsrf.addTo(form)`.
   A raw `XMLHttpRequest` write must set the header itself. Clients with an `Authorization` header are not asked.
 - `/palantir/dashboard/session` answers only the signed-in name; never hand the session id to scripts.
+- The wizard is split by what each part does, all loaded together by `PalantirScripts.load("applications")` in the order
+  the template lists them: `palantir-services-wizard.js` (dialog, type picker, building the definition),
+  `-fields.js` (inputs, selects, mapped values, validity; its own `fields` bundle, as other pages use it), `-release.js`, `-access.js`, `-policies.js` (the sections),
+  `-populate.js` (filling from a definition) and `-suggestions.js`. The System page is split the same way:
+  `palantir-system.js` (wiring and state) with `-startup.js`, `-dependencies.js`, `-http.js` and `-memory.js` holding
+  functions that use no state of `initializeSystemOperations`. A new helper that needs that state stays inside it.
+- Pop-ups go through `PalantirDialogs` (palantir-utils.js): `wait(title, text)`, `confirm({title, text, ...})` (whose
+  answer has `isConfirmed`), `error(title, text)` and `done(title, text)`; titles are text. Use `Swal.fire` directly
+  only for pop-ups with their own buttons or content, such as forms.
+- Anything read again on its own goes through `PalantirPolling.every(name, run, {tab, panel, when, every})`: one clock,
+  paused while the browser tab is hidden or the poll does not apply, one request at a time, a run as soon as it applies
+  again, and the refresh interval read live from the settings. Never add a `setInterval` poller.
 - Polled tables redraw with `draw(false)` so paging survives a refresh, and each poll is wrapped in `palantirOneAtATime`
   (palantir-utils.js) so a slow endpoint never gets a second request while the first is on its way; a reload after a
   change calls the unwrapped function. Every value in an actuator URL path or query goes through `encodeURIComponent`.
@@ -383,8 +406,8 @@ General view, theme and template rules are in the `cas-ui` skill.
   protocol section by `placeRegisteredServiceIdField` when the wizard opens; a protocol section holding it must not be
   advanced-only, or its required field drops out of validation.
 
-- Suggested values for wizard text fields live in `PalantirWizardSuggestions.FIELDS` (end of
-  `palantir-services-wizard.js`), keyed by the field's dotted path, or `path:key` / `path:value` for the two sides of a
+- Suggested values for wizard text fields live in `PalantirWizardSuggestions.FIELDS`
+  (`palantir-services-wizard-suggestions.js`), keyed by the field's dotted path, or `path:key` / `path:value` for the two sides of a
   map field; `list: true` completes comma-separated entries one at a time. A new field with standard values gets an
   entry there, not its own autocomplete; values come from the spec or the CAS model (check the Java setter accepts
   them), never `none` for JWS algorithms. They attach on focus, so map rows added later get them too.

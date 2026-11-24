@@ -1,10 +1,7 @@
 function removeSpringSession(id) {
-    Swal.fire({
+    PalantirDialogs.confirm({
         title: "Are you sure you want to delete this session?",
-        text: "Once deleted, you may not be able to recover this session.",
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+        text: "Once deleted, you may not be able to recover this session."
     })
         .then((result) => {
             if (result.isConfirmed) {
@@ -375,12 +372,9 @@ async function initializeSsoSessionOperations() {
     }
 
     function removeSsoSession(ticket) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this session?",
-            text: "Once deleted, you may not be able to recover this session.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this session."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -450,14 +444,7 @@ async function initializeSsoSessionOperations() {
                 return false;
             }
             const username = $("#springSessionUsername").val();
-            Swal.fire({
-                icon: "info",
-                titleText: `Fetching Spring Sessions for ${username}`,
-                text: "Please wait while Spring Sessions are retrieved...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
+            PalantirDialogs.wait(`Fetching Spring Sessions for ${username}`, "Please wait while Spring Sessions are retrieved...");
             springSessionsTable.clear();
             springSessionsById.clear();
             $.ajax({
@@ -499,12 +486,9 @@ async function initializeSsoSessionOperations() {
                 return false;
             }
 
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to delete all sessions for the user?",
-                text: "Once deleted, you may not be able to recover this and user's SSO session will be removed.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once deleted, you may not be able to recover this and user's SSO session will be removed."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -535,14 +519,7 @@ async function initializeSsoSessionOperations() {
                 return false;
             }
             const username = $("#ssoSessionUsername").val();
-            Swal.fire({
-                icon: "info",
-                titleText: `Fetching SSO Sessions for ${username}`,
-                text: "Please wait while single sign-on sessions are retrieved...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
+            PalantirDialogs.wait(`Fetching SSO Sessions for ${username}`, "Please wait while single sign-on sessions are retrieved...");
 
             ssoSessionsTable.clear();
             ssoSessionApplicationsTable.clear();
@@ -594,12 +571,9 @@ async function initializeSsoSessionOperations() {
 
     $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {
         if (CasActuatorEndpoints.ssoSessions()) {
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to delete all sessions for all users?",
-                text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once deleted, you may not be able to recover and ALL sso sessions for ALL users will be removed."
             })
                 .then((result) => {
                     if (result.isConfirmed) {

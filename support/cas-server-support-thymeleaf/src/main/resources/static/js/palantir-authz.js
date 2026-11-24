@@ -1251,16 +1251,10 @@ async function initializeHeimdallOperations() {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
-        const fetchHeimdallResources = palantirOneAtATime(loadHeimdallResources);
+        const fetchHeimdallResources = PalantirPolling.every("Heimdall resources", loadHeimdallResources, {tab: Tabs.ACCESS_STRATEGY});
 
         fetchHeimdallResources();
         reloadHeimdallResourcesTable = loadHeimdallResources;
-
-        setInterval(() => {
-            if (currentActiveTab === Tabs.ACCESS_STRATEGY.index && document.visibilityState === "visible") {
-                fetchHeimdallResources();
-            }
-        }, palantirSettings().refreshInterval);
     }
 
 }
@@ -1980,6 +1974,9 @@ class PalantirAccessCheck {
     }
 
     static async editAccessStrategy(serviceId) {
+        if (!await PalantirScripts.ready("applications")) {
+            return;
+        }
         try {
             const definition = await $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`);
             const opening = PalantirServiceEditor.openApplicationInWizard(definition);

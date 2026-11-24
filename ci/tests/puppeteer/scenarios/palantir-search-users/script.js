@@ -1,7 +1,7 @@
-/* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
-   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, PalantirAccessCheck,
+/* global $, CAS_FEATURES, CasActuatorEndpoints, currentActiveTab,
+   registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirAccessCheck, PalantirAvailability,
    Swal,
-   PalantirAttributeRelease, initializeDashboardTab */
+   PalantirAttributeRelease, initializeDashboardTab, PalantirScripts */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -47,7 +47,7 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);
@@ -472,7 +472,8 @@ async function verifyThrottlesUsername(page) {
  */
 async function verifyCredentialRepositories(page) {
     await cas.separator();
-    const expected = await page.evaluate(() => PalantirCredentialRepositories.available().map((repository) => repository.key));
+    const expected = await page.evaluate(() => Object.entries(PalantirAvailability.CREDENTIAL_REPOSITORIES)
+        .filter(([, endpoint]) => Boolean(endpoint())).map(([key]) => key));
     if (expected.length === 0) {
         await cas.logy("No multifactor credential repository endpoint is available; skipping");
         return;

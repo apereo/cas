@@ -903,7 +903,7 @@ function openNewAuthenticationHandlerDialog() {
                         success: response => {
                             $dialog.dialog("close");
                             $.get(CasActuatorEndpoints.env(), async res => {
-                                reloadConfigurationTable(res);
+                                reloadPalantirConfigurationTable(res);
                                 refreshCasServerConfiguration(`New Authentication Handler Created`);
                             })
                                 .fail((xhr) => {

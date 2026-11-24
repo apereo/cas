@@ -445,7 +445,7 @@ class PalantirServiceEditor {
                     PalantirServiceEditor.startFrom(text);
                 }
             })
-            .catch(error => Swal.fire({icon: "error", titleText: `${file.name} Could Not Be Read`, text: String(error?.message ?? error)}));
+            .catch(error => PalantirDialogs.error(`${file.name} Could Not Be Read`, String(error?.message ?? error)));
     }
 
     /**
@@ -454,11 +454,9 @@ class PalantirServiceEditor {
     static async backToTemplates() {
         const text = PalantirServiceEditor.editor().getValue().trim();
         if (text !== "" && text !== "{\n}" && text !== "{}") {
-            const result = await Swal.fire({
+            const result = await PalantirDialogs.confirm({
                 title: "Start from a Template?",
                 text: "The definition in the editor is replaced by the template you choose.",
-                icon: "question",
-                showDenyButton: true,
                 confirmButtonText: "Choose a Template",
                 denyButtonText: "Keep Editing"
             });
@@ -717,12 +715,6 @@ class PalantirServiceEditor {
             PalantirServiceEditor.showProblem("The application type is missing", "Add an \"@class\" property, or start from a template, to open the definition in the wizard.", 0);
             return;
         }
-        try {
-            await PalantirScripts.load("wizard");
-        } catch (error) {
-            PalantirScripts.failed(error);
-            return;
-        }
         const isNew = PalantirServiceEditor.isNew;
         const editorKey = PalantirServiceEditGuard.key("editor", isNew ? null : definition.id);
         const original = isNew ? null : PalantirServiceEditGuard.originals.get(editorKey) ?? null;
@@ -794,14 +786,13 @@ class PalantirServiceEditor {
             return;
         }
         const shown = dropped.slice(0, 12);
-        const result = await Swal.fire({
+        const result = await PalantirDialogs.confirm({
             icon: "warning",
             title: "The Wizard Does Not Cover Every Setting",
             html: `
                 <p class="palantir-json-editor__note">These settings have no place in the wizard, and saving from the wizard leaves them out:</p>
                 <ul class="palantir-json-editor__dropped">${shown.map(path => `<li>${palantirCode(path)}</li>`).join("")}</ul>
                 ${dropped.length > shown.length ? `<p class="palantir-json-editor__note">And ${dropped.length - shown.length} more.</p>` : ""}`,
-            showDenyButton: true,
             confirmButtonText: confirmText,
             denyButtonText: "Continue in the Wizard"
         });

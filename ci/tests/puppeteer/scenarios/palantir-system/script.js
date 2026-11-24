@@ -1,6 +1,6 @@
-/* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
+/* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration,
    currentActiveTab, notyf, Tabs, PalantirModules, signInsChart,
-   PalantirStartupTimeline, initializeDashboardTab */
+   PalantirStartupTimeline, initializeDashboardTab, PalantirScripts */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -46,7 +46,7 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);

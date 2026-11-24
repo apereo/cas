@@ -92,14 +92,89 @@
                     diff: [
                         /*[[@{#{webjars.jsdiff.js}}]]*/ ""
                     ],
-                    wizard: [
+                    fields: [
+                        /*[[@{/js/palantir-services-wizard-fields.js}]]*/ ""
+                    ],
+                    applications: [
+                        /*[[@{/js/palantir-services.js}]]*/ "",
+                        /*[[@{/js/palantir-services-actions.js}]]*/ "",
+                        /*[[@{/js/palantir-services-editor.js}]]*/ "",
+                        /*[[@{/js/palantir-services-sections.js}]]*/ "",
+                        /*[[@{/js/palantir-services-history.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-release.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-access.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-policies.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-populate.js}]]*/ "",
+                        /*[[@{/js/palantir-services-wizard-suggestions.js}]]*/ "",
                         /*[[@{/js/palantir-services-chains.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard-cas.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard-oauth.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard-oidc.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard-saml2.js}]]*/ "",
                         /*[[@{/js/palantir-services-wizard-wsfed.js}]]*/ ""
+                    ],
+                    metrics: [
+                        /*[[@{/js/palantir-metrics.js}]]*/ ""
+                    ],
+                    home: [
+                        /*[[@{/js/palantir-home.js}]]*/ ""
+                    ],
+                    system: [
+                        /*[[@{/js/palantir-system-startup.js}]]*/ "",
+                        /*[[@{/js/palantir-system-dependencies.js}]]*/ "",
+                        /*[[@{/js/palantir-system-http.js}]]*/ "",
+                        /*[[@{/js/palantir-system-memory.js}]]*/ "",
+                        /*[[@{/js/palantir-system.js}]]*/ "",
+                        /*[[@{/js/palantir-webflow.js}]]*/ ""
+                    ],
+                    tickets: [
+                        /*[[@{/js/palantir-tickets.js}]]*/ ""
+                    ],
+                    tasks: [
+                        /*[[@{/js/palantir-tasks.js}]]*/ ""
+                    ],
+                    access: [
+                        /*[[@{/js/palantir-authz.js}]]*/ ""
+                    ],
+                    logging: [
+                        /*[[@{/js/palantir-logging.js}]]*/ "",
+                        /*[[@{/js/palantir-cas-events.js}]]*/ ""
+                    ],
+                    sso: [
+                        /*[[@{/js/palantir-sso.js}]]*/ ""
+                    ],
+                    configuration: [
+                        /*[[@{/js/palantir-cas-config.js}]]*/ ""
+                    ],
+                    attributes: [
+                        /*[[@{/js/palantir-person-directory.js}]]*/ ""
+                    ],
+                    authentication: [
+                        /*[[@{/js/palantir-authn.js}]]*/ "",
+                        /*[[@{/js/palantir-interrupts.js}]]*/ "",
+                        /*[[@{/js/palantir-pac4j.js}]]*/ ""
+                    ],
+                    consent: [
+                        /*[[@{/js/palantir-consent.js}]]*/ ""
+                    ],
+                    protocols: [
+                        /*[[@{/js/palantir-protocols.js}]]*/ ""
+                    ],
+                    throttles: [
+                        /*[[@{/js/palantir-throttles.js}]]*/ ""
+                    ],
+                    mfa: [
+                        /*[[@{/js/palantir-mfa.js}]]*/ ""
+                    ],
+                    tenants: [
+                        /*[[@{/js/palantir-multitenancy.js}]]*/ ""
+                    ],
+                    cluster: [
+                        /*[[@{/js/palantir-cluster.js}]]*/ ""
+                    ],
+                    users: [
+                        /*[[@{/js/palantir-users.js}]]*/ ""
                     ]
                 })
             });
@@ -114,38 +189,11 @@
     <script type="text/javascript" defer th:src="@{/js/palantir-endpoints.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-utils.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-settings.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-cas-config.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-mfa.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-pac4j.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-webflow.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-system.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-metrics.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-home.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-person-directory.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-consent.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-multitenancy.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-cluster.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-throttles.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-protocols.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-logging.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-tickets.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-tasks.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-sso.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-authn.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-interrupts.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-authz.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-charts.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-cas-discovery.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-cas-features.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-cas-events.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-users.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-command-palette.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-hotkeys.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-actions.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-editor.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-sections.js}"></script>
-    <script type="text/javascript" defer th:src="@{/js/palantir-services-history.js}"></script>
     <script type="text/javascript" defer th:src="@{/js/palantir-services-guard.js}"></script>
     
 </head>

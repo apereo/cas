@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -225,6 +227,21 @@ class CasWebSecurityConfigurerAdapterWebTests {
     @Test
     void verifyStaticResources() throws Throwable {
         mvc.perform(get("/cas/hello/data.txt")).andExpect(status().isOk());
+    }
+
+    /**
+     * Actuator endpoints served from the root of the application, where Spring Boot reports the base path as empty,
+     * must not keep the security filter chain from starting.
+     */
+    @Nested
+    @TestPropertySource(properties = "management.endpoints.web.base-path=/")
+    class RootBasePathTests {
+        @Test
+        void verifyAccessToRootEndpoints() throws Throwable {
+            mvc.perform(get("/cas/beans")).andExpect(status().isOk());
+            mvc.perform(get("/cas/info")).andExpect(status().isUnauthorized());
+            mvc.perform(get("/cas/env").with(httpBasic("casuser", "Mellon"))).andExpect(status().isOk());
+        }
     }
 
     @TestConfiguration(value = "WebTestConfiguration", proxyBeanMethods = false)

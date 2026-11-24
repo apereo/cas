@@ -1,7 +1,7 @@
-/* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
+/* global $, CAS_FEATURES, CasActuatorEndpoints, isPopulatingWizard,
    currentActiveTab, registeredServicesById, PalantirServiceHistory, Swal, applicationActionHandler,
    applicationRowContext, fetchServices, notyf, PalantirApplicationAccess, Tabs, PalantirApplicationSelection,
-   importServiceFiles, importServiceFile, palantirParseJson */
+   importServiceFiles, importServiceFile, palantirParseJson, PalantirScripts */
 const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
@@ -50,8 +50,9 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
+    await page.evaluate(() => PalantirScripts.load("applications"));
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);
     assert(features > 0);

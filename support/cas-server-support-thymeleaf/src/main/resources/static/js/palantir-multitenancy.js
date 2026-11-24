@@ -67,15 +67,10 @@ async function initializeMultitenancyOperations() {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
-    const fetchTenants = palantirOneAtATime(loadTenants);
+    const fetchTenants = PalantirPolling.every("tenants", loadTenants, {tab: Tabs.MULTITENANCY});
 
     fetchTenants();
     reloadTenantsTable = loadTenants;
-    setInterval(() => {
-        if (currentActiveTab === Tabs.MULTITENANCY.index && document.visibilityState === "visible") {
-            fetchTenants();
-        }
-    }, palantirSettings().refreshInterval);
 }
 
 function toggleTenantJsonEditorVisibility() {
@@ -609,12 +604,9 @@ function newTenant(prefillData = null, options = {}) {
 }
 
 function deleteTenant(id, btn) {
-    Swal.fire({
-        titleText: `Are You Sure You Want to Delete Tenant ${id}?`,
-        text: "Once removed, you may not be able to revert this.",
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+    PalantirDialogs.confirm({
+        title: `Are You Sure You Want to Delete Tenant ${id}?`,
+        text: "Once removed, you may not be able to revert this."
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({

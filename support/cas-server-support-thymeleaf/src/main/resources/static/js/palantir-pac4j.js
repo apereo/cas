@@ -1,14 +1,11 @@
 function removeIdentityProvider(idp, type) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
-        Swal.fire({
-            titleText: `Are You Sure You Want to Delete ${idp}?`,
+        PalantirDialogs.confirm({
+            title: `Are You Sure You Want to Delete ${idp}?`,
             text: `
                 Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source.
                 Once removed, you may not be able to revert this.
-            `,
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            `
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -63,7 +60,7 @@ function removeIdentityProvider(idp, type) {
                                         Promise.all(requests)
                                             .then(() => {
                                                 $.get(CasActuatorEndpoints.env(), res => {
-                                                    reloadConfigurationTable(res);
+                                                    reloadPalantirConfigurationTable(res);
                                                     refreshCasServerConfiguration(`The identity provider ${idp} has been removed.`);
                                                 })
                                                     .fail((xhr) => {
@@ -133,14 +130,7 @@ function configureSaml2ClientMetadataButtons() {
     function showSaml2ClientIdpMetadata(clientName) {
         const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/idp/metadata`;
 
-        Swal.fire({
-            icon: "info",
-            titleText: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
-            text: "Please wait while data is being retrieved...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        PalantirDialogs.wait(`Fetching SAML2 Identity Provider Metadata for ${clientName}`, "Please wait while data is being retrieved...");
 
         $.get(url, async payload => {
             await showSamlMetadata(payload);
@@ -262,14 +252,7 @@ async function loadExternalIdentityProvidersTable() {
     $("#delegatedClientsSummary").addClass("d-none");
     if (CasActuatorEndpoints.delegatedClients()) {
         setExternalIdentityProviderStatus("mdi-loading mdi-spin", "Loading external identity providers...");
-        Swal.fire({
-            icon: "info",
-            title: `Loading Identity Providers`,
-            text: "Please wait while external identity providers are being retrieved...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        PalantirDialogs.wait(`Loading Identity Providers`, "Please wait while external identity providers are being retrieved...");
         $.get(CasActuatorEndpoints.delegatedClients(), response => {
             const identityProviders = response && typeof response === "object" && !Array.isArray(response)
                 ? Object.entries(response).sort(([first], [second]) => first.localeCompare(second))
@@ -655,7 +638,7 @@ function newExternalIdentityProvider() {
                             success: response => {
                                 $(this).dialog("close");
                                 $.get(CasActuatorEndpoints.env(), async res => {
-                                    reloadConfigurationTable(res);
+                                    reloadPalantirConfigurationTable(res);
                                     refreshCasServerConfiguration(`New Property ${name} Created`);
                                 })
                                     .fail((xhr) => {

@@ -385,3 +385,87 @@ class CasActuatorEndpoints {
             .map(name => ({ name, value: CasActuatorEndpoints[name]() }));
     }
 }
+
+/**
+ * Whether the pages and actions that span pages can be offered, answered from the enabled actuator endpoints alone, so
+ * the rail, the command palette and the applications' menus can tell before the page that does the work is fetched.
+ */
+class PalantirAvailability {
+    static USER_LOOKUP = Object.freeze({
+        sessions: () => Boolean(CasActuatorEndpoints.ssoSessions()),
+        oauthTokens: () => Boolean(CasActuatorEndpoints.oauthTokens()),
+        mfaDevices: () => Boolean(CasActuatorEndpoints.mfaDevices())
+            && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
+        trustedDevices: () => Boolean(CasActuatorEndpoints.multifactorTrustedDevices())
+            && PalantirDashboardConfiguration.availableMultifactorProviders().length > 0,
+        consent: () => Boolean(CasActuatorEndpoints.attributeConsent()) && CAS_FEATURES.includes("Consent"),
+        attributes: () => Boolean(CasActuatorEndpoints.personDirectory()),
+        release: () => PalantirAvailability.attributeRelease(),
+        impersonation: () => Boolean(CasActuatorEndpoints.impersonation()),
+        passwordless: () => Boolean(CasActuatorEndpoints.passwordless()),
+        passwordHistory: () => Boolean(CasActuatorEndpoints.passwordManagement()),
+        interrupts: () => Boolean(CasActuatorEndpoints.interrupts()),
+        throttles: () => Boolean(CasActuatorEndpoints.throttles()),
+        activity: () => Boolean(CasActuatorEndpoints.auditLog())
+    });
+
+    static CREDENTIAL_REPOSITORIES = Object.freeze({
+        gauthCredentialRepository: () => CasActuatorEndpoints.gauthCredentialRepository(),
+        webAuthnDevices: () => CasActuatorEndpoints.webAuthnDevices(),
+        yubikeyAccountRepository: () => CasActuatorEndpoints.yubikeyAccountRepository()
+    });
+
+    /**
+     * Whether a user can be looked up, because at least one of what the Users page shows about a user can be read.
+     *
+     * @returns {boolean} true when the Users page has something to show
+     */
+    static userLookup() {
+        return Object.values(PalantirAvailability.USER_LOOKUP).some(available => available());
+    }
+
+    /**
+     * Whether the release preview can run: the release endpoint is enabled and accepts the POST it answers to.
+     *
+     * @returns {boolean} true when the preview can run
+     */
+    static attributeRelease() {
+        return Boolean(CasActuatorEndpoints.releaseAttributes())
+            && Boolean(CasActuatorEndpoints.registeredServices())
+            && CasActuatorEndpoints.writable("releaseAttributes");
+    }
+
+    /**
+     * Whether any multifactor credential repository can be read.
+     *
+     * @returns {boolean} true when the repositories page has a repository to show
+     */
+    static credentialRepositories() {
+        return Object.values(PalantirAvailability.CREDENTIAL_REPOSITORIES).some(endpoint => Boolean(endpoint()));
+    }
+
+    /**
+     * The address that rotates, or lists, the secrets of an OAuth client.
+     *
+     * @param clientId the client id
+     * @param options whether only expired secrets are rotated, when the new ones expire, and the application's id
+     * @returns {string} the address
+     */
+    static clientSecretsUrl(clientId, {expiredOnly = false, expireIn = "", id = null} = {}) {
+        const encodedClientId = encodeURIComponent(clientId);
+        let endpoint = CasActuatorEndpoints.oauthClientSecrets();
+        if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
+            endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
+        } else {
+            endpoint = `${endpoint}/${encodedClientId}`;
+        }
+        const query = new URLSearchParams({expiredOnly: String(expiredOnly)});
+        if (String(expireIn ?? "").trim()) {
+            query.append("expireIn", String(expireIn).trim());
+        }
+        if (id !== null && id !== undefined && String(id) !== "") {
+            query.append("id", String(id));
+        }
+        return `${endpoint}?${query}`;
+    }
+}

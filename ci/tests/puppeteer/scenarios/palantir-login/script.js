@@ -2,7 +2,10 @@
    activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile,
    PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog,
    PalantirLinks, PalantirPages, PalantirPanelFocus, registeredServicesById, navigateToApplication, PalantirCsrf,
-   palantirOneAtATime */
+   palantirOneAtATime, PalantirPolling, createInputField, createRegisteredServiceAttributeReleasePolicy,
+   createRegisteredServiceAccessStrategy, createRegisteredServiceExpirationPolicy, populateWizardFromServiceDefinition,
+   PalantirWizardSuggestions, calculateCvssScore, normalizeHttpExchange, formatMemoryBytes, PalantirStartupTimeline,
+   PalantirModules, PalantirDashboardConfiguration, initializeThrottlesOperations, showSamlMetadataManager, PalantirMetrics */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -185,6 +188,31 @@ async function verifyPollsDoNotPileUp(page) {
     });
     assert(started.whileRunning === 1 && started.after === 2, `Polls run one at a time: ${JSON.stringify(started)}`);
     await cas.logg("A slow poll is not started again while it is still on its way");
+
+    const scheduled = await page.evaluate(() => {
+        let runs = 0;
+        let applies = false;
+        let finish = null;
+        PalantirPolling.every("scenario", () => {
+            runs++;
+            return new Promise((resolve) => {
+                finish = resolve;
+            });
+        }, {when: () => applies, every: 60000});
+        PalantirPolling.beat();
+        const whileHidden = runs;
+        applies = true;
+        PalantirPolling.beat();
+        const once = runs;
+        PalantirPolling.beat();
+        const notAgain = runs;
+        finish();
+        PalantirPolling.polls = PalantirPolling.polls.filter((poll) => poll.name !== "scenario");
+        return {whileHidden, once, notAgain};
+    });
+    assert(scheduled.whileHidden === 0 && scheduled.once === 1 && scheduled.notAgain === 1,
+        `The scheduler runs a poll once it applies, and not again before its time: ${JSON.stringify(scheduled)}`);
+    await cas.logg("The shared scheduler runs polls only when they apply, on their own clock");
 }
 
 async function waitForDashboard(page) {
@@ -193,7 +221,7 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);
@@ -533,29 +561,49 @@ async function verifySettingsDialog(page) {
 }
 
 /**
- * Check that the editor, the diff library and the application wizard are not part of the page itself but are fetched
- * when first needed, with the editor in its minified build.
+ * Check that only the scripts every page uses come with the dashboard, and that each page's scripts, with the editor,
+ * the diff library and the application wizard, are fetched when first needed, the bundles a bundle needs first, with
+ * the editor in its minified build.
  *
  * @param page the puppeteer page
  */
 async function verifyScriptsOnFirstUse(page) {
     await cas.separator();
     const state = await page.evaluate(async () => {
-        const deferred = $("script[defer]").toArray().map((script) => script.src)
-            .filter((src) => /ace-builds|\/diff\/|palantir-services-wizard|palantir-services-chains/.test(src));
-        await PalantirScripts.load("wizard");
+        const bundled = Object.values(PalantirDashboardConfiguration.all().scripts).flat()
+            .map((url) => new URL(url, location.href).pathname);
+        const deferred = $("script[defer]").toArray().map((script) => new URL(script.src, location.href).pathname)
+            .filter((src) => /\/js\/palantir/.test(src));
+        const throttlesBefore = PalantirScripts.loading.has("throttles") ? "loaded" : typeof initializeThrottlesOperations;
+        await PalantirScripts.load("throttles", "applications", "system");
         return {
-            deferred,
+            deferred: deferred.length,
+            bundledAndDeferred: deferred.filter((src) => bundled.includes(src)),
             ace: typeof ace,
             diff: typeof Diff,
+            usersOrder: PalantirScripts.withNeeds(["users"]),
+            applicationsOrder: PalantirScripts.withNeeds(["applications"]),
+            throttlesBefore,
+            throttlesAfter: typeof initializeThrottlesOperations,
             wizard: typeof openRegisteredServiceWizardDialog,
+            wizardParts: [typeof createInputField, typeof createRegisteredServiceAttributeReleasePolicy,
+                typeof createRegisteredServiceAccessStrategy, typeof createRegisteredServiceExpirationPolicy,
+                typeof populateWizardFromServiceDefinition, typeof PalantirWizardSuggestions, typeof showSamlMetadataManager],
+            systemParts: [typeof calculateCvssScore, typeof normalizeHttpExchange, typeof formatMemoryBytes,
+                typeof PalantirStartupTimeline, typeof PalantirModules, typeof PalantirMetrics],
             minified: $("script[src*='ace-builds']").toArray().every((script) => script.src.includes("/src-min-noconflict/"))
         };
     });
     await cas.log(`Scripts fetched on first use: ${JSON.stringify(state)}`);
-    assert(state.deferred.length === 0);
+    assert(state.deferred === 12 && state.bundledAndDeferred.length === 0, `Only the shared scripts come with the page: ${JSON.stringify(state)}`);
+    assert(state.throttlesBefore !== "function" && state.throttlesAfter === "function");
+    assert(JSON.stringify(state.usersOrder) === JSON.stringify(["ace", "fields", "access", "users"]), `Users needs ${state.usersOrder}`);
+    assert(JSON.stringify(state.applicationsOrder) === JSON.stringify(["ace", "diff", "fields", "protocols", "applications"]),
+        `Applications needs ${state.applicationsOrder}`);
     assert(state.ace === "object" && state.diff === "object" && state.wizard === "function" && state.minified);
-    await cas.logg("The editor, the diff library and the wizard are fetched on first use");
+    assert(state.wizardParts.every((part) => part === "function") && state.systemParts.every((part) => part === "function"),
+        `Every part of the wizard and the System page is loaded: ${JSON.stringify(state)}`);
+    await cas.logg("Each page's scripts, the editor, the diff library and the wizard are fetched on first use");
 }
 
 /**

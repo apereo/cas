@@ -89,6 +89,8 @@ public class DashboardController extends AbstractController {
     private final List<? extends ExposableEndpoint<?>> endpoints;
     private final EndpointAccessResolver endpointAccessResolver;
 
+    private final AtomicReference<SharedServiceTemplates> sharedServiceTemplates = new AtomicReference<>();
+
     private final Supplier<List<Map<String, String>>> builtInServiceTemplates =
         memoize(Unchecked.supplier(this::loadBuiltInServiceTemplates));
 
@@ -232,7 +234,47 @@ public class DashboardController extends AbstractController {
         return templates;
     }
 
+    /**
+     * The application templates of a shared directory, read again only when the directory changes: a template is added,
+     * removed or edited, as the names, sizes and modification times of its files tell. Listing the directory costs far
+     * less than reading and parsing every template on every view of the dashboard.
+     *
+     * @param directory the shared directory
+     * @return the templates
+     */
     private List<Map<String, String>> loadSharedServiceTemplates(final Path directory) {
+        val fingerprint = fingerprintOf(directory);
+        val cached = sharedServiceTemplates.get();
+        if (cached != null && cached.directory().equals(directory) && cached.fingerprint().equals(fingerprint)) {
+            return cached.templates();
+        }
+        val templates = readSharedServiceTemplates(directory);
+        sharedServiceTemplates.set(new SharedServiceTemplates(directory, fingerprint, templates));
+        return templates;
+    }
+
+    private static String fingerprintOf(final Path directory) {
+        if (!Files.isDirectory(directory)) {
+            return "missing";
+        }
+        try (val files = Files.list(directory)) {
+            return files
+                .filter(file -> Files.isRegularFile(file) && Strings.CI.endsWith(file.getFileName().toString(), ".json"))
+                .sorted()
+                .map(file -> {
+                    try {
+                        return file.getFileName() + ":" + Files.size(file) + ":" + Files.getLastModifiedTime(file).toMillis();
+                    } catch (final IOException e) {
+                        return file.getFileName() + ":unreadable";
+                    }
+                })
+                .collect(Collectors.joining("|"));
+        } catch (final IOException e) {
+            return "unreadable:" + e.getMessage();
+        }
+    }
+
+    private List<Map<String, String>> readSharedServiceTemplates(final Path directory) {
         if (!Files.isDirectory(directory)) {
             LOGGER.warn("Application templates directory [{}] does not exist or is not a directory", directory);
             return List.of();
@@ -271,5 +313,8 @@ public class DashboardController extends AbstractController {
             return Optional.empty();
         }
         return Optional.of(Map.of("source", source, "type", definition.getClass().getName(), "definition", contents));
+    }
+
+    private record SharedServiceTemplates(Path directory, String fingerprint, List<Map<String, String>> templates) {
     }
 }

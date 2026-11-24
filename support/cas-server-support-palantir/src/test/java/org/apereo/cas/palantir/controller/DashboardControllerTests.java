@@ -583,6 +583,12 @@ class DashboardControllerTests {
                 { "@class": "org.apereo.cas.services.CasRegisteredService", "serviceId": "^https://portal.example.org/.*", "name": "Portal" }
                 """);
             assertEquals(2, serviceTemplates().stream().filter(template -> "shared".equals(template.get("source"))).count());
+
+            val intranet = directory.resolve("intranet.json");
+            Files.writeString(intranet, Files.readString(intranet).replace("Our intranet applications", "Every intranet application"));
+            Files.setLastModifiedTime(intranet, FileTime.fromMillis(Files.getLastModifiedTime(intranet).toMillis() + 5000));
+            assertTrue(serviceTemplates().stream().anyMatch(template -> template.get("definition").contains("Every intranet application")));
+            assertEquals(2, serviceTemplates().stream().filter(template -> "shared".equals(template.get("source"))).count());
         }
     }
 

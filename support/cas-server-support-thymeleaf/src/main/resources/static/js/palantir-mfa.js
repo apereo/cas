@@ -1068,12 +1068,9 @@ async function initializeMultifactorOperations() {
     placePalantirRecordCards("mfaDevicesTable", "mfaDevicesCards", "Search for a username to see their devices.");
 
     function removeMfaDevice({key, providerId, username}) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this entry."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -1126,14 +1123,7 @@ async function initializeMultifactorOperations() {
         function fetchMfaDevices() {
             const username = $("#mfaUsername").val();
             $("#mfaDevicesButton").prop("disabled", true);
-            Swal.fire({
-                icon: "info",
-                titleText: `Fetching Devices for ${username}`,
-                text: "Please wait while registered multifactor devices are retrieved...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
+            PalantirDialogs.wait(`Fetching Devices for ${username}`, "Please wait while registered multifactor devices are retrieved...");
 
             mfaDevicesTable.clear();
             $.get(`${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`, response => {
@@ -1192,12 +1182,9 @@ async function initializeTrustedMultifactorOperations() {
 
     function removeMfaTrustedDevice(context) {
         const key = context.rowData.key;
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this entry."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -1233,14 +1220,7 @@ async function initializeTrustedMultifactorOperations() {
             mfaTrustedDevicesTable.clear();
             const username = $("#mfaTrustedUsername").val();
             $("#mfaTrustedDevicesButton").prop("disabled", true);
-            Swal.fire({
-                icon: "info",
-                titleText: `Fetching Multifactor Trusted Devices for ${username}`,
-                text: "Please wait while registered multifactor trusted devices are retrieved...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
+            PalantirDialogs.wait(`Fetching Multifactor Trusted Devices for ${username}`, "Please wait while registered multifactor trusted devices are retrieved...");
 
             $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(username)}`, response => {
                 for (const device of Object.values(response)) {
@@ -1281,21 +1261,21 @@ class PalantirCredentialRepositories {
             title: "Google Authenticator",
             records: "account",
             icon: "mdi-cellphone-key",
-            endpoint: () => CasActuatorEndpoints.gauthCredentialRepository()
+            endpoint: PalantirAvailability.CREDENTIAL_REPOSITORIES.gauthCredentialRepository
         },
         {
             key: "webAuthnDevices",
             title: "WebAuthn",
             records: "device registration",
             icon: "mdi-fingerprint",
-            endpoint: () => CasActuatorEndpoints.webAuthnDevices()
+            endpoint: PalantirAvailability.CREDENTIAL_REPOSITORIES.webAuthnDevices
         },
         {
             key: "yubikeyAccountRepository",
             title: "YubiKey",
             records: "account",
             icon: "mdi-usb-flash-drive-outline",
-            endpoint: () => CasActuatorEndpoints.yubikeyAccountRepository()
+            endpoint: PalantirAvailability.CREDENTIAL_REPOSITORIES.yubikeyAccountRepository
         }
     ];
 
@@ -1440,7 +1420,7 @@ class PalantirCredentialRepositories {
             document.body.removeChild(link);
             window.URL.revokeObjectURL(link.href);
         } catch (error) {
-            Swal.fire({icon: "error", titleText: `${repository.title} Records Could Not Be Exported`, text: error.message});
+            PalantirDialogs.error(`${repository.title} Records Could Not Be Exported`, error.message);
         }
     }
 
@@ -1467,13 +1447,9 @@ class PalantirCredentialRepositories {
         const skipped = Number(counts.skipped ?? 0);
         const records = repository.records;
         if (imported === 0) {
-            Swal.fire({
-                icon: "error",
-                titleText: "Nothing Imported",
-                text: skipped > 0
+            PalantirDialogs.error("Nothing Imported", skipped > 0
                     ? `CAS refused all ${PalantirCredentialRepositories.count(skipped, records)} in ${file.name}.`
-                    : `${file.name} holds no ${repository.title} records.`
-            });
+                    : `${file.name} holds no ${repository.title} records.`);
         } else if (skipped > 0) {
             Swal.fire({
                 icon: "warning",
@@ -1481,11 +1457,7 @@ class PalantirCredentialRepositories {
                 text: `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}; CAS refused ${PalantirCredentialRepositories.count(skipped, records)}.`
             });
         } else {
-            Swal.fire({
-                icon: "success",
-                titleText: "Imported",
-                text: `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}.`
-            });
+            PalantirDialogs.done("Imported", `${PalantirCredentialRepositories.count(imported, records)} imported into ${repository.title}.`);
         }
     }
 
@@ -1528,13 +1500,9 @@ class PalantirCredentialRepositories {
             if (xhr?.status === 422) {
                 PalantirCredentialRepositories.reportImport(repository, file, xhr.responseText);
             } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
-                Swal.fire({
-                    icon: "error",
-                    titleText: "Nothing Imported",
-                    text: xhr?.status === 413
+                PalantirDialogs.error("Nothing Imported", xhr?.status === 413
                         ? `${file.name} is too large to import: a record, or the records together, exceed what CAS accepts.`
-                        : `CAS could not import ${file.name} into ${repository.title}${xhr?.status ? ` (it answered ${xhr.status})` : ""}.`
-                });
+                        : `CAS could not import ${file.name} into ${repository.title}${xhr?.status ? ` (it answered ${xhr.status})` : ""}.`);
             }
         }
         await PalantirCredentialRepositories.refresh(repository);

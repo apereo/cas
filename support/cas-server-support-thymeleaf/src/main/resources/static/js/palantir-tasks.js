@@ -394,12 +394,7 @@ async function initializeScheduledTasksOperations() {
 
     if (CasActuatorEndpoints.metrics() || CasActuatorEndpoints.threadDump()) {
         await refreshTasksMetrics();
-        const pollTasksMetrics = palantirOneAtATime(refreshTasksMetrics);
-        setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS.index && document.visibilityState === "visible") {
-                pollTasksMetrics();
-            }
-        }, palantirSettings().refreshInterval);
+        PalantirPolling.every("tasks", refreshTasksMetrics, {tab: Tabs.TASKS});
     }
 }
 

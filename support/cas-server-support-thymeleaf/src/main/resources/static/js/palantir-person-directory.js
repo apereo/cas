@@ -174,12 +174,9 @@ async function initializePersonDirectoryOperations() {
                 return false;
             }
             const username = $("#personUsername").val();
-            Swal.fire({
-                titleText: `Are You Sure You Want to Delete the Cache for ${username}?`,
-                text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+            PalantirDialogs.confirm({
+                title: `Are You Sure You Want to Delete the Cache for ${username}?`,
+                text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -720,7 +717,7 @@ function renderNewAttributeRepositoryDialog() {
             success: () => {
                 dialogContainer.dialog("close");
                 $.get(CasActuatorEndpoints.env(), response => {
-                    reloadConfigurationTable(response);
+                    reloadPalantirConfigurationTable(response);
                     refreshCasServerConfiguration(`New ${type} Attribute Repository Created`);
                 }).fail(xhr => displayBanner(xhr));
             },
@@ -1093,12 +1090,9 @@ function deleteAllAttributeDefinitions() {
         Swal.fire("Pay Attention!", "There are no attribute definitions to delete.", "info");
         return;
     }
-    Swal.fire({
+    PalantirDialogs.confirm({
         title: `Are You Sure You Want to Delete All ${keys.length} Attribute Definition(s)?`,
-        text: "Once deleted, you may not be able to recover these entries.",
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+        text: "Once deleted, you may not be able to recover these entries."
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -1195,12 +1189,9 @@ function bindAttrDefDeleteButtons() {
  */
 function runAttributeDefinitionAction(action, definitionKey) {
     if (action === "delete" && CasActuatorEndpoints.attributeDefinitions()) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this entry."
         })
             .then((result) => {
                 if (result.isConfirmed) {

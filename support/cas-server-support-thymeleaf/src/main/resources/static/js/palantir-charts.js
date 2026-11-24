@@ -19,7 +19,6 @@ let threadDumpChart = null;
 const prometheusCharts = {};
 let prometheusAvailableMetrics = [];
 let prometheusEndpointUrl = null;
-let prometheusRefreshInterval = 10000;
 let prometheusRefreshTimer = null;
 let prometheusInitializationPromise = null;
 let prometheusInitialized = false;
@@ -524,7 +523,7 @@ async function openTopApplication(id) {
     const definition = Promise.resolve($.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`))
         .then(response => ({response}), xhr => ({xhr}));
     await Promise.all([
-        PalantirScripts.load("wizard").then(() => buildRegisteredServiceWizardFields(), () => undefined),
+        PalantirScripts.load("applications").then(() => buildRegisteredServiceWizardFields(), () => undefined),
         initializeDashboardTab(Tabs.APPLICATIONS)
     ]);
     const {response, xhr} = await definition;
@@ -543,7 +542,9 @@ async function openTopApplication(id) {
         displayBanner(xhr);
         return;
     }
-    PalantirServiceEditor.openApplicationInWizard(response);
+    if (typeof PalantirServiceEditor !== "undefined") {
+        PalantirServiceEditor.openApplicationInWizard(response);
+    }
 }
 
 /**
@@ -650,11 +651,8 @@ async function initializeApplicationsCharts() {
     $("#topApplicationsList").off("click").on("click", "[data-top-application]", event =>
         openTopApplication(String(event.currentTarget.dataset.topApplication)));
     refreshTopApplications();
-    setInterval(() => {
-        if (Date.now() - topApplicationsCounted >= 60000 && isPalantirPollingContextActive(Tabs.APPLICATIONS, "#applications-tab")) {
-            refreshTopApplications();
-        }
-    }, palantirSettings().refreshInterval);
+    PalantirPolling.every("top applications", refreshTopApplications,
+        {tab: Tabs.APPLICATIONS, panel: "#applications-tab", when: () => Date.now() - topApplicationsCounted >= 60000});
 }
 
 /**
@@ -1007,10 +1005,8 @@ async function initializePrometheusCharts() {
     if (!prometheusEndpointUrl) {
         return;
     }
-    prometheusRefreshInterval = palantirSettings().refreshInterval;
-    window.addEventListener(palantirPollingContextEvent, refreshPrometheusCharts);
     startPrometheusRefresh();
-    await refreshPrometheusCharts();
+    await prometheusRefreshTimer();
 }
 
 async function initializePrometheusChartData() {
@@ -1048,11 +1044,8 @@ async function initializePrometheusChartData() {
 }
 
 function startPrometheusRefresh() {
-    if (prometheusRefreshTimer) {
-        clearInterval(prometheusRefreshTimer);
-    }
-
-    prometheusRefreshTimer = setInterval(palantirOneAtATime(refreshPrometheusCharts), prometheusRefreshInterval);
+    prometheusRefreshTimer ??= PalantirPolling.every("Prometheus charts", refreshPrometheusCharts,
+        {tab: Tabs.SYSTEM, panel: "#prometheusmetrics-tab"});
 }
 
 async function refreshPrometheusCharts() {
@@ -1510,4 +1503,63 @@ if (typeof Chart !== "undefined" && typeof Chart.register === "function") {
         afterUpdate: applyChartAccessibleDescription,
         afterRender: applyChartAccessibleDescription
     }, palantirChartStylePlugin, palantirChartCopyPlugin, palantirChartVisibilityPlugin);
+}
+
+/**
+ * What an audit record was for: an application, by name, that opens its definition, or another target, such as a
+ * multifactor provider, as it is recorded. Shared by the audit log and the activity of a user on the Users page.
+ *
+ * @param {string} target the target, or nothing
+ * @returns {string} the cell
+ */
+function palantirAuditTarget(target) {
+    if (!target) {
+        return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
+    }
+    const value = String(target);
+    if (/^\d+$/.test(value) && CasActuatorEndpoints.registeredServices()) {
+        const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(value)?.name : null;
+        return `<button type="button" class="audit-target-application" data-audit-application="${escapePalantirMarkup(value)}"
+                    title="Open application ${escapePalantirMarkup(value)}">
+                    <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                    <span>${escapePalantirMarkup(name ?? `Application ${value}`)}</span>
+                </button>`;
+    }
+    return `<code class="audit-target-value">${escapePalantirMarkup(value)}</code>`;
+}
+
+/**
+ * Name the applications of the audit targets shown in a table that Palantir has not listed yet, reading each once, and
+ * mark the ones that no longer exist.
+ *
+ * @param {string} table the table
+ */
+function namePalantirAuditTargetApplications(table) {
+    if (typeof palantirApplicationName !== "function") {
+        return;
+    }
+    $(table).find("[data-audit-application]").each((index, button) => {
+        const id = button.dataset.auditApplication;
+        palantirApplicationName(id).then(name => {
+            $(button).find("span").text(name);
+            if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
+                $(button).addClass("is-gone").attr("title", "This application no longer exists");
+            }
+        });
+    });
+}
+
+/**
+ * Open the application an audit target names, from any table that shows audit targets.
+ *
+ * @param {Event} event the click on the target
+ */
+function openPalantirAuditTargetApplication(event) {
+    event.stopPropagation();
+    const id = event.currentTarget.dataset.auditApplication;
+    if (typeof openTopApplication === "function") {
+        openTopApplication(id);
+    } else if (typeof navigateToApplication === "function") {
+        navigateToApplication(id);
+    }
 }

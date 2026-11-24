@@ -415,7 +415,7 @@ class PalantirCommandPalette {
             ? PalantirCommandPalette.CATEGORY_ORDER
             : [...new Set(results.map(entry => entry.category))];
         const grouped = categories.flatMap(category => results.filter(entry => entry.category === category));
-        if (trimmed && !/\s/.test(trimmed) && PalantirUserLookup.availableSources().length > 0) {
+        if (trimmed && !/\s/.test(trimmed) && PalantirAvailability.userLookup()) {
             grouped.push({
                 category: "Users",
                 label: `Look Up User ${trimmed}`,

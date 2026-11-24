@@ -108,11 +108,10 @@ class PalantirHome {
      * progress bar showing, rather than at the next refresh.
      */
     static activated() {
-        PalantirScripts.whenIdle().then(() => {
-            if (CasActuatorEndpoints.registeredServices()) {
-                prepareRegisteredServiceWizardWhenIdle();
-            }
-        }, error => console.debug("The application wizard was not fetched ahead of use", error));
+        if (CasActuatorEndpoints.registeredServices()) {
+            PalantirScripts.whenIdle().then(() => prepareRegisteredServiceWizardWhenIdle(),
+                error => console.debug("The application wizard was not fetched ahead of use", error));
+        }
         if (PalantirHome.summary !== null && Date.now() - PalantirHome.fetched > PalantirHome.FRESH_FOR) {
             PalantirHome.refresh({visible: true});
         }
@@ -121,11 +120,7 @@ class PalantirHome {
     static async initialize() {
         PalantirHome.bind();
         if (PalantirHome.timer === null) {
-            PalantirHome.timer = setInterval(() => {
-                if (PalantirHome.visible()) {
-                    PalantirHome.refresh();
-                }
-            }, palantirSettings().refreshInterval);
+            PalantirHome.timer = PalantirPolling.every("home", () => PalantirHome.refresh(), {when: () => PalantirHome.visible()});
         }
         await PalantirHome.refresh({visible: true});
     }

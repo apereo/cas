@@ -10,7 +10,7 @@ async function initializeCasEventsOperations() {
             }
         });
 
-        const updateCasEventsTable = palantirOneAtATime(() => {
+        const updateCasEventsTable = PalantirPolling.every("CAS events", () => {
             if (!isPalantirPollingContextActive(Tabs.LOGGING, "#casEvents-tab")) {
                 return null;
             }
@@ -44,70 +44,8 @@ async function initializeCasEventsOperations() {
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
             });
-        });
-
-        setInterval(updateCasEventsTable, palantirSettings().refreshInterval);
-        window.addEventListener(palantirPollingContextEvent, updateCasEventsTable);
+        }, {tab: Tabs.LOGGING, panel: "#casEvents-tab"});
         updateCasEventsTable();
-    }
-}
-
-/**
- * What an audit record was for: an application, by name, that opens its definition, or another target, such as a
- * multifactor provider, as it is recorded. Shared by the audit log and the activity of a user on the Users page.
- *
- * @param {string} target the target, or nothing
- * @returns {string} the cell
- */
-function palantirAuditTarget(target) {
-    if (!target) {
-        return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
-    }
-    const value = String(target);
-    if (/^\d+$/.test(value) && CasActuatorEndpoints.registeredServices()) {
-        const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(value)?.name : null;
-        return `<button type="button" class="audit-target-application" data-audit-application="${escapePalantirMarkup(value)}"
-                    title="Open application ${escapePalantirMarkup(value)}">
-                    <i class="mdi mdi-application-outline" aria-hidden="true"></i>
-                    <span>${escapePalantirMarkup(name ?? `Application ${value}`)}</span>
-                </button>`;
-    }
-    return `<code class="audit-target-value">${escapePalantirMarkup(value)}</code>`;
-}
-
-/**
- * Name the applications of the audit targets shown in a table that Palantir has not listed yet, reading each once, and
- * mark the ones that no longer exist.
- *
- * @param {string} table the table
- */
-function namePalantirAuditTargetApplications(table) {
-    if (typeof palantirApplicationName !== "function") {
-        return;
-    }
-    $(table).find("[data-audit-application]").each((index, button) => {
-        const id = button.dataset.auditApplication;
-        palantirApplicationName(id).then(name => {
-            $(button).find("span").text(name);
-            if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
-                $(button).addClass("is-gone").attr("title", "This application no longer exists");
-            }
-        });
-    });
-}
-
-/**
- * Open the application an audit target names, from any table that shows audit targets.
- *
- * @param {Event} event the click on the target
- */
-function openPalantirAuditTargetApplication(event) {
-    event.stopPropagation();
-    const id = event.currentTarget.dataset.auditApplication;
-    if (typeof openTopApplication === "function") {
-        openTopApplication(id);
-    } else if (typeof navigateToApplication === "function") {
-        navigateToApplication(id);
     }
 }
 
@@ -575,9 +513,7 @@ async function initializeAuditEventsOperations() {
         });
         auditEventsRefreshButton.off("click").on("click", updateAuditEventsTable);
 
-        const auditEventsRefreshInterval = palantirSettings().refreshInterval;
-        setInterval(updateAuditEventsTable, auditEventsRefreshInterval);
-        window.addEventListener(palantirPollingContextEvent, updateAuditEventsTable);
+        PalantirPolling.every("audit events", updateAuditEventsTable, {tab: Tabs.LOGGING, panel: "#auditevents-tab"});
         updateAuditEventsTable();
     }
 }

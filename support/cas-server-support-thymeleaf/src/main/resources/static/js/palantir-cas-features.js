@@ -258,11 +258,7 @@ class CasFeatureToggles {
         if ($.fn.dataTable.isDataTable("#configurationTable") && typeof reloadConfigurationTable === "function") {
             $.get(CasActuatorEndpoints.env(), response => reloadConfigurationTable(response));
         }
-        Swal.fire({
-            icon: "success",
-            titleText: `${subject.charAt(0).toUpperCase()}${subject.slice(1)} Is Turned ${enable ? "On" : "Off"} in ${source}`,
-            text: "Restart CAS for the change to take effect."
-        });
+        PalantirDialogs.done(`${subject.charAt(0).toUpperCase()}${subject.slice(1)} Is Turned ${enable ? "On" : "Off"} in ${source}`, "Restart CAS for the change to take effect.");
     }
 
     /**
@@ -454,11 +450,7 @@ class CasFeatureToggles {
         if ($.fn.dataTable.isDataTable("#configurationTable") && typeof reloadConfigurationTable === "function") {
             $.get(CasActuatorEndpoints.env(), response => reloadConfigurationTable(response));
         }
-        Swal.fire({
-            icon: "success",
-            titleText: `${group.title} Is Updated in ${source}`,
-            text: "Restart CAS for the change to take effect."
-        });
+        PalantirDialogs.done(`${group.title} Is Updated in ${source}`, "Restart CAS for the change to take effect.");
     }
 
     /**

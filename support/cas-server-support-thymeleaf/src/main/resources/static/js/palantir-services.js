@@ -155,11 +155,7 @@ function serviceImportContentType(file) {
 function showUnreadableDefinition(xhr, title) {
     const reason = xhr?.status === 400 ? xhr.responseJSON?.error : null;
     if (reason) {
-        Swal.fire({
-            icon: "error",
-            title: title,
-            text: `CAS cannot read this definition: ${reason}`
-        });
+        PalantirDialogs.error(title, `CAS cannot read this definition: ${reason}`);
     } else {
         displayBanner(xhr);
     }
@@ -308,12 +304,10 @@ async function importServiceFiles(files) {
     const contentType = [...kinds][0];
     const listed = files.slice(0, 8).map(file => `<li>${escapePalantirMarkup(file.name)}</li>`).join("");
     const more = files.length > 8 ? `<li>and ${files.length - 8} more</li>` : "";
-    const result = await Swal.fire({
-        titleText: `Import ${files.length} Applications?`,
+    const result = await PalantirDialogs.confirm({
+        title: `Import ${files.length} Applications?`,
         html: `<p>Each application takes effect immediately, replacing an application with the same id.</p>
                <ul class="palantir-selection-list">${listed}${more}</ul>`,
-        icon: "question",
-        showDenyButton: true,
         confirmButtonText: `Import ${files.length}`,
         denyButtonText: "Cancel"
     });
@@ -402,13 +396,11 @@ async function importServiceFiles(files) {
 async function importServiceFile(file) {
     const contentType = serviceImportContentType(file);
     const archive = contentType === "application/octet-stream";
-    const result = await Swal.fire({
-        titleText: `Import ${file.name}?`,
+    const result = await PalantirDialogs.confirm({
+        title: `Import ${file.name}?`,
         text: archive
             ? "Every JSON application definition in the archive takes effect immediately, replacing an application with the same id."
             : "The application takes effect immediately, replacing an application with the same id.",
-        icon: "question",
-        showDenyButton: true,
         confirmButtonText: "Import",
         denyButtonText: "Cancel"
     });
@@ -446,15 +438,11 @@ async function importServiceFile(file) {
         const outcome = palantirImportOutcome(request, archive);
         if (outcome !== "imported") {
             PalantirProgress.close();
-            Swal.fire({
-                title: "Nothing Imported",
-                text: outcome === "stopped"
+            PalantirDialogs.error("Nothing Imported", outcome === "stopped"
                     ? `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`
                     : archive && palantirArchiveCounts(request).imported === 0
                         ? `CAS found no application definition in ${file.name}.`
-                        : `CAS did not confirm that it saved ${file.name}.`,
-                icon: "error"
-            });
+                        : `CAS did not confirm that it saved ${file.name}.`);
             return;
         }
         PalantirProgress.update("Refreshing the applications...");
@@ -479,26 +467,14 @@ async function importServiceFile(file) {
                 icon: "warning"
             });
         } else if (palantirImportOutcome(xhr, archive) === "stopped") {
-            Swal.fire({
-                title: "Nothing Imported",
-                text: `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`,
-                icon: "error"
-            });
+            PalantirDialogs.error("Nothing Imported", `CAS no longer accepts imports in this session, which may have expired. Sign in again to import ${file.name}.`);
         } else if (xhr?.status === 400 || xhr?.status === 422) {
             const skipped = archive ? palantirArchiveCounts(xhr).skipped : null;
-            Swal.fire({
-                title: "Nothing Imported",
-                text: archive
+            PalantirDialogs.error("Nothing Imported", archive
                     ? `CAS could not read or save ${skipped === null ? "the definitions" : `any of the ${skipped} definition${skipped === 1 ? "" : "s"}`} in ${file.name}.`
-                    : `CAS could not read ${file.name} as an application definition.`,
-                icon: "error"
-            });
+                    : `CAS could not read ${file.name} as an application definition.`);
         } else if (xhr?.status === 413) {
-            Swal.fire({
-                title: "Nothing Imported",
-                text: `${file.name} is larger than an import allows, or holds a definition that is, so none of it was imported.`,
-                icon: "error"
-            });
+            PalantirDialogs.error("Nothing Imported", `${file.name} is larger than an import allows, or holds a definition that is, so none of it was imported.`);
         } else if (xhr?.statusText !== PALANTIR_READ_ONLY) {
             console.error("Importing applications failed:", xhr?.status, xhr?.responseText);
             displayBanner(xhr);
@@ -547,12 +523,9 @@ async function initializeServiceButtons() {
     function deleteService(context) {
         const serviceId = context.rowData.serviceId;
         if (CasActuatorEndpoints.registeredServices()) {
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to delete this entry?",
-                text: "Once deleted, you may not be able to recover this entry.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once deleted, you may not be able to recover this entry."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -640,12 +613,9 @@ async function initializeServiceButtons() {
             }
             const confirmation = conflict === "overwrite"
                 ? Promise.resolve({isConfirmed: true})
-                : Swal.fire({
+                : PalantirDialogs.confirm({
                     title: `Are You Sure You Want to ${isNewService ? "Create" : "Update"} This Entry?`,
-                    text: "Once updated, you may not be able to revert this entry.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
+                    text: "Once updated, you may not be able to revert this entry."
                 });
             confirmation
                 .then((result) => {
@@ -768,7 +738,7 @@ async function initializeServiceButtons() {
             releasePreview: {
                 name: "Preview Released Attributes",
                 icon: contextMenuIcon("mdi-account-eye"),
-                visible: () => PalantirAttributeRelease.available()
+                visible: () => PalantirAvailability.attributeRelease()
             },
             history: {
                 name: "View Change History",
@@ -805,20 +775,16 @@ async function initializeServiceButtons() {
         } else if (key === "samlMetadataHealth") {
             PalantirSamlMetadataHealth.open(serviceId);
         } else if (key === "releasePreview") {
-            PalantirAttributeRelease.openForApplication(serviceId);
+            PalantirScripts.ready("users").then(ready => ready && PalantirAttributeRelease.openForApplication(serviceId));
         } else if (key === "rotateClientSecrets") {
             PalantirClientSecretRotation.open(serviceId);
         } else if (key === "accessCheck") {
-            PalantirAccessCheck.openFor(serviceId);
+            PalantirScripts.ready("access").then(ready => ready && PalantirAccessCheck.openFor(serviceId));
         } else if (key === "copyLink") {
             PalantirLinks.copy(Tabs.APPLICATIONS, serviceId);
         }
     };
 }
-
-let palantirServicesRequest = 0;
-
-let palantirServicesLatest = Promise.resolve(true);
 
 /**
  * Read the registered services into the applications table. When the applications are read again before an earlier
@@ -1021,7 +987,7 @@ async function initializeFooterButtons() {
                     data: editor.getValue(),
                     success: response => {
                         if (response === false || response === "false") {
-                            Swal.fire({icon: "error", title: "The Application Definition Is Not Valid", text: "CAS cannot read this definition."});
+                            PalantirDialogs.error("The Application Definition Is Not Valid", "CAS cannot read this definition.");
                             return;
                         }
                         const message = `
@@ -1084,7 +1050,7 @@ async function initializeFooterButtons() {
                 await palantirDownloadExport(`${CasActuatorEndpoints.registeredServices()}/export/${encodeURIComponent(serviceId)}`,
                     `${serviceId}.json`);
             } catch (error) {
-                Swal.fire({icon: "error", titleText: "The Application Was Not Exported", text: String(error?.message ?? error)});
+                PalantirDialogs.error("The Application Was Not Exported", String(error?.message ?? error));
             }
         }
     });
@@ -1094,21 +1060,13 @@ async function initializeFooterButtons() {
             try {
                 await palantirDownloadExport(`${CasActuatorEndpoints.registeredServices()}/export`, "services.zip");
             } catch (error) {
-                Swal.fire({icon: "error", titleText: "The Applications Were Not Exported", text: String(error?.message ?? error)});
+                PalantirDialogs.error("The Applications Were Not Exported", String(error?.message ?? error));
             }
         }
     });
 }
 
 let applicationActionHandler = null;
-
-const registeredServicesById = new Map();
-
-/**
- * Bumped whenever the registered applications are read again, so views that derive from them, such as the access
- * check's sorted list, know to derive it again.
- */
-let registeredServicesVersion = 0;
 
 const APPLICATIONS_VIEW_STORAGE_KEY = "PalantirApplicationsView";
 
@@ -1273,42 +1231,6 @@ function renderPalantirDescription(value) {
     const target = document.createElement("div");
     copy(new DOMParser().parseFromString(String(value ?? ""), "text/html").body, target);
     return target.innerHTML;
-}
-
-/**
- * The text of a registered service description, without its markup, for search and tooltips.
- *
- * @param value the description
- * @returns {string} the text
- */
-function describePalantirDescription(value) {
-    const body = new DOMParser().parseFromString(String(value ?? ""), "text/html").body;
-    body.querySelectorAll("script, style, template, noscript").forEach(element => element.remove());
-    body.querySelectorAll("p, br").forEach(element => element.after(" "));
-    return body.textContent.replace(/\s+/g, " ").trim();
-}
-
-/**
- * Describe the protocol of a registered service class for badges and summaries.
- *
- * @param serviceClass the fully qualified registered service class
- * @returns {{key: string, short: string, label: string}} the badge key, its short text and a readable name
- */
-function applicationProtocolOf(serviceClass) {
-    const friendly = PalantirDashboardConfiguration.supportedServiceTypes()[serviceClass];
-    const name = String(serviceClass ?? "");
-    const protocols = [
-        {match: "CasRegisteredService", key: "cas", short: "CAS", label: "CAS"},
-        {match: "SamlRegisteredService", key: "saml", short: "SAML", label: "SAML2 Service Provider"},
-        {match: "OidcRegisteredService", key: "oidc", short: "OIDC", label: "OpenID Connect Relying Party"},
-        {match: "OAuthRegisteredService", key: "oauth", short: "OAuth", label: "OAuth Client"},
-        {match: "WSFederationRegisteredService", key: "wsfed", short: "WS", label: "WS-Federation Relying Party"}
-    ];
-    const protocol = protocols.find(entry => name.includes(entry.match));
-    if (protocol) {
-        return {key: protocol.key, short: protocol.short, label: friendly || protocol.label};
-    }
-    return {key: "other", short: name.split(".").pop().replace("RegisteredService", "").slice(0, 5) || "App", label: friendly || name.split(".").pop()};
 }
 
 /**

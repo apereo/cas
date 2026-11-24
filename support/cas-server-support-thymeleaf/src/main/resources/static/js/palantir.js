@@ -75,58 +75,59 @@ class PalantirDashboardConfiguration {
  *
  * Nothing here runs yet. Each entry is invoked the first time its tab is activated, which keeps a
  * cold load down to the requests the visible tab actually needs instead of every tab's data tables
- * and actuator calls at once.
+ * and actuator calls at once. Each is named only when it runs, because the page's scripts are fetched
+ * when the page is first opened.
  */
 function registerPalantirTabInitializers() {
     registerDashboardTabInitializers(Tabs.APPLICATIONS,
-        initializeApplicationsCharts,
-        initializeServicesOperations);
+        () => initializeApplicationsCharts(),
+        () => initializeServicesOperations());
     registerDashboardTabInitializers(Tabs.SYSTEM,
-        initializeSystemCharts,
-        initializeSystemOperations,
-        initializeCasSpringWebflowOperations,
-        initializePrometheusCharts);
+        () => initializeSystemCharts(),
+        () => initializeSystemOperations(),
+        () => initializeCasSpringWebflowOperations(),
+        () => initializePrometheusCharts());
     registerDashboardTabInitializers(Tabs.TICKETS,
-        initializeTicketsOperations);
+        () => initializeTicketsOperations());
     registerDashboardTabInitializers(Tabs.TASKS,
-        initializeTasksCharts,
-        initializeScheduledTasksOperations);
+        () => initializeTasksCharts(),
+        () => initializeScheduledTasksOperations());
     registerDashboardTabInitializers(Tabs.ACCESS_STRATEGY,
-        initializeAccessStrategyOperations,
-        initializeHeimdallOperations);
+        () => initializeAccessStrategyOperations(),
+        () => initializeHeimdallOperations());
     registerDashboardTabInitializers(Tabs.LOGGING,
-        initializeLoggingOperations,
-        initializeAuditEventsOperations,
-        initializeCasEventsOperations);
+        () => initializeLoggingOperations(),
+        () => initializeAuditEventsOperations(),
+        () => initializeCasEventsOperations());
     registerDashboardTabInitializers(Tabs.SSO_SESSIONS,
-        initializeSsoSessionOperations);
+        () => initializeSsoSessionOperations());
     registerDashboardTabInitializers(Tabs.CONFIGURATION,
-        initializeConfigurationOperations);
+        () => initializeConfigurationOperations());
     registerDashboardTabInitializers(Tabs.PERSON_DIRECTORY,
-        initializePersonDirectoryOperations);
+        () => initializePersonDirectoryOperations());
     registerDashboardTabInitializers(Tabs.AUTHENTICATION,
-        initializeAuthenticationOperations);
+        () => initializeAuthenticationOperations());
     registerDashboardTabInitializers(Tabs.CONSENT,
-        initializeConsentOperations);
+        () => initializeConsentOperations());
     registerDashboardTabInitializers(Tabs.PROTOCOLS,
-        initializeCasProtocolOperations,
-        initializeSAML1ProtocolOperations,
-        initializeSAML2ProtocolOperations,
-        initializeOidcProtocolOperations);
+        () => initializeCasProtocolOperations(),
+        () => initializeSAML1ProtocolOperations(),
+        () => initializeSAML2ProtocolOperations(),
+        () => initializeOidcProtocolOperations());
     registerDashboardTabInitializers(Tabs.THROTTLES,
-        initializeThrottlesOperations);
+        () => initializeThrottlesOperations());
     registerDashboardTabInitializers(Tabs.MFA,
-        initializeMultifactorOperations,
-        initializeTrustedMultifactorOperations,
+        () => initializeMultifactorOperations(),
+        () => initializeTrustedMultifactorOperations(),
         () => PalantirCredentialRepositories.initialize());
     registerDashboardTabInitializers(Tabs.MULTITENANCY,
-        initializeMultitenancyOperations);
+        () => initializeMultitenancyOperations());
     registerDashboardTabInitializers(Tabs.CLUSTER,
-        initializeClusterTopologyOperations);
+        () => initializeClusterTopologyOperations());
     registerDashboardTabInitializers(Tabs.USERS,
-        initializeUserLookupOperations);
+        () => initializeUserLookupOperations());
     registerDashboardTabInitializers(Tabs.HOME,
-        initializePalantirHome);
+        () => initializePalantirHome());
 }
 
 /**
@@ -212,9 +213,6 @@ async function initializePalantir() {
             return;
         }
 
-        if (selectedTab !== Tabs.HOME.index) {
-            PalantirScripts.load("wizard").catch(error => console.debug("The page's scripts will be fetched again", error));
-        }
         registerPalantirTabInitializers();
         PalantirServiceEditGuard.removeExpiredDrafts();
 

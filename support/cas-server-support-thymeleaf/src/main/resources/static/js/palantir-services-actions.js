@@ -449,7 +449,7 @@ class PalantirApplicationSelection {
             notyf.success(`Exported ${ids.length} application${ids.length === 1 ? "" : "s"}.`);
             PalantirApplicationSelection.clear();
         } catch (error) {
-            Swal.fire({icon: "error", titleText: "The Selected Applications Were Not Exported", text: String(error?.message ?? error)});
+            PalantirDialogs.error("The Selected Applications Were Not Exported", String(error?.message ?? error));
         } finally {
             button.prop("disabled", false);
         }
@@ -545,7 +545,7 @@ class PalantirApplicationSelection {
             PalantirApplicationSelection.selected.clear();
             await PalantirApplicationSelection.reload();
             PalantirProgress.close();
-            Swal.fire({icon: "success", titleText: "All Applications Are Deleted"});
+            PalantirDialogs.done("All Applications Are Deleted");
         } catch (xhr) {
             PalantirProgress.close();
             if (xhr?.statusText !== PALANTIR_READ_ONLY) {
@@ -622,22 +622,8 @@ class PalantirClientSecretRotation {
      *        the registration that must carry the client id, so that no other registration of that client id is changed
      * @returns {string} the endpoint address with its query
      */
-    static url(clientId, {expiredOnly = false, expireIn = "", id = null} = {}) {
-        const encodedClientId = encodeURIComponent(clientId);
-        let endpoint = CasActuatorEndpoints.oauthClientSecrets();
-        if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
-            endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
-        } else {
-            endpoint = `${endpoint}/${encodedClientId}`;
-        }
-        const query = new URLSearchParams({expiredOnly: String(expiredOnly)});
-        if (String(expireIn ?? "").trim()) {
-            query.append("expireIn", String(expireIn).trim());
-        }
-        if (id !== null && id !== undefined && String(id) !== "") {
-            query.append("id", String(id));
-        }
-        return `${endpoint}?${query}`;
+    static url(clientId, options = {}) {
+        return PalantirAvailability.clientSecretsUrl(clientId, options);
     }
 
     static secrets(service) {

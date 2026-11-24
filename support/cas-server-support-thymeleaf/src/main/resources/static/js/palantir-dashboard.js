@@ -105,13 +105,19 @@ class PalantirLinks {
     };
 
     static CLEARED = {
-        users: () => PalantirUserLookup.clear()
+        users: () => {
+            if (typeof PalantirUserLookup !== "undefined") {
+                PalantirUserLookup.clear();
+            }
+        }
     };
 
     static CANCELLED = {
         applications: () => {
             palantirApplicationNavigation++;
-            clearApplicationRowSelection();
+            if (typeof clearApplicationRowSelection === "function") {
+                clearApplicationRowSelection();
+            }
         }
     };
 
@@ -394,7 +400,7 @@ function activateDashboardTab(idx) {
                             }
                             PalantirTheme.apply($("#palantirTheme").val());
                             $(this).dialog("close");
-                            location.reload(true);
+                            PalantirPolling.beat();
                         },
                         Cancel: function () {
                             $(this).dialog("close");
@@ -645,7 +651,7 @@ function processNavigationTabs() {
     if (!CasActuatorEndpoints.multifactorTrustedDevices() || PalantirDashboardConfiguration.availableMultifactorProviders().length === 0) {
         hideElements($("#trustedMfaDevicesTab").parent());
     }
-    if (typeof PalantirCredentialRepositories === "undefined" || PalantirCredentialRepositories.available().length === 0) {
+    if (!PalantirAvailability.credentialRepositories()) {
         hideElements($("#mfaRepositoriesTab").parent());
     }
     if (!CasActuatorEndpoints.multitenancy() || !CAS_FEATURES.includes("Multitenancy")) {
@@ -655,7 +661,7 @@ function processNavigationTabs() {
         hideElements($("#clusterTabButton"));
         hideElements($(`#attribute-tab-${Tabs.CLUSTER.index}`));
     }
-    if (PalantirUserLookup.availableSources().length === 0) {
+    if (!PalantirAvailability.userLookup()) {
         hideElements($("#usersTabButton"));
         hideElements($(`#attribute-tab-${Tabs.USERS.index}`));
     }
@@ -787,7 +793,7 @@ async function navigateToApplication(serviceIdToFind) {
     }
     const stillShown = () => currentActiveTab === Tabs.APPLICATIONS.index && navigation === palantirApplicationNavigation;
     await initializeDashboardTab(Tabs.APPLICATIONS);
-    if (!stillShown()) {
+    if (!stillShown() || typeof fetchServices !== "function") {
         return;
     }
     const tabs = $("#applications-tabs");
@@ -816,8 +822,9 @@ async function navigateToApplication(serviceIdToFind) {
  * answers with an error, such as while it restarts, says nothing about the session, so the check simply tries again.
  */
 async function initializePalantirSession() {
-    const intervalId = setInterval(async () => {
-        if (document.visibilityState !== "visible") {
+    let expired = false;
+    PalantirPolling.every("session", async () => {
+        if (expired) {
             return;
         }
         const url = retrieveDashboardUrl();
@@ -828,11 +835,11 @@ async function initializePalantirSession() {
             console.debug("The session could not be checked just now", error);
             return;
         }
-        const expired = result.type === "opaqueredirect" || result.status === 401 || result.status === 403
+        const ended = result.type === "opaqueredirect" || result.status === 401 || result.status === 403
             || (result.status >= 300 && result.status < 400);
-        if (expired) {
-            clearInterval(intervalId);
-            
+        if (ended) {
+            expired = true;
+
             Swal.close();
             Swal.fire({
                 title: "Session Expired",
@@ -848,5 +855,23 @@ async function initializePalantirSession() {
             });
 
         }
-    }, 15000);
+    }, {every: 15000});
+}
+
+/**
+ * Open the Users page and look up the given user, as the command palette does.
+ *
+ * @param username the user to look up
+ * @returns {Promise<void>} resolved once the lookup has finished
+ */
+async function lookUpPalantirUser(username) {
+    if (currentActiveTab !== Tabs.USERS.index || !isDashboardTabInitialized(Tabs.USERS)) {
+        PalantirPages.open(Tabs.USERS);
+    }
+    await initializeDashboardTab(Tabs.USERS);
+    if (typeof PalantirUserLookup === "undefined") {
+        return;
+    }
+    $("#userLookupUsername").val(username);
+    await PalantirUserLookup.lookUp(username);
 }

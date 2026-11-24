@@ -3,7 +3,7 @@
    applicationRowContext, fetchServices, Tabs, PalantirServiceEditor, PalantirServiceTemplates,
    PalantirClientSecretRotation, registeredServicesById, initializeDashboardTab,
    PalantirServiceEditGuard, mappedFieldValue, palantirSavedApplication, palantirArchiveCounts, palantirParseJson,
-   palantirStringifyJson, flushServiceDefinition */
+   palantirStringifyJson, flushServiceDefinition, PalantirScripts */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -50,8 +50,9 @@ async function waitForDashboard(page) {
         return dashboard !== null
             && !dashboard.classList.contains("d-none")
             && typeof CAS_FEATURES !== "undefined"
-            && typeof openRegisteredServiceWizardDialog === "function";
+            && typeof PalantirScripts === "function";
     }, {timeout: 60000});
+    await page.evaluate(() => PalantirScripts.load("applications"));
     const features = await page.evaluate(() => CAS_FEATURES.length);
     await cas.logg(`Dashboard ready with ${features} CAS features`);
     assert(features > 0);

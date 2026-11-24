@@ -16,7 +16,7 @@ function searchForConfigPropertyButton(name) {
 
 function effectiveConfigPropertyValue(name) {
     $.get(`${CasActuatorEndpoints.env()}/${encodeURIComponent(name)}`, response => {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Effective Property Value",
             html: `
                 The effective configuration value for ${palantirCode(name)} is:<p/>
@@ -24,7 +24,6 @@ function effectiveConfigPropertyValue(name) {
             `,
             icon: "info",
             width: "50%",
-            showDenyButton: true,
             confirmButtonText: "OK",
             denyButtonText: "Copy",
             didOpen: () => {
@@ -43,19 +42,12 @@ function effectiveConfigPropertyValue(name) {
         });
 }
 
-function configPropertySourceName(propertySource) {
-    return propertySource.replace("bootstrapProperties-", "");
-}
-
 function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const source = configPropertySourceName(propertySource);
-        Swal.fire({
-            titleText: `Are You Sure You Want to Delete This Entry from ${source}?`,
-            text: "Once removed, you may not be able to revert this.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+        PalantirDialogs.confirm({
+            title: `Are You Sure You Want to Delete This Entry from ${source}?`,
+            text: "Once removed, you may not be able to revert this."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -110,15 +102,12 @@ function isEncryptedConfigValue(value) {
 async function toggleConfigPropertyEncryption(operation, name, propertySource) {
     const encrypting = operation === "encrypt";
     const source = configPropertySourceName(propertySource);
-    const confirmation = await Swal.fire({
+    const confirmation = await PalantirDialogs.confirm({
         title: encrypting ? "Encrypt this value?" : "Decrypt this value?",
         html: encrypting
             ? `The value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its encrypted form,
                which CAS decrypts when it applies its configuration.`
             : `The encrypted value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its plain text.`,
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true,
         confirmButtonText: encrypting ? "Encrypt" : "Decrypt",
         denyButtonText: "Cancel"
     });
@@ -165,15 +154,11 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
         });
     } catch (error) {
         if (error?.status === 400) {
-            Swal.fire({
-                icon: "error",
-                title: `The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`,
-                text: error.responseText || "Check that configuration security is set up."
-            });
+            PalantirDialogs.error(`The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, error.responseText || "Check that configuration security is set up.");
         } else if (error?.status !== undefined) {
             displayBanner(error);
         } else {
-            Swal.fire({icon: "error", title: `The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, text: error.message});
+            PalantirDialogs.error(`The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, error.message);
         }
         return;
     }
@@ -186,11 +171,7 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
     if (CasActuatorEndpoints.refresh()) {
         refreshCasServerConfiguration(title);
     } else {
-        Swal.fire({
-            icon: "success",
-            title: title,
-            text: "The new value takes effect once CAS refreshes its configuration or restarts."
-        });
+        PalantirDialogs.done(title, "The new value takes effect once CAS refreshes its configuration or restarts.");
     }
 }
 
@@ -226,13 +207,10 @@ function deleteAllConfigurationProperties(button) {
     function deletePropertiesFromSource(propertySource) {
         Swal.close();
 
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: `Delete Configuration Properties`,
             text: `Are you sure you want to delete all configuration properties from ${propertySource}?
-                Once deleted, you may not be able to recover the configuration properties.`,
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+                Once deleted, you may not be able to recover the configuration properties.`
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -325,17 +303,14 @@ function importConfigurationProperties(button) {
         });
     }
 
-    Swal.fire({
+    PalantirDialogs.confirm({
         title: "Are you sure you want to import configuration properties?",
         input: "select",
         inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
         html: `
             <p class="text-justify">Properties will be imported and applied to the CAS server configuration. You may import multiple files at once.
             Supported file formats are .properties and .yml/.yaml files. You may choose the target property source to which the properties will be applied.</p>
-        `,
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+        `
     }).then((result) => {
         if (result.isConfirmed) {
             const propertySource = PalantirDashboardConfiguration.mutablePropertySources()[Number(result.value)];
@@ -350,14 +325,7 @@ function importConfigurationProperties(button) {
                         const content = e.target.result;
                         const ext = file.name.split(".").pop().toLowerCase();
 
-                        Swal.fire({
-                            icon: "info",
-                            titleText: `${propertySource}: Importing Properties`,
-                            text: "Please wait while the configuration properties are being imported...",
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            didOpen: () => Swal.showLoading()
-                        });
+                        PalantirDialogs.wait(`${propertySource}: Importing Properties`, "Please wait while the configuration properties are being imported...");
                         if (ext === "properties") {
                             const props = parseProperties(content);
                             const payload = Object.entries(props).map(([key, value]) => ({
@@ -523,66 +491,6 @@ function openNewConfigurationPropertyDialog(config) {
             }
     });
     $("#newConfigurationDialog").dialog("open");
-}
-
-function refreshCasServerConfiguration(title) {
-    if (CasActuatorEndpoints.refresh()) {
-        Swal.fire({
-            showConfirmButton: true,
-            showCancelButton: true,
-            icon: "question",
-            title: title,
-            width: "35%",
-            confirmButtonText: "Refresh",
-            html: `Do you want to refresh the CAS runtime context to apply the changes?
-            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>,
-            allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
-            using the existing/old CAS components until they are fully refreshed in the runtime application context.
-            <p class="text-justify"/>
-            <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
-            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong>
-            may not be dynamically reloaded. In such cases, a full restart of the CAS server
-            may be required for the changes to take effect.
-            `
-        })
-            .then((reloadResult) => {
-                if (reloadResult.isConfirmed) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: "info",
-                        title: "Refreshing CAS Server",
-                        text: "Please wait while the CAS application context is being refreshed...",
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    const endpoint = CasActuatorEndpoints.refresh();
-                    $.post(endpoint)
-                        .done(() => {
-                            reloadAuthenticationHandlersTable();
-                            reloadAttributeRepositoriesTable();
-                            loadExternalIdentityProvidersTable().then(r => {
-                                Swal.close();
-                                Swal.fire({
-                                    title: "Success!",
-                                    text: "CAS configuration has been reloaded successfully.",
-                                    icon: "success",
-                                    timer: 1000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: true
-                                });
-                            });
-                        })
-                        .fail((jqXHR, textStatus, errorThrown) => {
-                            console.error("Error:", textStatus, errorThrown);
-                            Swal.close();
-                            Swal.fire("Error", "Failed to reload CAS configuration.", "error");
-                            displayBanner(jqXHR);
-                        });
-                }
-            });
-    }
 }
 
 function reloadConfigurationTable(response) {
@@ -961,12 +869,9 @@ function initializeGroovyScriptCacheManagerOperations() {
     }
 
     function deleteGroovyScriptCacheKey(row, key) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this cache entry?",
-            text: "Once removed, the script resource will need to be resolved again before it is cached.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once removed, the script resource will need to be resolved again before it is cached."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -1046,14 +951,7 @@ function initializeGroovyScriptCacheManagerOperations() {
             Swal.fire("No Cache Entries", "There are no Groovy script cache keys to recompute.", "info");
             return;
         }
-        Swal.fire({
-            icon: "info",
-            title: "Recomputing Groovy Script Cache",
-            text: "Please wait while all Groovy script cache entries are recomputed.",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        PalantirDialogs.wait("Recomputing Groovy Script Cache", "Please wait while all Groovy script cache entries are recomputed.");
         Promise.all(keys.map(cacheKey => recomputeGroovyScriptCacheKey(cacheKey, false)))
             .then(() => {
                 Swal.fire("Success", `Recomputed ${keys.length} Groovy script cache entr${keys.length === 1 ? "y" : "ies"}.`, "success");
@@ -1650,14 +1548,7 @@ async function initializeConfigurationOperations() {
                 return false;
             }
             const searchQuery = $("#configSearchQuery").val();
-            Swal.fire({
-                icon: "info",
-                title: `Fetching Results`,
-                text: "Please wait while configuration metadata repository is consulted to find matches...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
-            });
+            PalantirDialogs.wait(`Fetching Results`, "Please wait while configuration metadata repository is consulted to find matches...");
             $.get(`${CasActuatorEndpoints.configurationMetadata()}/${encodeURIComponent(searchQuery)}`, response => {
                 for (const entry of response) {
                     configSearchResultsTable.row.add({

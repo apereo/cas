@@ -349,20 +349,81 @@ function loadPalantirScriptOnce(url) {
 }
 
 /**
- * The editor, the diff library and the application wizard, fetched when something first needs them rather than on
- * every visit, so Home, the page most visits land on, renders without them. Every page but Home waits for them before
- * it is initialized, because its fields and editors are built with them; Home fetches them once the browser is idle,
- * so opening the wizard from it does not wait either. The wizard brings the editor and the diff library along, and
- * the scripts of a bundle are fetched together but run in the order they are listed. A script that ran is never
- * fetched again, so trying again after a failed fetch only fetches what failed.
+ * The scripts of each page, fetched the first time the page is opened rather than on every visit, so a visit fetches
+ * only what it shows. The scripts every page uses, such as the rail, the endpoints, the dialogs, the charts and the
+ * command palette, come with the dashboard; the rest are grouped into bundles that the dashboard's configuration
+ * lists, and each page names the bundles it is built with. A bundle can need others, and those are fetched along with
+ * it: the applications' wizard needs the editor, the diff library, the fields other pages build their dialogs with,
+ * and the SAML2 metadata tools of the Protocols page, and a page with code fields needs the editor. An action that
+ * opens what another page shows, such as the release preview from the applications' menu, fetches that page's bundle
+ * first. Home fetches the applications once the browser is idle, so opening the wizard from it does not wait. The
+ * scripts of a bundle are fetched together but run in the order they are listed, after the bundles it needs. A script
+ * that ran is never fetched again, so trying again after a failed fetch only fetches what failed.
  */
 class PalantirScripts {
+    static NEEDS = Object.freeze({
+        applications: ["ace", "diff", "fields", "protocols"],
+        fields: ["ace"],
+        configuration: ["ace"],
+        protocols: ["ace"],
+        tickets: ["ace"],
+        access: ["fields"],
+        attributes: ["fields"],
+        authentication: ["fields"],
+        tenants: ["fields"],
+        home: ["metrics"],
+        system: ["metrics"],
+        users: ["access"]
+    });
+
+    static PAGES = Object.freeze({
+        applications: ["applications"],
+        system: ["system"],
+        tickets: ["tickets"],
+        tasks: ["tasks"],
+        access: ["access"],
+        logging: ["logging"],
+        sessions: ["sso"],
+        configuration: ["configuration"],
+        attributes: ["attributes"],
+        authentication: ["authentication"],
+        consent: ["consent"],
+        protocols: ["protocols"],
+        throttles: ["throttles"],
+        mfa: ["mfa"],
+        tenants: ["tenants"],
+        cluster: ["cluster"],
+        users: ["users"],
+        home: ["home"]
+    });
+
     static loading = new Map();
 
     static scripts = new Map();
 
     static load(...names) {
-        return Promise.all(names.map(name => PalantirScripts.bundle(name))).then(() => undefined);
+        return Promise.all(PalantirScripts.withNeeds(names).map(name => PalantirScripts.bundle(name))).then(() => undefined);
+    }
+
+    /**
+     * The bundles to fetch for the given ones: the ones they need, and the ones those need, first.
+     *
+     * @param names the bundles
+     * @returns {string[]} every bundle to fetch, each once, a bundle after the ones it needs
+     */
+    static withNeeds(names) {
+        const ordered = [];
+        const visited = new Set();
+        const visit = name => {
+            if (visited.has(name)) {
+                return;
+            }
+            visited.add(name);
+            (PalantirScripts.NEEDS[name] ?? []).forEach(visit);
+            ordered.push(name);
+        };
+        names.forEach(visit);
+        return ordered;
     }
 
     static bundle(name) {
@@ -370,9 +431,8 @@ class PalantirScripts {
         if (existing) {
             return existing;
         }
-        const needed = name === "wizard" ? [PalantirScripts.bundle("ace"), PalantirScripts.bundle("diff")] : [];
         const urls = PalantirDashboardConfiguration.all().scripts?.[name] ?? [];
-        const loading = Promise.all([...needed, ...urls.map(url => PalantirScripts.script(url))])
+        const loading = Promise.all(urls.map(url => PalantirScripts.script(url)))
             .then(() => undefined)
             .catch(error => {
                 PalantirScripts.loading.delete(name);
@@ -404,7 +464,24 @@ class PalantirScripts {
     }
 
     static forPage(tabIndex) {
-        return tabIndex === Tabs.HOME.index ? Promise.resolve() : PalantirScripts.load("wizard");
+        const tab = Tabs.byIndex(tabIndex);
+        return PalantirScripts.load(...(PalantirScripts.PAGES[tab?.key] ?? []));
+    }
+
+    /**
+     * Fetch bundles before an action that uses what they define, telling the operator when they could not be fetched.
+     *
+     * @param names the bundles
+     * @returns {Promise<boolean>} true once they are loaded, false when they could not be fetched
+     */
+    static async ready(...names) {
+        try {
+            await PalantirScripts.load(...names);
+            return true;
+        } catch (error) {
+            PalantirScripts.failed(error);
+            return false;
+        }
     }
 
     static whenIdle() {
@@ -414,12 +491,12 @@ class PalantirScripts {
             } else {
                 setTimeout(resolve, 500);
             }
-        }).then(() => PalantirScripts.load("wizard"));
+        }).then(() => PalantirScripts.load("applications"));
     }
 
     static failed(error) {
-        console.error("Unable to load the application wizard:", error);
-        displayBanner("The application wizard could not be loaded. Reload the page to try again.");
+        console.error("Unable to load the page's scripts:", error);
+        displayBanner("Part of the dashboard could not be loaded. Reload the page to try again.");
     }
 }
 
@@ -431,7 +508,7 @@ class PalantirScripts {
  */
 async function openPalantirWizard(...args) {
     try {
-        await PalantirScripts.load("wizard");
+        await PalantirScripts.load("applications");
     } catch (error) {
         PalantirScripts.failed(error);
         return false;
@@ -449,6 +526,71 @@ function closeAllDialogs() {
 }
 
 const PALANTIR_READ_ONLY = "palantir-read-only";
+
+/**
+ * The pop-ups Palantir shows again and again, so they look and behave the same everywhere: one that asks the operator
+ * to wait, one that asks before a change, and ones that report an error or a change done. Titles are text, never
+ * markup, so names and other values can go in them as they are.
+ */
+class PalantirDialogs {
+    /**
+     * Ask the operator to wait while something is fetched or done; close it with <code>Swal.close()</code>.
+     *
+     * @param title what is happening
+     * @param text more about it, if anything
+     */
+    static wait(title, text = "") {
+        Swal.fire({
+            icon: "info",
+            titleText: title,
+            text: text,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+    }
+
+    /**
+     * Ask the operator before a change, with a button to go ahead and one to decline. Any other option of the pop-up,
+     * such as html, the labels of the buttons or the icon, can be given as well; <code>title</code> is shown as text.
+     *
+     * @param options the options of the pop-up, with its title
+     * @returns {Promise<object>} the answer, whose <code>isConfirmed</code> says whether to go ahead
+     */
+    static confirm(options) {
+        const {title, ...rest} = options;
+        return Swal.fire({
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true,
+            ...rest,
+            ...(title === undefined ? {} : {titleText: title})
+        });
+    }
+
+    /**
+     * Report that something could not be done.
+     *
+     * @param title what could not be done
+     * @param text why, if known; an error or a failed request is shown by its message
+     * @returns {Promise<object>} resolved once the pop-up is closed
+     */
+    static error(title, text = "") {
+        const reason = typeof text === "string" ? text : String(text?.message ?? text?.responseText ?? text ?? "");
+        return Swal.fire({icon: "error", titleText: title, text: reason});
+    }
+
+    /**
+     * Report that something was done.
+     *
+     * @param title what was done
+     * @param text more about it, if anything
+     * @returns {Promise<object>} resolved once the pop-up is closed
+     */
+    static done(title, text = "") {
+        return Swal.fire({icon: "success", titleText: title, text: text});
+    }
+}
 
 /**
  * Let a poll run one at a time: while what it started is still on its way, such as a request to a slow endpoint, a
@@ -474,6 +616,89 @@ function palantirOneAtATime(poll) {
         }
         return started;
     };
+}
+
+/**
+ * The one scheduler of everything Palantir reads again on its own, such as a table of events or the charts of a page.
+ * Each poll says when it applies, such as only while its page or panel is shown; a single clock then runs the polls
+ * that apply as often as the refresh interval in the settings says, read on every beat so a change applies at once.
+ * A poll is counted as run when it is registered, since its page reads it then, and whenever it is run by hand, so the
+ * clock never reads the same thing twice in a row.
+ * Nothing runs while the browser tab is hidden; a poll runs one request at a time; and a poll that did not apply for a
+ * while, such as when its page was hidden, runs as soon as it applies again, rather than on the next beat.
+ */
+class PalantirPolling {
+    static BEAT = 1000;
+
+    static polls = [];
+
+    static clock = null;
+
+    /**
+     * Read something again and again.
+     *
+     * @param name what the poll reads, for the log
+     * @param run reads it, returning what it started (a promise or a jQuery request), if anything
+     * @param options <code>tab</code> and <code>panel</code>: the page, and the panel on it, that must be shown;
+     *        <code>when</code>: any other condition; <code>every</code>: how often, in milliseconds, when not as often as
+     *        the refresh interval
+     * @returns {function(): *} the poll, to run it at once, one request at a time, such as after a change
+     */
+    static every(name, run, {tab = null, panel = null, when = null, every = null} = {}) {
+        const poll = {name, last: Date.now(), missed: false};
+        poll.run = palantirOneAtATime(() => {
+            poll.last = Date.now();
+            poll.missed = false;
+            return run();
+        });
+        poll.applies = () => {
+            if (tab !== null) {
+                const index = typeof tab === "number" ? tab : tab.index;
+                const shown = panel === null ? currentActiveTab === index : isPalantirPollingContextActive(tab, panel);
+                if (!shown) {
+                    return false;
+                }
+            }
+            return when === null || when() === true;
+        };
+        poll.period = () => every ?? palantirSettings().refreshInterval;
+        PalantirPolling.polls.push(poll);
+        PalantirPolling.start();
+        return poll.run;
+    }
+
+    static start() {
+        if (PalantirPolling.clock !== null) {
+            return;
+        }
+        PalantirPolling.clock = setInterval(() => PalantirPolling.beat(), PalantirPolling.BEAT);
+        document.addEventListener("visibilitychange", () => PalantirPolling.beat());
+        window.addEventListener(palantirPollingContextEvent, () => PalantirPolling.beat());
+    }
+
+    static beat() {
+        if (document.visibilityState !== "visible") {
+            return;
+        }
+        const now = Date.now();
+        for (const poll of PalantirPolling.polls) {
+            let applies = false;
+            try {
+                applies = poll.applies();
+            } catch (error) {
+                console.debug(`Palantir could not tell whether to read ${poll.name} again`, error);
+            }
+            if (!applies) {
+                poll.missed = true;
+            } else if (poll.missed || now - poll.last >= poll.period()) {
+                try {
+                    poll.run();
+                } catch (error) {
+                    console.debug(`Palantir could not read ${poll.name} again`, error);
+                }
+            }
+        }
+    }
 }
 
 const PALANTIR_LARGE_IDS = new Set();
@@ -2344,5 +2569,143 @@ class PalantirPanelFocus {
             return;
         }
         field.blur();
+    }
+}
+
+/**
+ * The registered applications Palantir has read, by id, shared by every page that names or opens one, with the
+ * sequence of the latest read of them, so a late answer to an earlier read never replaces a newer one.
+ */
+let palantirServicesRequest = 0;
+
+let palantirServicesLatest = Promise.resolve(true);
+
+const registeredServicesById = new Map();
+
+/**
+ * Bumped whenever the registered applications are read again, so views that derive from them, such as the access
+ * check's sorted list, know to derive it again.
+ */
+let registeredServicesVersion = 0;
+
+/**
+ * The text of a registered service description, without its markup, for search and tooltips.
+ *
+ * @param value the description
+ * @returns {string} the text
+ */
+function describePalantirDescription(value) {
+    const body = new DOMParser().parseFromString(String(value ?? ""), "text/html").body;
+    body.querySelectorAll("script, style, template, noscript").forEach(element => element.remove());
+    body.querySelectorAll("p, br").forEach(element => element.after(" "));
+    return body.textContent.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Describe the protocol of a registered service class for badges and summaries.
+ *
+ * @param serviceClass the fully qualified registered service class
+ * @returns {{key: string, short: string, label: string}} the badge key, its short text and a readable name
+ */
+function applicationProtocolOf(serviceClass) {
+    const friendly = PalantirDashboardConfiguration.supportedServiceTypes()[serviceClass];
+    const name = String(serviceClass ?? "");
+    const protocols = [
+        {match: "CasRegisteredService", key: "cas", short: "CAS", label: "CAS"},
+        {match: "SamlRegisteredService", key: "saml", short: "SAML", label: "SAML2 Service Provider"},
+        {match: "OidcRegisteredService", key: "oidc", short: "OIDC", label: "OpenID Connect Relying Party"},
+        {match: "OAuthRegisteredService", key: "oauth", short: "OAuth", label: "OAuth Client"},
+        {match: "WSFederationRegisteredService", key: "wsfed", short: "WS", label: "WS-Federation Relying Party"}
+    ];
+    const protocol = protocols.find(entry => name.includes(entry.match));
+    if (protocol) {
+        return {key: protocol.key, short: protocol.short, label: friendly || protocol.label};
+    }
+    return {key: "other", short: name.split(".").pop().replace("RegisteredService", "").slice(0, 5) || "App", label: friendly || name.split(".").pop()};
+}
+
+/**
+ * The name of a property source as the configuration pages show it.
+ *
+ * @param propertySource the name CAS reports
+ * @returns {string} the name without the bootstrap prefix
+ */
+function configPropertySourceName(propertySource) {
+    return propertySource.replace("bootstrapProperties-", "");
+}
+
+/**
+ * Offer to refresh the CAS runtime context after a configuration change, then reload what the opened pages show of it.
+ *
+ * @param title the title of the question
+ */
+function refreshCasServerConfiguration(title) {
+    if (CasActuatorEndpoints.refresh()) {
+        Swal.fire({
+            showConfirmButton: true,
+            showCancelButton: true,
+            icon: "question",
+            title: title,
+            width: "35%",
+            confirmButtonText: "Refresh",
+            html: `Do you want to refresh the CAS runtime context to apply the changes?
+            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>,
+            allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
+            using the existing/old CAS components until they are fully refreshed in the runtime application context.
+            <p class="text-justify"/>
+            <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
+            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong>
+            may not be dynamically reloaded. In such cases, a full restart of the CAS server
+            may be required for the changes to take effect.
+            `
+        })
+            .then((reloadResult) => {
+                if (reloadResult.isConfirmed) {
+                    Swal.close();
+                    PalantirDialogs.wait("Refreshing CAS Server", "Please wait while the CAS application context is being refreshed...");
+
+                    const endpoint = CasActuatorEndpoints.refresh();
+                    $.post(endpoint)
+                        .done(() => {
+                            const authentication = isDashboardTabInitialized(Tabs.AUTHENTICATION);
+                            if (authentication && typeof reloadAuthenticationHandlersTable === "function") {
+                                reloadAuthenticationHandlersTable();
+                            }
+                            if (isDashboardTabInitialized(Tabs.PERSON_DIRECTORY) && typeof reloadAttributeRepositoriesTable === "function") {
+                                reloadAttributeRepositoriesTable();
+                            }
+                            const providers = authentication && typeof loadExternalIdentityProvidersTable === "function"
+                                ? loadExternalIdentityProvidersTable() : Promise.resolve();
+                            providers.then(() => {
+                                Swal.close();
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: "CAS configuration has been reloaded successfully.",
+                                    icon: "success",
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: true
+                                });
+                            });
+                        })
+                        .fail((jqXHR, textStatus, errorThrown) => {
+                            console.error("Error:", textStatus, errorThrown);
+                            Swal.close();
+                            Swal.fire("Error", "Failed to reload CAS configuration.", "error");
+                            displayBanner(jqXHR);
+                        });
+                }
+            });
+    }
+}
+
+/**
+ * Show the configuration CAS reports again on the Configuration page, when that page has been opened.
+ *
+ * @param response what the environment endpoint answered
+ */
+function reloadPalantirConfigurationTable(response) {
+    if (typeof reloadConfigurationTable === "function" && isDashboardTabInitialized(Tabs.CONFIGURATION)) {
+        reloadConfigurationTable(response);
     }
 }

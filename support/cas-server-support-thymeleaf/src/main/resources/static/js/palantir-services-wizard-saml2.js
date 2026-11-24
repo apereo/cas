@@ -797,7 +797,7 @@ function createSamlMetadataUploadButton() {
                 $("#registeredServiceMetadataLocation").val(manager.sourceId).trigger("input").trigger("blur");
                 let providers = [];
                 try {
-                    providers = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(document.value ?? ""))
+                    providers = PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(document.value ?? ""))
                         .filter(provider => provider.getAttribute("entityID"));
                 } catch (error) {
                     console.debug("The entity ids could not be read from the uploaded metadata", error);
@@ -812,7 +812,7 @@ function createSamlMetadataUploadButton() {
                 }
                 const provider = providers.find(entry => entry.getAttribute("entityID") === entityId);
                 if (provider && String($("#registeredServiceName").val() ?? "").trim() === "") {
-                    $("#registeredServiceName").val(PalantirSamlMetadataImport.nameOf(provider)).trigger("input").trigger("blur");
+                    $("#registeredServiceName").val(PalantirSamlMetadataNames.nameOf(provider)).trigger("input").trigger("blur");
                 }
             }
         });
@@ -829,14 +829,6 @@ function createSamlMetadataUploadButton() {
  * contacts. Nothing is saved.
  */
 class PalantirSamlMetadataImport {
-    static NAMESPACES = {
-        md: "urn:oasis:names:tc:SAML:2.0:metadata",
-        mdui: "urn:oasis:names:tc:SAML:metadata:ui",
-        mdattr: "urn:oasis:names:tc:SAML:metadata:attribute",
-        saml: "urn:oasis:names:tc:SAML:2.0:assertion",
-        xml: "http://www.w3.org/XML/1998/namespace"
-    };
-
     static ENTITY_CATEGORY = "http://macedir.org/entity-category";
 
     static CATEGORY_POLICIES = {
@@ -911,7 +903,7 @@ class PalantirSamlMetadataImport {
                 await PalantirSamlMetadataImport.fill(source.entity, source.metadataLocation);
             }
         } catch (error) {
-            Swal.fire({icon: "error", title: "The Metadata Could Not Be Read", text: error.message});
+            PalantirDialogs.error("The Metadata Could Not Be Read", error.message);
         }
     }
 
@@ -941,7 +933,7 @@ class PalantirSamlMetadataImport {
     static async read(request) {
         if (request.xml || request.file) {
             const text = request.xml || await request.file.text();
-            const providers = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(text));
+            const providers = PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(text));
             if (providers.length === 0) {
                 throw new Error("The metadata holds no SAML2 service provider.");
             }
@@ -963,7 +955,7 @@ class PalantirSamlMetadataImport {
             }
             preview = await PalantirSamlMetadataImport.preview(request.url, chosen);
         }
-        const entity = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(preview.metadata))[0];
+        const entity = PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(preview.metadata))[0];
         if (!entity) {
             throw new Error("The metadata holds no SAML2 service provider.");
         }
@@ -978,13 +970,7 @@ class PalantirSamlMetadataImport {
      * @returns {Promise<object>} the service providers the metadata holds and the metadata of the one read, if any
      */
     static async preview(url, entityId = null) {
-        Swal.fire({
-            title: "Reading Metadata",
-            text: url,
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        PalantirDialogs.wait("Reading Metadata", url);
         try {
             return await PalantirSamlMetadataImport.request(url, entityId);
         } finally {
@@ -1043,108 +1029,6 @@ class PalantirSamlMetadataImport {
     }
 
     /**
-     * Parse metadata XML.
-     *
-     * @param text the XML
-     * @returns {Document} the document
-     */
-    static parse(text) {
-        const document = new DOMParser().parseFromString(text, "application/xml");
-        if (document.getElementsByTagName("parsererror").length > 0) {
-            throw new Error("This is not well-formed XML.");
-        }
-        return document;
-    }
-
-    /**
-     * The entities of a metadata document that are SAML2 service providers.
-     *
-     * @param document the metadata document
-     * @returns {Element[]} their EntityDescriptor elements
-     */
-    static serviceProviders(document) {
-        const ns = PalantirSamlMetadataImport.NAMESPACES;
-        return Array.from(document.getElementsByTagNameNS(ns.md, "EntityDescriptor"))
-            .filter(entity => entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor").length > 0);
-    }
-
-    /**
-     * The text of the element in the operator's language, else in English, else the first one.
-     *
-     * @param elements the elements, one per language
-     * @returns {string} the text, or an empty string
-     */
-    static localized(elements) {
-        const ns = PalantirSamlMetadataImport.NAMESPACES;
-        const languages = [String(navigator.language ?? "en").toLowerCase().split("-")[0], "en"];
-        const language = element => String(element.getAttributeNS(ns.xml, "lang") || element.getAttribute("xml:lang") || "").toLowerCase();
-        const chosen = languages.map(code => elements.find(element => language(element).split("-")[0] === code)).find(Boolean)
-            ?? elements[0];
-        return String(chosen?.textContent ?? "").trim();
-    }
-
-    /**
-     * The name a service provider gives itself in its metadata: its display name, else the display name or the name of
-     * its organization, else a readable form of its entity id.
-     *
-     * @param entity the provider's EntityDescriptor
-     * @returns {string} the name, or an empty string
-     */
-    static nameOf(entity) {
-        const ns = PalantirSamlMetadataImport.NAMESPACES;
-        const children = (parent, namespace, name) => Array.from(parent?.children ?? [])
-            .filter(child => child.namespaceURI === namespace && child.localName === name);
-        const provider = entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor")[0];
-        const uiInfo = provider?.getElementsByTagNameNS(ns.mdui, "UIInfo")[0];
-        const displayNames = uiInfo ? Array.from(uiInfo.getElementsByTagNameNS(ns.mdui, "DisplayName")) : [];
-        const organization = children(entity, ns.md, "Organization")[0];
-        return PalantirSamlMetadataImport.localized(displayNames)
-            || PalantirSamlMetadataImport.localized(children(organization, ns.md, "OrganizationDisplayName"))
-            || PalantirSamlMetadataImport.localized(children(organization, ns.md, "OrganizationName"))
-            || PalantirSamlMetadataImport.readableEntityId(entity.getAttribute("entityID"));
-    }
-
-    /**
-     * A readable form of an entity id: the host of a URL, without www, or the last part of a URN.
-     *
-     * @param entityId the entity id
-     * @returns {string} the readable form, or the entity id as it is
-     */
-    static readableEntityId(entityId) {
-        const value = String(entityId ?? "").trim();
-        if (/^urn:/i.test(value)) {
-            return value.split(":").filter(Boolean).pop() ?? value;
-        }
-        try {
-            return new URL(value).hostname.replace(/^www\./i, "") || value;
-        } catch (error) {
-            return value;
-        }
-    }
-
-    /**
-     * The name to keep uploaded metadata under: the name of its one service provider, else the name the aggregate
-     * gives itself, else the name of its first service provider.
-     *
-     * @param text the metadata XML
-     * @returns {string} the name, or an empty string when the metadata names no service provider
-     */
-    static documentName(text) {
-        try {
-            const document = PalantirSamlMetadataImport.parse(String(text ?? ""));
-            const providers = PalantirSamlMetadataImport.serviceProviders(document);
-            const root = document.documentElement;
-            const aggregate = root?.localName === "EntitiesDescriptor" ? String(root.getAttribute("Name") ?? "").trim() : "";
-            if (providers.length === 1) {
-                return PalantirSamlMetadataImport.nameOf(providers[0]);
-            }
-            return aggregate || (providers.length > 0 ? PalantirSamlMetadataImport.nameOf(providers[0]) : "");
-        } catch (error) {
-            return "";
-        }
-    }
-
-    /**
      * Whether a value is a web address the wizard may link to.
      *
      * @param value the value
@@ -1162,7 +1046,7 @@ class PalantirSamlMetadataImport {
      * @returns {{definition: object, filled: string[]}} the definition's parts and the names of the fields they fill
      */
     static describe(entity, metadataLocation) {
-        const ns = PalantirSamlMetadataImport.NAMESPACES;
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
         const children = (parent, namespace, name) => Array.from(parent?.children ?? [])
             .filter(child => child.namespaceURI === namespace && child.localName === name);
         const provider = entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor")[0];
@@ -1179,12 +1063,12 @@ class PalantirSamlMetadataImport {
 
         const entityId = entity.getAttribute("entityID");
         set("serviceId", "Entity ID", entityId);
-        set("name", "Name", PalantirSamlMetadataImport.nameOf(entity));
-        const description = PalantirSamlMetadataImport.localized(ui("Description"));
+        set("name", "Name", PalantirSamlMetadataNames.nameOf(entity));
+        const description = PalantirSamlMetadataNames.localized(ui("Description"));
         set("description", "Description", description ? escapePalantirMarkup(description) : "");
-        const informationUrl = PalantirSamlMetadataImport.localized(ui("InformationURL"));
+        const informationUrl = PalantirSamlMetadataNames.localized(ui("InformationURL"));
         set("informationUrl", "Information URL", PalantirSamlMetadataImport.isWebAddress(informationUrl) ? informationUrl : "");
-        const privacyUrl = PalantirSamlMetadataImport.localized(ui("PrivacyStatementURL"));
+        const privacyUrl = PalantirSamlMetadataNames.localized(ui("PrivacyStatementURL"));
         set("privacyUrl", "Privacy URL", PalantirSamlMetadataImport.isWebAddress(privacyUrl) ? privacyUrl : "");
         const logo = ui("Logo")
             .filter(element => PalantirSamlMetadataImport.isWebAddress(element.textContent.trim()))
@@ -1252,11 +1136,7 @@ class PalantirSamlMetadataImport {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
         const location = merged.metadataLocation ? "" : " Enter where CAS should read its metadata from as the metadata location.";
-        Swal.fire({
-            icon: "success",
-            title: "Filled from Metadata",
-            text: `${definition.serviceId}: ${filled.join(", ")}. Review the fields before saving.${location}`
-        });
+        PalantirDialogs.done("Filled from Metadata", `${definition.serviceId}: ${filled.join(", ")}. Review the fields before saving.${location}`);
     }
 }
 
@@ -1409,7 +1289,7 @@ class PalantirSamlMetadataHealth {
      * @returns {{use: string, expiry: Date|null}[]} the certificates
      */
     static certificates(entity) {
-        const ns = PalantirSamlMetadataImport.NAMESPACES;
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
         return Array.from(entity.getElementsByTagNameNS(ns.md, "KeyDescriptor")).flatMap(descriptor =>
             Array.from(descriptor.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "X509Certificate"))
                 .map(certificate => ({
@@ -1507,7 +1387,7 @@ class PalantirSamlMetadataHealth {
                         preview = await PalantirSamlMetadataImport.request(url, matching[0]);
                     }
                     metadata = preview.metadata ?? null;
-                    entity = metadata ? PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(metadata))[0] ?? null : null;
+                    entity = metadata ? PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(metadata))[0] ?? null : null;
                 }
             } catch (error) {
                 checks.push({status: "fail", title: "Download", detail: error.message});
@@ -1540,7 +1420,7 @@ class PalantirSamlMetadataHealth {
                 });
             if (!entity && resolved[0]?.[1]?.metadata) {
                 metadata = resolved[0][1].metadata;
-                entity = PalantirSamlMetadataImport.serviceProviders(PalantirSamlMetadataImport.parse(metadata))[0] ?? null;
+                entity = PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(metadata))[0] ?? null;
             }
         } catch (error) {
             checks.push({status: "fail", title: "Resolution by CAS", detail: error.message});

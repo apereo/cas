@@ -59,7 +59,7 @@ class PalantirMetrics {
         if (!PalantirMetrics.initialized) {
             PalantirMetrics.initialized = true;
             PalantirMetrics.bind();
-            PalantirMetrics.timer = setInterval(() => PalantirMetrics.tick(), palantirSettings().refreshInterval);
+            PalantirMetrics.timer = PalantirPolling.every("metrics", () => PalantirMetrics.refresh(), {when: () => PalantirMetrics.visible()});
         }
         try {
             const response = await $.get(CasActuatorEndpoints.metrics());
@@ -136,12 +136,6 @@ class PalantirMetrics {
     static visible() {
         const tab = document.getElementById("systemmetrics-tab");
         return document.visibilityState === "visible" && tab !== null && tab.offsetParent !== null;
-    }
-
-    static tick() {
-        if (PalantirMetrics.visible()) {
-            PalantirMetrics.refresh();
-        }
     }
 
     static show(view) {

@@ -39,12 +39,9 @@ async function initializeConsentOperations() {
 
         function deleteConsent(context) {
             const {id, principal} = context.rowData.decision;
-            Swal.fire({
-                titleText: `Are You Sure You Want to Delete This Entry for ${principal}?`,
-                text: "Once deleted, you may not be able to recover this entry.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+            PalantirDialogs.confirm({
+                title: `Are You Sure You Want to Delete This Entry for ${principal}?`,
+                text: "Once deleted, you may not be able to recover this entry."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
