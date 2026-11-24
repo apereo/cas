@@ -276,10 +276,14 @@ async function verifyUserLookup(page, failures) {
 /**
  * Draw an SSO session and tokens of two applications and check that each is a card of its own with labelled facts,
  * the applications and scopes as chips, the tokens grouped by application, and only shortened ids on show.
+ * A lookup of the user shown before may still be answered here, and an endpoint that answers 404 has nothing for the
+ * user, so those responses are not counted as browser errors.
  *
  * @param page the puppeteer page
+ * @param failures the failures recorded so far
  */
-async function verifySessionAndTokenCards(page) {
+async function verifySessionAndTokenCards(page, failures) {
+    const before = failures.length;
     const drawn = await page.evaluate(() => {
         const now = Date.now();
         const ticket = "TGT-1-abcdefghijklmnopqrstuvwxyz0123456789-example";
@@ -358,6 +362,8 @@ async function verifySessionAndTokenCards(page) {
     assert(JSON.stringify(accounts.kinds) === JSON.stringify(["duo", "webauthn"]));
     assert(JSON.stringify(accounts.dated) === JSON.stringify(["Registered"]), `A WebAuthn device shows when it was registered: ${accounts.dated}`);
     assert(JSON.stringify(accounts.removes) === JSON.stringify(["mfa-duo/1/Remove", "mfa-campus-key/2/Remove"]));
+    failures.push(...failures.splice(before).filter((failure) => !/^response: 404 GET .*\/actuator\//.test(failure)
+        && !/status of 404/.test(failure)));
     await cas.logg("Passwordless accounts and MFA devices are drawn as cards with labelled facts");
 }
 
@@ -585,11 +591,14 @@ async function verifyConsentUsername(page) {
 /**
  * Check access from the access page: a user without the group an application requires is denied, with the failed
  * step and the missing value shown, and an application without rules lets the user in. Both checks are listed as
- * recent checks.
+ * recent checks. The applications are read before the field is used, so the suggestions shown when it gets focus are
+ * settled before typing narrows them, and the 403 the service access endpoint answers for the denied user is not
+ * counted as a browser error.
  *
  * @param page the puppeteer page
+ * @param failures the failures recorded so far
  */
-async function verifyAccessCheck(page) {
+async function verifyAccessCheck(page, failures) {
     await cas.separator();
     await page.evaluate(() => $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.ACCESS_STRATEGY.index}]`).trigger("click"));
     await page.waitForFunction(() => currentActiveTab === Tabs.ACCESS_STRATEGY.index
@@ -598,10 +607,14 @@ async function verifyAccessCheck(page) {
         await cas.logy("The service access endpoint is not available; skipping the access check");
         return;
     }
+    const before = failures.length;
     await page.evaluate(() => localStorage.removeItem(PalantirAccessCheck.STORAGE_KEY));
+    await page.evaluate(() => PalantirAccessCheck.loadApplications());
     await page.click("#accessApplication");
-    await page.type("#accessApplication", "Staff");
     await page.waitForFunction(() => $(".palantir-access__suggestions:visible .palantir-access__suggestion").length > 0, {timeout: 10000});
+    await page.type("#accessApplication", "Staff");
+    await page.waitForFunction(() => $(".palantir-access__suggestions:visible .palantir-access__suggestions-header").text().trim() === "1 Application",
+        {timeout: 10000}).catch(() => null);
     const header = await page.evaluate(() => $(".palantir-access__suggestions:visible .palantir-access__suggestions-header").text().trim());
     await cas.log(`Suggestions: ${header}`);
     assert(header === "1 Application");
@@ -633,6 +646,7 @@ async function verifyAccessCheck(page) {
     assert(denied.verdict.includes("is-denied") && denied.title === "casuser Is Denied");
     assert(denied.failed.includes("Required Attributes") && denied.missing.includes("memberOf"));
     assert(denied.reason.includes("memberOf needs admins"));
+    failures.push(...failures.splice(before).filter((failure) => !/\/actuator\/serviceAccess/.test(failure) || !/403/.test(failure)));
 
     await page.evaluate(() => $("#accessTargetField [data-access-action=clear]").trigger("click"));
     assert(await page.evaluate(() => $("#accessApplication").val() === "" && PalantirAccessCheck.selected === null));
@@ -759,14 +773,14 @@ async function waitForApplications(page) {
     await waitForApplications(page);
     await verifyCommandPalette(page);
     await verifyUserLookup(page, failures);
-    await verifySessionAndTokenCards(page);
+    await verifySessionAndTokenCards(page, failures);
     await verifyInterruptInquiry(page);
     await verifyImpersonationAccounts(page);
     await verifyThrottlesUsername(page);
     await verifyConsentUsername(page);
     await verifyAuditEventsUsername(page);
     await verifyCredentialRepositories(page);
-    await verifyAccessCheck(page);
+    await verifyAccessCheck(page, failures);
 
     if (failures.length > 0) {
         await cas.logr(`Browser reported ${failures.length} error(s):`);

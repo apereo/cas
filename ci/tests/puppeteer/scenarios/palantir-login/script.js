@@ -250,12 +250,15 @@ async function verifyPollsDoNotPileUp(page) {
 /**
  * A lookup that fills a panel shows that it is busy in the panel, with a way to cancel it, and says in place why it
  * failed, rather than in a pop-up that blocks the dashboard; a panel that reads itself again shows when it last read
- * and can be paused.
+ * and can be paused. The failure the lookup is made to report is logged to the console on purpose, so it is not counted
+ * as a browser error.
  *
  * @param page the puppeteer page
+ * @param failures the failures recorded so far
  */
-async function verifyInlineProgress(page) {
+async function verifyInlineProgress(page, failures) {
     await cas.separator();
+    const before = failures.length;
     const busy = await page.evaluate(async () => {
         const region = $("<div>", {id: "scenarioBusyRegion"}).appendTo("body");
         let request = null;
@@ -295,6 +298,7 @@ async function verifyInlineProgress(page) {
         region.remove();
         return result;
     });
+    failures.push(...failures.splice(before).filter((failure) => !failure.includes("The sessions could not be read")));
     await cas.log(`Inline progress: ${JSON.stringify(busy)}`);
     assert(busy.again === false && busy.shown.busy === "true" && busy.shown.visible && !busy.shown.popup);
     assert(busy.shown.text.startsWith("Looking up casuser") && busy.cancelled === false && busy.failed === false);
@@ -951,7 +955,7 @@ async function verifyShortcutsOverlay(page) {
     await waitForDashboard(page);
     await verifySessionWritesCarryToken(page, failures);
     await verifyPollsDoNotPileUp(page);
-    await verifyInlineProgress(page);
+    await verifyInlineProgress(page, failures);
     await verifyScriptsOnFirstUse(page);
     await verifyHome(page);
     await verifyRegisteredServices(page);
