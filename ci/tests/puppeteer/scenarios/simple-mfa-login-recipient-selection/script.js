@@ -43,7 +43,12 @@ const PHONES = ["13477465342", "14477465342"];
     assert(message.from === "3477465300");
     assert(message.text === `SMS-code:${code}`, `Unexpected SMS text ${message.text}`);
     assert(message.authorization === `Basic ${Buffer.from("casuser:paSSw0rd").toString("base64")}`);
+    await cas.log("Checking that every selected phone number received the code");
+    for (const phone of PHONES) {
+        await sms.waitForMessage(phone, (msg) => msg.text === `SMS-code:${code}`);
+    }
     assert(sms.messages.every((msg) => PHONES.includes(msg.to) && msg.text === `SMS-code:${code}`));
+    assert(sms.messages.length === PHONES.length, `Expected one SMS per phone, got ${JSON.stringify(sms.messages)}`);
 
     await page.bringToFront();
     await cas.type(page, "#token", code);

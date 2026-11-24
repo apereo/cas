@@ -78,6 +78,15 @@ public class WsFederationCredential extends AbstractCredential {
                 getRetrievedOn(), getIssuedOn(), retrievedOnTimeAfterDrift);
             return false;
         }
+        if (this.notBefore != null && this.notBefore.isAfter(retrievedOnTimeAfterDrift)) {
+            LOGGER.warn("Ticket is not yet valid since it's retrieved on [{}] while it is not valid before [{}] with an allowed drift of [{}]",
+                getRetrievedOn(), this.notBefore, retrievedOnTimeAfterDrift);
+            return false;
+        }
+        if (this.notOnOrAfter == null) {
+            LOGGER.warn("Ticket carries no [NotOnOrAfter] condition and cannot be checked for expiration");
+            return false;
+        }
         if (getRetrievedOn().isAfter(this.notOnOrAfter)) {
             LOGGER.warn("Ticket is too late because it's retrieved on [{}] which is after [{}].",
                 getRetrievedOn(), this.notOnOrAfter);

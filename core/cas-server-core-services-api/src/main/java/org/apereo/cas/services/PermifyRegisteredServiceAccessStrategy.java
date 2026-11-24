@@ -81,7 +81,9 @@ public class PermifyRegisteredServiceAccessStrategy extends BaseRegisteredServic
         val permifyUrl = String.format("%s/v1/tenants/%s/permissions/check", url, tenant);
 
         val headers = new HashMap<String, String>();
-        headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + expressionResolver.resolve(this.token));
+        if (StringUtils.isNotBlank(this.token)) {
+            headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + expressionResolver.resolve(this.token));
+        }
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         val exec = HttpExecutionRequest.builder()

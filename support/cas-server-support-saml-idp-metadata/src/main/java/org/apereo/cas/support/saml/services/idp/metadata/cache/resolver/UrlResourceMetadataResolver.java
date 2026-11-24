@@ -233,8 +233,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * backup <i>instead of</i> contacting the remote source requires the root to be positively
      * valid. Falling back onto it <i>because</i> the remote source could not be reached only
      * requires that the root is not known to be invalid, since a document that carries no
-     * {@code validUntil} reports its validity as unknown and is the common case; expired
-     * descriptors within it are still filtered out by {@code require-valid-metadata}.
+     * {@code validUntil} reports its validity as unknown and is the common case; a service
+     * provider whose own entry within it has expired is still refused when it is looked up.
      *
      * @param service          the registered service
      * @param backupFile       the metadata backup file

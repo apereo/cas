@@ -550,7 +550,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
 - {: .fixed data-area="services"} The [Permify access strategy](../services/Service-Access-Strategy-Permify.html) denies access
-  when the Permify server answers with an error status, instead of trusting the body of the response.
+  when the Permify server answers with an error status, instead of trusting the body of the response, and sends an
+  `Authorization` header only when a token is defined.
 
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
@@ -1105,7 +1106,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   token is no longer HTML-unescaped.
 - {: .fixed data-area="authentication"} [WS-Federation delegated authentication](../integration/ADFS-Integration.html) restores the
   theme, locale and `method` saved before the redirect to the identity provider, and rejects a token that cannot be parsed,
-  or that has no audience or issuer, instead of failing with an error.
+  that has no audience, issuer or `NotOnOrAfter` condition, or whose `NotBefore` has not yet been reached, instead of failing
+  with an error or accepting a token that is not valid yet.
 - {: .fixed data-area="authentication"} [Surrogate authentication](../authentication/Surrogate-Authentication.html) SMS and email
   notifications are sent when multitenancy is not in use.
 - {: .fixed data-area="tickets"} Security: with [multitenancy](../multitenancy/Multitenancy-Overview.html#tenant-isolation),
@@ -1283,6 +1285,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   at the same time.
 - {: .changed data-area="mfa"} The `browser` component of [trusted device fingerprints](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
   has its own settings with a default order of `5`, after geolocation, instead of sharing the geolocation settings.
+- {: .fixed data-area="mfa"} [Simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) sends the
+  token to every phone number the user selects, and SMS messages sent by CAS reach every phone number of the recipient,
+  where they used to stop at the first number the message was sent to.
 
 ### Documentation
 {: .changed data-area="docs"}
@@ -1291,6 +1296,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
+- {: .changed data-area="docs"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution)
+  explains `cas.authn.saml-idp.metadata.core.require-valid-metadata`{: .cas-setting}: a service provider whose own metadata
+  entry has passed its `validUntil` is always refused, and the setting decides whether metadata that has otherwise
+  expired, such as an aggregate, is still used.
 - {: .fixed data-area="docs"} Setting lists show default values in full instead of cutting them off; where a list is narrow, the
   value moves to a second row under the setting name. Each setting in the configuration catalog also has a *Copy link* button.
 - {: .new data-area="docs"} Every page of the documentation has a Markdown copy at the same address ending in `.md`, which
