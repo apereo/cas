@@ -427,6 +427,8 @@ async function verifyLargeIdsSurviveEditing(page) {
         serviceId: "^https://large-id.example.org/.*"};
     const formatted = await page.evaluate((text) => palantirStringifyJson(palantirParseJson(text), 4), `{"id": ${large}, "name": "LargeId"}`);
     assert(formatted.includes(`"id": ${large}`), `Formatting keeps the id: ${formatted}`);
+    const padded = await page.evaluate(() => palantirStringifyJson(palantirParseJson("{\"id\": \"0012345678901234567\"}")));
+    assert(JSON.parse(padded).id === "0012345678901234567", `Text that is not a JSON number stays text: ${padded}`);
     await page.evaluate((definition) => PalantirServiceEditor.openApplicationInWizard(definition), service);
     await cas.sleep(1000);
     if (await page.evaluate(() => $(".swal2-popup:visible").length > 0)) {

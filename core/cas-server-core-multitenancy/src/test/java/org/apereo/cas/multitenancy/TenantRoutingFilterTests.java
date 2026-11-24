@@ -73,5 +73,28 @@ class TenantRoutingFilterTests {
         tenantRoutingFilter.getFilter().doFilter(requestContext.getHttpServletRequest(), response, chain);
         assertTrue(response.getForwardedUrl().startsWith("/tenants/hosted"));
         assertEquals("hosted", ClientInfoHolder.getClientInfo().getTenant());
+
+        val secondRequestContext = MockRequestContext.create(applicationContext);
+        secondRequestContext.setServerName("SSO.SYSTEM.ORG");
+        secondRequestContext.setServletPath("/login");
+        secondRequestContext.setClientInfo();
+        val secondResponse = secondRequestContext.getHttpServletResponse();
+        tenantRoutingFilter.getFilter().doFilter(secondRequestContext.getHttpServletRequest(), secondResponse, new MockFilterChain());
+        assertEquals("/tenants/hosted/login", secondResponse.getForwardedUrl());
+    }
+
+    @Test
+    void verifyUnknownHostIsNotRouted() throws Exception {
+        for (var i = 0; i < 2; i++) {
+            val requestContext = MockRequestContext.create(applicationContext);
+            requestContext.setServerName("unknown.example.org");
+            requestContext.setServletPath("/login");
+            requestContext.setClientInfo();
+            val chain = new MockFilterChain();
+            val response = requestContext.getHttpServletResponse();
+            tenantRoutingFilter.getFilter().doFilter(requestContext.getHttpServletRequest(), response, chain);
+            assertNull(response.getForwardedUrl());
+            assertNotNull(chain.getRequest());
+        }
     }
 }

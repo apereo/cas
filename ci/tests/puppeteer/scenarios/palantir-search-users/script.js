@@ -1,7 +1,7 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, currentActiveTab,
    registeredServicesById, PalantirUserLookup, Tabs, PalantirCommandPalette, PalantirCredentialRepositories, PalantirAccessCheck,
    Swal,
-   PalantirAttributeRelease */
+   PalantirAttributeRelease, initializeDashboardTab */
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -532,8 +532,9 @@ async function verifyAuditEventsUsername(page) {
         await cas.logy("Audit log endpoint is not available; skipping");
         return;
     }
-    await page.evaluate(() => {
+    await page.evaluate(async () => {
         $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.LOGGING.index}]`).trigger("click");
+        await initializeDashboardTab(Tabs.LOGGING);
         $("#auditEvents").trigger("click");
     });
     await page.waitForFunction(() => $("#auditEventsUsername").is(":visible"), {timeout: 30000});

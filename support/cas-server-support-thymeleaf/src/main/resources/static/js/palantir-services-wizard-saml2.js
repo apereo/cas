@@ -1241,7 +1241,7 @@ class PalantirSamlMetadataImport {
         const {definition, filled} = PalantirSamlMetadataImport.describe(entity, metadataLocation);
         let current;
         try {
-            current = JSON.parse(ace.edit("wizardServiceEditor").getValue() || "{}");
+            current = palantirParseJson(ace.edit("wizardServiceEditor").getValue() || "{}");
         } catch (error) {
             current = {};
         }

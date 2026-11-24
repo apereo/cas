@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptCookieProperties;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquirer;
@@ -105,7 +104,7 @@ public class CasInterruptAutoConfiguration {
             if (props.getCrypto().isEnabled()) {
 
                 val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
-                    InterruptCookieProperties.class, bindingContext -> {
+                    "cas.interrupt.cookie.crypto", bindingContext -> {
                     val properties = bindingContext.value();
                     return CipherExecutorUtils.newStringCipherExecutor(properties.getInterrupt().getCookie().getCrypto(), InterruptTrackingCookieCipherExecutor.class);
                 });

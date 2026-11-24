@@ -175,7 +175,9 @@ class PalantirApplicationAccess {
     }
 
     /**
-     * Read an application again, switch its access strategy off or on and save it.
+     * Read an application again, switch its access strategy off or on and save it. It counts as saved only when CAS
+     * answers with the application it saved, switched as asked; a login page or an answer that leaves it as it was
+     * fails, so the operator is not told it changed when it did not.
      *
      * @param serviceId the numeric id of the application
      * @param disable true to disable it, false to enable it
@@ -191,12 +193,17 @@ class PalantirApplicationAccess {
         service.accessStrategy = disable
             ? PalantirApplicationAccess.disable(service.accessStrategy)
             : PalantirApplicationAccess.enable(service.accessStrategy);
-        await $.ajax({
+        const saved = await $.ajax({
             url: endpoint,
             type: "PUT",
             contentType: "application/json",
-            data: JSON.stringify(service)
+            dataType: "json",
+            headers: {"Accept": "application/json"},
+            data: palantirStringifyJson(service)
         });
+        if (!palantirSavedApplication(saved) || PalantirApplicationAccess.isDisabled(saved.accessStrategy) !== disable) {
+            throw new Error(`CAS did not confirm that the application was ${disable ? "disabled" : "enabled"}.`);
+        }
     }
 
     /**

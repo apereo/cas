@@ -125,6 +125,16 @@ release:
       text: keeps tickets in their tenant; applications of a tenant validate tickets and request proxy tickets at that tenant's URL, and an `X-Tenant-Id` header that names another tenant than the URL is refused.
       section: Authentication and Session Security
       area: tickets
+    - type: action
+      title: Multitenancy devices and consent
+      text: Google Authenticator devices and consent decisions only apply in the tenant they were registered or made in; devices and decisions recorded outside of any tenant no longer apply at a tenant's URL, so users register a device or consent again there.
+      section: Authentication and Session Security
+      area: mfa
+    - type: changed
+      title: The multitenancy endpoint
+      text: shows passwords, keys and other secrets in tenant definitions as `******`; posting a definition back with `******` keeps the stored value.
+      section: Authentication and Session Security
+      area: operations
     - type: changed
       title: etcd configuration source
       text: keeps the values it read at startup or at the last refresh and no longer defines an `etcdClient` bean; custom code that used that bean opens its own client.
@@ -1097,6 +1107,28 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   cookie or through the REST API with a tenant header. Tickets now stay in the tenant that issued them: single sign-on,
   service and proxy tickets and ticket validation are refused across tenants, a tenant header that names another tenant
   than the URL is refused, and the proxy endpoint is also available under the tenant URL.
+- {: .fixed data-area="operations"} Security: the [multitenancy](../multitenancy/Multitenancy-Overview.html#actuator-endpoints)
+  endpoint no longer shows the passwords, keys and other secrets of tenant definitions; it shows `******` in their place,
+  and a definition posted back with `******` keeps the stored value. Adding, changing or removing a tenant no longer
+  writes the decrypted values of encrypted settings back to the tenant definitions in plain text, and fails rather than
+  overwriting tenant definitions that cannot be read.
+- {: .fixed data-area="authentication"} With [multitenancy](../multitenancy/Multitenancy-Tenant-Properties.html), a tenant
+  that sets cookie or session settings without keys of its own keeps using the keys CAS uses outside of any tenant; it used
+  to get new, random keys on every request, so its single sign-on cookie and webflow state could not be read back.
+  Tenant lookups made while the tenant definitions reload no longer find an empty or partial list.
+- {: .fixed data-area="mfa"} Security: with [multitenancy](../multitenancy/Multitenancy-Overview.html#tenant-isolation),
+  Google Authenticator devices and consent decisions stay in the tenant they were registered or made in, even when tenants
+  share their storage. A device of one tenant no longer answers multifactor authentication at another tenant, and is no
+  longer listed or managed there; a consent decision made in one tenant no longer applies in another, and consenting in a
+  second tenant no longer moves the first tenant's decision. A login in progress at one tenant can no longer be continued
+  at another tenant, and [tenant ids](../multitenancy/Multitenancy-Tenant-Registration.html) that are not made of letters,
+  digits, dots, dashes and underscores are refused.
+- {: .fixed data-area="mfa"} Security: when a user picks one of their [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html)
+  devices to log in with, CAS accepts only a device it offered to that user; any other device id, such as one of another
+  user's devices, is refused and the device list is shown again, where it used to show that device on the login page.
+- {: .fixed data-area="authentication"} With [multitenancy](../multitenancy/Multitenancy-Performance.html), authentication
+  handlers built for a tenant, such as LDAP handlers with their connection pools, are closed once the request completes;
+  service ticket validation and other requests that only looked them up used to leave them open.
 
 ### SAML2
 {: .changed data-area="saml"}
@@ -1274,6 +1306,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   their use can be reported; the settings search still finds them, with their replacement where there is one.
 
 ## Other Stuff
+
+- {: .fixed data-area="authentication"} Devices authorized for [QR code authentication](../authentication/QRCode-Authentication.html)
+  and kept in a JSON file are no longer lost when several devices are authorized at the same time; a change could
+  overwrite another one made a moment earlier, and the device then stopped being recognized.
+
+- {: .changed data-area="operations"} With [multitenancy](../multitenancy/Multitenancy-Performance.html#what-cas-keeps-per-tenant),
+  the host name that routes requests to a tenant, the message bundles of a tenant and the keys a tenant uses for its cookies
+  are built once for each tenant definition, where they used to be built again for every request or message.
 
 - {: .fixed data-area="services"} A [chained consent policy](../integration/Attribute-Release-Consent.html) can be
   given in an application's definition, and the policies it lists are read with it.

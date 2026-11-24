@@ -254,8 +254,10 @@ async function verifyServiceImport(page, failures) {
         await page.waitForFunction(() => $(".swal2-title").text() === "3 Applications Imported", {timeout: 60000});
         const summary = await page.evaluate(() => $(".swal2-html-container").text());
         await cas.logg(`Importing several JSON files: ${summary}`);
-        assert(summary.includes("Broken.json"));
-        const unexpected = failures.splice(before).filter((failure) => !/registeredServices\/import/.test(failure));
+        assert(summary.includes("could not read or save") && summary.includes("Broken.json") && !summary.includes("may already be imported"),
+            `Only the broken file is refused, and nothing is left unconfirmed: ${summary}`);
+        const unexpected = failures.splice(before)
+            .filter((failure) => !(/registeredServices\/import/.test(failure) && /\b400\b/.test(failure)));
         failures.push(...unexpected);
         await page.evaluate(() => Swal.close());
         const many = await page.evaluate((imported) => [...registeredServicesById.values()]
@@ -324,7 +326,24 @@ async function verifyListAndExportGuards(page) {
     await cas.log(`Exporting when the login page answers: ${JSON.stringify(exported)}`);
     assert(exported.title === "The Selected Applications Were Not Exported" && exported.kept,
         "A login page is not saved as an export, and the selection is kept");
-    await cas.logg("Late lists, large ids and login pages answered to exports are handled");
+    const unchanged = await page.evaluate(() => {
+        const ajax = $.ajax;
+        const id = [...registeredServicesById.keys()][0];
+        const service = registeredServicesById.get(id);
+        $.ajax = function (options) {
+            if (typeof options === "object" && String(options.type ?? "GET").toUpperCase() === "PUT") {
+                return $.Deferred().resolve({...service, accessStrategy: {"@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy", enabled: true}}).promise();
+            }
+            return ajax.apply(this, arguments);
+        };
+        return PalantirApplicationAccess.save(id, true)
+            .then(() => "saved", (error) => String(error?.message ?? error))
+            .finally(() => {
+                $.ajax = ajax;
+            });
+    });
+    assert(unchanged.includes("did not confirm"), `Disabling is not reported when CAS answers with the application still enabled: ${unchanged}`);
+    await cas.logg("Late lists, large ids, login pages answered to exports and unconfirmed disables are handled");
 }
 
 /**

@@ -460,20 +460,22 @@ const PALANTIR_READ_ONLY = "palantir-read-only";
  * @returns {*} the value it holds
  */
 function palantirParseJson(text) {
-    return JSON.parse(String(text).replace(/("id"\s*:\s*)(-?\d{16,})(?=\s*[,}\]])/g,
+    return JSON.parse(String(text).replace(/("id"\s*:\s*)(-?(?:0|[1-9]\d*))(?=\s*[,}\]])/g,
         (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}"${digits}"`));
 }
 
 /**
  * Write JSON the way CAS reads it: an id kept as the text of its digits by {@link palantirParseJson}, because it is too
- * large for an exact JavaScript number, is written as the number it is.
+ * large for an exact JavaScript number, is written as the number it is. Only text that is a whole number as JSON
+ * writes one, with no leading zeros, is written so; any other text, such as "0012345678901234567", stays text, so
+ * the JSON stays valid.
  *
  * @param value the value
  * @param indent the indentation, as JSON.stringify takes it
  * @returns {string} the JSON text
  */
 function palantirStringifyJson(value, indent) {
-    return JSON.stringify(value, null, indent).replace(/("id"\s*:\s*)"(-?\d{16,})"/g,
+    return JSON.stringify(value, null, indent).replace(/("id"\s*:\s*)"(-?(?:0|[1-9]\d*))"/g,
         (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}${digits}`);
 }
 

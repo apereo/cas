@@ -130,6 +130,22 @@ When you learn something new, record it in the skill that owns the area, or here
   before it, on the original path), and a TGT created without a service takes the `ClientInfo` tenant through the `tenant`
   authentication attribute. Anything that builds a new `Service` from a request's service (selection strategies,
   compactors) must copy the tenant over.
+- Per-tenant resources: `TenantDefinition.bindProperties()` binds all of `CasConfigurationProperties` and is costly; never
+  call it per request or per message. Build what a tenant needs once per definition in a Caffeine `weakKeys()` cache keyed
+  by the `TenantDefinition` (identity), as `DefaultCipherExecutorResolver`, `TenantRoutingFilter` and
+  `CasReloadableMessageBundle` do; `DefaultTenantsManager` swaps in new definition instances on reload or save, which drops
+  the old entries. A tenant gets its own cipher only for settings under that cipher's crypto prefix
+  (`containsBindingUnder`), since a cipher built without keys generates random ones. Tenant authentication handlers are
+  built per call: hand them to `DisposableAuthenticationHandlers` rather than destroying them while the request may still
+  use them. Tenant definitions are written back in their stored form (`{cas-cipher}` values and expressions intact), and the
+  multitenancy endpoint masks secret-looking values with `TenantsManager.REDACTED_PROPERTY_VALUE`, which a save keeps as stored.
+- Tenant-scoped records are strict: a record with a tenant (`OneTimeTokenAccount`, `ConsentDecision`) counts only in that
+  tenant, and a record without one only outside any tenant (`isAssignedToTenant`). Shared repositories return every
+  tenant's records, so code acting for a user filters them (`OneTimeTokenCredentialRepository.getForCurrentTenant`/
+  `countForCurrentTenant`, `DefaultConsentEngine.findConsentDecision`); admin paths (actuators, MCP) stay unscoped.
+  `ClientFlowExecutionRepository` records the first tenant a webflow runs in and refuses a resume in another named tenant;
+  steps at the urls outside any tenant are allowed and keep the recorded tenant, since provider callbacks may land there. Tenant ids
+  must match `TenantsManager.TENANT_ID_PATTERN`.
 - A string cipher executor (`BaseStringCipherExecutor`) refuses a value whose signature cannot be verified by returning
   null from `decode` rather than throwing. Callers that turn the decoded value into an identity must reject a null or
   blank result themselves; `SimplePrincipal` accepts a null id, so a handler that relied on the exception
@@ -148,13 +164,19 @@ When you learn something new, record it in the skill that owns the area, or here
   write the whole map after every change) must replace a stored object with a changed copy, never mutate it in place:
   `PermissiveYubiKeyAccountRegistry` removed a device from the stored account's list and failed a concurrent JSON write
   with `ConcurrentModificationException`.
+- File-backed repositories that write a snapshot after each change and refresh from the file on reads must run the change,
+  the write and the refreshing read under one `CasReentrantLock`: two snapshots written out of order lose a change, and
+  the next refresh drops it from memory too (`JsonResourceQRAuthenticationDeviceRepository`).
+- Tests that set a tenant or other state on the thread's `ClientInfo` restore the previous `ClientInfo` in `finally`;
+  `CasTestExtension` sets a tenant-less one once per class, and later tests on the same thread rely on it.
 - Never add the Java `synchronized` keyword. When mutual exclusion is genuinely required, use `CasReentrantLock` and its execution helpers consistently with nearby CAS code.
 - If the user requests a `PLANS.md` plan, create it before implementation work and check off each step as it is completed.
 - When code cannot be compiled locally, check overridden and called signatures for checked exceptions (for example `ByteArrayResource.getInputStream()` declares `IOException`) and reuse helpers' existing filtering instead of repeating it.
 - Honor explicit verification boundaries. If the user asks not to run tests, do not invoke tests or Gradle tasks; perform static review such as `git diff --check` and clearly report what was not run.
 - For release-bound security work, add one brief, user-facing note to the appropriate security/protocol section of the requested release-notes file after the implementation is complete.
 - For all changes, cross check with puppeteer scenarios and make sure they continue to pass and are adjusted correctly.
-- Test sources compile with Error Prone and `-Werror`, so a warning such as `JdkObsolete` fails `compileTestJava`. When a test needs the flagged type on purpose (an unmodifiable `LinkedList` to get the non-`RandomAccess` wrapper), put `@SuppressWarnings("JdkObsolete")` on that test method.
+- Test sources compile with Error Prone and `-Werror`, so a warning such as `JdkObsolete` fails `compileTestJava`. When a test needs the flagged type on purpose (an unmodifiable `LinkedList` to get the non-`RandomAccess` wrapper), put `@SuppressWarnings("JdkObsolete")` on that test method. `DirectInvocationOnMock` fails a test that calls a stubbed
+  method on a mock outside `when(...)`/`verify(...)`: keep the object the stub returns in a local and assert on that.
 - `WebApplicationServiceFactory` validates HTTP service URLs (a host, no user information, no backslash), so never hand a registered service's regex `serviceId` such as `https://oauth\.example\.org.*` to `RegisteredServiceTestUtils.getService`; use a concrete URL that the pattern matches.
 - A fixed cipher key in a test must have the size the cipher expects: stringable encryption keys default to 512 bits (86 base64url characters) for `A256CBC-HS512`, and a shorter key fails with `DecryptionException`.
 - `DefaultServiceMatchingStrategy` compares service URLs verbatim up to the query and decodes only the query, so `+` and `%20` in parameters still match while an encoded `#` or `/` before the query never does.

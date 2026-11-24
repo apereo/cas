@@ -224,10 +224,13 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
             val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
             if (!tenantDefinition.getProperties().isEmpty()) {
+                val tenantHandlers = new ArrayList<AuthenticationHandler>();
                 getTenantAuthenticationHandlerBuilders()
                     .stream()
                     .map(builder -> builder.build(tenantDefinition))
-                    .forEach(handlers::addAll);
+                    .forEach(tenantHandlers::addAll);
+                DisposableAuthenticationHandlers.track(tenantHandlers);
+                handlers.addAll(tenantHandlers);
             }
         }
 

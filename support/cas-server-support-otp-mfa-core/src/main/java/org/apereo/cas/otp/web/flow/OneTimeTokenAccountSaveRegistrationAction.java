@@ -75,7 +75,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             }
 
             if (!isMultipleDeviceRegistrationEnabled(requestContext)
-                && repository.count(currentAcct.getUsername()) > 0) {
+                && repository.countForCurrentTenant(currentAcct.getUsername()) > 0) {
                 LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
                 return getErrorEvent(requestContext);
             }

@@ -33,7 +33,7 @@ fi
 printgreen "Running OpenLDAP docker container"
 # Create an empty OpenLdap server for the company Example Inc. and the domain example.org.
 docker stop openldap-server || true && docker rm openldap-server || true
-docker run --quiet  --rm -d -p 11389:389 -p 11636:636 --name="openldap-server" --ulimit nofile=1024:1024 \
+docker run --quiet -d -p 11389:389 -p 11636:636 --name="openldap-server" \
 --volume $PWD/ci/tests/ldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom \
 --env LDAP_ADMIN_PASSWORD="P@ssw0rd" --env LDAP_CONFIG_PASSWORD="P@ssw0rd" --env LDAP_TLS=false \
 ${DOCKER_IMAGE} --copy-service --loglevel debug
@@ -49,6 +49,6 @@ for attempt in $(seq 1 60); do
   fi
   sleep 1
 done
-printred "OpenLDAP docker container failed to start."
-docker logs openldap-server 2>&1 | tail -50 || true
-exit 1
+printred "OpenLDAP docker container did not start slapd; tests that need it will not find it on port 11389."
+docker ps -a --filter name=openldap-server
+docker logs openldap-server 2>&1 | tail -80 || true

@@ -43,6 +43,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
         val decisions = consentEngine.toConsentRepository(tenantId).findConsentDecisions(principal.getId());
         val resolved = decisions
             .stream()
+            .filter(consentDecision -> consentDecision.isAssignedToTenant(tenantId))
             .map(Unchecked.function(consentDecision -> {
                 val decision = AccountProfileConsentDecision.builder()
                     .id(consentDecision.getId())

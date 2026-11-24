@@ -621,9 +621,35 @@ class PalantirServiceEditGuard {
     }
 
     /**
+     * Ask the operator whether to save when CAS could not be asked whether someone else changed the application, as when
+     * the connection fails or the session expired and the login page answered instead.
+     *
+     * @param xhr the failed request
+     * @returns {Promise<string>} overwrite to save anyway, or cancel to keep editing
+     */
+    static async askWithoutCheck(xhr) {
+        const expired = xhr?.status === 401 || xhr?.status === 403 || xhr?.statusText === "parsererror"
+            || /text\/html/i.test(xhr?.getResponseHeader?.("Content-Type") ?? "");
+        const result = await Swal.fire({
+            title: "Could Not Check for Changes",
+            text: expired
+                ? "CAS did not answer with the application, and your session may have expired. Sign in again before saving, "
+                    + "or save anyway and replace whatever someone else may have saved."
+                : "CAS could not be asked whether someone else changed this application since you started editing it. "
+                    + "Saving anyway replaces whatever they may have saved.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Save Mine Anyway",
+            cancelButtonText: "Keep Editing",
+            focusCancel: true
+        });
+        return result.isConfirmed ? "overwrite" : "cancel";
+    }
+
+    /**
      * Read the application again before an edit is saved, and ask the operator what to do when someone else changed
-     * or deleted it since the edit started. An application whose id was changed in the edit, or that cannot be
-     * read for another reason, is saved as usual.
+     * or deleted it since the edit started. An application whose id was changed in the edit is saved as usual; when
+     * the application cannot be read again, the operator decides whether to save without the check.
      *
      * @param mode wizard or editor
      * @param text the definition about to be saved
@@ -651,7 +677,7 @@ class PalantirServiceEditGuard {
             });
         } catch (xhr) {
             if (xhr?.status !== 404) {
-                return "save";
+                return PalantirServiceEditGuard.askWithoutCheck(xhr);
             }
         }
         if (current && PalantirServiceEditGuard.normalize(palantirStringifyJson(current)) === PalantirServiceEditGuard.normalize(original.text)) {
