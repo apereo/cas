@@ -1043,18 +1043,6 @@ async function initializeFooterButtons() {
         }
     });
 
-    $("button[name=exportService]").off().on("click", async () => {
-        if (CasActuatorEndpoints.registeredServices()) {
-            const serviceId = $(exportServiceButton).attr("serviceId");
-            try {
-                await palantirDownloadExport(`${CasActuatorEndpoints.registeredServices()}/export/${encodeURIComponent(serviceId)}`,
-                    `${serviceId}.json`);
-            } catch (error) {
-                PalantirDialogs.error("The Application Was Not Exported", String(error?.message ?? error));
-            }
-        }
-    });
-
     $("button[name=exportAll]").off().on("click", async () => {
         if (CasActuatorEndpoints.registeredServices()) {
             try {

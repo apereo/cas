@@ -219,8 +219,21 @@ General view, theme and template rules are in the `cas-ui` skill.
   answer has `isConfirmed`), `error(title, text)` and `done(title, text)`; titles are text. Use `Swal.fire` directly
   only for pop-ups with their own buttons or content, such as forms.
 - Anything read again on its own goes through `PalantirPolling.every(name, run, {tab, panel, when, every})`: one clock,
-  paused while the browser tab is hidden or the poll does not apply, one request at a time, a run as soon as it applies
-  again, and the refresh interval read live from the settings. Never add a `setInterval` poller.
+  paused while the browser tab is hidden or the poll does not apply, one request at a time. The clock asks `applies`
+  (which lays the page out for a panel) only once a poll is due; a poll that was due while it did not apply is asked
+  again on `PalantirPolling.beat(true)`, which the page, panel and window changes send, so a new kind of context change
+  calls `notifyPalantirPollingContextChanged()`. Never add a `setInterval` poller.
+- A lookup that fills a panel goes through `PalantirBusy.during({region, after, button, label, failure, request})`,
+  never `PalantirDialogs.wait`: the panel is marked busy, a line under the form shows a bar, what is looked up and
+  Cancel (the request must have `abort()`), the old results stay dimmed, and a failure is reported on that line.
+  Clear and redraw the results only once `answered` is true. `PalantirDialogs.wait` is kept for server-wide operations
+  (restart, refresh, import, Groovy cache).
+- A poll that fills a panel passes `status: "#panel"` (and `focus: true` when its run checks the panel itself), so the
+  panel shows when it last read, whether it is paused, waiting in the background or failed, with Pause. A run reports
+  failure by rejecting or answering `false`. A panel with a toolbar marks the pill's place with
+  `data-palantir-poll-status`.
+- `palantirSettings()` is read from the browser once and kept; whatever writes the settings calls
+  `forgetPalantirSettings()` (another tab's change is picked up from the `storage` event).
 - Polled tables redraw with `draw(false)` so paging survives a refresh, and each poll is wrapped in `palantirOneAtATime`
   (palantir-utils.js) so a slow endpoint never gets a second request while the first is on its way; a reload after a
   change calls the unwrapped function. Every value in an actuator URL path or query goes through `encodeURIComponent`.

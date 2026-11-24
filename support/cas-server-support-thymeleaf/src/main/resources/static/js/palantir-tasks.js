@@ -394,7 +394,7 @@ async function initializeScheduledTasksOperations() {
 
     if (CasActuatorEndpoints.metrics() || CasActuatorEndpoints.threadDump()) {
         await refreshTasksMetrics();
-        PalantirPolling.every("tasks", refreshTasksMetrics, {tab: Tabs.TASKS});
+        PalantirPolling.every("tasks", refreshTasksMetrics, {tab: Tabs.TASKS, status: "#threaddump-tab"});
     }
 }
 

@@ -1045,7 +1045,7 @@ async function initializePrometheusChartData() {
 
 function startPrometheusRefresh() {
     prometheusRefreshTimer ??= PalantirPolling.every("Prometheus charts", refreshPrometheusCharts,
-        {tab: Tabs.SYSTEM, panel: "#prometheusmetrics-tab"});
+        {tab: Tabs.SYSTEM, panel: "#prometheusmetrics-tab", status: "#prometheusmetrics-tab"});
 }
 
 async function refreshPrometheusCharts() {

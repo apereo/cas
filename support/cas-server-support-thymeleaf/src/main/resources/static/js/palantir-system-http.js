@@ -259,46 +259,48 @@ function httpExchangeIsStaticAssetPath(path) {
         .some(extension => value.endsWith(extension));
 }
 
+/**
+ * Whether the charts count a request: requests to Palantir itself, such as its pages, scripts and styles, to web
+ * libraries, to the actuator and for static files are left out, whoever made them.
+ *
+ * @param entry the request
+ * @returns {boolean} true when the charts count it
+ */
 function httpExchangeUrlIsAcceptable(entry) {
     const path = stripHttpExchangeQuery(entry.path);
-    const normalizedEntry = {...entry, path};
-    if (httpExchangeIsWebjarsPath(path)) {
-        return false;
-    }
-    if (httpExchangeIsPalantirOrWebjarsPath(path)) {
-        return !httpExchangeIsPalantirGeneratedRequest(normalizedEntry);
-    }
-    return !httpExchangeIsActuatorPath(path)
+    return !httpExchangeIsPalantirOrWebjarsPath(path)
+        && !httpExchangeIsActuatorPath(path)
         && !httpExchangeIsStaticAssetPath(path);
 }
 
 function updateHttpExchangeCharts(entries) {
-    let httpSuccesses = [];
-    let httpFailures = [];
-    let httpSuccessesPerUrl = [];
-    let httpFailuresPerUrl = [];
+    const httpSuccesses = [];
+    const httpFailures = [];
+    const perUrl = new Map();
 
-    let totalHttpSuccessPerUrl = 0;
     let totalHttpSuccess = 0;
-    let totalHttpFailurePerUrl = 0;
     let totalHttpFailure = 0;
 
     for (const entry of entries) {
         const url = stripHttpExchangeQuery(entry.path);
         if (httpExchangeUrlIsAcceptable(entry)) {
+            const counts = perUrl.get(url) ?? {success: 0, failure: 0};
+            perUrl.set(url, counts);
+            const time = entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time;
             if (entry.status >= 100 && entry.status <= 400) {
                 totalHttpSuccess++;
-                httpSuccesses.push({x: entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time, y: totalHttpSuccess});
-                totalHttpSuccessPerUrl++;
-                httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
+                httpSuccesses.push({x: time, y: totalHttpSuccess});
+                counts.success++;
             } else {
                 totalHttpFailure++;
-                httpFailures.push({x: entry.timestamp ? formatDateYearMonthDayHourMinute(entry.timestamp) : entry.time, y: totalHttpFailure});
-                totalHttpFailurePerUrl++;
-                httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
+                httpFailures.push({x: time, y: totalHttpFailure});
+                counts.failure++;
             }
         }
     }
+    const urls = [...perUrl.entries()].sort(([, first], [, second]) => second.success + second.failure - first.success - first.failure);
+    const httpSuccessesPerUrl = urls.map(([url, counts]) => ({x: url, y: counts.success}));
+    const httpFailuresPerUrl = urls.map(([url, counts]) => ({x: url, y: counts.failure}));
     if (!httpRequestResponsesChart || !httpRequestsByUrlChart) {
         return;
     }

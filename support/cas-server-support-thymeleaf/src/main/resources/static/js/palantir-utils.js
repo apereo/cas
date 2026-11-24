@@ -619,13 +619,139 @@ function palantirOneAtATime(poll) {
 }
 
 /**
+ * Show that a lookup is on its way inside the panel it fills, rather than in a pop-up that blocks the whole dashboard
+ * until the server answers. The panel is marked busy at once; if the answer takes longer than a moment, a line above
+ * the results, or under the form that asked, shows a moving bar, what is being looked up and a Cancel link, the button
+ * that started it shows a spinner, and the tables and cards already shown are dimmed but stay until the answer
+ * replaces them. Clicking the button again
+ * while the lookup runs does nothing. A lookup that fails says so on the same line, which stays until the next one.
+ */
+class PalantirBusy {
+    static DELAY = 200;
+
+    static running = new WeakSet();
+
+    /**
+     * Run a lookup that fills a panel.
+     *
+     * @param options <code>region</code>: the results the lookup fills; <code>after</code>: what the line goes under,
+     *        such as the form that asked, when not right above the results; <code>button</code>: the button that started
+     *        it, if any, and <code>busy</code>: what the button says meanwhile; <code>label</code>: what is being looked
+     *        up, such as "Looking up casuser"; <code>failure</code>: what could not be done, such as "The sessions could
+     *        not be read", or null when the caller reports a failure itself, which is then thrown;
+     *        <code>request</code>: starts the lookup and returns the jQuery request, or a promise
+     * @returns {Promise<{answered: boolean, value: *}>} whether the server answered, and its answer; false when the
+     *        lookup was already running, was cancelled or failed
+     */
+    static async during({region, after = null, button = null, busy = "Looking Up", label, failure = null, request}) {
+        const panel = $(region).first();
+        const element = panel[0];
+        if (!element || PalantirBusy.running.has(element)) {
+            return {answered: false, value: undefined};
+        }
+        PalantirBusy.running.add(element);
+        const line = PalantirBusy.line(panel, after);
+        const started = {request: null, cancelled: false};
+        panel.attr("aria-busy", "true");
+        const shown = setTimeout(() => PalantirBusy.show(panel, line, {button, busy, label}, started), PalantirBusy.DELAY);
+        try {
+            started.request = request();
+            const value = await started.request;
+            line.prop("hidden", true).removeClass("is-error").empty();
+            return {answered: true, value};
+        } catch (error) {
+            if (started.cancelled || error?.statusText === "abort" || failure === null) {
+                line.prop("hidden", true).removeClass("is-error").empty();
+                if (!started.cancelled && error?.statusText !== "abort") {
+                    throw error;
+                }
+            } else {
+                console.error(failure, error);
+                PalantirBusy.fail(line, failure, error);
+            }
+            return {answered: false, value: undefined};
+        } finally {
+            clearTimeout(shown);
+            PalantirBusy.running.delete(element);
+            panel.removeAttr("aria-busy").removeClass("is-loading");
+            PalantirBusy.restore(button);
+        }
+    }
+
+    /**
+     * The line that tells how a panel's lookup is going, made the first time it is needed.
+     *
+     * @param panel the panel
+     * @param after what the line goes under, if not right above the panel
+     * @returns {jQuery} the line
+     */
+    static line(panel, after) {
+        const anchor = after === null ? null : $(after).first();
+        const existing = anchor === null ? panel.prev(".palantir-busy") : anchor.next(".palantir-busy");
+        if (existing.length > 0) {
+            return existing;
+        }
+        const line = $("<div>", {class: "palantir-busy", role: "status", "aria-live": "polite", hidden: true});
+        if (anchor === null) {
+            panel.before(line);
+        } else {
+            anchor.after(line);
+        }
+        return line;
+    }
+
+    static show(panel, line, {button, busy, label}, started) {
+        panel.addClass("palantir-busy-region is-loading");
+        const cancel = $("<button>", {type: "button", class: "palantir-busy__cancel", text: "Cancel"})
+            .on("click", () => {
+                started.cancelled = true;
+                started.request?.abort?.();
+            });
+        line.removeClass("is-error").empty().prop("hidden", false).append(
+            $("<span>", {class: "palantir-progress__track palantir-busy__track is-busy", "aria-hidden": "true"})
+                .append($("<span>", {class: "palantir-progress__bar"})),
+            $("<span>", {class: "palantir-busy__text", text: `${label}…`}),
+            typeof started.request?.abort === "function" ? cancel : "");
+        const target = $(button).first();
+        const text = target.find(".mdc-button__label");
+        if (text.length > 0 && target.data("palantirBusyLabel") === undefined) {
+            target.data("palantirBusyLabel", text.html()).addClass("is-busy");
+            text.empty().append($("<i>", {class: "mdc-tab__icon mdi mdi-loading mdi-spin", "aria-hidden": "true"}), busy);
+        }
+    }
+
+    static restore(button) {
+        const target = $(button).first();
+        const original = target.data("palantirBusyLabel");
+        if (original !== undefined) {
+            target.find(".mdc-button__label").html(original);
+            target.removeData("palantirBusyLabel").removeClass("is-busy");
+        }
+    }
+
+    static fail(line, failure, error) {
+        const reason = error?.responseJSON?.message ?? error?.responseJSON?.error
+            ?? (error?.status === 0 ? "CAS did not answer." : null)
+            ?? (error?.status ? `CAS answered ${error.status}${error.statusText ? ` ${error.statusText}` : ""}.` : null)
+            ?? String(error?.message ?? error ?? "");
+        line.addClass("is-error").empty().prop("hidden", false).append(
+            $("<i>", {class: "mdi mdi-alert-circle-outline", "aria-hidden": "true"}),
+            $("<span>", {class: "palantir-busy__text", text: reason ? `${failure}: ${reason}` : `${failure}.`}));
+    }
+}
+
+/**
  * The one scheduler of everything Palantir reads again on its own, such as a table of events or the charts of a page.
  * Each poll says when it applies, such as only while its page or panel is shown; a single clock then runs the polls
- * that apply as often as the refresh interval in the settings says, read on every beat so a change applies at once.
+ * that apply as often as the refresh interval in the settings says, so a change of the interval applies at once.
  * A poll is counted as run when it is registered, since its page reads it then, and whenever it is run by hand, so the
  * clock never reads the same thing twice in a row.
- * Nothing runs while the browser tab is hidden; a poll runs one request at a time; and a poll that did not apply for a
- * while, such as when its page was hidden, runs as soon as it applies again, rather than on the next beat.
+ * The clock asks whether a poll applies only once the poll is due, since asking whether a panel is shown lays the page
+ * out. Nothing runs while the browser tab is hidden; a poll runs one request at a time; and a poll that was due while
+ * it did not apply, such as when its page was hidden, is asked again when the page, panel or window shown changes, and
+ * runs as soon as it applies, or else at its next time. A poll can show how it is going in the panels it fills (see
+ * {@link PalantirPollStatus}), where it can also be paused; a paused poll is not run by the clock, and a poll whose
+ * panel has a menu open or text selected waits until they are gone, so a redraw never takes them away.
  */
 class PalantirPolling {
     static BEAT = 1000;
@@ -641,15 +767,19 @@ class PalantirPolling {
      * @param run reads it, returning what it started (a promise or a jQuery request), if anything
      * @param options <code>tab</code> and <code>panel</code>: the page, and the panel on it, that must be shown;
      *        <code>when</code>: any other condition; <code>every</code>: how often, in milliseconds, when not as often as
-     *        the refresh interval
+     *        the refresh interval; <code>status</code>: the panels that show how the poll is going, if any;
+     *        <code>focus</code>: whether the poll reads only while the window has focus, as a poll of a panel does
      * @returns {function(): *} the poll, to run it at once, one request at a time, such as after a change
      */
-    static every(name, run, {tab = null, panel = null, when = null, every = null} = {}) {
-        const poll = {name, last: Date.now(), missed: false};
+    static every(name, run, {tab = null, panel = null, when = null, every = null, status = null, focus = panel !== null} = {}) {
+        const poll = {
+            name, last: Date.now(), missed: false, asked: 0, status, focus,
+            paused: false, held: false, refreshing: false, succeeded: Date.now(), failed: null
+        };
         poll.run = palantirOneAtATime(() => {
             poll.last = Date.now();
             poll.missed = false;
-            return run();
+            return PalantirPollStatus.track(poll, run());
         });
         poll.applies = () => {
             if (tab !== null) {
@@ -672,32 +802,224 @@ class PalantirPolling {
             return;
         }
         PalantirPolling.clock = setInterval(() => PalantirPolling.beat(), PalantirPolling.BEAT);
-        document.addEventListener("visibilitychange", () => PalantirPolling.beat());
-        window.addEventListener(palantirPollingContextEvent, () => PalantirPolling.beat());
+        document.addEventListener("visibilitychange", () => PalantirPolling.beat(true));
+        window.addEventListener(palantirPollingContextEvent, () => PalantirPolling.beat(true));
+        window.addEventListener("storage", event => {
+            if (event.key === null || event.key === PALANTIR_SETTINGS_KEY) {
+                forgetPalantirSettings();
+            }
+        });
     }
 
-    static beat() {
+    /**
+     * Run the polls that are due and apply.
+     *
+     * @param changed whether the page, panel or window shown changed, so the polls that were due while they did not
+     *        apply are asked again
+     */
+    static beat(changed = false) {
         if (document.visibilityState !== "visible") {
             return;
         }
         const now = Date.now();
         for (const poll of PalantirPolling.polls) {
-            let applies = false;
-            try {
-                applies = poll.applies();
-            } catch (error) {
-                console.debug(`Palantir could not tell whether to read ${poll.name} again`, error);
-            }
-            if (!applies) {
-                poll.missed = true;
-            } else if (poll.missed || now - poll.last >= poll.period()) {
-                try {
-                    poll.run();
-                } catch (error) {
-                    console.debug(`Palantir could not read ${poll.name} again`, error);
+            PalantirPolling.consider(poll, now, changed);
+            PalantirPollStatus.render(poll, now);
+        }
+    }
+
+    static consider(poll, now, changed) {
+        const period = poll.period();
+        const due = poll.missed ? changed || now - poll.asked >= period : now - poll.last >= period;
+        if (!due || poll.paused) {
+            return;
+        }
+        poll.held = poll.status !== null && PalantirPollStatus.holding(poll);
+        if (poll.held) {
+            return;
+        }
+        let applies = false;
+        poll.asked = now;
+        try {
+            applies = poll.applies();
+        } catch (error) {
+            console.debug(`Palantir could not tell whether to read ${poll.name} again`, error);
+        }
+        if (!applies) {
+            poll.missed = true;
+            return;
+        }
+        try {
+            poll.run();
+        } catch (error) {
+            console.debug(`Palantir could not read ${poll.name} again`, error);
+        }
+    }
+}
+
+/**
+ * How a poll is going, shown at the top of each panel it fills: when it last read, whether a read is on its way,
+ * whether the operator paused it, whether it waits because the window is in the background or because a menu is open
+ * or text is selected in the panel, and whether the last read failed. The time since the last read is updated by the
+ * clock, as text only. The pill offers Pause, so a table can be read or copied from without rows moving under it.
+ */
+class PalantirPollStatus {
+    static STATES = Object.freeze({
+        live: "mdi-check-circle-outline",
+        refreshing: "mdi-refresh mdi-spin",
+        paused: "mdi-pause",
+        background: "mdi-eye-off-outline",
+        held: "mdi-hand-back-left-outline",
+        failed: "mdi-alert-outline"
+    });
+
+    /**
+     * Follow a read the clock or the page started: on its way until it settles, then read or failed. A read that
+     * answers <code>false</code> failed too.
+     *
+     * @param poll the poll
+     * @param started what the read started, if anything
+     * @returns {*} what the read started
+     */
+    static track(poll, started) {
+        if (!started || typeof started.then !== "function") {
+            return started;
+        }
+        poll.refreshing = true;
+        PalantirPollStatus.render(poll, Date.now());
+        return Promise.resolve(started)
+            .then(result => {
+                if (result === false) {
+                    poll.failed = Date.now();
+                } else {
+                    poll.succeeded = Date.now();
+                    poll.failed = null;
                 }
+                return result;
+            }, error => {
+                poll.failed = Date.now();
+                throw error;
+            })
+            .finally(() => {
+                poll.refreshing = false;
+                PalantirPollStatus.render(poll, Date.now());
+            });
+    }
+
+    /**
+     * Whether a poll should wait: a menu is open, or text is selected in one of its panels, which a redraw would lose.
+     *
+     * @param poll the poll
+     * @returns {boolean} true while it should wait
+     */
+    static holding(poll) {
+        const selection = document.getSelection();
+        if (selection && !selection.isCollapsed && selection.anchorNode
+            && PalantirPollStatus.panels(poll).some(panel => panel.contains(selection.anchorNode))) {
+            return true;
+        }
+        return Array.from(document.querySelectorAll(".context-menu-list.context-menu-root"))
+            .some(menu => menu.style.display !== "none" && menu.isConnected);
+    }
+
+    static panels(poll) {
+        return poll.status === null ? [] : Array.from(document.querySelectorAll(poll.status));
+    }
+
+    static describe(poll, now) {
+        if (poll.paused) {
+            return {state: "paused", text: "Paused by you", action: "Resume"};
+        }
+        if (poll.refreshing) {
+            return {state: "refreshing", text: "Refreshing…", action: "Pause"};
+        }
+        if (poll.focus && (document.visibilityState !== "visible" || !document.hasFocus())) {
+            return {state: "background", text: "Paused while the window is in the background", action: null};
+        }
+        if (poll.held) {
+            return {state: "held", text: "Waiting while a menu is open or text is selected", action: "Pause"};
+        }
+        if (poll.failed !== null) {
+            const time = new Date(poll.failed).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+            return {state: "failed", text: `Refresh failed ${time} · retrying`, action: "Pause"};
+        }
+        const seconds = Math.max(0, Math.round((now - poll.succeeded) / 1000));
+        const ago = seconds < 5 ? "just now" : seconds < 60 ? `${seconds}s ago` : `${Math.floor(seconds / 60)} min ago`;
+        const period = Math.round(poll.period() / 1000);
+        const every = period < 60 ? `every ${period}s` : `every ${Math.round(period / 60)} min`;
+        return {state: "live", text: `Updated ${ago} · ${every}`, action: "Pause"};
+    }
+
+    /**
+     * Show how a poll is going in its panels, changing only what changed.
+     *
+     * @param poll the poll
+     * @param now the time
+     */
+    static render(poll, now) {
+        if (poll.status === null) {
+            return;
+        }
+        const {state, text, action} = PalantirPollStatus.describe(poll, now);
+        for (const panel of PalantirPollStatus.panels(poll)) {
+            const pill = PalantirPollStatus.pill(poll, panel);
+            if (pill.dataset.state !== state) {
+                pill.dataset.state = state;
+                pill.querySelector(".palantir-poll-status__icon").className = `palantir-poll-status__icon mdi ${PalantirPollStatus.STATES[state]}`;
+            }
+            const label = pill.querySelector(".palantir-poll-status__text");
+            if (label.textContent !== text) {
+                label.textContent = text;
+            }
+            const toggle = pill.querySelector(".palantir-poll-status__toggle");
+            toggle.hidden = action === null;
+            if (action !== null && toggle.dataset.action !== action) {
+                toggle.dataset.action = action;
+                toggle.setAttribute("aria-pressed", String(action === "Resume"));
+                toggle.querySelector(".mdi").className = `mdi ${action === "Resume" ? "mdi-play" : "mdi-pause"}`;
+                toggle.querySelector(".palantir-poll-status__action").textContent = action;
             }
         }
+    }
+
+    /**
+     * The pill of a poll in a panel, made the first time it is shown: in the panel's place for it, marked
+     * <code>data-palantir-poll-status</code>, such as a toolbar, or else at the top of the panel.
+     *
+     * @param poll the poll
+     * @param panel the panel
+     * @returns {HTMLElement} the pill
+     */
+    static pill(poll, panel) {
+        const slot = panel.querySelector("[data-palantir-poll-status]") ?? panel;
+        const existing = Array.from(slot.children).find(child => child.matches(".palantir-poll-status"));
+        if (existing) {
+            return existing;
+        }
+        const pill = $("<div>", {class: "palantir-poll-status", "data-poll": poll.name})
+            .append($("<span>", {class: "palantir-poll-status__state"}).append(
+                $("<i>", {class: "palantir-poll-status__icon mdi", "aria-hidden": "true"}),
+                $("<span>", {class: "palantir-poll-status__text"})))
+            .append($("<button>", {type: "button", class: "palantir-poll-status__toggle", title: `Pause or resume reading ${poll.name} again`})
+                .append($("<i>", {class: "mdi mdi-pause", "aria-hidden": "true"}),
+                    $("<span>", {class: "palantir-poll-status__action", text: "Pause"}))
+                .on("click", () => PalantirPollStatus.toggle(poll)))[0];
+        slot.prepend(pill);
+        return pill;
+    }
+
+    /**
+     * Pause a poll, or resume it, reading at once if it is due.
+     *
+     * @param poll the poll
+     */
+    static toggle(poll) {
+        poll.paused = !poll.paused;
+        if (!poll.paused) {
+            poll.missed = true;
+            PalantirPolling.beat(true);
+        }
+        PalantirPollStatus.render(poll, Date.now());
     }
 }
 

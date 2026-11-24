@@ -948,12 +948,18 @@ class PalantirSamlMetadataImport {
             throw new Error("Reading metadata from a URL needs the SAML2 metadata cache endpoint. Paste or choose the metadata instead.");
         }
         let preview = await PalantirSamlMetadataImport.preview(request.url);
+        if (preview === null) {
+            return null;
+        }
         if (!preview.metadata) {
             const chosen = await PalantirSamlMetadataImport.choose(preview.entities ?? []);
             if (!chosen) {
                 return null;
             }
             preview = await PalantirSamlMetadataImport.preview(request.url, chosen);
+            if (preview === null) {
+                return null;
+            }
         }
         const entity = PalantirSamlMetadataNames.serviceProviders(PalantirSamlMetadataNames.parse(preview.metadata))[0];
         if (!entity) {
@@ -963,19 +969,22 @@ class PalantirSamlMetadataImport {
     }
 
     /**
-     * Ask the server to read the metadata at a URL.
+     * Ask the server to read the metadata at a URL, showing in the wizard that it is being read, with a way to cancel.
      *
      * @param url the metadata URL
      * @param entityId the service provider to read from an aggregate, if any
-     * @returns {Promise<object>} the service providers the metadata holds and the metadata of the one read, if any
+     * @returns {Promise<object|null>} the service providers the metadata holds and the metadata of the one read, if
+     *        any, or null when the reading was cancelled
      */
     static async preview(url, entityId = null) {
-        PalantirDialogs.wait("Reading Metadata", url);
-        try {
-            return await PalantirSamlMetadataImport.request(url, entityId);
-        } finally {
-            Swal.close();
-        }
+        const {answered, value} = await PalantirBusy.during({
+            region: "#editServiceWizardForm",
+            button: "#fillServiceWizardFromMetadata",
+            busy: "Reading",
+            label: `Reading the metadata at ${url}`,
+            request: () => PalantirSamlMetadataImport.request(url, entityId)
+        });
+        return answered ? value : null;
     }
 
     /**
@@ -983,20 +992,25 @@ class PalantirSamlMetadataImport {
      *
      * @param url the metadata URL
      * @param entityId the service provider to read from an aggregate, if any
-     * @returns {Promise<object>} the service providers the metadata holds and the metadata of the one read, if any
+     * @returns {Promise<object>} the service providers the metadata holds and the metadata of the one read, if any,
+     *        with <code>abort()</code> to stop reading
      */
-    static async request(url, entityId = null) {
-        try {
-            return await $.ajax({
-                url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache()}/preview`,
-                method: "GET",
-                data: entityId ? {metadataLocation: url, entityId: entityId} : {metadataLocation: url},
-                dataType: "json",
-                headers: {"Accept": "application/json"}
-            });
-        } catch (xhr) {
-            throw new Error(xhr?.responseJSON?.error ?? `CAS could not read the metadata at ${url}.`, {cause: xhr});
-        }
+    static request(url, entityId = null) {
+        const xhr = $.ajax({
+            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache()}/preview`,
+            method: "GET",
+            data: entityId ? {metadataLocation: url, entityId: entityId} : {metadataLocation: url},
+            dataType: "json",
+            headers: {"Accept": "application/json"}
+        });
+        const answer = Promise.resolve(xhr).catch(failed => {
+            if (failed?.statusText === "abort") {
+                throw failed;
+            }
+            throw new Error(failed?.responseJSON?.error ?? `CAS could not read the metadata at ${url}.`, {cause: failed});
+        });
+        answer.abort = () => xhr.abort();
+        return answer;
     }
 
     /**

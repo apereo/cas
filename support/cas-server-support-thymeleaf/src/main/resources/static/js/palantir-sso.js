@@ -437,46 +437,47 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-    $("#springSessionsButton").off().on("click", () => {
+    $("#springSessionsButton").off().on("click", async () => {
         if (CasActuatorEndpoints.sessions()) {
             const form = document.getElementById("fmSpringSessions");
             if (!form.reportValidity()) {
                 return false;
             }
             const username = $("#springSessionUsername").val();
-            PalantirDialogs.wait(`Fetching Spring Sessions for ${username}`, "Please wait while Spring Sessions are retrieved...");
-            springSessionsTable.clear();
-            springSessionsById.clear();
-            $.ajax({
-                url: `${CasActuatorEndpoints.sessions()}?username=${encodeURIComponent(username)}`,
-                type: "GET",
-                contentType: "application/x-www-form-urlencoded",
-                success: (response, status, xhr) => {
-                    for (const session of response.sessions) {
-                        springSessionsById.set(session.id, session);
-                        const attributes = springSessionAttributes(session);
-                        springSessionsTable.row.add({
-                            0: `${palantirCode(session.id)}`,
-                            1: `${palantirCode(session.creationTime)}`,
-                            2: `${palantirCode(session.lastAccessedTime)}`,
-                            3: `${palantirCode(formatSpringSessionIdleTime(session))}`,
-                            4: `${palantirCode(formatSpringSessionDuration(springSessionMaxInactiveInterval(session)))}`,
-                            5: `${palantirCode(attributes.length)}`,
-                            sessionId: session.id,
-                            record: session
-                        });
-                    }
-                    $("#springSessionsCards").data("searched", username);
-                    springSessionsTable.draw();
-                    Swal.close();
-                },
-                error: (xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    Swal.close();
-                    displayBanner(xhr);
-                }
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#springsession-tab",
+                after: "#fmSpringSessions",
+                button: "#springSessionsButton",
+                label: `Looking up the Spring sessions of ${username}`,
+                failure: `The Spring sessions of ${username} could not be read`,
+                request: () => $.ajax({
+                    url: `${CasActuatorEndpoints.sessions()}?username=${encodeURIComponent(username)}`,
+                    type: "GET",
+                    contentType: "application/x-www-form-urlencoded"
+                })
             });
+            if (answered) {
+                springSessionsTable.clear();
+                springSessionsById.clear();
+                for (const session of response.sessions) {
+                    springSessionsById.set(session.id, session);
+                    const attributes = springSessionAttributes(session);
+                    springSessionsTable.row.add({
+                        0: `${palantirCode(session.id)}`,
+                        1: `${palantirCode(session.creationTime)}`,
+                        2: `${palantirCode(session.lastAccessedTime)}`,
+                        3: `${palantirCode(formatSpringSessionIdleTime(session))}`,
+                        4: `${palantirCode(formatSpringSessionDuration(springSessionMaxInactiveInterval(session)))}`,
+                        5: `${palantirCode(attributes.length)}`,
+                        sessionId: session.id,
+                        record: session
+                    });
+                }
+                $("#springSessionsCards").data("searched", username);
+                springSessionsTable.draw();
+            }
         }
+        return false;
     });
 
     $("#removeSsoSessionButton").off().on("click", () => {
@@ -512,61 +513,58 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-    $("button[name=ssoSessionButton]").off().on("click", () => {
+    $("button[name=ssoSessionButton]").off().on("click", async () => {
         if (CasActuatorEndpoints.ssoSessions()) {
             const form = document.getElementById("fmSsoSessions");
             if (!form.reportValidity()) {
                 return false;
             }
             const username = $("#ssoSessionUsername").val();
-            PalantirDialogs.wait(`Fetching SSO Sessions for ${username}`, "Please wait while single sign-on sessions are retrieved...");
-
-            ssoSessionsTable.clear();
-            ssoSessionApplicationsTable.clear();
-
-            $.ajax({
-                url: `${CasActuatorEndpoints.ssoSessions()}/users/${encodeURIComponent(username)}`,
-                type: "GET",
-                contentType: "application/x-www-form-urlencoded",
-                success: (response, status, xhr) => {
-                    for (const session of response.activeSsoSessions) {
-                        const attributes = {
-                            principal: session["principal_attributes"],
-                            authentication: session["authentication_attributes"]
-                        };
-
-                        const services = {};
-                        for (const [key, value] of Object.entries(session["authenticated_services"])) {
-                            services[key] = {id: value.id};
-                        }
-
-                        ssoSessionsTable.row.add({
-                            0: `${palantirCode(session["authentication_date"])}`,
-                            1: `${palantirCode(session["ticket_granting_ticket"])}`,
-                            2: `${palantirCode(session["authentication_attributes"]?.clientIpAddress?.[0])}`,
-                            3: `${palantirCode(session["authentication_attributes"]?.userAgent?.[0])}`,
-                            4: `${palantirCode(session["number_of_uses"])}`,
-                            5: `${palantirCode(session["remember_me"])}`,
-                            6: JSON.stringify(attributes),
-                            ticketGrantingTicket: session.ticket_granting_ticket,
-                            attributes: attributes,
-                            services: services,
-                            record: session
-                        });
-                    }
-                    $("#ssoSessionsCards").data("searched", username);
-                    ssoSessionsTable.draw();
-
-                    Swal.close();
-
-                },
-                error: (xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    Swal.close();
-                    displayBanner(xhr);
-                }
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#ssosessions-tab",
+                after: "#fmSsoSessions",
+                button: "button[name=ssoSessionButton]",
+                label: `Looking up the single sign-on sessions of ${username}`,
+                failure: `The single sign-on sessions of ${username} could not be read`,
+                request: () => $.ajax({
+                    url: `${CasActuatorEndpoints.ssoSessions()}/users/${encodeURIComponent(username)}`,
+                    type: "GET",
+                    contentType: "application/x-www-form-urlencoded"
+                })
             });
+            if (answered) {
+                ssoSessionsTable.clear();
+                ssoSessionApplicationsTable.clear();
+                for (const session of response.activeSsoSessions) {
+                    const attributes = {
+                        principal: session["principal_attributes"],
+                        authentication: session["authentication_attributes"]
+                    };
+
+                    const services = {};
+                    for (const [key, value] of Object.entries(session["authenticated_services"])) {
+                        services[key] = {id: value.id};
+                    }
+
+                    ssoSessionsTable.row.add({
+                        0: `${palantirCode(session["authentication_date"])}`,
+                        1: `${palantirCode(session["ticket_granting_ticket"])}`,
+                        2: `${palantirCode(session["authentication_attributes"]?.clientIpAddress?.[0])}`,
+                        3: `${palantirCode(session["authentication_attributes"]?.userAgent?.[0])}`,
+                        4: `${palantirCode(session["number_of_uses"])}`,
+                        5: `${palantirCode(session["remember_me"])}`,
+                        6: JSON.stringify(attributes),
+                        ticketGrantingTicket: session.ticket_granting_ticket,
+                        attributes: attributes,
+                        services: services,
+                        record: session
+                    });
+                }
+                $("#ssoSessionsCards").data("searched", username);
+                ssoSessionsTable.draw();
+            }
         }
+        return false;
     });
 
     $("button[name=removeAllSsoSessionsButton]").off().on("click", () => {

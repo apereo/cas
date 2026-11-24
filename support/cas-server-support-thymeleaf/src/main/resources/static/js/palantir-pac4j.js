@@ -127,16 +127,18 @@ function configureSaml2ClientMetadataButtons() {
         $.get(url, payload => showSamlMetadata(payload));
     }
 
-    function showSaml2ClientIdpMetadata(clientName) {
+    async function showSaml2ClientIdpMetadata(clientName) {
         const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/idp/metadata`;
-
-        PalantirDialogs.wait(`Fetching SAML2 Identity Provider Metadata for ${clientName}`, "Please wait while data is being retrieved...");
-
-        $.get(url, async payload => {
+        const {answered, value: payload} = await PalantirBusy.during({
+            region: "#delegatedClientsCards",
+            label: `Reading the identity provider metadata of ${clientName}`,
+            failure: `The identity provider metadata of ${clientName} could not be read`,
+            request: () => $.get(url)
+        });
+        if (answered) {
             await showSamlMetadata(payload);
             await updateNavigationSidebar();
-            Swal.close();
-        });
+        }
     }
 
     initializeContextMenu({
@@ -252,7 +254,6 @@ async function loadExternalIdentityProvidersTable() {
     $("#delegatedClientsSummary").addClass("d-none");
     if (CasActuatorEndpoints.delegatedClients()) {
         setExternalIdentityProviderStatus("mdi-loading mdi-spin", "Loading external identity providers...");
-        PalantirDialogs.wait(`Loading Identity Providers`, "Please wait while external identity providers are being retrieved...");
         $.get(CasActuatorEndpoints.delegatedClients(), response => {
             const identityProviders = response && typeof response === "object" && !Array.isArray(response)
                 ? Object.entries(response).sort(([first], [second]) => first.localeCompare(second))
@@ -272,7 +273,6 @@ async function loadExternalIdentityProvidersTable() {
             showElements($("#delegatedclients").parent());
             updateNavigationSidebar();
             configureSaml2ClientMetadataButtons();
-            Swal.close();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             delegatedClientsCards.empty();
@@ -281,7 +281,6 @@ async function loadExternalIdentityProvidersTable() {
             hideElements("#delegatedClientsContainer");
             hideElements($("#delegatedclients").parent());
             displayBanner(xhr);
-            Swal.close();
         });
     } else {
         delegatedClientsCards.empty();
@@ -639,7 +638,7 @@ function newExternalIdentityProvider() {
                                 $(this).dialog("close");
                                 $.get(CasActuatorEndpoints.env(), async res => {
                                     reloadPalantirConfigurationTable(res);
-                                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                                    refreshCasServerConfiguration("New External Identity Provider Created");
                                 })
                                     .fail((xhr) => {
                                         displayBanner(xhr);

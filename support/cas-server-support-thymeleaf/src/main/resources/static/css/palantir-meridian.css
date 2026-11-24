@@ -10110,3 +10110,131 @@ html.palantir-page .palantir-access__suggestions .palantir-access__suggestions-h
     grid-column: 1 / -1;
     color: var(--palantir-text-muted, var(--palantir-text));
 }
+
+/* A lookup on its way inside the panel it fills: a line with a moving bar, what is looked up and Cancel; the tables
+   and cards already shown are dimmed until the answer replaces them. A failed lookup leaves its reason on the line. */
+.palantir-busy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin: 8px 0 12px;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-busy[hidden] {
+    display: none;
+}
+
+.palantir-busy .palantir-busy__track {
+    flex: 1 0 100%;
+    height: 3px;
+}
+
+.palantir-busy__text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.palantir-busy__cancel {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--palantir-brand);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.palantir-busy__cancel:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-busy.is-error {
+    color: var(--palantir-danger-line);
+}
+
+.palantir-busy.is-error .mdi {
+    font-size: 16px;
+}
+
+.palantir-busy-region.is-loading :is(.dt-container, .palantir-record-cards),
+#delegatedClientsCards.is-loading,
+#editServiceWizardForm.is-loading {
+    opacity: .55;
+    transition: opacity .2s ease;
+}
+
+.mdc-button.is-busy {
+    cursor: progress;
+}
+
+/* How a panel that reads itself again is going: a pill with when it last read, or why it waits, and Pause. */
+.palantir-poll-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+[data-palantir-poll-status] > .palantir-poll-status {
+    display: inline-flex;
+    margin: 0;
+}
+
+.palantir-poll-status__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-poll-status[data-state="live"] .palantir-poll-status__state {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success-text);
+}
+
+.palantir-poll-status[data-state="failed"] .palantir-poll-status__state {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-poll-status__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 12px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    font: inherit;
+    cursor: pointer;
+}
+
+.palantir-poll-status__toggle:hover {
+    background: var(--palantir-hover);
+}
+
+.palantir-poll-status__toggle:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-poll-status__toggle[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-poll-status__icon.mdi-spin {
+        animation: none;
+    }
+}

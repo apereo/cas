@@ -1349,7 +1349,7 @@ async function initializeSystemOperations() {
             }
         }
         return work.length > 0 ? Promise.all(work) : null;
-    }, {tab: Tabs.SYSTEM});
+    }, {tab: Tabs.SYSTEM, status: "#systemstatus-tab, #httprequests-tab", focus: true});
 
     if ($("#systeminfo-tab").is(":visible")) {
         await refreshActiveSystemInfoTab();

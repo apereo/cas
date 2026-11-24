@@ -7,13 +7,31 @@ class PalantirSettings {
     }
 }
 
+const PALANTIR_SETTINGS_KEY = "PalantirSettings";
+
+let palantirSettingsRead = null;
+
+/**
+ * The settings, read from the browser once and kept until they change.
+ *
+ * @returns {PalantirSettings} the settings
+ */
 function palantirSettings() {
-    try {
-        const raw = JSON.parse(localStorage.getItem("PalantirSettings")) ?? {};
-        return new PalantirSettings(raw);
-    } catch {
-        return new PalantirSettings();
+    if (palantirSettingsRead === null) {
+        try {
+            palantirSettingsRead = new PalantirSettings(JSON.parse(localStorage.getItem(PALANTIR_SETTINGS_KEY)) ?? {});
+        } catch {
+            palantirSettingsRead = new PalantirSettings();
+        }
     }
+    return palantirSettingsRead;
+}
+
+/**
+ * Read the settings again next time, after they were changed here or in another tab.
+ */
+function forgetPalantirSettings() {
+    palantirSettingsRead = null;
 }
 
 /**

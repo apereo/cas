@@ -289,7 +289,7 @@ function importConfigurationProperties(button) {
                 Swal.close();
                 $.get(CasActuatorEndpoints.env(), res => {
                     reloadConfigurationTable(res);
-                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                    refreshCasServerConfiguration(payload.length === 1 ? `Property ${payload[0].name} Imported` : `${payload.length} Properties Imported`);
                 })
                     .fail((xhr) => {
                         displayBanner(xhr);
@@ -1539,31 +1539,32 @@ async function initializeConfigurationOperations() {
         });
         configSearchResultsTable.clear();
 
-        $("button[name=configSearchButton]").off().on("click", () => {
-            $("#configSearchResults").hide();
-            configSearchResultsTable.clear();
-
+        $("button[name=configSearchButton]").off().on("click", async () => {
             const form = document.getElementById("fmConfigSearch");
             if (!form.reportValidity()) {
                 return false;
             }
             const searchQuery = $("#configSearchQuery").val();
-            PalantirDialogs.wait(`Fetching Results`, "Please wait while configuration metadata repository is consulted to find matches...");
-            $.get(`${CasActuatorEndpoints.configurationMetadata()}/${encodeURIComponent(searchQuery)}`, response => {
-                for (const entry of response) {
-                    configSearchResultsTable.row.add({
-                        0: entry.id ?? "",
-                        1: entry.description ?? ""
-                    });
-                }
-                $("#configSearchResults").show();
-                configSearchResultsTable.draw();
-            })
-                .fail((xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    displayBanner(xhr);
-                })
-                .always(() => Swal.close());
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#configSearchResults",
+                button: "#configSearchButton",
+                label: `Searching for ${searchQuery}`,
+                failure: "The configuration metadata could not be searched",
+                request: () => $.get(`${CasActuatorEndpoints.configurationMetadata()}/${encodeURIComponent(searchQuery)}`)
+            });
+            if (!answered) {
+                return false;
+            }
+            configSearchResultsTable.clear();
+            for (const entry of response) {
+                configSearchResultsTable.row.add({
+                    0: entry.id ?? "",
+                    1: entry.description ?? ""
+                });
+            }
+            $("#configSearchResults").show();
+            configSearchResultsTable.draw();
+            return false;
         });
     }
 }

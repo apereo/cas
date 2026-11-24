@@ -67,7 +67,7 @@ async function initializeMultitenancyOperations() {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
-    const fetchTenants = PalantirPolling.every("tenants", loadTenants, {tab: Tabs.MULTITENANCY});
+    const fetchTenants = PalantirPolling.every("tenants", loadTenants, {tab: Tabs.MULTITENANCY, status: "#tenants-tab"});
 
     fetchTenants();
     reloadTenantsTable = loadTenants;

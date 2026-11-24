@@ -228,7 +228,7 @@ async function initializeLoggingOperations() {
         }
 
         const refreshActiveLogStreams = PalantirPolling.every("log streams", () => Promise.all([refreshLogData(), refreshLogFile()]),
-            {tab: Tabs.LOGGING, panel: "#logdatastream-tab"});
+            {tab: Tabs.LOGGING, panel: "#logdatastream-tab", status: "#logdatastream-tab"});
 
         refreshActiveLogStreams();
 

@@ -352,5 +352,6 @@ async function initializeClusterTopologyOperations() {
         }
     });
     refreshActiveClusterTab();
-    PalantirPolling.every("cluster", refreshActiveClusterTab, {tab: Tabs.CLUSTER});
+    PalantirPolling.every("cluster", refreshActiveClusterTab,
+        {tab: Tabs.CLUSTER, status: "#cluster-topology-tab, #cluster-discovery-tab"});
 }

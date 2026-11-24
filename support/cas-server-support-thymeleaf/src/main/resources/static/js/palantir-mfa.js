@@ -1120,13 +1120,18 @@ async function initializeMultifactorOperations() {
     });
 
     $("#mfaDevicesButton").off().on("click", () => {
-        function fetchMfaDevices() {
+        async function fetchMfaDevices() {
             const username = $("#mfaUsername").val();
-            $("#mfaDevicesButton").prop("disabled", true);
-            PalantirDialogs.wait(`Fetching Devices for ${username}`, "Please wait while registered multifactor devices are retrieved...");
-
-            mfaDevicesTable.clear();
-            $.get(`${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`, response => {
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#mfadevices-tab",
+                after: "#fmMfaDevices",
+                button: "#mfaDevicesButton",
+                label: `Looking up the devices of ${username}`,
+                failure: `The devices of ${username} could not be read`,
+                request: () => $.get(`${CasActuatorEndpoints.mfaDevices()}/${encodeURIComponent(username)}`)
+            });
+            if (answered) {
+                mfaDevicesTable.clear();
                 for (const device of Object.values(response)) {
                     mfaDevicesTable.row.add({
                         0: `${palantirCode(device.name ?? "N/A")}`,
@@ -1146,14 +1151,7 @@ async function initializeMultifactorOperations() {
                 }
                 $("#mfaDevicesCards").data("searched", username);
                 mfaDevicesTable.draw();
-                $("#mfaDevicesButton").prop("disabled", false);
-                Swal.close();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-                $("#mfaDevicesButton").prop("disabled", false);
-                Swal.close();
-            });
+            }
         }
 
         const fmMfaDevices = document.getElementById("fmMfaDevices");
@@ -1215,14 +1213,19 @@ async function initializeTrustedMultifactorOperations() {
         }
     });
 
-    $("#mfaTrustedDevicesButton").off().on("click", () => {
+    $("#mfaTrustedDevicesButton").off().on("click", async () => {
         if (CasActuatorEndpoints.multifactorTrustedDevices()) {
-            mfaTrustedDevicesTable.clear();
             const username = $("#mfaTrustedUsername").val();
-            $("#mfaTrustedDevicesButton").prop("disabled", true);
-            PalantirDialogs.wait(`Fetching Multifactor Trusted Devices for ${username}`, "Please wait while registered multifactor trusted devices are retrieved...");
-
-            $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(username)}`, response => {
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#trustedmfadevices-tab",
+                after: "#fmTrustedMfaDevices",
+                button: "#mfaTrustedDevicesButton",
+                label: `Looking up the trusted devices of ${username}`,
+                failure: `The trusted devices of ${username} could not be read`,
+                request: () => $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(username)}`)
+            });
+            if (answered) {
+                mfaTrustedDevicesTable.clear();
                 for (const device of Object.values(response)) {
                     mfaTrustedDevicesTable.row.add({
                         0: `${palantirCode(device.id ?? "N/A")}`,
@@ -1237,14 +1240,7 @@ async function initializeTrustedMultifactorOperations() {
                     });
                 }
                 mfaTrustedDevicesTable.draw();
-                $("#mfaTrustedDevicesButton").prop("disabled", false);
-                Swal.close();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-                $("#mfaTrustedDevicesButton").prop("disabled", false);
-                Swal.close();
-            });
+            }
         }
     });
 

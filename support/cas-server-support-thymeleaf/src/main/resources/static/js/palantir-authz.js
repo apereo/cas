@@ -1251,7 +1251,8 @@ async function initializeHeimdallOperations() {
             console.error("Error fetching data:", error);
             displayBanner(xhr);
         });
-        const fetchHeimdallResources = PalantirPolling.every("Heimdall resources", loadHeimdallResources, {tab: Tabs.ACCESS_STRATEGY});
+        const fetchHeimdallResources = PalantirPolling.every("Heimdall resources", loadHeimdallResources,
+            {tab: Tabs.ACCESS_STRATEGY, status: "#heimdall-tab"});
 
         fetchHeimdallResources();
         reloadHeimdallResourcesTable = loadHeimdallResources;

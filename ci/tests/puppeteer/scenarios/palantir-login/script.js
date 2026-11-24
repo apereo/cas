@@ -2,7 +2,7 @@
    activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile,
    PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog,
    PalantirLinks, PalantirPages, PalantirPanelFocus, registeredServicesById, navigateToApplication, PalantirCsrf,
-   palantirOneAtATime, PalantirPolling, createInputField, createRegisteredServiceAttributeReleasePolicy,
+   palantirOneAtATime, PalantirPolling, PalantirBusy, palantirSettings, forgetPalantirSettings, createInputField, createRegisteredServiceAttributeReleasePolicy,
    createRegisteredServiceAccessStrategy, createRegisteredServiceExpirationPolicy, populateWizardFromServiceDefinition,
    PalantirWizardSuggestions, calculateCvssScore, normalizeHttpExchange, formatMemoryBytes, PalantirStartupTimeline,
    PalantirModules, PalantirDashboardConfiguration, initializeThrottlesOperations, showSamlMetadataManager, PalantirMetrics */
@@ -191,6 +191,7 @@ async function verifyPollsDoNotPileUp(page) {
 
     const scheduled = await page.evaluate(() => {
         let runs = 0;
+        let asked = 0;
         let applies = false;
         let finish = null;
         PalantirPolling.every("scenario", () => {
@@ -198,21 +199,140 @@ async function verifyPollsDoNotPileUp(page) {
             return new Promise((resolve) => {
                 finish = resolve;
             });
-        }, {when: () => applies, every: 60000});
+        }, {when: () => {
+            asked++;
+            return applies;
+        }, every: 60000});
+        const poll = PalantirPolling.polls.find((entry) => entry.name === "scenario");
         PalantirPolling.beat();
-        const whileHidden = runs;
+        const notDue = {asked, runs};
+        poll.last -= 60000;
+        PalantirPolling.beat();
+        const whileHidden = {asked, runs};
         applies = true;
         PalantirPolling.beat();
+        const askedAgain = asked;
+        PalantirPolling.beat(true);
         const once = runs;
+        PalantirPolling.beat(true);
         PalantirPolling.beat();
         const notAgain = runs;
         finish();
-        PalantirPolling.polls = PalantirPolling.polls.filter((poll) => poll.name !== "scenario");
-        return {whileHidden, once, notAgain};
+        PalantirPolling.polls = PalantirPolling.polls.filter((entry) => entry.name !== "scenario");
+        return {notDue, whileHidden, askedAgain, once, notAgain};
     });
-    assert(scheduled.whileHidden === 0 && scheduled.once === 1 && scheduled.notAgain === 1,
+    assert(scheduled.notDue.asked === 0 && scheduled.notDue.runs === 0,
+        `A poll that is not due is not asked whether it applies: ${JSON.stringify(scheduled)}`);
+    assert(scheduled.whileHidden.asked === 1 && scheduled.whileHidden.runs === 0 && scheduled.askedAgain === 1,
+        `A due poll that does not apply waits for a change of what is shown: ${JSON.stringify(scheduled)}`);
+    assert(scheduled.once === 1 && scheduled.notAgain === 1,
         `The scheduler runs a poll once it applies, and not again before its time: ${JSON.stringify(scheduled)}`);
+    const settings = await page.evaluate(() => {
+        const before = palantirSettings() === palantirSettings();
+        const stored = localStorage.getItem("PalantirSettings");
+        localStorage.setItem("PalantirSettings", JSON.stringify({refreshInterval: 42}));
+        const cached = palantirSettings().refreshInterval;
+        forgetPalantirSettings();
+        const fresh = palantirSettings().refreshInterval;
+        if (stored === null) {
+            localStorage.removeItem("PalantirSettings");
+        } else {
+            localStorage.setItem("PalantirSettings", stored);
+        }
+        forgetPalantirSettings();
+        return {before, cached, fresh};
+    });
+    assert(settings.before && settings.cached !== 42000 && settings.fresh === 42000,
+        `The settings are read once and again after they change: ${JSON.stringify(settings)}`);
     await cas.logg("The shared scheduler runs polls only when they apply, on their own clock");
+}
+
+/**
+ * A lookup that fills a panel shows that it is busy in the panel, with a way to cancel it, and says in place why it
+ * failed, rather than in a pop-up that blocks the dashboard; a panel that reads itself again shows when it last read
+ * and can be paused.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyInlineProgress(page) {
+    await cas.separator();
+    const busy = await page.evaluate(async () => {
+        const region = $("<div>", {id: "scenarioBusyRegion"}).appendTo("body");
+        let request = null;
+        const running = PalantirBusy.during({
+            region: "#scenarioBusyRegion",
+            label: "Looking up casuser",
+            failure: "The sessions could not be read",
+            request: () => {
+                request = $.Deferred();
+                const promise = request.promise();
+                promise.abort = () => request.reject({statusText: "abort"});
+                return promise;
+            }
+        });
+        const again = await PalantirBusy.during({region: "#scenarioBusyRegion", label: "Again", failure: "Again", request: () => $.Deferred().resolve(1)});
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const line = region.prev(".palantir-busy");
+        const shown = {
+            busy: region.attr("aria-busy"),
+            visible: !line.prop("hidden"),
+            text: line.find(".palantir-busy__text").text(),
+            popup: Swal.isVisible()
+        };
+        line.find(".palantir-busy__cancel").trigger("click");
+        const cancelled = await running;
+        const failed = await PalantirBusy.during({
+            region: "#scenarioBusyRegion",
+            label: "Looking up casuser",
+            failure: "The sessions could not be read",
+            request: () => $.Deferred().reject({status: 503, statusText: "Service Unavailable"})
+        });
+        const result = {
+            again: again.answered, shown, cancelled: cancelled.answered, failed: failed.answered,
+            error: line.hasClass("is-error") ? line.text() : "", busyAfter: region.attr("aria-busy") ?? null
+        };
+        line.remove();
+        region.remove();
+        return result;
+    });
+    await cas.log(`Inline progress: ${JSON.stringify(busy)}`);
+    assert(busy.again === false && busy.shown.busy === "true" && busy.shown.visible && !busy.shown.popup);
+    assert(busy.shown.text.startsWith("Looking up casuser") && busy.cancelled === false && busy.failed === false);
+    assert(busy.error.includes("The sessions could not be read") && busy.error.includes("503") && busy.busyAfter === null);
+    await cas.logg("A lookup shows its progress in the panel, can be cancelled, and reports a failure in place");
+
+    const status = await page.evaluate(async () => {
+        const panel = $("<div>", {id: "scenarioPollPanel"}).appendTo("body");
+        let runs = 0;
+        let fail = false;
+        const run = PalantirPolling.every("scenario status", () => {
+            runs++;
+            return fail ? Promise.reject(new Error("down")) : Promise.resolve(true);
+        }, {every: 60000, status: "#scenarioPollPanel"});
+        const poll = PalantirPolling.polls.find((entry) => entry.name === "scenario status");
+        const text = () => panel.find(".palantir-poll-status__text").text();
+        const state = () => panel.find(".palantir-poll-status").attr("data-state");
+        PalantirPolling.beat();
+        const live = {state: state(), text: text()};
+        panel.find(".palantir-poll-status__toggle").trigger("click");
+        poll.last -= 60000;
+        PalantirPolling.beat();
+        const paused = {state: state(), text: text(), runs};
+        panel.find(".palantir-poll-status__toggle").trigger("click");
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        const resumed = runs;
+        fail = true;
+        await run();
+        const failed = {state: state(), text: text()};
+        PalantirPolling.polls = PalantirPolling.polls.filter((entry) => entry.name !== "scenario status");
+        panel.remove();
+        return {live, paused, resumed, failed};
+    });
+    await cas.log(`Poll status: ${JSON.stringify(status)}`);
+    assert(status.live.state === "live" && status.live.text.startsWith("Updated just now"));
+    assert(status.paused.state === "paused" && status.paused.runs === 0 && status.resumed === 1);
+    assert(status.failed.state === "failed" && status.failed.text.startsWith("Refresh failed"));
+    await cas.logg("A panel that reads itself again shows when it last read, can be paused, and shows a failed read");
 }
 
 async function waitForDashboard(page) {
@@ -831,6 +951,7 @@ async function verifyShortcutsOverlay(page) {
     await waitForDashboard(page);
     await verifySessionWritesCarryToken(page, failures);
     await verifyPollsDoNotPileUp(page);
+    await verifyInlineProgress(page);
     await verifyScriptsOnFirstUse(page);
     await verifyHome(page);
     await verifyRegisteredServices(page);

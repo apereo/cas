@@ -387,17 +387,18 @@ function activateDashboardTab(idx) {
                         OK: function () {
                             let palantirSettings = {};
                             try {
-                                const stored = JSON.parse(localStorage.getItem("PalantirSettings") ?? "{}");
+                                const stored = JSON.parse(localStorage.getItem(PALANTIR_SETTINGS_KEY) ?? "{}");
                                 palantirSettings = stored !== null && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
                             } catch (error) {
                                 console.debug("Palantir replaces settings it could not read", error);
                             }
                             palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
                             try {
-                                localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                                localStorage.setItem(PALANTIR_SETTINGS_KEY, JSON.stringify(palantirSettings));
                             } catch (error) {
                                 console.debug("Palantir could not keep the settings", error);
                             }
+                            forgetPalantirSettings();
                             PalantirTheme.apply($("#palantirTheme").val());
                             $(this).dialog("close");
                             PalantirPolling.beat();

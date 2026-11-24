@@ -44,7 +44,7 @@ async function initializeCasEventsOperations() {
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
             });
-        }, {tab: Tabs.LOGGING, panel: "#casEvents-tab"});
+        }, {tab: Tabs.LOGGING, panel: "#casEvents-tab", status: "#casEvents-tab"});
         updateCasEventsTable();
     }
 }
@@ -443,11 +443,11 @@ async function initializeAuditEventsOperations() {
 
         function updateAuditEventsTable() {
             if (!isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
-                return;
+                return null;
             }
             if (auditEventsRequestInFlight) {
                 auditEventsRefreshWanted = true;
-                return;
+                return null;
             }
 
             const interval = $("#auditEventsIntervalFilter").val();
@@ -458,7 +458,7 @@ async function initializeAuditEventsOperations() {
 
             auditEventsRequestInFlight = true;
             auditEventsRefreshButton.prop("disabled", true);
-            $.ajax({
+            return $.ajax({
                 url: `${CasActuatorEndpoints.auditLog()}?interval=${encodeURIComponent(interval)}&count=${encodeURIComponent(count)}${principal}`,
                 type: "GET",
                 headers: {
@@ -513,7 +513,8 @@ async function initializeAuditEventsOperations() {
         });
         auditEventsRefreshButton.off("click").on("click", updateAuditEventsTable);
 
-        PalantirPolling.every("audit events", updateAuditEventsTable, {tab: Tabs.LOGGING, panel: "#auditevents-tab"});
+        PalantirPolling.every("audit events", updateAuditEventsTable,
+            {tab: Tabs.LOGGING, panel: "#auditevents-tab", status: "#auditevents-tab"});
         updateAuditEventsTable();
     }
 }

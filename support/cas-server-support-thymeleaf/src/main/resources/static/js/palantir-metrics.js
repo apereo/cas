@@ -59,7 +59,8 @@ class PalantirMetrics {
         if (!PalantirMetrics.initialized) {
             PalantirMetrics.initialized = true;
             PalantirMetrics.bind();
-            PalantirMetrics.timer = PalantirPolling.every("metrics", () => PalantirMetrics.refresh(), {when: () => PalantirMetrics.visible()});
+            PalantirMetrics.timer = PalantirPolling.every("metrics", () => PalantirMetrics.refresh(),
+                {when: () => PalantirMetrics.visible(), status: "#systemmetrics-tab"});
         }
         try {
             const response = await $.get(CasActuatorEndpoints.metrics());
@@ -167,7 +168,6 @@ class PalantirMetrics {
             } else if (PalantirMetrics.selected) {
                 await PalantirMetrics.refreshDetail();
             }
-            $("#metricsStatus").text(`Refreshed every ${Math.round(palantirSettings().refreshInterval / 1000)} s · ${new Date().toLocaleTimeString()}`);
         } finally {
             PalantirMetrics.pending = false;
         }
