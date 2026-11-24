@@ -56,10 +56,12 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -118,7 +120,7 @@ class DashboardControllerTests {
         val mapper = JsonMapper.builder().build();
         for (val template : templates) {
             val service = serializer.from(template.get("definition"));
-            assertNotNull(service, template.get("definition"));
+            assertNotNull(service, () -> template.get("definition"));
             assertNotNull(service.getName());
             assertNotNull(service.getDescription());
             assertFieldsKept(service.getName(), mapper.readTree(template.get("definition")), mapper.readTree(serializer.toString(service)));
@@ -140,8 +142,10 @@ class DashboardControllerTests {
             .getModel();
         assertNotNull(model.get("casServerPrefix"));
         assertTrue(model.containsKey("authentication"));
-        assertTrue(model.containsKey("httpRequestMethod"));
-        assertTrue(model.containsKey("httpRequestSecure"));
+        assertFalse(model.containsKey("httpRequestMethod"));
+        assertFalse(model.containsKey("httpRequestSecure"));
+        assertFalse(model.containsKey("httpRequestHeaders"));
+        assertEquals(Boolean.TRUE, model.get("isRoleAdmin"));
         assertTrue(model.containsKey("actuatorEndpoints"));
         assertTrue(model.containsKey("actuatorEndpointAccess"));
         assertTrue(model.containsKey("serviceTemplates"));
@@ -175,7 +179,10 @@ class DashboardControllerTests {
 
         mvc.perform(get("/palantir/dashboard/session")
             .with(authentication(authentication))
-            .session(session)).andExpect(status().isOk());
+            .session(session))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("casuser"))
+            .andExpect(jsonPath("$.id").doesNotExist());
         SecurityContextHolder.clearContext();
         mvc.perform(get("/palantir/dashboard/session"))
             .andExpect(status().is3xxRedirection());
@@ -327,7 +334,11 @@ class DashboardControllerTests {
             val components = ((List<Map<String, Object>>) health.get("components")).stream()
                 .collect(Collectors.toMap(component -> (String) component.get("name"), component -> component.get("status")));
             assertEquals(Map.of("pooledLdapConnectionFactory", "DOWN", "memory", "UP", "warning", "WARN"), components);
-            assertEquals("DOWN", health.get("status"));
+            assertEquals("WARN", health.get("status"));
+            assertEquals("WARN", PalantirOverview.overallStatus(List.of("UP", "WARN"), List.of("WARN", "DOWN", "UP")));
+            assertEquals("DOWN", PalantirOverview.overallStatus(List.of("UP", "WARN", "DOWN"), List.of("DOWN", "OUT_OF_SERVICE", "UP", "UNKNOWN")));
+            assertEquals("UNKNOWN", PalantirOverview.overallStatus(List.of("UP", "SLOW"), List.of("DOWN", "UNKNOWN", "UP")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of(), List.of("DOWN", "UP")));
         } finally {
             overview.destroy();
             context.close();
@@ -451,6 +462,87 @@ class DashboardControllerTests {
             assertNull(response.getRedirectedUrl());
             assertEquals(HttpStatus.UNAUTHORIZED.value(), response.getStatus());
             assertTrue(String.valueOf(response.getHeader(HttpHeaders.WWW_AUTHENTICATE)).startsWith("Basic"));
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "spring.security.user.name=casadmin",
+        "spring.security.user.password=Mellon",
+        "spring.security.user.roles=ADMIN",
+        "management.endpoints.web.exposure.include=health",
+        "management.endpoint.health.show-components=when-authorized",
+        "management.endpoint.health.roles=OPERATOR"
+    })
+    class SecurityTests {
+        private static RequestPostProcessor browserSession() {
+            return request -> {
+                request.setRequestedSessionId("browser-session");
+                request.setRequestedSessionIdFromCookie(true);
+                return request;
+            };
+        }
+
+        @Test
+        void verifyLoginIgnoresRedirectTarget() throws Throwable {
+            mvc.perform(post("/adminlogin")
+                    .param("username", "casadmin")
+                    .param("password", "Mellon")
+                    .param("redirectTo", "https://attacker.example.org"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(result -> assertFalse(String.valueOf(result.getResponse().getRedirectedUrl()).contains("attacker.example.org")));
+        }
+
+        @Test
+        void verifyBrowserSessionWritesCarryToken() throws Throwable {
+            mvc.perform(post("/palantir/dashboard/logout").with(browserSession()))
+                .andExpect(status().isForbidden());
+            mvc.perform(post("/actuator/health").with(browserSession()))
+                .andExpect(status().isForbidden());
+            mvc.perform(post("/palantir/dashboard/logout").with(browserSession()).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        }
+
+        @Test
+        void verifyHealthChecksFollowTheHealthEndpoint() throws Throwable {
+            val user = new UsernamePasswordAuthenticationToken("casuser", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.status").exists())
+                .andExpect(jsonPath("$.sections.health.components").doesNotExist());
+
+            val operator = new UsernamePasswordAuthenticationToken("casoperator", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_OPERATOR")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(operator)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.components").isArray());
+
+            val administrator = new UsernamePasswordAuthenticationToken("casadmin", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(administrator)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.components").isArray());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "management.endpoints.web.base-path=/",
+        "management.endpoints.web.exposure.include=health,info"
+    })
+    class RootActuatorTests {
+        @Test
+        void verifyBrowserSessionWritesToRootActuatorsCarryToken() throws Throwable {
+            val browserSession = (RequestPostProcessor) request -> {
+                request.setRequestedSessionId("browser-session");
+                request.setRequestedSessionIdFromCookie(true);
+                return request;
+            };
+            mvc.perform(post("/health").with(browserSession)).andExpect(status().isForbidden());
+            mvc.perform(post("/info").with(browserSession)).andExpect(status().isForbidden());
+            mvc.perform(post("/login").with(browserSession))
+                .andExpect(result -> assertNotEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus()));
         }
     }
 

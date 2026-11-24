@@ -616,7 +616,7 @@ async function initializeOidcProtocolOperations() {
                 const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
 
                 $.ajax({
-                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
+                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${encodeURIComponent(scopes)}`,
                     type: "POST",
                     headers: {
                         "Content-Type": "application/json",

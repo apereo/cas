@@ -10,7 +10,7 @@ let interruptInquirersTable = null;
  * @returns {string} the cell, escaped for display
  */
 function renderInterruptInquiryCell(data, type) {
-    return type === "display" ? $("<div>").text(data ?? "").html() : data;
+    return palantirTextColumn(data, type);
 }
 
 /**

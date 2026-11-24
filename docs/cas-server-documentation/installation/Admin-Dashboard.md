@@ -76,8 +76,14 @@ the page back as it was. The page is drawn from one summary that the server
 puts together and keeps for a few seconds per part, so it costs one request per refresh, and only the parts the shown
 widgets need are put together: hiding a widget that is slow to fill takes its work off the server for that person, and
 the server widget then says only that CAS is running when the health widget is hidden;
-a widget whose data comes from an actuator endpoint that is not exposed is left out. Reloading Palantir stays on the
-page that was showing.
+a widget whose data comes from an actuator endpoint that is not exposed is left out. The health checks are named only
+to administrators and to those the health endpoint itself shows its components to; others see the overall health only.
+Reloading Palantir stays on the page that was showing.
+
+Changes Palantir makes, to the actuator endpoints and to Palantir itself, rely on the browser's session and so carry a
+CSRF token, which Palantir sends on its own; a change made with the session but without the token is refused. Scripts
+and other clients that authenticate each request themselves, such as with basic authentication or a bearer token, are
+not asked for a token.
 
 Every page has a link, such as `/palantir/dashboard#system`, and so do applications and users:
 `#applications/42` opens *Applications* with application 42 selected, and `#users/casuser` looks that user up. The

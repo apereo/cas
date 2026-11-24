@@ -26,6 +26,7 @@ import org.springframework.boot.security.autoconfigure.actuate.web.servlet.Endpo
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -167,25 +168,52 @@ public class CasWebSecurityConfigurerAdapter {
         return http;
     }
 
+    private static List<RequestMatcher> toPathMatchers(final List<CasWebSecurityConfigurer<?>> configurers,
+                                                       final Function<CasWebSecurityConfigurer<?>, List<String>> patterns) {
+        return configurers
+            .stream()
+            .map(patterns)
+            .flatMap(List::stream)
+            .distinct()
+            .<RequestMatcher>map(endpoint -> PathPatternRequestMatcher.withDefaults().matcher(endpoint))
+            .toList();
+    }
+
+    /**
+     * Whether a request is made by a browser on the strength of its session alone: it carries a session cookie and
+     * does not authenticate itself with an {@code Authorization} header.
+     *
+     * @param request the request
+     * @return true when the request relies on the browser's session
+     */
+    private static boolean isBrowserSessionRequest(final HttpServletRequest request) {
+        return request.getRequestedSessionId() != null && request.isRequestedSessionIdFromCookie()
+            && StringUtils.isBlank(request.getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
     /**
      * Configure CSRF protection once, for the endpoints that all configurers declare through
-     * {@link CasWebSecurityConfigurer#getCsrfProtectedEndpoints()}: a request that is not a {@code GET}, {@code HEAD},
-     * {@code TRACE} or {@code OPTIONS} request to one of them must carry the token of the CSRF token repository, masked or raw
-     * (see {@link CasCsrfTokenRequestHandler}). CSRF protection stays disabled when no configurer declares an endpoint.
+     * {@link CasWebSecurityConfigurer#getCsrfProtectedEndpoints()}, and for those they declare through
+     * {@link CasWebSecurityConfigurer#getCsrfProtectedSessionEndpoints()} when a browser calls them with its session:
+     * a request that is not a {@code GET}, {@code HEAD}, {@code TRACE} or {@code OPTIONS} request to one of them must carry
+     * the token of the CSRF token repository, masked or raw (see {@link CasCsrfTokenRequestHandler}). CSRF protection
+     * stays disabled when no configurer declares an endpoint.
      *
      * @param http the http security
      * @throws Exception the exception
      */
     protected void configureCsrfProtection(final HttpSecurity http) throws Exception {
-        val endpoints = webSecurityConfigurers
+        val configurers = webSecurityConfigurers
             .getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .map(CasWebSecurityConfigurer::getCsrfProtectedEndpoints)
-            .flatMap(List<String>::stream)
-            .distinct()
-            .<RequestMatcher>map(endpoint -> PathPatternRequestMatcher.withDefaults().matcher(endpoint))
+            .<CasWebSecurityConfigurer<?>>map(configurer -> configurer)
             .toList();
+        val endpoints = new ArrayList<>(toPathMatchers(configurers, CasWebSecurityConfigurer::getCsrfProtectedEndpoints));
+        val sessionEndpoints = toPathMatchers(configurers, CasWebSecurityConfigurer::getCsrfProtectedSessionEndpoints);
+        if (!sessionEndpoints.isEmpty()) {
+            endpoints.add(new AndRequestMatcher(new OrRequestMatcher(sessionEndpoints), CasWebSecurityConfigurerAdapter::isBrowserSessionRequest));
+        }
         if (!endpoints.isEmpty()) {
             LOGGER.debug("Configuring CSRF protection for [{}]", endpoints);
             val protectedEndpoints = new OrRequestMatcher(endpoints);

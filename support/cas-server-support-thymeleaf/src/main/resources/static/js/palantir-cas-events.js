@@ -10,11 +10,11 @@ async function initializeCasEventsOperations() {
             }
         });
 
-        function updateCasEventsTable() {
+        const updateCasEventsTable = palantirOneAtATime(() => {
             if (!isPalantirPollingContextActive(Tabs.LOGGING, "#casEvents-tab")) {
-                return;
+                return null;
             }
-            $.ajax({
+            return $.ajax({
                 url: `${CasActuatorEndpoints.events()}`,
                 type: "GET",
                 headers: {
@@ -40,11 +40,11 @@ async function initializeCasEventsOperations() {
                             });
                         }
                     }
-                    casEventsTable.draw();
+                    casEventsTable.draw(false);
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
             });
-        }
+        });
 
         setInterval(updateCasEventsTable, palantirSettings().refreshInterval);
         window.addEventListener(palantirPollingContextEvent, updateCasEventsTable);
@@ -113,12 +113,6 @@ function openPalantirAuditTargetApplication(event) {
 
 async function initializeAuditEventsOperations() {
     if (CasActuatorEndpoints.auditLog()) {
-        function escapeHtml(str) {
-            return String(str).replace(/[&<>"']/g, s => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-            }[s]));
-        }
-
         function splitAuditResourceParts(value, separator) {
             const parts = [];
             let depth = 0;
@@ -268,13 +262,13 @@ async function initializeAuditEventsOperations() {
         function renderAuditAction(action) {
             const type = auditActionType(action);
             const text = action || "N/A";
-            return `<span class="audit-action-tag audit-action-${type}" title="${escapeHtml(text)}">`
-                + `${escapeHtml(text).replaceAll("_", "_<wbr>")}</span>`;
+            return `<span class="audit-action-tag audit-action-${type}" title="${escapePalantirMarkup(text)}">`
+                + `${escapePalantirMarkup(text).replaceAll("_", "_<wbr>")}</span>`;
         }
 
         function renderAuditPrincipal(principal) {
-            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapeHtml(part));
-            return `<span class="audit-principal-value" title="${escapeHtml(principal)}">
+            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapePalantirMarkup(part));
+            return `<span class="audit-principal-value" title="${escapePalantirMarkup(principal)}">
                         <i class="mdi mdi-account" aria-hidden="true"></i>
                         <code>${parts.join("<wbr>")}</code>
                     </span>`;
@@ -287,7 +281,7 @@ async function initializeAuditEventsOperations() {
                         ${renderAuditJsonValue(row.resourceDetails)}
                     </div>`;
             }
-            return `<code class="audit-resource-value">${escapeHtml(data)}</code>`;
+            return `<code class="audit-resource-value">${escapePalantirMarkup(data)}</code>`;
         }
 
         function normalizeAuditEvent(entry, index) {
@@ -321,13 +315,13 @@ async function initializeAuditEventsOperations() {
                 }
                 return `<dl class="audit-resource-fields">${entries.map(([key, entry]) => `
                     <div class="audit-resource-field">
-                        <dt class="audit-resource-json-key">${escapeHtml(isArray ? `[${key}]` : key)}</dt>
+                        <dt class="audit-resource-json-key">${escapePalantirMarkup(isArray ? `[${key}]` : key)}</dt>
                         <dd class="audit-resource-field-value">${renderAuditJsonValue(entry)}</dd>
                     </div>`).join("")}</dl>`;
             }
             const displayValue = value === null ? "null" : String(value);
             const valueType = value === null ? "null" : typeof value;
-            return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapeHtml(displayValue)}</code>`;
+            return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapePalantirMarkup(displayValue)}</code>`;
         }
 
         let auditEventsTable;
@@ -480,7 +474,7 @@ async function initializeAuditEventsOperations() {
                 {
                     data: "userAgent",
                     width: "14rem",
-                    render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapeHtml(data)}</span>` : data
+                    render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapePalantirMarkup(data)}</span>` : data
                 }
             ],
             drawCallback: settings => {
@@ -549,7 +543,7 @@ async function initializeAuditEventsOperations() {
                         .filter(entry => actionFilter === "all" || entry.actionType === actionFilter);
                     auditEventsTable.clear();
                     shown.forEach(entry => auditEventsTable.row.add(entry));
-                    auditEventsTable.draw();
+                    auditEventsTable.draw(false);
                     showAuditEventsUsername(shown.length);
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown),

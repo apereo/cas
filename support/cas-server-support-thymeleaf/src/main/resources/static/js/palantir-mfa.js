@@ -1128,7 +1128,7 @@ async function initializeMultifactorOperations() {
             $("#mfaDevicesButton").prop("disabled", true);
             Swal.fire({
                 icon: "info",
-                title: `Fetching Devices for ${username}`,
+                titleText: `Fetching Devices for ${username}`,
                 text: "Please wait while registered multifactor devices are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
@@ -1202,7 +1202,7 @@ async function initializeTrustedMultifactorOperations() {
             .then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `${CasActuatorEndpoints.multifactorTrustedDevices()}/${key}`,
+                        url: `${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(key)}`,
                         type: "DELETE",
                         contentType: "application/x-www-form-urlencoded",
                         success: (response, status, xhr) => context.row.remove().draw(),
@@ -1235,14 +1235,14 @@ async function initializeTrustedMultifactorOperations() {
             $("#mfaTrustedDevicesButton").prop("disabled", true);
             Swal.fire({
                 icon: "info",
-                title: `Fetching Multifactor Trusted Devices for ${username}`,
+                titleText: `Fetching Multifactor Trusted Devices for ${username}`,
                 text: "Please wait while registered multifactor trusted devices are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
                 didOpen: () => Swal.showLoading()
             });
 
-            $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${username}`, response => {
+            $.get(`${CasActuatorEndpoints.multifactorTrustedDevices()}/${encodeURIComponent(username)}`, response => {
                 for (const device of Object.values(response)) {
                     mfaTrustedDevicesTable.row.add({
                         0: `${palantirCode(device.id ?? "N/A")}`,

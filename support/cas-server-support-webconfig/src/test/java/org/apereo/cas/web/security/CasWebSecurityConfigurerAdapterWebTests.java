@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -160,6 +161,29 @@ class CasWebSecurityConfigurerAdapterWebTests {
     }
 
     @Test
+    void verifyCsrfProtectionOfBrowserSessions() throws Throwable {
+        val browserSession = (RequestPostProcessor) request -> {
+            request.setRequestedSessionId("browser-session");
+            request.setRequestedSessionIdFromCookie(true);
+            return request;
+        };
+        mvc.perform(post("/cas/session-only")).andExpect(status().isOk());
+        mvc.perform(post("/cas/session-only").with(browserSession)).andExpect(status().isForbidden());
+        mvc.perform(post("/cas/session-only").with(browserSession).with(httpBasic("casuser", "Mellon")))
+            .andExpect(status().isOk());
+
+        val result = mvc.perform(get("/cas/session-only").with(browserSession))
+            .andExpect(status().isOk())
+            .andExpect(cookie().exists("XSRF-TOKEN"))
+            .andReturn();
+        val cookie = Objects.requireNonNull(result.getResponse().getCookie("XSRF-TOKEN"));
+        mvc.perform(post("/cas/session-only").with(browserSession).cookie(cookie).header("X-CSRF-TOKEN", cookie.getValue()))
+            .andExpect(status().isOk());
+        mvc.perform(post("/cas/session-only").with(browserSession).cookie(cookie).param("_csrf", cookie.getValue()))
+            .andExpect(status().isOk());
+    }
+
+    @Test
     void verifyStaticResources() throws Throwable {
         mvc.perform(get("/cas/hello/data.txt")).andExpect(status().isOk());
     }
@@ -202,6 +226,26 @@ class CasWebSecurityConfigurerAdapterWebTests {
         @RestController("SecondCsrfProtectedController")
         @RequestMapping("/second")
         static class SecondCsrfProtectedController extends BaseController {
+        }
+
+        @RestController("SessionCsrfProtectedController")
+        @RequestMapping("/session-only")
+        static class SessionCsrfProtectedController extends BaseController {
+        }
+
+        @Bean
+        public CasWebSecurityConfigurer<HttpSecurity> sessionCsrfProtectedConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of("/session-only");
+                }
+
+                @Override
+                public List<String> getCsrfProtectedSessionEndpoints() {
+                    return List.of("/session-only/**");
+                }
+            };
         }
 
         @Bean

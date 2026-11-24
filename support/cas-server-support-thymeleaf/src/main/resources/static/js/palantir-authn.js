@@ -1655,9 +1655,7 @@ async function initializeAuthenticationOperations() {
                 },
                 {
                     targets: [0, 1],
-                    render: (data, type) => type === "display"
-                        ? $("<div>").text(data ?? "").html()
-                        : data
+                    render: palantirTextColumn
                 }
             ],
             drawCallback: () => {

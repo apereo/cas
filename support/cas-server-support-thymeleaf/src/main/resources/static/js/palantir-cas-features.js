@@ -552,9 +552,7 @@ function humanizeCasFeature(name) {
  * @returns {string} safe markup
  */
 function markCasFeatureMatch(text, query) {
-    const escape = value => String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    }[character]));
+    const escape = escapePalantirMarkup;
     const index = query ? text.toLowerCase().indexOf(query) : -1;
     if (index < 0) {
         return escape(text);

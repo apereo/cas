@@ -23,7 +23,7 @@ public class HazelcastTicketExpirationListener implements EntryExpiredListener<S
 
     @Override
     public void entryExpired(final EntryEvent<String, HazelcastTicketDocument> event) {
-        val document = Objects.requireNonNullElse(event.getOldValue(), event.getValue());
+        val document = Objects.requireNonNullElseGet(event.getOldValue(), event::getValue);
         val registry = ticketRegistry.getIfAvailable();
         if (document != null && registry != null) {
             LOGGER.debug("Hazelcast expired ticket [{}]", event.getKey());

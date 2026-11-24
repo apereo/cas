@@ -25,16 +25,12 @@ let heimdallPolicySequence = 0;
 let heimdallAuthorizationResponseEditor = null;
 let heimdallAuthorizationSimulationMode = "heimdall";
 
-function escapeHeimdallHtml(value) {
-    return $("<div>").text(value ?? "").html();
-}
-
 function renderHeimdallHttpMethod(method) {
     const value = String(method ?? "N/A");
     const normalized = value.toLowerCase();
     const knownMethods = ["get", "post", "put", "patch", "delete", "head", "options", "trace", "connect"];
     const methodClass = knownMethods.includes(normalized) ? `method-${normalized}` : "method-any";
-    return `<span class="http-exchange-method ${methodClass}">${escapeHeimdallHtml(value)}</span>`;
+    return `<span class="http-exchange-method ${methodClass}">${escapePalantirMarkup(value)}</span>`;
 }
 
 function renderHeimdallPolicyEnforcement(enforced) {
@@ -1110,7 +1106,7 @@ function editHeimdallResource(namespace, resourceId) {
 
 function deleteHeimdallResource(namespace, resourceId) {
     Swal.fire({
-        title: `Delete Resource <strong>${escapeHeimdallHtml(resourceId)}</strong> from <strong>${escapeHeimdallHtml(namespace)}</strong>?`,
+        title: `Delete Resource <strong>${escapePalantirMarkup(resourceId)}</strong> from <strong>${escapePalantirMarkup(namespace)}</strong>?`,
         text: "This change is written to the namespace's authorization resource file.",
         icon: "question",
         showConfirmButton: true,
@@ -1192,8 +1188,8 @@ async function initializeHeimdallOperations() {
     const heimdallResourcesTable = $("#heimdallResourcesTable").DataTable({
         pageLength: 10,
         columnDefs: [
-            {visible: false, targets: 0},
-            {visible: false, targets: 1}
+            {visible: false, targets: 0, render: palantirTextColumn},
+            {visible: false, targets: 1, render: palantirTextColumn}
         ],
         autoWidth: false,
         layout: {topStart: heimdallToolbar},
@@ -1233,33 +1229,32 @@ async function initializeHeimdallOperations() {
             }
         });
 
-        function fetchHeimdallResources() {
-            $.get(`${CasActuatorEndpoints.heimdall()}/resources`, response => {
-                heimdallResourcesByNamespace = response;
-                heimdallResourcesTable.clear();
-                for (const [key, value] of Object.entries(response)) {
-                    for (const resource of Object.values(value)) {
-                        heimdallResourcesTable.row.add({
-                            0: key,
-                            1: `${resource.id ?? "N/A"}`,
-                            2: `${palantirCode(resource.pattern ?? "N/A")}`,
-                            3: renderHeimdallHttpMethod(resource.method),
-                            4: renderHeimdallAuthZenMapping(resource),
-                            5: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
-                            namespace: key,
-                            resourceId: resource.id
-                        });
-                    }
+        const loadHeimdallResources = () => $.get(`${CasActuatorEndpoints.heimdall()}/resources`, response => {
+            heimdallResourcesByNamespace = response;
+            heimdallResourcesTable.clear();
+            for (const [key, value] of Object.entries(response)) {
+                for (const resource of Object.values(value)) {
+                    heimdallResourcesTable.row.add({
+                        0: key,
+                        1: String(resource.id ?? "N/A"),
+                        2: `${palantirCode(resource.pattern ?? "N/A")}`,
+                        3: renderHeimdallHttpMethod(resource.method),
+                        4: renderHeimdallAuthZenMapping(resource),
+                        5: renderHeimdallPolicyEnforcement(resource.enforceAllPolicies === true),
+                        namespace: key,
+                        resourceId: resource.id
+                    });
                 }
-                heimdallResourcesTable.draw();
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
-            });
-        }
+            }
+            heimdallResourcesTable.draw(false);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+        const fetchHeimdallResources = palantirOneAtATime(loadHeimdallResources);
 
         fetchHeimdallResources();
-        reloadHeimdallResourcesTable = fetchHeimdallResources;
+        reloadHeimdallResourcesTable = loadHeimdallResources;
 
         setInterval(() => {
             if (currentActiveTab === Tabs.ACCESS_STRATEGY.index && document.visibilityState === "visible") {

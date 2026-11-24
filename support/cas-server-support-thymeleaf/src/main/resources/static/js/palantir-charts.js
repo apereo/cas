@@ -1052,7 +1052,7 @@ function startPrometheusRefresh() {
         clearInterval(prometheusRefreshTimer);
     }
 
-    prometheusRefreshTimer = setInterval(refreshPrometheusCharts, prometheusRefreshInterval);
+    prometheusRefreshTimer = setInterval(palantirOneAtATime(refreshPrometheusCharts), prometheusRefreshInterval);
 }
 
 async function refreshPrometheusCharts() {

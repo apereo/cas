@@ -3355,7 +3355,9 @@ function buildWizardServiceDefinition() {
                     } else if (value === "false") {
                         value = false;
                     } else if (isNumeric(value) && !isWizardTextSetting($input, paramName)) {
-                        value = /^-?\d+$/.test(String(value).trim()) && !Number.isSafeInteger(Number(value)) ? String(value).trim() : Number(value);
+                        value = /^-?\d+$/.test(String(value).trim()) && !Number.isSafeInteger(Number(value))
+                            ? palantirLargeId(String(value).trim())
+                            : Number(value);
                     }
 
                     if (paramName.includes(".")) {

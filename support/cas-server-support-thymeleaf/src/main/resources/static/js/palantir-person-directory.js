@@ -175,7 +175,7 @@ async function initializePersonDirectoryOperations() {
             }
             const username = $("#personUsername").val();
             Swal.fire({
-                title: `Are You Sure You Want to Delete the Cache for ${username}?`,
+                titleText: `Are You Sure You Want to Delete the Cache for ${username}?`,
                 text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
                 icon: "question",
                 showConfirmButton: true,
@@ -1220,7 +1220,7 @@ function runAttributeDefinitionAction(action, definitionKey) {
                 }
             });
     } else if (action === "view" && CasActuatorEndpoints.attributeDefinitions()) {
-        $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${definitionKey}`, response => {
+        $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${encodeURIComponent(definitionKey)}`, response => {
             const editor = initializeAceEditor("viewAttrDefEditor", "json");
             editor.setReadOnly(true);
             editor.setValue(JSON.stringify(response, null, 2), -1);
@@ -1864,7 +1864,7 @@ function editAttributeDefinition(key) {
     if (!CasActuatorEndpoints.attributeDefinitions()) {
         return;
     }
-    $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${key}`, response => {
+    $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${encodeURIComponent(key)}`, response => {
         openAttributeDefinitionDialog(response);
     }).fail((xhr, status, error) => {
         console.error("Error fetching attribute definition:", error);

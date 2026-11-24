@@ -222,7 +222,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
             case "wrong-type" -> header.type(new JOSEObjectType("JWT"));
             case "disallowed-algorithm", "wrong-signature" -> {
             }
-            default -> fail("Unexpected attestation case " + failure);
+            default -> fail(() -> "Unexpected attestation case " + failure);
         }
         val modifiedHeader = "disallowed-algorithm".equals(failure)
             ? new JWSHeader.Builder(JWSAlgorithm.HS256).type(valid.getHeader().getType())
@@ -263,7 +263,7 @@ class OidcPushedAuthorizeEndpointControllerTests extends AbstractOidcTests {
             case "missing-identifier" -> claims.jwtID(null);
             case "blank-identifier" -> claims.jwtID(" ");
             case "wrong-type" -> header.type(new JOSEObjectType("JWT"));
-            default -> fail("Unexpected proof case " + failure);
+            default -> fail(() -> "Unexpected proof case " + failure);
         }
         val invalid = new SignedJWT(header.build(), claims.build());
         invalid.sign(new ECDSASigner(instanceKey));

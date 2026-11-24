@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.configuration.api.MutablePropertySource;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.palantir.PalantirAuthorities;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -14,7 +15,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.ReflectionUtils;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.AbstractController;
@@ -95,16 +95,19 @@ public class DashboardController extends AbstractController {
     /**
      * Dashboard home page explicitly defined.
      *
+     * @param authentication who is signed in
      * @return the model and view
+     * @throws Exception when the page cannot be put together
      */
     @GetMapping(path = {StringUtils.EMPTY, "/dashboard", "/"}, produces = MediaType.TEXT_HTML_VALUE)
     @Operation(summary = "Dashboard home page", description = "Dashboard home page")
-    public ModelAndView dashboardRoot(final Authentication authentication, final HttpServletRequest request) throws Exception {
-        return buildModelAndView(authentication, request);
+    public ModelAndView dashboardRoot(final Authentication authentication) throws Exception {
+        return buildModelAndView(authentication);
     }
 
     /**
-     * Fetch session response entity.
+     * Tell the page whether its session is still signed in, and as whom. The session id itself is not given out: it
+     * is the session, and scripts on the page have no use for it.
      *
      * @param request the request
      * @return the response entity
@@ -119,21 +122,15 @@ public class DashboardController extends AbstractController {
         if (!authenticated || session == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok(Map.of(
-            "name", auth.getName(),
-            "id", session.getId()
-        ));
+        return ResponseEntity.ok(Map.of("name", auth.getName()));
     }
 
-    private ModelAndView buildModelAndView(final Authentication authentication, final HttpServletRequest request) throws Exception {
+    private ModelAndView buildModelAndView(final Authentication authentication) throws Exception {
         val mav = new ModelAndView("palantir/casPalantirDashboardView");
         mav.addObject("authentication", authentication);
         mav.addObject("casServerPrefix", casProperties.getServer().getPrefix());
-        mav.addObject("httpRequestSecure", request.isSecure());
-        mav.addObject("httpRequestMethod", request.getMethod());
-        mav.addObject("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
         mav.addObject("clientInfo", ClientInfoHolder.getClientInfo());
-        mav.addObject("isRoleAdmin", isRoleAdmin(authentication));
+        mav.addObject("isRoleAdmin", PalantirAuthorities.isAdministrator(authentication));
 
         val basePath = webEndpointProperties.getBasePath();
         val resolvedLinks = endpointLinksResolver.resolveLinks(basePath);
@@ -171,13 +168,6 @@ public class DashboardController extends AbstractController {
             .collect(Collectors.toMap(endpoint -> endpoint.getEndpointId().toString(),
                 endpoint -> endpointAccessResolver.accessFor(endpoint.getEndpointId(), endpoint.getDefaultAccess()).name(),
                 (first, second) -> first, TreeMap::new));
-    }
-
-    private static boolean isRoleAdmin(final Authentication authentication) {
-        return authentication
-            .getAuthorities()
-            .stream()
-            .anyMatch(grantedAuthority -> Objects.equals(grantedAuthority.getAuthority(), "ROLE_ADMIN"));
     }
 
     /**

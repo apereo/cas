@@ -185,7 +185,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
                 .filter(Objects::nonNull)
                 .toList();
         });
-        val results = Objects.requireNonNullElse(services, List.<RegisteredService>of());
+        val results = Objects.requireNonNullElseGet(services, List::<RegisteredService>of);
         val identifiers = results.stream().map(RegisteredService::getId).collect(Collectors.toSet());
         loadedServices.keySet().retainAll(identifiers);
         return results;

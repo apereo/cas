@@ -709,16 +709,19 @@ class PalantirHome {
         const health = summary.sections.health;
         const components = Array.isArray(health?.components) ? health.components : [];
         const attention = components.filter(component => component.status !== "UP");
+        const overall = String(health?.status ?? "UNKNOWN").toUpperCase();
         const state = !health || health.unavailable ? "neutral"
             : health.pending ? "pending"
-                : health.status !== "UP" ? "down"
-                    : attention.length > 0 ? "attention" : "up";
+                : overall === "DOWN" || overall === "OUT_OF_SERVICE" ? "down"
+                    : overall !== "UP" || attention.length > 0 ? "attention" : "up";
         const checks = attention.length === 1 ? "1 check" : `${attention.length} checks`;
+        const named = camelcaseToTitleCase(overall.toLowerCase().replace(/_(\w)/g, (match, letter) => letter.toUpperCase()));
         const label = {
             neutral: "CAS is running",
             pending: "Checking health...",
             up: "All systems healthy",
-            attention: `Up, with ${checks} to look at`,
+            attention: overall === "UP" ? `Up, with ${checks} to look at`
+                : attention.length > 0 ? `${named}, with ${checks} to look at` : `Health is ${named}`,
             down: "Something is down"
         }[state];
         const icon = {neutral: "mdi-server", pending: "mdi-timer-sand", up: "mdi-check-bold", attention: "mdi-exclamation-thick", down: "mdi-close-thick"}[state];

@@ -628,7 +628,8 @@ class PalantirServiceEditGuard {
      * @returns {Promise<string>} overwrite to save anyway, or cancel to keep editing
      */
     static async askWithoutCheck(xhr) {
-        const expired = xhr?.status === 401 || xhr?.status === 403 || xhr?.statusText === "parsererror"
+        const status = Number(xhr?.status);
+        const expired = status === 401 || status === 403 || (status >= 200 && status < 300)
             || /text\/html/i.test(xhr?.getResponseHeader?.("Content-Type") ?? "");
         const result = await Swal.fire({
             title: "Could Not Check for Changes",

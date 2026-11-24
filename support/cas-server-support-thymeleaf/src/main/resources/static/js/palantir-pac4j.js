@@ -1,7 +1,7 @@
 function removeIdentityProvider(idp, type) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         Swal.fire({
-            title: `Are You Sure You Want to Delete ${idp}?`,
+            titleText: `Are You Sure You Want to Delete ${idp}?`,
             text: `
                 Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source.
                 Once removed, you may not be able to revert this.
@@ -135,7 +135,7 @@ function configureSaml2ClientMetadataButtons() {
 
         Swal.fire({
             icon: "info",
-            title: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
+            titleText: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
             text: "Please wait while data is being retrieved...",
             allowOutsideClick: false,
             showConfirmButton: false,

@@ -352,9 +352,10 @@ async function initializeClusterTopologyOperations() {
         }
     });
     refreshActiveClusterTab();
+    const pollCluster = palantirOneAtATime(refreshActiveClusterTab);
     setInterval(() => {
         if (currentActiveTab === Tabs.CLUSTER.index && document.visibilityState === "visible") {
-            refreshActiveClusterTab();
+            pollCluster();
         }
     }, palantirSettings().refreshInterval);
 }

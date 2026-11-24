@@ -216,7 +216,7 @@ async function initializeLoggingOperations() {
                 return;
             }
             const logFileStream = $("#logFileStream");
-            $.ajax({
+            return $.ajax({
                 url: CasActuatorEndpoints.logFile(),
                 type: "GET",
                 success: response => {
@@ -230,10 +230,7 @@ async function initializeLoggingOperations() {
             });
         }
 
-        function refreshActiveLogStreams() {
-            refreshLogData();
-            refreshLogFile();
-        }
+        const refreshActiveLogStreams = palantirOneAtATime(() => Promise.all([refreshLogData(), refreshLogFile()]));
 
         setInterval(refreshActiveLogStreams, palantirSettings().refreshInterval);
         window.addEventListener(palantirPollingContextEvent, refreshActiveLogStreams);

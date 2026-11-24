@@ -286,11 +286,30 @@ public class PalantirOverview implements DisposableBean {
             component.put("millis", millis);
             components.add(component);
         });
-        val down = components.stream().anyMatch(component -> Set.of("DOWN", "OUT_OF_SERVICE").contains(component.get("status")));
         val health = new LinkedHashMap<String, Object>();
-        health.put("status", down ? "DOWN" : "UP");
+        health.put("status", overallStatus(components.stream().map(component -> String.valueOf(component.get("status"))).toList(),
+            healthStatusOrder()));
         health.put("components", components);
         return health;
+    }
+
+    /**
+     * The overall health, as the health endpoint puts it together: the first status, in the configured order, that a
+     * check has. A check that has not answered in time counts as unknown, and statuses the order does not name are left
+     * out; with no check, the server is up.
+     *
+     * @param statuses the statuses of the checks
+     * @param order    the status codes, worst first
+     * @return the overall status
+     */
+    public static String overallStatus(final List<String> statuses, final List<String> order) {
+        if (statuses.isEmpty()) {
+            return Status.UP.getCode();
+        }
+        val known = statuses.stream()
+            .map(status -> "SLOW".equals(status) ? Status.UNKNOWN.getCode() : status)
+            .collect(Collectors.toSet());
+        return order.stream().filter(known::contains).findFirst().orElseGet(Status.UNKNOWN::getCode);
     }
 
     private static String healthCheckName(final String beanName) {
@@ -349,7 +368,7 @@ public class PalantirOverview implements DisposableBean {
             .map(entry -> statusOf(entry.contributor(), order))
             .collect(Collectors.toSet());
         return order.stream().filter(statuses::contains).findFirst()
-            .orElseGet(() -> statuses.stream().sorted().findFirst().orElse(Status.UNKNOWN.getCode()));
+            .orElseGet(() -> statuses.stream().sorted().findFirst().orElseGet(Status.UNKNOWN::getCode));
     }
 
     private static String statusOf(final HealthContributor contributor, final List<String> order) {

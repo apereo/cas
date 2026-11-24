@@ -451,6 +451,47 @@ function closeAllDialogs() {
 const PALANTIR_READ_ONLY = "palantir-read-only";
 
 /**
+ * Let a poll run one at a time: while what it started is still on its way, such as a request to a slow endpoint, a
+ * later call waits for it rather than starting another, so polling never piles up requests.
+ *
+ * @param poll the poll, returning what it started (a promise or a jQuery request) when it starts something
+ * @returns {function(...*): *} the poll, run one at a time
+ */
+function palantirOneAtATime(poll) {
+    let running = null;
+    return function (...args) {
+        if (running !== null) {
+            return running;
+        }
+        const started = poll.apply(this, args);
+        if (started && typeof started.then === "function") {
+            running = Promise.resolve(started)
+                .catch(error => console.debug("A poll did not finish", error))
+                .finally(() => {
+                    running = null;
+                });
+            return running;
+        }
+        return started;
+    };
+}
+
+const PALANTIR_LARGE_IDS = new Set();
+
+/**
+ * Keep a numeric id too large for an exact JavaScript number as the text of its digits, and remember that it is a
+ * number, so {@link palantirStringifyJson} writes it back as one. Text that only looks like such a number, such as a
+ * value someone typed in a map, is not remembered and stays text.
+ *
+ * @param digits the digits of the id
+ * @returns {string} the digits
+ */
+function palantirLargeId(digits) {
+    PALANTIR_LARGE_IDS.add(digits);
+    return digits;
+}
+
+/**
  * Read JSON keeping every id exactly as CAS wrote it. CAS ids, such as those of applications, are 64-bit numbers, and
  * JavaScript numbers are exact only up to 2^53, so two neighbouring large ids would read as the same number and an
  * action on one could reach the other. An id too large to be exact is read as the text of its digits instead; ids that
@@ -461,14 +502,14 @@ const PALANTIR_READ_ONLY = "palantir-read-only";
  */
 function palantirParseJson(text) {
     return JSON.parse(String(text).replace(/("id"\s*:\s*)(-?(?:0|[1-9]\d*))(?=\s*[,}\]])/g,
-        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}"${digits}"`));
+        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}"${palantirLargeId(digits)}"`));
 }
 
 /**
  * Write JSON the way CAS reads it: an id kept as the text of its digits by {@link palantirParseJson}, because it is too
- * large for an exact JavaScript number, is written as the number it is. Only text that is a whole number as JSON
- * writes one, with no leading zeros, is written so; any other text, such as "0012345678901234567", stays text, so
- * the JSON stays valid.
+ * large for an exact JavaScript number, is written as the number it is. Only ids that were numbers, read so or entered
+ * as one ({@link palantirLargeId}), are written back as numbers; an id that was text, such as an entry of a map holding
+ * digits, stays text.
  *
  * @param value the value
  * @param indent the indentation, as JSON.stringify takes it
@@ -476,12 +517,92 @@ function palantirParseJson(text) {
  */
 function palantirStringifyJson(value, indent) {
     return JSON.stringify(value, null, indent).replace(/("id"\s*:\s*)"(-?(?:0|[1-9]\d*))"/g,
-        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}${digits}`);
+        (match, key, digits) => PALANTIR_LARGE_IDS.has(digits) && !Number.isSafeInteger(Number(digits)) ? `${key}${digits}` : match);
 }
 
 if (typeof $ !== "undefined" && $.ajaxSetup) {
     $.ajaxSetup({converters: {"text json": palantirParseJson}});
 }
+
+/**
+ * Send the CSRF token with every request Palantir makes that changes something on this server. CAS asks for the token
+ * on such requests to the actuator and to Palantir when they rely on the browser's session, so another site cannot
+ * make them on the operator's behalf; the token is read from the cookie CAS sets for the page.
+ */
+class PalantirCsrf {
+    static HEADER = "X-CSRF-TOKEN";
+
+    static PARAMETER = "_csrf";
+
+    static token() {
+        const cookie = document.cookie.split(";").map(entry => entry.trim()).find(entry => entry.startsWith("XSRF-TOKEN="));
+        if (!cookie) {
+            return null;
+        }
+        try {
+            return decodeURIComponent(cookie.slice("XSRF-TOKEN=".length)) || null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    static needed(method, url) {
+        if (["GET", "HEAD", "OPTIONS", "TRACE"].includes(String(method ?? "GET").toUpperCase())) {
+            return false;
+        }
+        try {
+            return new URL(url, window.location.href).origin === window.location.origin;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * Add the token to a form that is about to be posted to this server, such as the one that signs out.
+     *
+     * @param form the form
+     */
+    static addTo(form) {
+        const token = PalantirCsrf.token();
+        if (token !== null && PalantirCsrf.needed(form.method || "POST", form.action)) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = PalantirCsrf.PARAMETER;
+            input.value = token;
+            form.appendChild(input);
+        }
+    }
+
+    static install() {
+        if (typeof $ !== "undefined" && $.ajaxPrefilter) {
+            $.ajaxPrefilter((options, originalOptions, xhr) => {
+                const token = PalantirCsrf.token();
+                if (token !== null && PalantirCsrf.needed(options.type ?? options.method, options.url)) {
+                    xhr.setRequestHeader(PalantirCsrf.HEADER, token);
+                }
+            });
+        }
+        if (typeof window.fetch === "function") {
+            const send = window.fetch.bind(window);
+            window.fetch = (input, init = {}) => {
+                const request = input instanceof Request ? input : null;
+                const method = init.method ?? request?.method ?? "GET";
+                const url = request ? request.url : String(input);
+                const token = PalantirCsrf.token();
+                if (token === null || !PalantirCsrf.needed(method, url)) {
+                    return send(input, init);
+                }
+                const headers = new Headers(init.headers ?? request?.headers ?? undefined);
+                if (!headers.has(PalantirCsrf.HEADER)) {
+                    headers.set(PalantirCsrf.HEADER, token);
+                }
+                return send(input, {...init, headers});
+            };
+        }
+    }
+}
+
+PalantirCsrf.install();
 
 /**
  * A modal progress dialog for work the operator has to wait for: a message saying what is happening, a bar that
@@ -698,6 +819,32 @@ function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
 }
 
 /**
+ * Escape text for markup, the one way Palantir does it: put a value that may come from outside, such as from CAS or
+ * from what someone typed, into HTML as text, in elements and attributes alike.
+ *
+ * @param value the value; nothing is written as an empty string
+ * @returns {string} the escaped text
+ */
+function escapePalantirMarkup(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character]);
+}
+
+/**
+ * The renderer of a DataTables column that holds text: the cell keeps its value as it is for sorting, searching and
+ * grouping, and shows it escaped, so a column of plain text needs no escaping where its rows are added. Use it as the
+ * column's <code>render</code>.
+ *
+ * @param data the cell value
+ * @param type the DataTables rendering type
+ * @returns {*} the escaped text for display, otherwise the value
+ */
+function palantirTextColumn(data, type) {
+    return type === "display" ? escapePalantirMarkup(data) : data ?? "";
+}
+
+/**
  * A value shown as code in a table cell or a card: the value is escaped, so text that came from a request, such as a
  * username, a user agent or an attribute value, is shown as written and never read as markup.
  *
@@ -706,9 +853,7 @@ function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
  */
 function palantirCode(value) {
     const text = value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
-    return `<code>${text.replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    })[character])}</code>`;
+    return `<code>${escapePalantirMarkup(text)}</code>`;
 }
 
 function palantirReadOnlyMessage(name) {

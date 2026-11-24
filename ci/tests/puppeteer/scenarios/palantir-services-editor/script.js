@@ -429,6 +429,10 @@ async function verifyLargeIdsSurviveEditing(page) {
     assert(formatted.includes(`"id": ${large}`), `Formatting keeps the id: ${formatted}`);
     const padded = await page.evaluate(() => palantirStringifyJson(palantirParseJson("{\"id\": \"0012345678901234567\"}")));
     assert(JSON.parse(padded).id === "0012345678901234567", `Text that is not a JSON number stays text: ${padded}`);
+    const mapped = await page.evaluate(() => palantirStringifyJson(palantirParseJson(
+        "{\"id\": 9007199254740995, \"properties\": {\"x\": {\"id\": \"12345678901234567891\"}}}")));
+    assert(mapped.includes("\"id\":9007199254740995") && mapped.includes("\"id\":\"12345678901234567891\""),
+        `Only ids that were numbers are written back as numbers: ${mapped}`);
     await page.evaluate((definition) => PalantirServiceEditor.openApplicationInWizard(definition), service);
     await cas.sleep(1000);
     if (await page.evaluate(() => $(".swal2-popup:visible").length > 0)) {

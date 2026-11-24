@@ -24,12 +24,6 @@ function removeSpringSession(id) {
         });
 }
 
-function escapeSsoHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 function formatSpringSessionDuration(value) {
     if (value === undefined || value === null || value === "") {
         return "&mdash;";
@@ -42,11 +36,11 @@ function formatSpringSessionDuration(value) {
                 + Number(match[3] ?? 0);
             return formatSpringSessionDuration(seconds);
         }
-        return escapeSsoHtml(value);
+        return escapePalantirMarkup(value);
     }
     const seconds = Number(value);
     if (!Number.isFinite(seconds)) {
-        return escapeSsoHtml(value);
+        return escapePalantirMarkup(value);
     }
     if (seconds < 60) {
         return `${Math.round(seconds)}s`;
@@ -121,7 +115,7 @@ function describePalantirUserAgent(userAgent) {
  * @returns {string} the card markup
  */
 function ssoSessionCard(session) {
-    const escape = escapeSsoHtml;
+    const escape = escapePalantirMarkup;
     const authentication = session.authentication_attributes ?? {};
     const date = palantirRecordDate(session.authentication_date);
     const agent = describePalantirUserAgent(authentication.userAgent?.[0]);
@@ -181,7 +175,7 @@ function ssoSessionCard(session) {
  * @returns {string} the card markup
  */
 function springSessionCard(session) {
-    const escape = escapeSsoHtml;
+    const escape = escapePalantirMarkup;
     const id = String(session.id ?? "");
     const created = palantirRecordDate(session.creationTime);
     const accessed = palantirRecordDate(session.lastAccessedTime);
@@ -307,7 +301,7 @@ async function initializeSsoSessionOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 6}
+            {visible: false, targets: 6, render: palantirTextColumn}
         ],
         drawCallback: function () {
             $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
@@ -458,7 +452,7 @@ async function initializeSsoSessionOperations() {
             const username = $("#springSessionUsername").val();
             Swal.fire({
                 icon: "info",
-                title: `Fetching Spring Sessions for ${username}`,
+                titleText: `Fetching Spring Sessions for ${username}`,
                 text: "Please wait while Spring Sessions are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
@@ -543,7 +537,7 @@ async function initializeSsoSessionOperations() {
             const username = $("#ssoSessionUsername").val();
             Swal.fire({
                 icon: "info",
-                title: `Fetching SSO Sessions for ${username}`,
+                titleText: `Fetching SSO Sessions for ${username}`,
                 text: "Please wait while single sign-on sessions are retrieved...",
                 allowOutsideClick: false,
                 showConfirmButton: false,
@@ -576,7 +570,7 @@ async function initializeSsoSessionOperations() {
                             3: `${palantirCode(session["authentication_attributes"]?.userAgent?.[0])}`,
                             4: `${palantirCode(session["number_of_uses"])}`,
                             5: `${palantirCode(session["remember_me"])}`,
-                            6: `${JSON.stringify(attributes)}`,
+                            6: JSON.stringify(attributes),
                             ticketGrantingTicket: session.ticket_granting_ticket,
                             attributes: attributes,
                             services: services,

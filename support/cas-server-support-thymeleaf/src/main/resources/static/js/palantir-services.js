@@ -531,7 +531,7 @@ async function initializeServiceButtons() {
     });
 
     function viewEntityChangelog(serviceId) {
-        $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${serviceId}/changelog`, response => {
+        $.get(`${CasActuatorEndpoints.entityHistory()}/registeredServices/${encodeURIComponent(serviceId)}/changelog`, response => {
             const editor = initializeAceEditor("entityChangelogEditor", "text");
             editor.setValue(response);
             editor.setReadOnly(true);
@@ -557,7 +557,7 @@ async function initializeServiceButtons() {
                 .then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.registeredServices()}/${serviceId}`,
+                            url: `${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`,
                             type: "DELETE",
                             headers: {"Content-Type": "application/json"},
                             success: async () => {
@@ -576,7 +576,7 @@ async function initializeServiceButtons() {
 
     function editService(serviceId, wizard) {
         if (CasActuatorEndpoints.registeredServices()) {
-            $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
+            $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`, response => {
                 if (wizard) {
                     PalantirServiceEditor.openApplicationInWizard(response);
                     return;
@@ -705,7 +705,7 @@ async function initializeServiceButtons() {
      */
     function duplicateService(serviceId) {
         if (CasActuatorEndpoints.registeredServices()) {
-            $.get(`${CasActuatorEndpoints.registeredServices()}/${serviceId}`, response => {
+            $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`, response => {
                 const clone = structuredClone(response);
                 delete clone.id;
                 clone.name = `Copy of ${response.name ?? serviceId}`;
@@ -1244,12 +1244,6 @@ function samlMetadataLocationMarkup(location) {
     }
     return `${tag}<a href="#" data-saml-metadata-manager="${escapePalantirMarkup(`${scheme}://`)}"
         title="Open the ${escapePalantirMarkup(kind)} metadata manager under Protocols">Metadata Location</a>`;
-}
-
-function escapePalantirMarkup(value) {
-    return String(value ?? "").replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    })[character]);
 }
 
 /**

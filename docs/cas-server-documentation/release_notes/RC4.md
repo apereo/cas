@@ -422,6 +422,12 @@ closing with unsaved changes, keeping a draft in the browser that can be resumed
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
 
+Palantir is hardened against misuse from other sites and pages: changes it makes to the actuator endpoints and to
+Palantir itself with the browser's session must carry a CSRF token, while scripts and other clients that authenticate
+each request are unaffected; signing in no longer follows a target address given in the request; the session id is no
+longer handed to the page; values such as user attributes, tenant ids, identity provider names and usernames are always
+shown as text; and the home page names health checks only to those the health endpoint shows its components to.
+
 ### Theme Properties
 {: .new data-area="ui"}
 

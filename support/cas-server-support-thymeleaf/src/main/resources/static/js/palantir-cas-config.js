@@ -15,7 +15,7 @@ function searchForConfigPropertyButton(name) {
 }
 
 function effectiveConfigPropertyValue(name) {
-    $.get(`${CasActuatorEndpoints.env()}/${name}`, response => {
+    $.get(`${CasActuatorEndpoints.env()}/${encodeURIComponent(name)}`, response => {
         Swal.fire({
             title: "Effective Property Value",
             html: `
@@ -679,12 +679,6 @@ async function populateConfigurationNameSelectOptions() {
     }
 }
 
-function escapeConfigHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 function classifySpringBean(type) {
     const beanType = String(type ?? "");
     if (beanType.startsWith("org.springframework")
@@ -760,10 +754,10 @@ function springConditionLabel(condition) {
     const kind = kinds.find(([pattern]) => pattern.test(name));
     const label = kind ? kind[2] : name.replace(/^On/, "").replace(/Condition$/, "").replace(/([a-z0-9])([A-Z])/g, "$1 $2") || "Condition";
     return `
-        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapeConfigHtml(name)}">
-            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapeConfigHtml(label)}
+        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapePalantirMarkup(name)}">
+            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapePalantirMarkup(label)}
         </span>
-        <code class="spring-condition-class">${escapeConfigHtml(name)}</code>`.trim();
+        <code class="spring-condition-class">${escapePalantirMarkup(name)}</code>`.trim();
 }
 
 /**
@@ -778,7 +772,7 @@ function springConditionMessage(message) {
     if (text === "") {
         return "<span class=\"spring-condition-message is-empty\">No condition message provided.</span>";
     }
-    const formatted = escapeConfigHtml(text)
+    const formatted = escapePalantirMarkup(text)
         .replace(/@(Conditional\w*|Profile)\b/g, "<span class=\"spring-condition-annotation\">@$1</span>")
         .replace(/\(([^()]+)\)/g, "<span class=\"spring-condition-details\">$1</span>")
         .replace(/(?:&#39;|&#x27;|')([^&']+?)(?:&#39;|&#x27;|')/g, "<code>$1</code>");
@@ -948,9 +942,7 @@ function initializeGroovyScriptCacheManagerOperations() {
     function fetchGroovyScriptResource(entry) {
         const key = groovyScriptCacheEntryKey(entry);
         const resourceName = groovyScriptCacheEntryResourceName(entry);
-        const title = resourceName
-            ? `${escapeConfigHtml(resourceName)} (${escapeConfigHtml(key)})`
-            : escapeConfigHtml(key);
+        const title = resourceName ? `${resourceName} (${key})` : key;
         $("#groovyScriptCacheResourceDialog").dialog("option", "title", `Groovy Script Resource: ${title}`);
         $.ajax({
             url: resourceUrl(key),
@@ -1087,7 +1079,7 @@ async function initializeConfigurationOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1353,7 +1345,7 @@ async function initializeConfigurationOperations() {
                     const property = `${bean.prefix}.${prop}`;
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
-                            0: `${sourceBean}`,
+                            0: sourceBean,
                             1: `${palantirCode(property)}`,
                             2: `${palantirCode(propValue)}`,
                             propertyName: toKebabCase(property)
@@ -1367,7 +1359,7 @@ async function initializeConfigurationOperations() {
                     const property = `${bean.prefix}.${prop}`;
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
-                            0: `${sourceBean}`,
+                            0: sourceBean,
                             1: `${palantirCode(toKebabCase(property))}`,
                             2: `${palantirCode(propValue)}`,
                             propertyName: toKebabCase(property)
@@ -1397,7 +1389,7 @@ async function initializeConfigurationOperations() {
                 className: "spring-bean-toggle-cell",
                 render: (data, type, row) => type === "display" && (row.dependencies.length > 0 || row.dependents.length > 0)
                     ? `<button type="button" class="spring-bean-toggle" aria-expanded="false"
-                               aria-label="Show what ${escapeConfigHtml(row.name)} depends on and what uses it">
+                               aria-label="Show what ${escapePalantirMarkup(row.name)} depends on and what uses it">
                            <i class="mdi mdi-chevron-right" aria-hidden="true"></i>
                        </button>`
                     : ""
@@ -1416,7 +1408,7 @@ async function initializeConfigurationOperations() {
                     if (row.dependents.length > 0) {
                         counts.push(`used by ${row.dependents.length}`);
                     }
-                    return `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>${counts.length > 0
+                    return `<code class="spring-bean-name">${escapePalantirMarkup(data)}</code>${counts.length > 0
                         ? `<span class="spring-bean-counts">${counts.join(" · ")}</span>` : ""}`;
                 }
             },
@@ -1424,21 +1416,21 @@ async function initializeConfigurationOperations() {
                 data: "type",
                 width: "42%",
                 render: (data, type) => type === "display"
-                    ? `<code class="spring-bean-type">${escapeConfigHtml(data)}</code>`
+                    ? `<code class="spring-bean-type">${escapePalantirMarkup(data)}</code>`
                     : data
             },
             {
                 data: "scope",
                 width: "12%",
                 render: (data, type) => type === "display"
-                    ? `<span class="spring-bean-scope scope-${escapeConfigHtml(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapeConfigHtml(data || "singleton")}</span>`
+                    ? `<span class="spring-bean-scope scope-${escapePalantirMarkup(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapePalantirMarkup(data || "singleton")}</span>`
                     : data
             },
             {
                 data: "classification",
                 width: "15%",
                 render: (data, type) => type === "display"
-                    ? `<span class="spring-bean-classification classification-${escapeConfigHtml(String(data).toLowerCase())}">${escapeConfigHtml(data)}</span>`
+                    ? `<span class="spring-bean-classification classification-${escapePalantirMarkup(String(data).toLowerCase())}">${escapePalantirMarkup(data)}</span>`
                     : data
             },
             {
@@ -1465,8 +1457,8 @@ async function initializeConfigurationOperations() {
             <div class="spring-bean-relations">
                 <h5>${title} <span>${names.length}</span></h5>
                 ${names.length > 0
-        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapeConfigHtml(name)}"
-                        title="Find ${escapeConfigHtml(name)}">${escapeConfigHtml(name)}</button>`).join("")}</div>`
+        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapePalantirMarkup(name)}"
+                        title="Find ${escapePalantirMarkup(name)}">${escapePalantirMarkup(name)}</button>`).join("")}</div>`
         : `<p class="spring-bean-none">${empty}</p>`}
             </div>`;
         return `<div class="spring-bean-details">
@@ -1636,8 +1628,12 @@ async function initializeConfigurationOperations() {
         await populateConfigurationNameSelectOptions();
 
         const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
-        deferRender: true,
+            deferRender: true,
             pageLength: 10,
+            columnDefs: [
+                {targets: 0, render: palantirTextColumn},
+                {targets: 1, render: (data, type) => type === "display" ? sanitizePalantirHtml(data) : palantirHtmlText(data)}
+            ],
             drawCallback: settings => {
                 $("#configSearchResultsTable tr").addClass("mdc-data-table__row");
                 $("#configSearchResultsTable td").addClass("mdc-data-table__cell").addClass("text-wrap");
@@ -1662,11 +1658,11 @@ async function initializeConfigurationOperations() {
                 showConfirmButton: false,
                 didOpen: () => Swal.showLoading()
             });
-            $.get(`${CasActuatorEndpoints.configurationMetadata()}/${searchQuery}`, response => {
+            $.get(`${CasActuatorEndpoints.configurationMetadata()}/${encodeURIComponent(searchQuery)}`, response => {
                 for (const entry of response) {
                     configSearchResultsTable.row.add({
-                        0: entry.id,
-                        1: entry.description
+                        0: entry.id ?? "",
+                        1: entry.description ?? ""
                     });
                 }
                 $("#configSearchResults").show();

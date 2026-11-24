@@ -698,12 +698,6 @@ async function initializeSystemOperations() {
         }
     }
 
-    function escapeHtml(str) {
-        return String(str).replace(/[&<>"']/g, s => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[s]));
-    }
-
     function normalizeDependency(dependency) {
         const entry = dependency ?? {};
         return {
@@ -715,11 +709,11 @@ async function initializeSystemOperations() {
     }
 
     function renderDependencyVersion(version) {
-        return `<span class="cas-dependency-version">${escapeHtml(version)}</span>`;
+        return `<span class="cas-dependency-version">${escapePalantirMarkup(version)}</span>`;
     }
 
     function renderVulnerabilityId(id) {
-        return `<span class="cas-vulnerability-id">${escapeHtml(id)}</span>`;
+        return `<span class="cas-vulnerability-id">${escapePalantirMarkup(id)}</span>`;
     }
 
     function roundUpCvssScore(value) {
@@ -883,9 +877,9 @@ async function initializeSystemOperations() {
         const score = Number.isFinite(severity?.score) ? severity.score.toFixed(1) : "";
         const title = [severity?.type, severity?.vector].filter(Boolean).join(" ");
         return `
-            <span class="cas-vulnerability-severity severity-${escapeHtml(severity?.level ?? "unknown")}"
-                  title="${escapeHtml(title)}">
-                ${escapeHtml(label)}${score ? ` ${escapeHtml(score)}` : ""}
+            <span class="cas-vulnerability-severity severity-${escapePalantirMarkup(severity?.level ?? "unknown")}"
+                  title="${escapePalantirMarkup(title)}">
+                ${escapePalantirMarkup(label)}${score ? ` ${escapePalantirMarkup(score)}` : ""}
             </span>`;
     }
 
@@ -1108,7 +1102,7 @@ async function initializeSystemOperations() {
         const params = new URLSearchParams();
         tags.forEach(tag => params.append("tag", tag));
         const query = params.toString();
-        return `${CasActuatorEndpoints.metrics()}/${metricName}${query ? `?${query}` : ""}`;
+        return `${CasActuatorEndpoints.metrics()}/${encodeURIComponent(metricName)}${query ? `?${query}` : ""}`;
     }
 
     async function getMemoryMetricValue(metricName, tags = []) {
@@ -1538,7 +1532,7 @@ async function initializeSystemOperations() {
             const renderedValue = Array.isArray(value) ? value.join(", ") : value;
             return `
                 <div class="http-exchange-header-row">
-                    <strong>${escapeHtml(name)}</strong>
+                    <strong>${escapePalantirMarkup(name)}</strong>
                     ${palantirCode(renderedValue)}
                 </div>`;
         }).join("");
@@ -1568,7 +1562,7 @@ async function initializeSystemOperations() {
                 <h4>Metadata</h4>
                 <div class="http-exchange-metadata">
                     ${metadata.length === 0 ? `<div class="http-exchange-empty">No metadata recorded.</div>` : metadata.map(([name, value]) => `
-                        <strong>${escapeHtml(name)}</strong>
+                        <strong>${escapePalantirMarkup(name)}</strong>
                         ${palantirCode(value)}
                     `).join("")}
                 </div>
@@ -1618,7 +1612,7 @@ async function initializeSystemOperations() {
         const status = Number(value);
         const statusClass = httpTraceStatusClass(value, error);
         const label = Number.isFinite(status) && status > 0 ? status : error ? "ERROR" : "OK";
-        return `<span class="http-trace-status status-${statusClass}">${escapeHtml(label)}</span>`;
+        return `<span class="http-trace-status status-${statusClass}">${escapePalantirMarkup(label)}</span>`;
     }
 
     function renderHttpTraceError(error) {
@@ -1629,7 +1623,7 @@ async function initializeSystemOperations() {
 
     function renderHttpTraceMethod(method) {
         return method
-            ? `<span class="http-exchange-method method-${escapeHtml(String(method).toLowerCase())}">${escapeHtml(method)}</span>`
+            ? `<span class="http-exchange-method method-${escapePalantirMarkup(String(method).toLowerCase())}">${escapePalantirMarkup(method)}</span>`
             : "";
     }
 
@@ -1640,13 +1634,13 @@ async function initializeSystemOperations() {
         }
         const match = value.match(/^(http)\s+(get|post|put|patch|delete|options|head)\b(.*)$/i);
         if (!match) {
-            return `<span class="http-trace-root-span">${escapeHtml(value)}</span>`;
+            return `<span class="http-trace-root-span">${escapePalantirMarkup(value)}</span>`;
         }
         return `
             <span class="http-trace-root-span">
-                ${escapeHtml(match[1].toUpperCase())}
+                ${escapePalantirMarkup(match[1].toUpperCase())}
                 ${renderHttpTraceMethod(match[2].toUpperCase())}
-                ${escapeHtml(match[3] ?? "")}
+                ${escapePalantirMarkup(match[3] ?? "")}
             </span>`;
     }
 
@@ -1656,7 +1650,7 @@ async function initializeSystemOperations() {
             return `<span class="text-muted">N/A</span>`;
         }
         return values
-            .map(service => `<span class="http-trace-service">${escapeHtml(service)}</span>`)
+            .map(service => `<span class="http-trace-service">${escapePalantirMarkup(service)}</span>`)
             .join("");
     }
 
@@ -1771,7 +1765,7 @@ async function initializeSystemOperations() {
             .sort(([first], [second]) => first.localeCompare(second))
             .map(([name, value]) => `
                 <div class="http-trace-attribute-row">
-                    <strong>${escapeHtml(name)}</strong>
+                    <strong>${escapePalantirMarkup(name)}</strong>
                     ${palantirCode(value)}
                 </div>`)
             .join("");
@@ -1788,14 +1782,14 @@ async function initializeSystemOperations() {
             return `
                 <div class="http-trace-span-row ${span.error ? "http-trace-span-error" : ""}">
                     <div class="http-trace-span-summary">
-                        <span class="http-trace-span-service">${escapeHtml(span.serviceName || "N/A")}</span>
-                        <span class="http-trace-span-name">${escapeHtml(span.name || `Span ${index + 1}`)}</span>
-                        <span class="http-trace-span-kind">${escapeHtml(span.kind || "INTERNAL")}</span>
+                        <span class="http-trace-span-service">${escapePalantirMarkup(span.serviceName || "N/A")}</span>
+                        <span class="http-trace-span-name">${escapePalantirMarkup(span.name || `Span ${index + 1}`)}</span>
+                        <span class="http-trace-span-kind">${escapePalantirMarkup(span.kind || "INTERNAL")}</span>
                     </div>
-                    <div class="http-trace-span-track" aria-label="${escapeHtml(span.name)} duration">
+                    <div class="http-trace-span-track" aria-label="${escapePalantirMarkup(span.name)} duration">
                         <span class="http-trace-span-bar" style="left:${left}%;width:${width}%"></span>
                     </div>
-                    <div class="http-trace-span-duration">${escapeHtml(formatNanosDuration(span.durationNanos))}</div>
+                    <div class="http-trace-span-duration">${escapePalantirMarkup(formatNanosDuration(span.durationNanos))}</div>
                 </div>`;
         }).join("");
     }
@@ -1828,12 +1822,12 @@ async function initializeSystemOperations() {
                             <td class="mdc-data-table__cell">${palantirCode(span.traceId ?? "")}</td>
                             <td class="mdc-data-table__cell">${palantirCode(span.spanId ?? "")}</td>
                             <td class="mdc-data-table__cell">${palantirCode(span.parentSpanId || "")}</td>
-                            <td class="mdc-data-table__cell">${escapeHtml(span.name)}</td>
-                            <td class="mdc-data-table__cell">${escapeHtml(span.serviceName)}</td>
-                            <td class="mdc-data-table__cell">${escapeHtml(span.kind)}</td>
+                            <td class="mdc-data-table__cell">${escapePalantirMarkup(span.name)}</td>
+                            <td class="mdc-data-table__cell">${escapePalantirMarkup(span.serviceName)}</td>
+                            <td class="mdc-data-table__cell">${escapePalantirMarkup(span.kind)}</td>
                             <td class="mdc-data-table__cell">${palantirCode(span.startEpochNanos)}</td>
-                            <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.relativeStartNanos))}</td>
-                            <td class="mdc-data-table__cell">${escapeHtml(formatNanosDuration(span.durationNanos))}</td>
+                            <td class="mdc-data-table__cell">${escapePalantirMarkup(formatNanosDuration(span.relativeStartNanos))}</td>
+                            <td class="mdc-data-table__cell">${escapePalantirMarkup(formatNanosDuration(span.durationNanos))}</td>
                             <td class="mdc-data-table__cell">${renderHttpTraceStatus(span.status, span.error)}</td>
                             <td class="mdc-data-table__cell">${renderHttpTraceError(span.error)}</td>
                         </tr>
@@ -1865,11 +1859,11 @@ async function initializeSystemOperations() {
                     </div>
                     <div>
                         <span class="http-trace-dialog-label">Spans</span>
-                        <strong>${escapeHtml(spans.length)}</strong>
+                        <strong>${escapePalantirMarkup(spans.length)}</strong>
                     </div>
                     <div>
                         <span class="http-trace-dialog-label">Duration</span>
-                        <strong>${escapeHtml(formatNanosDuration(durationNanos))}</strong>
+                        <strong>${escapePalantirMarkup(formatNanosDuration(durationNanos))}</strong>
                     </div>
                     <div>
                         <span class="http-trace-dialog-label">Status</span>
@@ -2053,7 +2047,7 @@ async function initializeSystemOperations() {
     function renderHttpMappingMethods(methods) {
         return toArray(methods).map(method => {
             const value = String(method);
-            return `<span class="http-exchange-method method-${escapeHtml(value.toLowerCase())}">${escapeHtml(value)}</span>`;
+            return `<span class="http-exchange-method method-${escapePalantirMarkup(value.toLowerCase())}">${escapePalantirMarkup(value)}</span>`;
         }).join(" ");
     }
 
@@ -2062,7 +2056,7 @@ async function initializeSystemOperations() {
         if (entries.length === 0) {
             return "-";
         }
-        return entries.map(value => `<code class="${cssClass}" title="${escapeHtml(value)}">${escapeHtml(value)}</code>`).join(" ");
+        return entries.map(value => `<code class="${cssClass}" title="${escapePalantirMarkup(value)}">${escapePalantirMarkup(value)}</code>`).join(" ");
     }
 
     function renderHttpRequestMappings(entries) {
@@ -2544,7 +2538,7 @@ async function initializeSystemOperations() {
                 data: "handler",
                 width: "34rem",
                 render: (data, type) => type === "display"
-                    ? `<code class="http-request-mapping-handler" title="${escapeHtml(data)}">${escapeHtml(data)}</code>`
+                    ? `<code class="http-request-mapping-handler" title="${escapePalantirMarkup(data)}">${escapePalantirMarkup(data)}</code>`
                     : data
             },
             {
@@ -2631,20 +2625,20 @@ async function initializeSystemOperations() {
                 data: "timestampMs",
                 className: "text-start",
                 width: "10rem",
-                render: (data, type, row) => type === "display" ? escapeHtml(row.time) : data
+                render: (data, type, row) => type === "display" ? escapePalantirMarkup(row.time) : data
             },
             {
                 data: "method",
                 width: "6.5rem",
                 render: (data, type) => type === "display"
-                    ? `<span class="http-exchange-method method-${escapeHtml(String(data).toLowerCase())}">${escapeHtml(data)}</span>`
+                    ? `<span class="http-exchange-method method-${escapePalantirMarkup(String(data).toLowerCase())}">${escapePalantirMarkup(data)}</span>`
                     : data
             },
             {
                 data: "path",
                 width: "65rem",
                 render: (data, type) => type === "display"
-                    ? `<code class="http-exchange-path">${escapeHtml(data)}</code>`
+                    ? `<code class="http-exchange-path">${escapePalantirMarkup(data)}</code>`
                     : data
             },
             {
@@ -2659,13 +2653,13 @@ async function initializeSystemOperations() {
                             : data >= 300 ? "redirect"
                                 : data >= 200 ? "success"
                                     : "informational";
-                    return `<span class="http-exchange-status status-${statusClass}">${escapeHtml(data)}</span>`;
+                    return `<span class="http-exchange-status status-${statusClass}">${escapePalantirMarkup(data)}</span>`;
                 }
             },
             {
                 data: "duration",
                 width: "7rem",
-                render: (data, type, row) => type === "display" ? escapeHtml(row.durationLabel) : data
+                render: (data, type, row) => type === "display" ? escapePalantirMarkup(row.durationLabel) : data
             }
         ],
         drawCallback: settings => {
@@ -2704,13 +2698,13 @@ async function initializeSystemOperations() {
                 data: "startedAtMs",
                 width: "13%",
                 className: "dt-left",
-                render: (data, type, row) => type === "display" ? escapeHtml(row.startedAtLabel) : data
+                render: (data, type, row) => type === "display" ? escapePalantirMarkup(row.startedAtLabel) : data
             },
             {
                 data: "traceId",
                 width: "19%",
                 render: (data, type) => type === "display"
-                    ? `<code class="http-trace-id">${escapeHtml(data)}</code>`
+                    ? `<code class="http-trace-id">${escapePalantirMarkup(data)}</code>`
                     : data
             },
             {
@@ -2731,7 +2725,7 @@ async function initializeSystemOperations() {
                 data: "url",
                 width: "21%",
                 render: (data, type) => type === "display"
-                    ? `<code class="http-trace-url">${escapeHtml(data || "N/A")}</code>`
+                    ? `<code class="http-trace-url">${escapePalantirMarkup(data || "N/A")}</code>`
                     : data
             },
             {
@@ -2743,7 +2737,7 @@ async function initializeSystemOperations() {
                 data: "durationNanos",
                 width: "8%",
                 className: "text-end",
-                render: (data, type) => type === "display" ? escapeHtml(formatNanosDuration(data)) : data
+                render: (data, type) => type === "display" ? escapePalantirMarkup(formatNanosDuration(data)) : data
             },
             {
                 data: "status",
@@ -2861,7 +2855,7 @@ async function initializeSystemOperations() {
             {
                 data: "modified",
                 width: "12%",
-                render: (data, type) => type === "display" ? escapeHtml(formatDependencyTimestamp(data)) : data
+                render: (data, type) => type === "display" ? escapePalantirMarkup(formatDependencyTimestamp(data)) : data
             }
         ],
         initComplete: () => applyMdcDataTableControls("#casVulnerabilitiesTable"),
@@ -2979,26 +2973,29 @@ async function initializeSystemOperations() {
     }
 
 
-    setInterval(() => {
+    const pollSystem = palantirOneAtATime(() => {
+        const work = [];
         if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab, #httprequests-tab")) {
-            configureSystemData();
+            work.push(configureSystemData());
         }
         if (isPalantirPollingContextActive(Tabs.SYSTEM, "#systemstatus-tab")) {
-            configureHealthChart();
+            work.push(configureHealthChart());
             if (Date.now() - statisticsCounted >= STATISTICS_REFRESH) {
-                configureStatistics();
+                work.push(configureStatistics());
             }
             if (Date.now() - signInsCounted >= STATISTICS_REFRESH) {
-                configureSignIns();
+                work.push(configureSignIns());
             }
             if (Date.now() - slowestMeasured >= STATISTICS_REFRESH) {
-                configureSlowestEndpoints();
+                work.push(configureSlowestEndpoints());
             }
             if (Date.now() - providersCounted >= STATISTICS_REFRESH) {
-                configureMultifactorProviders();
+                work.push(configureMultifactorProviders());
             }
         }
-    }, palantirSettings().refreshInterval);
+        return work.length > 0 ? Promise.all(work) : null;
+    });
+    setInterval(pollSystem, palantirSettings().refreshInterval);
 
     if ($("#systeminfo-tab").is(":visible")) {
         await refreshActiveSystemInfoTab();

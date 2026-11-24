@@ -14,7 +14,7 @@ async function initializeTicketsOperations() {
             const decode = new mdc.switchControl.MDCSwitch(document.getElementById("decodeTicketButton")).selected;
             ticketEditor.setValue("");
             if (CasActuatorEndpoints.ticketRegistry()) {
-                $.get(`${CasActuatorEndpoints.ticketRegistry()}/query?type=${type}&id=${ticketId}&decode=${decode}`,
+                $.get(`${CasActuatorEndpoints.ticketRegistry()}/query?type=${encodeURIComponent(type)}&id=${encodeURIComponent(ticketId)}&decode=${encodeURIComponent(decode)}`,
                     response => {
                         ticketEditor.setValue(JSON.stringify(response, null, 2));
                         ticketEditor.gotoLine(1);

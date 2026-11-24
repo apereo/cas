@@ -1,7 +1,8 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, openRegisteredServiceWizardDialog, isPopulatingWizard,
    activateDashboardTab, currentActiveTab, Swal, Tabs, Chart, PalantirHome, topApplicationsChart, CasDiscoveryProfile,
    PalantirScripts, ace, Diff, initializeDashboardTab, openNewConfigurationPropertyDialog,
-   PalantirLinks, PalantirPages, PalantirPanelFocus, registeredServicesById, navigateToApplication */
+   PalantirLinks, PalantirPages, PalantirPanelFocus, registeredServicesById, navigateToApplication, PalantirCsrf,
+   palantirOneAtATime */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -123,6 +124,67 @@ async function verifyLinks(page) {
     await page.waitForFunction(() => currentActiveTab === Tabs.SYSTEM.index, {timeout: 30000});
     await page.evaluate(() => PalantirPages.open(Tabs.APPLICATIONS));
     await page.waitForFunction(() => currentActiveTab === Tabs.APPLICATIONS.index, {timeout: 10000});
+}
+
+/**
+ * Check that a change sent with the browser's session needs the CSRF token, and that Palantir has the token to send.
+ * The requests go around Palantir's own sending, which adds the token, and are expected to fail; their failures are
+ * taken off the list of unexpected ones.
+ *
+ * @param page the puppeteer page
+ * @param failures the failures recorded so far
+ */
+async function verifySessionWritesCarryToken(page, failures) {
+    await cas.separator();
+    const before = failures.length;
+    const answers = await page.evaluate(() => {
+        const send = (token) => new Promise((resolve) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", CasActuatorEndpoints.health());
+            if (token) {
+                xhr.setRequestHeader("X-CSRF-TOKEN", token);
+            }
+            xhr.onloadend = () => resolve(xhr.status);
+            xhr.send();
+        });
+        const token = PalantirCsrf.token();
+        return Promise.all([send(null), send(token)]).then(([without, sent]) => ({token: token !== null, without, sent}));
+    });
+    failures.push(...failures.splice(before).filter((failure) => !/actuator\/health/.test(failure)));
+    await cas.log(`A change sent with the session: ${JSON.stringify(answers)}`);
+    assert(answers.token, "Palantir has the CSRF token to send");
+    assert(answers.without === 403, `A change without the token is refused: ${answers.without}`);
+    assert(answers.sent !== 403, `A change with the token gets past the check: ${answers.sent}`);
+    await cas.logg("Changes made with the browser's session need the CSRF token, which Palantir sends");
+}
+
+/**
+ * Check that a poll runs one at a time: calls made while its request is on its way start nothing new.
+ *
+ * @param page the puppeteer page
+ */
+async function verifyPollsDoNotPileUp(page) {
+    const started = await page.evaluate(() => {
+        let count = 0;
+        let finish = null;
+        const poll = palantirOneAtATime(() => {
+            count++;
+            return new Promise((resolve) => {
+                finish = resolve;
+            });
+        });
+        poll();
+        poll();
+        poll();
+        const whileRunning = count;
+        finish();
+        return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+            poll();
+            return {whileRunning, after: count};
+        });
+    });
+    assert(started.whileRunning === 1 && started.after === 2, `Polls run one at a time: ${JSON.stringify(started)}`);
+    await cas.logg("A slow poll is not started again while it is still on its way");
 }
 
 async function waitForDashboard(page) {
@@ -719,6 +781,8 @@ async function verifyShortcutsOverlay(page) {
     assert(response.ok());
 
     await waitForDashboard(page);
+    await verifySessionWritesCarryToken(page, failures);
+    await verifyPollsDoNotPileUp(page);
     await verifyScriptsOnFirstUse(page);
     await verifyHome(page);
     await verifyRegisteredServices(page);

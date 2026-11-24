@@ -184,6 +184,26 @@ General view, theme and template rules are in the `cas-ui` skill.
   attacker-controlled.
 - Text that comes from the server or from users, such as log messages, logger names and metric tag values, is put in
   the page with jQuery `text` or text nodes, or `escapePalantirMarkup` inside markup, never as raw HTML.
+- There is one escaper, `escapePalantirMarkup` in palantir-utils.js; do not add file-local `escapeHtml` helpers.
+  DataTables renders every column as HTML, hidden ones included: a column of plain text declares
+  `render: palantirTextColumn` and its rows hold the raw value (so sorting, searching and group rows see the real
+  text); a column that holds built markup escapes each value with `escapePalantirMarkup` or `palantirCode`.
+- jQuery UI dialog titles (`title`, `dialog("option", "title", …)`) are set as text: never escape what goes in them,
+  or `&` shows as `&amp;`. Swal is the opposite: `title` is markup, `titleText` is text.
+- Descriptions from configuration metadata may carry markup: show them with `sanitizePalantirHtml` and search them
+  with `palantirHtmlText`.
+- Administrator checks in Palantir's Java use `PalantirAuthorities.isAdministrator`.
+- Writes to the actuator and to Palantir made with the browser's session need the CSRF token (Palantir declares those
+  paths through `getCsrfProtectedSessionEndpoints`). `PalantirCsrf` in palantir-utils.js adds `X-CSRF-TOKEN` to every
+  same-origin `$.ajax` and `fetch` write; a form posted by script, such as Logout, calls `PalantirCsrf.addTo(form)`.
+  A raw `XMLHttpRequest` write must set the header itself. Clients with an `Authorization` header are not asked.
+- `/palantir/dashboard/session` answers only the signed-in name; never hand the session id to scripts.
+- Polled tables redraw with `draw(false)` so paging survives a refresh, and each poll is wrapped in `palantirOneAtATime`
+  (palantir-utils.js) so a slow endpoint never gets a second request while the first is on its way; a reload after a
+  change calls the unwrapped function. Every value in an actuator URL path or query goes through `encodeURIComponent`.
+- Definition JSON is read with `palantirParseJson` and written with `palantirStringifyJson` (palantir-utils.js), never
+  plain `JSON.parse`/`JSON.stringify`: ids above 2^53 are kept as their digits and written back as numbers. A field
+  that produces such an id registers it with `palantirLargeId`; digit strings that were text stay text.
 
 - Uploading SAML2 metadata to a metadata manager goes through `PalantirSamlMetadataUpload` (in
   `palantir-protocols.js`), shared by Protocols › SAML2 › Metadata Management and the wizard's Upload Metadata button

@@ -379,10 +379,19 @@ function activateDashboardTab(idx) {
                     height: Math.min(760, $(window).height() - 48),
                     buttons: {
                         OK: function () {
-                            const storedSettings = localStorage.getItem("PalantirSettings");
-                            const palantirSettings = storedSettings ? JSON.parse(storedSettings) : {};
+                            let palantirSettings = {};
+                            try {
+                                const stored = JSON.parse(localStorage.getItem("PalantirSettings") ?? "{}");
+                                palantirSettings = stored !== null && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+                            } catch (error) {
+                                console.debug("Palantir replaces settings it could not read", error);
+                            }
                             palantirSettings.refreshInterval = Number($("#palantirRefreshInterval").val());
-                            localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                            try {
+                                localStorage.setItem("PalantirSettings", JSON.stringify(palantirSettings));
+                            } catch (error) {
+                                console.debug("Palantir could not keep the settings", error);
+                            }
                             PalantirTheme.apply($("#palantirTheme").val());
                             $(this).dialog("close");
                             location.reload(true);
@@ -435,6 +444,7 @@ function activateDashboardTab(idx) {
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = `${url}/logout`;
+                PalantirCsrf.addTo(form);
                 document.body.appendChild(form);
                 form.submit();
                 break;
