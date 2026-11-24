@@ -37,6 +37,15 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
 - An IDE `JetGradlePlugin` error about `setExcludedTaskNames` comes from the IDE integration, not category discovery.
   Use `--no-isolated-projects` for the affected IDE invocation until that integration supports Isolated Projects; keep
   configuration caching enabled and do not disable Isolated Projects globally to hide an IDE-only violation.
+- Google's Maven Central mirror (`maven-central.storage-download.googleapis.com/maven2`, releases only) comes before
+  `mavenCentral()` in `settings.gradle`, the `build.gradle` buildscript and `buildSrc/build.gradle`, so hundreds of CI
+  jobs do not trip Maven Central's rate limits (429). It answers 404 for what it lacks, such as Shibboleth or Spring
+  milestone artifacts, so Gradle falls through to the repositories after it; keep `mavenCentral()` as the fallback.
+- Gradle's download retries and HTTP timeouts are JVM system properties: set them as `systemProp.` entries with the
+  names Gradle reads (`org.gradle.internal.network.retry.max.attempts`, `...retry.initial.backOff`,
+  `org.gradle.internal.http.connectionTimeout`, `...socketTimeout`); plain or misspelled keys are ignored. Gradle retries
+  429 and 5xx. CI lowers the attempts to 2 in the user-home `gradle.properties` (`ci/init-build.sh` and the puppeteer
+  `configure-ci.sh`), since more retries prolong a rate-limit block.
 - Dependency bundles and web application packaging: see the `cas-dependencies` skill.
 
 ## GitHub Actions workflows

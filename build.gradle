@@ -8,6 +8,11 @@ defaultTasks "clean", "build"
 
 buildscript {
     repositories {
+        maven {
+            name = "MavenCentralMirror"
+            url = "https://maven-central.storage-download.googleapis.com/maven2/"
+            mavenContent { releasesOnly() }
+        }
         mavenCentral()
         gradlePluginPortal()
         maven {
