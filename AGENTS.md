@@ -139,6 +139,9 @@ When you learn something new, record it in the skill that owns the area, or here
   built per call: hand them to `DisposableAuthenticationHandlers` rather than destroying them while the request may still
   use them. Tenant definitions are written back in their stored form (`{cas-cipher}` values and expressions intact), and the
   multitenancy endpoint masks secret-looking values with `TenantsManager.REDACTED_PROPERTY_VALUE`, which a save keeps as stored.
+- A default-typed `ObjectMapper` (`defaultTypingEnabled(true)`) writes a JDK immutable list (`List.of`, `Stream.toList()`,
+  `List.copyOf`) as a plain array with no type id, which the same mapper then cannot read back as a `List`; copy into an
+  `ArrayList` before writing a root list to a file such as `tenants.json`.
 - Tenant-scoped records are strict: a record with a tenant (`OneTimeTokenAccount`, `ConsentDecision`) counts only in that
   tenant, and a record without one only outside any tenant (`isAssignedToTenant`). Shared repositories return every
   tenant's records, so code acting for a user filters them (`OneTimeTokenCredentialRepository.getForCurrentTenant`/

@@ -1,6 +1,7 @@
 package org.apereo.cas.multitenancy;
 
 import module java.base;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -81,12 +82,15 @@ class DefaultTenantsManagerTests {
     @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
         "cas.multitenancy.core.enabled=true",
-        "cas.multitenancy.json.location=file://${java.io.tmpdir}/Tenants.json"
+        "cas.multitenancy.json.location=file://${java.io.tmpdir}/Tenants-${random.uuid}.json"
     })
     class ExternalTenantsTests {
         @Autowired
         @Qualifier(TenantsManager.BEAN_NAME)
         private TenantsManager tenantsManager;
+
+        @Autowired
+        private CasConfigurationProperties casProperties;
 
         @Test
         void verifyOperation() {
@@ -113,7 +117,7 @@ class DefaultTenantsManagerTests {
                 .properties(CollectionUtils.wrap("cas.host.name", encryptedHost, "cas.authn.accept.users", "casuser::Mellon"))
                 .build());
             assertEquals("sso.system.org", tenantsManager.findTenant(id).orElseThrow().getProperties().get("cas.host.name"));
-            val file = Path.of(System.getProperty("java.io.tmpdir"), "Tenants.json");
+            val file = casProperties.getMultitenancy().getJson().getLocation().getFile().toPath();
             assertTrue(Files.readString(file).contains(encryptedHost));
 
             tenantsManager.save(TenantDefinition.builder()
@@ -130,6 +134,8 @@ class DefaultTenantsManagerTests {
             assertTrue(contents.contains(encryptedHost));
             assertFalse(contents.contains(TenantsManager.REDACTED_PROPERTY_VALUE));
             assertTrue(tenantsManager.delete(id));
+            assertTrue(Files.readString(file).contains("java.util.ArrayList"));
+            assertTrue(tenantsManager.findTenants().stream().noneMatch(definition -> definition.getId().equals(id)));
         }
     }
 }

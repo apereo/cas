@@ -156,17 +156,15 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
         if (removed) {
             val storedDefinitions = ResourceUtils.isFile(jsonResource)
                 ? readTenantDefinitions(STORAGE_MAPPER)
-                : List.<TenantDefinition>of();
+                : new ArrayList<TenantDefinition>();
             tenantDefinitions.updateAndGet(current -> {
                 val updated = new LinkedHashMap<>(current);
                 updated.remove(toKey(tenantId));
                 return updated;
             });
             if (ResourceUtils.isFile(jsonResource)) {
-                writeTenantDefinitions(storedDefinitions
-                    .stream()
-                    .filter(stored -> !isSameTenant(stored, tenantId))
-                    .toList());
+                storedDefinitions.removeIf(stored -> isSameTenant(stored, tenantId));
+                writeTenantDefinitions(storedDefinitions);
             }
         }
         return removed;
@@ -193,10 +191,16 @@ public class DefaultTenantsManager implements TenantsManager, DisposableBean, In
         });
     }
 
+    /**
+     * Write the tenant definitions to the resource. They are written as an {@link ArrayList}, whatever list they
+     * come in, so the file names its list type the way {@link #readTenantDefinitions(ObjectMapper)} expects.
+     *
+     * @param definitions the tenant definitions
+     */
     private void writeTenantDefinitions(final List<TenantDefinition> definitions) {
         FunctionUtils.doAndHandle(_ -> {
             val writer = STORAGE_MAPPER.writerWithDefaultPrettyPrinter();
-            writer.writeValue(jsonResource.getFile(), definitions);
+            writer.writeValue(jsonResource.getFile(), new ArrayList<>(definitions));
         });
     }
 

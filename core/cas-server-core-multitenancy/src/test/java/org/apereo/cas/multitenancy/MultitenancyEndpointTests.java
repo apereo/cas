@@ -97,7 +97,7 @@ class MultitenancyEndpointTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.multitenancy.json.location=file://${java.io.tmpdir}/ExternalTenants.json")
+    @TestPropertySource(properties = "cas.multitenancy.json.location=file://${java.io.tmpdir}/ExternalTenants-${random.uuid}.json")
     class ExternalTests extends BaseTests {
         @Test
         void verifyOperation() throws Throwable {
