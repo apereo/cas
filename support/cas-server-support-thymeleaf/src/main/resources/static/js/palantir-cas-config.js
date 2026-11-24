@@ -1168,7 +1168,7 @@ async function initializeConfigurationOperations() {
             topStart: toolbar
         },
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1289,7 +1289,7 @@ async function initializeConfigurationOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {

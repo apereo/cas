@@ -4,7 +4,6 @@
   "extends": [
     ":dependencyDashboard",
     ":preserveSemverRanges",
-    ":disableRateLimiting",
     ":semanticCommits",
     ":semanticCommitTypeAll(renovatebot)",
     "group:monorepos",
@@ -71,8 +70,12 @@
     "Renovate"
   ],
   "schedule": [
-    "after 5pm and before 9am every day"
+    "* 0-5 * * 1,4"
   ],
+  "prHourlyLimit": 2,
+  "prConcurrentLimit": 10,
+  "minimumReleaseAge": "2 days",
+  "minimumReleaseAgeBehaviour": "timestamp-optional",
   "gradle": {
     "enabled": true
   },
@@ -141,6 +144,57 @@
         "commons-codec:commons-codec"
       ],
       "allowedVersions": "<1.23.0"
+    },
+    {
+      "description": "One pull request for the minor and patch updates of Gradle dependencies, so CI runs once for them",
+      "matchManagers": [
+        "gradle"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "Gradle minor and patch updates",
+      "groupSlug": "gradle-non-major"
+    },
+    {
+      "description": "One pull request for Docker image updates",
+      "matchDatasources": [
+        "docker"
+      ],
+      "groupName": "Docker images",
+      "groupSlug": "docker-images"
+    },
+    {
+      "description": "One pull request for the minor and patch updates of npm packages",
+      "matchManagers": [
+        "npm"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "groupName": "npm minor and patch updates",
+      "groupSlug": "npm-non-major"
+    },
+    {
+      "description": "One pull request for GitHub Actions updates",
+      "matchManagers": [
+        "github-actions"
+      ],
+      "groupName": "GitHub Actions",
+      "groupSlug": "github-actions"
+    },
+    {
+      "description": "The AWS SDK releases almost daily; its updates come in a pull request of their own once a month",
+      "matchPackageNames": [
+        "/^software\\.amazon\\.awssdk:/"
+      ],
+      "groupName": "AWS SDK",
+      "groupSlug": "aws-sdk",
+      "schedule": [
+        "* 0-5 1 * *"
+      ]
     }
   ]
 }

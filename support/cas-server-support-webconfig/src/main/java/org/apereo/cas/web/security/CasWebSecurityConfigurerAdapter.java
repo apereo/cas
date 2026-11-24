@@ -187,10 +187,10 @@ public class CasWebSecurityConfigurerAdapter {
      * remembered, such as basic authentication, do not exempt it; a bearer token does when the request carries no
      * session, since a browser never adds one on its own, so an application on another origin that calls with its own
      * token is not asked, while a bearer header sent along with the browser's session, which would still authenticate
-     * the request, is), or a request that relies on a session the browser
-     * keeps, rather than authenticating itself with an {@code Authorization} header. The session counts whatever cookie
-     * carries it, such as the {@code SESSION} cookie of Spring Session, whose requests do not report their session as
-     * coming from a cookie; only a session id given in the URL, which a browser does not send on its own, does not.
+     * the request, is), or a request that relies on a session the browser keeps, rather than authenticating itself with
+     * an {@code Authorization} header. The session counts whatever cookie carries it, such as the {@code SESSION}
+     * cookie of Spring Session, whose requests do not report their session as coming from a cookie; only a session id
+     * given in the URL, which a browser does not send on its own, does not.
      *
      * @param request the request
      * @return true when the request must carry the CSRF token
@@ -199,7 +199,7 @@ public class CasWebSecurityConfigurerAdapter {
         val session = request.getRequestedSessionId() != null && !request.isRequestedSessionIdFromURL();
         val fetchSite = request.getHeader(SEC_FETCH_SITE);
         val bearer = Strings.CI.startsWith(StringUtils.trimToEmpty(request.getHeader(HttpHeaders.AUTHORIZATION)), "Bearer ");
-        if ((session || !bearer) && StringUtils.isNotBlank(fetchSite) && !"same-origin".equalsIgnoreCase(fetchSite.trim())) {
+        if ((session || !bearer) && StringUtils.isNotBlank(fetchSite) && !Strings.CI.equals(fetchSite.trim(), "same-origin")) {
             return true;
         }
         return session && StringUtils.isBlank(request.getHeader(HttpHeaders.AUTHORIZATION));
