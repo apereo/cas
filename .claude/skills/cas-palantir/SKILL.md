@@ -379,6 +379,12 @@ General view, theme and template rules are in the `cas-ui` skill.
 
 ## Service wizard and JSON editor
 
+- The wizard opens on the first section of its Basics step (`RegisteredServiceSections.start()`) and shows one
+  section at a time. A scenario that uses a protocol field (the SAML2 metadata location and its buttons) brings that
+  section on screen first with `RegisteredServiceSections.activate("<panel id>")` and `render()`, as the wizard's
+  navigation does; it never waits for such a field right after opening the wizard.
+- A SweetAlert2 question that moves focus once answered passes `returnFocus: false`; otherwise SweetAlert2 hands focus
+  back to the element that had it after it closes, undoing the move.
 - Settings CAS reads from a chain itself rather than its members (the access strategy's `unauthorizedRedirectUrl`) are
   listed as `lift` on the chain kind: the fields show the chain's value and packing moves it back to the chain.
 - Matching a draft's list entries to the saved definition (to restore secrets) never goes by position alone.

@@ -686,7 +686,9 @@ class PalantirSamlMetadataSources {
 
     /**
      * Ask whether the application accepts every entity of the source its metadata location names, once per location,
-     * when it has no entity id yet: yes makes its entity id <code>.+</code>; no leaves the entity id to be entered.
+     * when it has no entity id yet: yes makes its entity id <code>.+</code>; no leaves the entity id to be entered and
+     * puts the cursor in it. The question does not hand focus back to the field that had it when it closes, since that
+     * happens after the answer is applied and would take the cursor away from the entity id.
      *
      * @param location the metadata location
      * @returns {Promise<void>} resolved once answered
@@ -714,7 +716,8 @@ class PalantirSamlMetadataSources {
             showCancelButton: true,
             confirmButtonText: "Accept Every Service Provider",
             cancelButtonText: "Enter Entity IDs",
-            focusCancel: true
+            focusCancel: true,
+            returnFocus: false
         });
         if (!PalantirSamlMetadataSources.unchanged(location, current)) {
             return;

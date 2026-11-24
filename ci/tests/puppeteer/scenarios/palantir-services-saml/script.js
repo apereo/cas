@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
    isPopulatingWizard, ace, currentActiveTab, Swal, fetchServices, PalantirSamlMetadataImport, PalantirSamlMetadataNames, PalantirSamlMetadataUpload,
-   Tabs, PalantirScripts */
+   Tabs, PalantirScripts, RegisteredServiceSections */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -73,6 +73,22 @@ async function discardUnsavedChanges(page, name) {
 }
 
 /**
+ * Open the wizard for a new SAML2 application and bring its SAML2 section on screen, as choosing it in the wizard's
+ * navigation does: the wizard opens on its first step, where the fields of the SAML2 section are not shown.
+ *
+ * @param page the puppeteer page
+ */
+async function openSamlWizardSection(page) {
+    const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
+    await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
+    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard, {timeout: 30000});
+    await page.evaluate(() => {
+        RegisteredServiceSections.activate("editServiceWizardMenuItemSaml");
+        RegisteredServiceSections.render();
+    });
+}
+
+/**
  * Fill the SAML2 wizard from the metadata of the SAML2 test service provider, read by the server from its URL, and
  * check that the entity id and the metadata location come from it; then discard the wizard.
  *
@@ -127,10 +143,8 @@ async function verifySamlMetadataImport(page) {
  */
 async function verifyMetadataSourceTrust(page) {
     await cas.separator();
-    const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
-    await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
-    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
-        && $("#registeredServiceMetadataLocation").is(":visible"), {timeout: 30000});
+    await openSamlWizardSection(page);
+    await page.waitForFunction(() => $("#registeredServiceMetadataLocation").is(":visible"), {timeout: 10000});
     await cas.sleep(1000);
     const order = await page.evaluate(() => {
         const fields = $("#editServiceWizardSamlContainer").children("[id$='FieldContainer']").map((index, element) => element.id).get();
@@ -237,11 +251,9 @@ async function verifySamlMetadataManage(page) {
     await cas.log(`Contacts imported from metadata: ${JSON.stringify(contacts)}`);
     assert(JSON.stringify(contacts) === JSON.stringify(["One", "Two", "Three", "Four"]));
 
-    const samlClass = "org.apereo.cas.support.saml.services.SamlRegisteredService";
-    await page.evaluate((serviceClass) => openRegisteredServiceWizardDialog({"@class": serviceClass}, {duplicate: true}), samlClass);
-    await page.waitForFunction(() => $("#editServiceWizardDialog").dialog("isOpen") && !isPopulatingWizard
-        && $("#registeredServiceMetadataManage").is(":visible") && $("#registeredServiceMetadataUpload").is(":visible"),
-    {timeout: 30000});
+    await openSamlWizardSection(page);
+    await page.waitForFunction(() => $("#registeredServiceMetadataManage").is(":visible") && $("#registeredServiceMetadataUpload").is(":visible"),
+        {timeout: 10000});
     await cas.sleep(1000);
     const typed = manager.sourceId.replace("://", "").slice(0, 3);
     await page.evaluate((term) => $("#registeredServiceMetadataLocation").val(term).trigger("focusin"), typed);
