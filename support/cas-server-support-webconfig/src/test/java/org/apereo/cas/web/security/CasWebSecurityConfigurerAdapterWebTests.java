@@ -197,6 +197,9 @@ class CasWebSecurityConfigurerAdapterWebTests {
             .andExpect(status().isOk());
         mvc.perform(post("/cas/session-only").header("Authorization", "Bearer some-token").header("Sec-Fetch-Site", "cross-site"))
             .andExpect(status().isOk());
+        mvc.perform(post("/cas/session-only").with(browserSession)
+                .header("Authorization", "Bearer some-token").header("Sec-Fetch-Site", "cross-site"))
+            .andExpect(status().isForbidden());
     }
 
     @Test

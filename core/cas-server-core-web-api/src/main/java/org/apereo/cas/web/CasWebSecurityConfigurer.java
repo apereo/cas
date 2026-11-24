@@ -54,7 +54,7 @@ public interface CasWebSecurityConfigurer<T> extends Ordered, DisposableBean {
      * must carry the token when it relies on a session the browser keeps, whatever cookie carries it, and has no
      * {@code Authorization} header, or when the browser says another site started it ({@code Sec-Fetch-Site} other than
      * {@code same-origin}), even with credentials the browser remembered, unless it carries a bearer token, which a
-     * browser never adds on its own. A client that authenticates each request
+     * browser never adds on its own, and no session. A client that authenticates each request
      * itself, such as a script with basic authentication or a bearer token, is not asked for one, so scripts and other
      * clients of such endpoints keep working as they are.
      *
