@@ -56,6 +56,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter {
+    private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
 
     private final ObjectPostProcessor<BasicAuthenticationFilter> basicAuthFilterPostProcessor = new ObjectPostProcessor<>() {
         @Override
@@ -180,14 +181,26 @@ public class CasWebSecurityConfigurerAdapter {
     }
 
     /**
-     * Whether a request is made by a browser on the strength of its session alone: it carries a session cookie and
-     * does not authenticate itself with an {@code Authorization} header.
+     * Whether a request is one a browser may have been made to send on someone's behalf, so it must carry the CSRF
+     * token: a request another site started, which the browser marks with a {@code Sec-Fetch-Site} header other than
+     * {@code same-origin} (browsers send that header, scripts and other clients do not, and credentials the browser
+     * remembered, such as basic authentication, do not exempt it; a bearer token does, since a browser never adds one on
+     * its own, so an application on another origin that calls with its own token is not asked), or a request that relies
+     * on a session the browser
+     * keeps, rather than authenticating itself with an {@code Authorization} header. The session counts whatever cookie
+     * carries it, such as the {@code SESSION} cookie of Spring Session, whose requests do not report their session as
+     * coming from a cookie; only a session id given in the URL, which a browser does not send on its own, does not.
      *
      * @param request the request
-     * @return true when the request relies on the browser's session
+     * @return true when the request must carry the CSRF token
      */
-    private static boolean isBrowserSessionRequest(final HttpServletRequest request) {
-        return request.getRequestedSessionId() != null && request.isRequestedSessionIdFromCookie()
+    static boolean isBrowserSessionRequest(final HttpServletRequest request) {
+        val fetchSite = request.getHeader(SEC_FETCH_SITE);
+        val bearer = Strings.CI.startsWith(StringUtils.trimToEmpty(request.getHeader(HttpHeaders.AUTHORIZATION)), "Bearer ");
+        if (!bearer && StringUtils.isNotBlank(fetchSite) && !"same-origin".equalsIgnoreCase(fetchSite.trim())) {
+            return true;
+        }
+        return request.getRequestedSessionId() != null && !request.isRequestedSessionIdFromURL()
             && StringUtils.isBlank(request.getHeader(HttpHeaders.AUTHORIZATION));
     }
 

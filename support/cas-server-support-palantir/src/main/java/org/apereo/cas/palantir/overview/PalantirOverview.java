@@ -286,29 +286,30 @@ public class PalantirOverview implements DisposableBean {
             component.put("millis", millis);
             components.add(component);
         });
+        val statuses = components.stream().map(component -> String.valueOf(component.get("status"))).toList();
         val health = new LinkedHashMap<String, Object>();
-        health.put("status", overallStatus(components.stream().map(component -> String.valueOf(component.get("status"))).toList(),
-            healthStatusOrder()));
+        health.put("status", overallStatus(statuses, healthStatusOrder()));
+        health.put("failing", statuses.stream().anyMatch(status -> Set.of(Status.DOWN.getCode(), Status.OUT_OF_SERVICE.getCode()).contains(status)));
         health.put("components", components);
         return health;
     }
 
     /**
      * The overall health, as the health endpoint puts it together: the first status, in the configured order, that a
-     * check has. A check that has not answered in time counts as unknown, and statuses the order does not name are left
-     * out; with no check, the server is up.
+     * check has. A check that has not answered in time says nothing about the server's health yet and is left out, as are
+     * statuses the order does not name; with no check left, the server is up.
      *
      * @param statuses the statuses of the checks
      * @param order    the status codes, worst first
      * @return the overall status
      */
     public static String overallStatus(final List<String> statuses, final List<String> order) {
-        if (statuses.isEmpty()) {
+        val known = statuses.stream()
+            .filter(status -> !"SLOW".equals(status))
+            .collect(Collectors.toSet());
+        if (known.isEmpty()) {
             return Status.UP.getCode();
         }
-        val known = statuses.stream()
-            .map(status -> "SLOW".equals(status) ? Status.UNKNOWN.getCode() : status)
-            .collect(Collectors.toSet());
         return order.stream().filter(known::contains).findFirst().orElseGet(Status.UNKNOWN::getCode);
     }
 

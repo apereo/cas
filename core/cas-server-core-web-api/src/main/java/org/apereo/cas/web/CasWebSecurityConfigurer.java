@@ -50,10 +50,13 @@ public interface CasWebSecurityConfigurer<T> extends Ordered, DisposableBean {
 
     /**
      * The endpoints whose state-changing requests must carry a CSRF token when they are made by a browser, as path
-     * patterns: a request to one of them that is not a {@code GET}, {@code HEAD}, {@code TRACE} or {@code OPTIONS} request,
-     * carries a session cookie and no {@code Authorization} header must carry the token. A request that authenticates
-     * itself, such as with basic authentication or a bearer token, is a client of its own and is not asked for one, so
-     * scripts and other clients of such endpoints keep working as they are.
+     * patterns: a request to one of them that is not a {@code GET}, {@code HEAD}, {@code TRACE} or {@code OPTIONS} request
+     * must carry the token when it relies on a session the browser keeps, whatever cookie carries it, and has no
+     * {@code Authorization} header, or when the browser says another site started it ({@code Sec-Fetch-Site} other than
+     * {@code same-origin}), even with credentials the browser remembered, unless it carries a bearer token, which a
+     * browser never adds on its own. A client that authenticates each request
+     * itself, such as a script with basic authentication or a bearer token, is not asked for one, so scripts and other
+     * clients of such endpoints keep working as they are.
      *
      * @return the path patterns
      */

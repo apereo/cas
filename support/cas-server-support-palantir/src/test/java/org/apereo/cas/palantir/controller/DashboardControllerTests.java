@@ -335,9 +335,11 @@ class DashboardControllerTests {
                 .collect(Collectors.toMap(component -> (String) component.get("name"), component -> component.get("status")));
             assertEquals(Map.of("pooledLdapConnectionFactory", "DOWN", "memory", "UP", "warning", "WARN"), components);
             assertEquals("WARN", health.get("status"));
+            assertEquals(Boolean.TRUE, health.get("failing"));
             assertEquals("WARN", PalantirOverview.overallStatus(List.of("UP", "WARN"), List.of("WARN", "DOWN", "UP")));
             assertEquals("DOWN", PalantirOverview.overallStatus(List.of("UP", "WARN", "DOWN"), List.of("DOWN", "OUT_OF_SERVICE", "UP", "UNKNOWN")));
-            assertEquals("UNKNOWN", PalantirOverview.overallStatus(List.of("UP", "SLOW"), List.of("DOWN", "UNKNOWN", "UP")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of("UP", "SLOW"), List.of("WARN", "DOWN", "OUT_OF_SERVICE", "UNKNOWN", "UP")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of("SLOW"), List.of("DOWN", "UP")));
             assertEquals("UP", PalantirOverview.overallStatus(List.of(), List.of("DOWN", "UP")));
         } finally {
             overview.destroy();

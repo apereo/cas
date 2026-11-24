@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -181,6 +183,40 @@ class CasWebSecurityConfigurerAdapterWebTests {
             .andExpect(status().isOk());
         mvc.perform(post("/cas/session-only").with(browserSession).cookie(cookie).param("_csrf", cookie.getValue()))
             .andExpect(status().isOk());
+
+        val springSession = (RequestPostProcessor) request -> {
+            request.setRequestedSessionId("spring-session");
+            request.setRequestedSessionIdFromCookie(false);
+            request.setRequestedSessionIdFromURL(false);
+            return request;
+        };
+        mvc.perform(post("/cas/session-only").with(springSession)).andExpect(status().isForbidden());
+        mvc.perform(post("/cas/session-only").with(httpBasic("casuser", "Mellon")).header("Sec-Fetch-Site", "cross-site"))
+            .andExpect(status().isForbidden());
+        mvc.perform(post("/cas/session-only").with(httpBasic("casuser", "Mellon")).header("Sec-Fetch-Site", "same-origin"))
+            .andExpect(status().isOk());
+        mvc.perform(post("/cas/session-only").header("Authorization", "Bearer some-token").header("Sec-Fetch-Site", "cross-site"))
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void verifyBrowserSessionOfSpringSession() {
+        val tomcatRequest = new MockHttpServletRequest("POST", "/session-only");
+        tomcatRequest.setRequestedSessionIdFromCookie(false);
+        tomcatRequest.setRequestedSessionIdFromURL(false);
+        val springSessionRequest = new HttpServletRequestWrapper(tomcatRequest) {
+            @Override
+            public String getRequestedSessionId() {
+                return "spring-session";
+            }
+        };
+        assertTrue(CasWebSecurityConfigurerAdapter.isBrowserSessionRequest(springSessionRequest));
+
+        val urlSession = new MockHttpServletRequest("POST", "/session-only");
+        urlSession.setRequestedSessionId("from-url");
+        urlSession.setRequestedSessionIdFromCookie(false);
+        urlSession.setRequestedSessionIdFromURL(true);
+        assertFalse(CasWebSecurityConfigurerAdapter.isBrowserSessionRequest(urlSession));
     }
 
     @Test

@@ -95,7 +95,7 @@ public class ConfigurationMetadataClassSourceLocator {
             .scan()) {
             val index = new HashMap<String, String>();
             scanResult.getAllClasses().forEach(classInfo ->
-                index.computeIfAbsent(classInfo.getSimpleName().toLowerCase(Locale.ROOT), k -> classInfo.getName()));
+                index.computeIfAbsent(classInfo.getSimpleName().toLowerCase(Locale.ROOT), _ -> classInfo.getName()));
             return index;
         }
     }
