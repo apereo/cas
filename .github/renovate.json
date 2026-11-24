@@ -166,6 +166,16 @@
       "groupSlug": "docker-images"
     },
     {
+      "description": "osixia/openldap 2.x is a different image with its own command line and layout; the CI OpenLDAP server is written for 1.x",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "osixia/openldap"
+      ],
+      "allowedVersions": "<2"
+    },
+    {
       "description": "One pull request for the minor and patch updates of npm packages",
       "matchManagers": [
         "npm"

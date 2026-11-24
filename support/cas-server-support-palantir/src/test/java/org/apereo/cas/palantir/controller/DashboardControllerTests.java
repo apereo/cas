@@ -543,7 +543,7 @@ class DashboardControllerTests {
             };
             mvc.perform(post("/health").with(browserSession)).andExpect(status().isForbidden());
             mvc.perform(post("/info").with(browserSession)).andExpect(status().isForbidden());
-            mvc.perform(post("/login").with(browserSession))
+            mvc.perform(post("/adminlogin").with(browserSession))
                 .andExpect(result -> assertNotEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus()));
         }
     }

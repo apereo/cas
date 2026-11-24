@@ -15,7 +15,7 @@ function printred() {
   printf "🚨  ${RED}$1${ENDCOLOR}\n"
 }
 
-export DOCKER_IMAGE="osixia/openldap:latest"
+export DOCKER_IMAGE="osixia/openldap:1.5.0"
 
 printgreen "Running LDAP docker container"
 docker stop ldap-server || true && docker rm ldap-server || true

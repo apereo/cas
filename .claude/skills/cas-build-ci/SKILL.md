@@ -81,3 +81,4 @@ description: "Gradle build settings (configuration cache, Isolated Projects, bui
   The JSON trusted-device store adds `DisposableBean` ahead of `MultifactorAuthenticationTrustStorage`; its Spring
   transaction/audit proxy needs that ordered interface pair plus the Spring proxy interfaces in native metadata.
   Test the interfaces discovered from the concrete implementation, not only the bean's declared interface.
+- CI docker images are pinned to a version in `export DOCKER_IMAGE="name:tag"` lines, which Renovate updates through a custom manager. Do not use `latest`: when `osixia/openldap:latest` moved to 2.x the OpenLDAP container exited on start and every scenario and unit category that needs port 11389 failed. `osixia/openldap` stays on 1.x (`allowedVersions` in `.github/renovate.json`), since 2.x has a different command line and layout.
