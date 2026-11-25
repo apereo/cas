@@ -174,7 +174,7 @@ public class OidcFederationDefaultEntityStatementService implements OidcFederati
             .stream()
             .filter(entry -> StringUtils.isNoneBlank(entry.getTrustMarkType(), entry.getOwner(), entry.getJwks()))
             .forEach(entry -> readOwnerKeys(entry).ifPresent(keys ->
-                owners.putIfAbsent(entry.getTrustMarkType(), Map.of("sub", entry.getOwner(), "jwks", keys))));
+                owners.computeIfAbsent(entry.getTrustMarkType(), _ -> Map.of("sub", entry.getOwner(), "jwks", keys))));
         return owners;
     }
 

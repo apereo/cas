@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.SAMLObject;
@@ -18,6 +19,7 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
+import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -103,8 +105,53 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
             .binding(SAMLConstants.SAML2_POST_BINDING_URI)
             .build();
 
-        val result = samlProfileSamlNameIdBuilder.build(buildContext);
-        assertNull(result);
+        assertThrows(SamlIdPInvalidNameIdPolicyException.class, () -> samlProfileSamlNameIdBuilder.build(buildContext));
+    }
+
+    @Test
+    void verifyRequestedFormatIsSelected() throws Throwable {
+        val buildContext = buildContextForRequestedFormat(NameIDType.EMAIL, StringUtils.EMPTY,
+            List.of(NameIDType.TRANSIENT, NameIDType.EMAIL));
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(buildContext);
+        assertNotNull(result);
+        assertEquals(NameIDType.EMAIL, result.getFormat());
+        assertEquals("casuser", result.getValue());
+    }
+
+    @Test
+    void verifyRequestedFormatIsNotSupported() {
+        val buildContext = buildContextForRequestedFormat(NameIDType.EMAIL, StringUtils.EMPTY,
+            List.of(NameIDType.TRANSIENT, NameIDType.PERSISTENT));
+        val error = assertThrows(SamlIdPInvalidNameIdPolicyException.class, () -> samlProfileSamlNameIdBuilder.build(buildContext));
+        assertEquals(StatusCode.INVALID_NAMEID_POLICY, error.getCode());
+    }
+
+    @Test
+    void verifyRequestedFormatWithoutMetadataFormats() throws Throwable {
+        val transientContext = buildContextForRequestedFormat(NameIDType.TRANSIENT, StringUtils.EMPTY, List.of());
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(transientContext);
+        assertNotNull(result);
+        assertEquals(NameIDType.TRANSIENT, result.getFormat());
+
+        val emailContext = buildContextForRequestedFormat(NameIDType.EMAIL, StringUtils.EMPTY, List.of());
+        assertThrows(SamlIdPInvalidNameIdPolicyException.class, () -> samlProfileSamlNameIdBuilder.build(emailContext));
+    }
+
+    @Test
+    void verifyUnspecifiedRequestedFormat() throws Throwable {
+        val buildContext = buildContextForRequestedFormat(NameIDType.UNSPECIFIED, StringUtils.EMPTY,
+            List.of(NameIDType.EMAIL, NameIDType.TRANSIENT));
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(buildContext);
+        assertNotNull(result);
+        assertEquals(NameIDType.EMAIL, result.getFormat());
+    }
+
+    @Test
+    void verifyRequiredFormatTakesPrecedence() throws Throwable {
+        val buildContext = buildContextForRequestedFormat(NameIDType.EMAIL, NameIDType.PERSISTENT, List.of(NameIDType.EMAIL));
+        val result = (NameID) samlProfileSamlNameIdBuilder.build(buildContext);
+        assertNotNull(result);
+        assertEquals(NameIDType.PERSISTENT, result.getFormat());
     }
 
 
@@ -333,6 +380,36 @@ class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationTests {
         assertNotNull(result);
         assertEquals(NameIDType.TRANSIENT, result.getFormat());
         assertEquals("casuser", result.getValue());
+    }
+
+    private SamlProfileBuilderContext buildContextForRequestedFormat(final String requestedFormat,
+                                                                     final String requiredFormat,
+                                                                     final List<String> supportedFormats) {
+        val authnRequest = mock(AuthnRequest.class);
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn("https://sp.example.org");
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+
+        val policy = mock(NameIDPolicy.class);
+        when(policy.getFormat()).thenReturn(requestedFormat);
+        when(authnRequest.getNameIDPolicy()).thenReturn(policy);
+
+        val service = new SamlRegisteredService();
+        service.setServiceId("https://sp.example.org");
+        service.setRequiredNameIdFormat(requiredFormat);
+        val facade = mock(SamlRegisteredServiceMetadataAdaptor.class);
+        when(facade.getEntityId()).thenReturn(service.getServiceId());
+        when(facade.getSupportedNameIdFormats()).thenReturn(new ArrayList<>(supportedFormats));
+
+        return SamlProfileBuilderContext.builder()
+            .samlRequest(authnRequest)
+            .httpRequest(new MockHttpServletRequest())
+            .httpResponse(new MockHttpServletResponse())
+            .authenticatedAssertion(Optional.of(getAssertion()))
+            .registeredService(service)
+            .adaptor(facade)
+            .binding(SAMLConstants.SAML2_POST_BINDING_URI)
+            .build();
     }
 
     private void verifyNameIdByFormat(final String format) throws Exception {

@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^http://localhost:5612/app-b.*",
+  "id": 3,
+  "name": "SloLogoutUrl",
+  "logoutType": "BACK_CHANNEL",
+  "logoutUrl": "http://localhost:5612/slo/b"
+}

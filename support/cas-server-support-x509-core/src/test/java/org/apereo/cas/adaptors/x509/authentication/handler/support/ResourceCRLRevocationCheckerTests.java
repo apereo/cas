@@ -5,6 +5,8 @@ import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
+import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -105,6 +107,30 @@ class ResourceCRLRevocationCheckerTests extends BaseCRLRevocationCheckerTests {
                 }),
                 new String[]{"user-valid.crt"},
                 null
+            ),
+
+            /*
+             * Test case #6
+             * Valid certificate on expired CRL data with the allow policy as the expiration policy
+             */
+            arguments(
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
+                    new ClassPathResource("userCA-expired.crl"),
+                }, new AllowRevocationPolicy()),
+                new String[]{"user-valid.crt"},
+                null
+            ),
+
+            /*
+             * Test case #7
+             * Valid certificate on expired CRL data with the deny policy as the expiration policy
+             */
+            arguments(
+                new ResourceCRLRevocationChecker(new ClassPathResource[]{
+                    new ClassPathResource("userCA-expired.crl"),
+                }, new DenyRevocationPolicy()),
+                new String[]{"user-valid.crt"},
+                new GeneralSecurityException("Aborting since DenyRevocationPolicy is in effect.")
             )
         );
     }

@@ -62,7 +62,7 @@ class SamlIdPConsentSingleSignOnParticipationStrategyTests extends BaseSamlIdPWe
             .attribute(Service.class.getName(), service)
             .attribute(RegisteredService.class.getName(), registeredService)
             .attribute(Authentication.class.getName(), authn)
-            .attribute(TicketGrantingTicket.class.getName(), cookie);
+            .attribute(TicketGrantingTicket.class.getName(), cookie.getId());
         assertFalse(singleSignOnParticipationStrategy.isParticipating(ssoRequest));
     }
 }

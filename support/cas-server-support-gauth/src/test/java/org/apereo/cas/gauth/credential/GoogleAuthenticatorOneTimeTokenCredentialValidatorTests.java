@@ -15,6 +15,8 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,6 +56,10 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     @Autowired
     @Qualifier(OneTimeTokenRepository.BEAN_NAME)
     private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
+
+    @Autowired
+    @Qualifier("googleAuthenticatorInstance")
+    private CasGoogleAuthenticator googleAuthenticatorInstance;
 
     @Test
     void verifyTokenAuthz() {
@@ -113,6 +120,31 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
         assertNotNull(validator.validate(CoreAuthenticationTestUtils.getAuthentication(acct.getUsername()), cred));
         assertTrue(googleAuthenticatorAccountRegistry.get(acct.getId()).getScratchCodes().isEmpty());
         assertNotNull(googleAuthenticatorAccountRegistry.get(acct.getId()).getLastUsedDateTime());
+    }
+
+    @Test
+    void verifyAccountsOfOtherTenantsAreNotUsed() throws Throwable {
+        val acct = getOneTimeTokenAccount();
+        acct.setUsername(UUID.randomUUID().toString());
+        acct.setTenant("shire");
+        val repository = mock(OneTimeTokenCredentialRepository.class);
+        when(repository.get(acct.getUsername())).thenReturn((Collection) List.of(acct));
+        when(repository.getForCurrentTenant(anyString())).thenCallRealMethod();
+        val tenantValidator = new GoogleAuthenticatorOneTimeTokenCredentialValidator(googleAuthenticatorInstance,
+            oneTimeTokenAuthenticatorTokenRepository, repository);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(acct.getUsername());
+        val credential = new GoogleAuthenticatorTokenCredential("123456", acct.getId());
+        val previousClientInfo = ClientInfoHolder.getClientInfo();
+        try {
+            ClientInfoHolder.clear();
+            assertThrows(AccountNotFoundException.class, () -> tenantValidator.validate(authentication, credential));
+            ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()).setTenant("other"));
+            assertThrows(AccountNotFoundException.class, () -> tenantValidator.validate(authentication, credential));
+            ClientInfoHolder.getClientInfo().setTenant("SHIRE");
+            assertNotNull(tenantValidator.validate(authentication, credential));
+        } finally {
+            ClientInfoHolder.setClientInfo(previousClientInfo);
+        }
     }
 
     @Test

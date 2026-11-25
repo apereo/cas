@@ -255,7 +255,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Import registered services as a JSON document or a zip file")
-    public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
+    public ResponseEntity importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();
         if (Strings.CI.equalsAny(MediaType.APPLICATION_OCTET_STREAM_VALUE, contentType)) {
             return importServicesAsStream(request);
@@ -512,35 +512,34 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     /**
-     * Read the definitions of an archive, each once, and save them. A definition is read by the serializer that
-     * recognizes it, so it is neither parsed nor saved twice when more than one serializer could read it.
+     * Read the JSON definitions of an archive, each once, and save them one by one, with the limits and the answer every
+     * archive import has. A definition is read by the serializer that recognizes it, so it is neither parsed nor saved
+     * twice when more than one serializer could read it; one that cannot be read, or that CAS does not save, is counted
+     * as skipped and does not stop the rest.
      *
      * @param request the request carrying the archive
-     * @return the response
+     * @return how many definitions were saved and how many were not
      * @throws IOException if the archive cannot be read
      */
-    private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
-        val servicesToImport = new ArrayList<RegisteredService>();
-        try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
-             val zipIn = new ZipInputStream(bais)) {
-            var entry = zipIn.getNextEntry();
-            while (entry != null) {
-                if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
-                    val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
-                    readRegisteredService(requestBody).ifPresent(servicesToImport::add);
-                }
-                zipIn.closeEntry();
-                entry = zipIn.getNextEntry();
-            }
+    private ResponseEntity<Map<String, Integer>> importServicesAsStream(final HttpServletRequest request) throws IOException {
+        return importArchive(request.getInputStream(),
+            name -> !name.contains("..") && name.endsWith(".json"),
+            content -> readRegisteredService(content).map(this::saveImportedService).orElse(Boolean.FALSE));
+    }
+
+    private boolean saveImportedService(final RegisteredService service) {
+        try {
+            return servicesManager.getObject().save(service) != null;
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to save the imported registered service [{}]: [{}]", service.getName(), e.getMessage());
+            return false;
         }
-        LOGGER.debug("Importing [{}] registered services from the archive", servicesToImport.size());
-        servicesManager.getObject().save(servicesToImport.stream());
-        return ResponseEntity.ok().build();
     }
 
     /**
      * Read one definition with the first serializer that recognizes its content, and only when none does, with the
-     * others in turn. Serializers that recognize nothing do not get to log a failed parse for every definition.
+     * others in turn. Serializers that recognize nothing do not get to log a failed parse for every definition, and one
+     * that fails on the content counts as not reading it, so a broken definition does not stop the rest of an archive.
      *
      * @param content the definition
      * @return the registered service, if a serializer could read it
@@ -550,8 +549,17 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         return Stream.concat(
                 serializers.stream().filter(serializer -> serializer.supports(content)),
                 serializers.stream().filter(serializer -> !serializer.supports(content)))
-            .map(serializer -> serializer.from(content))
-            .filter(Objects::nonNull)
+            .map(serializer -> readWith(serializer, content))
+            .flatMap(Optional::stream)
             .findFirst();
+    }
+
+    private static Optional<RegisteredService> readWith(final StringSerializer<RegisteredService> serializer, final String content) {
+        try {
+            return Optional.ofNullable(serializer.from(content));
+        } catch (final Exception e) {
+            LOGGER.debug("Serializer [{}] cannot read the definition: [{}]", serializer.getClass().getSimpleName(), e.getMessage());
+            return Optional.empty();
+        }
     }
 }

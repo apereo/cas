@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 
 const ENTITY_ID = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
 const MANAGERS_URL = "https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadata/managers";
-const MANAGER_URL = `${MANAGERS_URL}/RedisSamlRegisteredServiceMetadataResolver`;
+const MANAGER_URL = `${MANAGERS_URL}/Redis`;
 
 async function redisKeys(pattern) {
     const output = execFileSync("docker", ["exec", "redis_server_master", "redis-cli", "--scan", "--pattern", pattern]).toString().trim();
@@ -33,7 +33,7 @@ async function metadataDocuments() {
 
     await cas.logg("The Redis metadata manager is listed, and documents can be fetched and replaced by id");
     const managers = JSON.parse(await cas.doRequest(MANAGERS_URL, "GET", {"Accept": "application/json"}));
-    const manager = managers.find((entry) => entry.name === "RedisSamlRegisteredServiceMetadataResolver");
+    const manager = managers.find((entry) => entry.name === "Redis");
     assert(manager !== undefined && manager.sourceId === "redis://");
     const stored = JSON.parse(await cas.doRequest(`${MANAGER_URL}/${documents[0].id}`, "GET", {"Accept": "application/json"}));
     assert(stored.entityId === ENTITY_ID && stored.value === documents[0].value);

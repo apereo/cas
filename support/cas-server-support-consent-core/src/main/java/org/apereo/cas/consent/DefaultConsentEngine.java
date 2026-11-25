@@ -90,13 +90,35 @@ public class DefaultConsentEngine implements ConsentEngine {
             repository -> repository.storeConsentDecision(decision));
     }
 
+    /**
+     * Find the consent decision of the user for the service in the service's tenant. A decision made in another
+     * tenant, or a decision made outside of any tenant while the service belongs to one, is not the user's decision
+     * here; when the repository answers with such a decision, the user's decisions are searched for one made in
+     * this tenant.
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param authentication    the authentication
+     * @return the decision, or null
+     * @throws Throwable the throwable
+     */
     @Override
     public ConsentDecision findConsentDecision(final Service service,
                                                final RegisteredService registeredService,
                                                final Authentication authentication)
             throws Throwable {
-        return executeRepositoryOperation(service, registeredService, authentication, repository ->
-            repository.findConsentDecision(service, registeredService, authentication));
+        return executeRepositoryOperation(service, registeredService, authentication, repository -> {
+            val decision = repository.findConsentDecision(service, registeredService, authentication);
+            if (decision == null || decision.isAssignedToTenant(service.getTenant())) {
+                return decision;
+            }
+            return repository.findConsentDecisions(authentication.getPrincipal().getId())
+                .stream()
+                .filter(candidate -> Objects.equals(candidate.getService(), service.getId()))
+                .filter(candidate -> candidate.isAssignedToTenant(service.getTenant()))
+                .max(Comparator.comparing(ConsentDecision::getCreatedDate))
+                .orElse(null);
+        });
     }
 
     @Override

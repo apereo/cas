@@ -287,7 +287,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                 return stream.toList();
             }
         });
-        return Objects.requireNonNullElse(collected, List.<Ticket>of()).stream();
+        return Objects.requireNonNullElseGet(collected, List::<Ticket>of).stream();
     }
 
     /**
@@ -337,7 +337,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             return entityManager.createQuery(sql, Object[].class).getResultList();
         });
         val counts = new TreeMap<String, Long>();
-        Objects.requireNonNullElse(rows, List.<Object[]>of()).forEach(row -> {
+        Objects.requireNonNullElseGet(rows, List::<Object[]>of).forEach(row -> {
             val type = String.valueOf(row[0]);
             counts.merge(prefixes.getOrDefault(type, StringUtils.substringAfterLast(type, ".")), countToLong(row[1]), Long::sum);
         });
@@ -462,7 +462,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     .collect(Collectors.toList());
             }
         });
-        return Objects.requireNonNullElse(tickets, List.of());
+        return Objects.requireNonNullElseGet(tickets, List::of);
     }
 
     /**
@@ -519,7 +519,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
                     .toList();
             }
         });
-        return Objects.requireNonNullElse(sessions, List.<Ticket>of()).stream();
+        return Objects.requireNonNullElseGet(sessions, List::<Ticket>of).stream();
     }
 
     /**

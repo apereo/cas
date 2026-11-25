@@ -32,12 +32,12 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     /**
      * Policy to apply when CRL data is unavailable.
      */
-    private final RevocationPolicy<Void> unavailableCRLPolicy;
+    private final RevocationPolicy<? super Void> unavailableCRLPolicy;
 
     /**
      * Policy to apply when CRL data has expired.
      */
-    private final RevocationPolicy<X509CRL> expiredCRLPolicy;
+    private final RevocationPolicy<? super X509CRL> expiredCRLPolicy;
 
     /**
      * Instantiates a new Abstract crl revocation checker.
@@ -49,11 +49,11 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * @param expiredCRLPolicy     the expired crl policy
      */
     protected AbstractCRLRevocationChecker(final boolean checkAll,
-                                        final RevocationPolicy<Void> unavailableCRLPolicy,
-                                        final RevocationPolicy<X509CRL> expiredCRLPolicy) {
+                                        final RevocationPolicy<? super Void> unavailableCRLPolicy,
+                                        final RevocationPolicy<? super X509CRL> expiredCRLPolicy) {
         this.checkAll = checkAll;
-        this.unavailableCRLPolicy = Objects.requireNonNullElseGet(unavailableCRLPolicy, DenyRevocationPolicy::new);
-        this.expiredCRLPolicy = Objects.requireNonNullElseGet(expiredCRLPolicy, () -> new ThresholdExpiredCRLRevocationPolicy(0));
+        this.unavailableCRLPolicy = Objects.<RevocationPolicy<? super Void>>requireNonNullElseGet(unavailableCRLPolicy, DenyRevocationPolicy::new);
+        this.expiredCRLPolicy = Objects.<RevocationPolicy<? super X509CRL>>requireNonNullElseGet(expiredCRLPolicy, () -> new ThresholdExpiredCRLRevocationPolicy(0));
     }
 
     @Override

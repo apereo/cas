@@ -14,10 +14,21 @@
                 <li><a id="mfaProvidersTab" href="#mfaproviders-tab">Multifactor Authentication Providers</a></li>
                 <li><a id="mfaDevicesTab" href="#mfadevices-tab">Multifactor Authentication Devices</a></li>
                 <li><a id="trustedMfaDevicesTab" href="#trustedmfadevices-tab">Trusted Multifactor Authentication Devices</a></li>
+                <li><a id="mfaRepositoriesTab" href="#mfarepositories-tab">Multifactor Credential Repositories</a></li>
             </ul>
             <div id="mfaproviders-tab">
-                <p>Here are the current multifactor authentication providers registered with CAS.</p>
-                <div class="grid-2" id="mfaProvidersGridPanel" ></div>
+                <p>The multifactor authentication providers registered with CAS, with their settings.</p>
+                <div id="mfaProvidersPanel" class="palantir-mfa-providers">
+                    <div class="palantir-mfa-providers__list">
+                        <label class="palantir-mfa-providers__filter">
+                            <span class="palantir-sr-only">Filter providers or settings</span>
+                            <i class="mdi mdi-magnify" aria-hidden="true"></i>
+                            <input type="search" id="mfaProvidersFilter" placeholder="Filter providers or settings…" autocomplete="off" spellcheck="false"/>
+                        </label>
+                        <div id="mfaProvidersList" role="tablist" aria-orientation="vertical" aria-label="Multifactor authentication providers"></div>
+                    </div>
+                    <section id="mfaProviderDetail" class="palantir-mfa-providers__detail" role="tabpanel" aria-live="polite"></section>
+                </div>
             </div>
             
             <div id="mfadevices-tab">
@@ -118,6 +129,15 @@
                     <tbody class="mdc-data-table__content">
                     </tbody>
                 </table>
+            </div>
+
+            <div id="mfarepositories-tab">
+                <p>Export, import or remove every record a multifactor credential repository holds, such as to move
+                    registrations to another server or repository. One user's devices are removed from the Users page
+                    or the devices section.</p>
+                <div id="mfaRepositoriesCards" class="palantir-record-cards" aria-live="polite"></div>
+                <input type="file" id="mfaRepositoryImportFile" accept=".zip,.json,application/zip,application/json" hidden
+                       aria-label="Choose the records to import"/>
             </div>
         </div>
     </div>

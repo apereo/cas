@@ -174,6 +174,38 @@ class DuoSecurityAdminApiEndpointTests {
     }
 
     @Test
+    void verifyUserUpdatesAccountDetails() throws Throwable {
+        val body = """
+            {"status": "DENY", "email": "casuser@example.org", "firstName": "CAS", "lastName": "User"}
+            """;
+        val account = MAPPER.readValue(body, DuoSecurityUserAccount.class);
+        assertEquals(DuoSecurityUserAccountStatus.DENY, account.getStatus());
+        assertEquals("casuser@example.org", account.getEmail());
+        assertEquals("CAS", account.getFirstName());
+        assertEquals("User", account.getLastName());
+        try (val webServer = new MockWebServer(8443)) {
+            webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));
+            webServer.start();
+            mockMvc.perform(put("/actuator/duoAdmin/casuser")
+                    .param("providerId", DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$['%s'].username".formatted(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER)).isNotEmpty());
+        }
+    }
+
+    @Test
+    void verifyAccountDatesInSeconds() {
+        val account = new DuoSecurityUserAccount("casuser")
+            .addAttribute("last_login", "1343921403")
+            .addAttribute("created", "1489612729");
+        assertEquals(Instant.parse("2012-08-02T15:30:03Z"), account.getLastLogin());
+        assertEquals(Instant.parse("2017-03-15T21:18:49Z"), account.getCreated());
+    }
+
+    @Test
     void verifyDuoDeviceManager() {
         try (val webServer = new MockWebServer(8443)) {
             webServer.responseBodySupplier(() -> new ClassPathResource("duoAdminApiResponse-user.json"));

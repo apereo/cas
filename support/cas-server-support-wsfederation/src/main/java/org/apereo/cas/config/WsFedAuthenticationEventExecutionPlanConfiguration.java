@@ -80,6 +80,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
 
         private static WsFederationConfiguration getWsFederationConfiguration(
             final WsFederationDelegationProperties wsfed,
+            final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
             val config = new WsFederationConfiguration();
@@ -95,6 +96,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
 
             val rpId = resolver.resolve(wsfed.getRelyingPartyIdentifier());
             config.setRelyingPartyIdentifier(rpId);
+            config.setReplyUrl(casProperties.getServer().getLoginUrl());
 
             val resources = resolver.resolve(wsfed.getSigningCertificateResources());
             config.setSigningCertificates(resources);
@@ -146,7 +148,7 @@ class WsFedAuthenticationEventExecutionPlanConfiguration {
             final CasConfigurationProperties casProperties) {
             val col = casProperties.getAuthn().getWsfed()
                 .stream()
-                .map(wsfed -> getWsFederationConfiguration(wsfed, applicationContext))
+                .map(wsfed -> getWsFederationConfiguration(wsfed, casProperties, applicationContext))
                 .collect(Collectors.toSet());
             return BeanContainer.of(col);
         }

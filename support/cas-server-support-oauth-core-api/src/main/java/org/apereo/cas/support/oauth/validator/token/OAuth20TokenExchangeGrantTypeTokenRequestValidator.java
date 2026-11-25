@@ -57,8 +57,8 @@ public class OAuth20TokenExchangeGrantTypeTokenRequestValidator<T extends OAuth2
         val accessResult = configurationContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        val authenticatedClientId = Objects.requireNonNullElse(
-            OAuth20Utils.getClientIdFromAuthenticatedProfile(uProfile), uProfile.getId());
+        val authenticatedClientId = Objects.requireNonNullElseGet(
+            OAuth20Utils.getClientIdFromAuthenticatedProfile(uProfile), uProfile::getId);
         val requestingClientId = requestParameterResolver.resolveRequestParameter(request, OAuth20Constants.CLIENT_ID)
             .orElse(authenticatedClientId);
         if (!Objects.equals(authenticatedClientId, requestingClientId)) {

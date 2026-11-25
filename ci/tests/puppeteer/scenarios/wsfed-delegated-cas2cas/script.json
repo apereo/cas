@@ -1,0 +1,72 @@
+{
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
+  "instances": 2,
+  "instance1": {
+    "dependencies": "wsfederation-webflow",
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.server.prefix=https://localhost:8443/cas",
+      "--cas.host.name=wsfed-rp-8443",
+      "--cas.tgc.name=TGC1",
+      "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services-rp",
+
+      "--cas.authn.wsfed[0].id=CASWSFED",
+      "--cas.authn.wsfed[0].name=CASWsFed",
+      "--cas.authn.wsfed[0].identity-provider-url=https://localhost:8444/cas/ws/idp/federation",
+      "--cas.authn.wsfed[0].identity-provider-identifier=https://localhost:8444/cas",
+      "--cas.authn.wsfed[0].relying-party-identifier=urn:org:apereo:cas:ws:idp:realm-CAS",
+      "--cas.authn.wsfed[0].signing-certificate-resources=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/realm-signing.crt,file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/sts-signing.crt",
+      "--cas.authn.wsfed[0].identity-attribute=upn",
+      "--cas.authn.wsfed[0].attributes-type=WSFED",
+      "--cas.authn.wsfed[0].tolerance=PT60S",
+      "--cas.authn.wsfed[0].auto-redirect-type=SERVER",
+      "--cas.authn.wsfed[0].cookie.crypto.alg=A128CBC-HS256",
+      "--cas.authn.wsfed[0].cookie.crypto.encryption.key=wjDVCGIx5ztrk9vKI55YIP01SLE4Ziaj0WsfjvVIaAE",
+      "--cas.authn.wsfed[0].cookie.crypto.signing.key=BXI9U68k1OYJ-vgCvqtZHLPhkCCiAWWfGiqHWdBVF7hXsvgLD1WQHgHbUYee039w7KXux7zfRpBDBeq6K3jfUg"
+    ]
+  },
+  "instance2": {
+    "dependencies": "ws-idp",
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.server.prefix=https://localhost:8444/cas",
+      "--cas.host.name=wsfed-idp-8444",
+      "--cas.tgc.name=TGC2",
+      "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services-idp",
+
+      "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
+      "--cas.authn.attribute-repository.stub.attributes.givenName=CAS",
+      "--cas.authn.attribute-repository.stub.attributes.email=casuser@example.org",
+      "--cas.authn.attribute-repository.stub.attributes.sn=Smith&Sons<LLC>",
+
+      "--cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
+      "--cas.authn.wsfed-idp.idp.realm-name=CAS",
+
+      "--cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
+      "--cas.authn.wsfed-idp.sts.sign-tokens=true",
+      "--cas.authn.wsfed-idp.sts.encrypt-tokens=false",
+      "--cas.authn.wsfed-idp.sts.crypto.alg=A128CBC-HS256",
+      "--cas.authn.wsfed-idp.sts.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+      "--cas.authn.wsfed-idp.sts.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
+      "--cas.authn.wsfed-idp.sts.realm.issuer=https://localhost:8444/cas",
+      "--cas.authn.wsfed-idp.sts.signing-keystore-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ststrust.jks",
+      "--cas.authn.wsfed-idp.sts.signing-keystore-password=storepass",
+      "--cas.authn.wsfed-idp.sts.encryption-keystore-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/stsencrypt.jks",
+      "--cas.authn.wsfed-idp.sts.encryption-keystore-password=storepass",
+      "--cas.authn.wsfed-idp.sts.realm.keystore-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/stsrealm.jks",
+      "--cas.authn.wsfed-idp.sts.realm.keystore-password=storepass",
+      "--cas.authn.wsfed-idp.sts.realm.keystore-alias=realma",
+      "--cas.authn.wsfed-idp.sts.realm.key-password=realma",
+
+      "--logging.level.org.apache.cxf=info",
+      "--logging.level.org.apache.wss4j=info"
+    ]
+  }
+}

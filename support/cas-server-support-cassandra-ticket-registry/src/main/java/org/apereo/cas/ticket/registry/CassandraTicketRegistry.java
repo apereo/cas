@@ -243,6 +243,39 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .filter(ticket -> !ticket.isExpired());
     }
 
+    /**
+     * The decoded tickets of one type that belong to a principal are read through the index on the principal of that
+     * type's table, as {@link #getSessionsFor(String)} does for sessions; any other query is answered as every
+     * registry answers it.
+     *
+     * @param criteria the criteria
+     * @return the results
+     */
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val definition = StringUtils.isBlank(criteria.getType()) ? null : ticketCatalog.find(criteria.getType());
+        if (definition == null || !criteria.isDecode() || StringUtils.isBlank(criteria.getPrincipal())
+            || StringUtils.isNotBlank(criteria.getId())) {
+            return super.query(criteria);
+        }
+        val select = QueryBuilder.selectFrom(properties.getKeyspace(), definition.getProperties().getStorageName())
+            .all()
+            .whereColumn("principal").isEqualTo(QueryBuilder.literal(digestIdentifier(criteria.getPrincipal())))
+            .build()
+            .setConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+            .setSerialConsistencyLevel(DefaultConsistencyLevel.valueOf(properties.getSerialConsistencyLevel()))
+            .setTimeout(Beans.newDuration(properties.getTimeout()));
+        val rowMapper = new BeanPropertyRowMapper<>(CassandraTicketHolder.class, true);
+        try (val holders = cassandraSessionFactory.getCqlTemplate().queryForStream(select, rowMapper)) {
+            return holders
+                .map(holder -> decodeTicket(deserializeTicket(holder.getData(), holder.getType())))
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired())
+                .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+                .collect(Collectors.toList());
+        }
+    }
+
     @Override
     public long countSessionsFor(final String principalId) {
         try (val sessions = getSessionsFor(principalId)) {

@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/pdp-permify.*",
+  "id": 13,
+  "name": "Permify",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.PermifyRegisteredServiceAccessStrategy",
+    "apiUrl": "http://localhost:5611/permify",
+    "tenantId": "t1",
+    "permission": "view",
+    "token": "permify-token"
+  }
+}

@@ -88,6 +88,13 @@ class RestfulSamlRegisteredServiceMetadataResolverTests extends BaseRestfulSamlM
             assertDoesNotThrow(metadataManager::removeAll);
         }
 
+        try (val webServer = new MockWebServer(8078, HttpStatus.INTERNAL_SERVER_ERROR)) {
+            webServer.start();
+            val metadataManager = resolver.getMetadataManager().orElseThrow();
+            assertThrows(IllegalStateException.class, () -> metadataManager.store(doc));
+        }
+        assertThrows(IllegalStateException.class, () -> resolver.getMetadataManager().orElseThrow().store(doc));
+
         try (val webServer = new MockWebServer(8078,
             new ByteArrayResource("@$@".getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();

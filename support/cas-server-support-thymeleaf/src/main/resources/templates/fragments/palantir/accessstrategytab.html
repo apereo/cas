@@ -11,107 +11,74 @@
 
         <div class="jqueryui-tabs" id="accessstrategy-tabs">
             <ul>
-                <li><a id="accessStrategy" href="#accessstrategy-tab">Service Access Strategy</a></li>
+                <li><a id="accessStrategy" href="#accessstrategy-tab">Application Access Check</a></li>
                 <li><a id="heimdall" href="#heimdall-tab">Heimdall Authorization</a></li>
             </ul>
 
             <div id="accessstrategy-tab">
-                <p>You can verify whether a user is authorized to access a registered application with CAS.</p>
+                <p>Find out whether a user may access an application, and why, the way CAS decides at sign-in.</p>
 
-                <form id="fmAccessStrategy" class="d-block" onsubmit="return false;">
-                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
-                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                            <label for="accessService"
-                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Service</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-                                <input class="mdc-text-field__input form-control" type="text"
-                                       name="accessService" data-param-name="service" tabindex="0" id="accessService" size="50"
-                                       title="The URL of the service/application to check access for"
-                                       autocomplete="off" required/>
+                <div class="palantir-access">
+                    <div class="palantir-access__side">
+                        <form id="fmAccessStrategy" class="palantir-access__card palantir-access__form" novalidate>
+                            <p class="palantir-access__label">Application</p>
+                            <label class="palantir-access__field palantir-access__target" id="accessTargetField">
+                                <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                                <span class="palantir-sr-only">Application: a service URL, a client id or an entity id</span>
+                                <input id="accessApplication" type="text" autocomplete="off" spellcheck="false"
+                                       aria-describedby="accessTargetHint"
+                                       placeholder="Service URL, client id or entity id"/>
+                                <button type="button" class="palantir-access__target-clear" data-access-action="clear"
+                                        title="Clear" aria-label="Clear the application" hidden>
+                                    <i class="mdi mdi-close-circle" aria-hidden="true"></i></button>
                             </label>
-                            <label for="accessUsername"
-                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Username</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-                                <input class="mdc-text-field__input form-control" type="text"
-                                       name="accessUsername" data-param-name="username" tabindex="0" id="accessUsername"
-                                       size="50" title="The username to verify access for"
-                                       autocomplete="off" required/>
+                            <p id="accessTargetHint" class="palantir-access__hint" aria-live="polite">
+                                Pick a registered application, or type what it sends to CAS.</p>
+
+                            <p class="palantir-access__label">User</p>
+                            <label class="palantir-access__field">
+                                <i class="mdi mdi-account-outline" aria-hidden="true"></i>
+                                <span class="palantir-sr-only">Username</span>
+                                <input id="accessUsername" type="text" autocomplete="off" spellcheck="false" placeholder="Username"/>
                             </label>
-                            <label for="accessPassword"
-                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Password</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
+                            <label class="palantir-feature-switch palantir-access__switch" for="accessCheckPassword">
+                                <input type="checkbox" role="switch" id="accessCheckPassword"/>
+                                <span class="palantir-feature-switch__track" aria-hidden="true"></span>
+                                <span class="palantir-feature-switch__text">
+                                    <strong>Also Check the Password</strong>
+                                    <small>Otherwise the user's attributes are resolved without signing in</small>
                                 </span>
-                                <input class="mdc-text-field__input form-control pwd" type="password"
-                                       name="accessPassword" data-param-name="password" tabindex="0" id="accessPassword"
-                                       size="50" title="The password credential for the given username"
-                                       autocomplete="off"/>
-                                <button
-                                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                                        tabindex="-1"
-                                        type="button">
-                                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
-                                       aria-hidden="true"></i>
-                                    <span class="visually-hidden">Toggle Token</span>
+                            </label>
+                            <label id="accessPasswordField" class="palantir-access__field" hidden>
+                                <i class="mdi mdi-lock-outline" aria-hidden="true"></i>
+                                <span class="palantir-sr-only">Password</span>
+                                <input id="accessPassword" type="password" autocomplete="off" placeholder="Password"/>
+                            </label>
+                            <p id="accessFormProblem" class="palantir-access__problem" role="alert" hidden></p>
+                            <div class="palantir-access__submit">
+                                <button type="submit" id="accessStrategyButton" class="palantir-button is-primary" data-palantir-write="serviceAccess">
+                                    <i class="mdi mdi-shield-check-outline" aria-hidden="true"></i>Check Access
                                 </button>
-                            </label>
-                            <label for="accessClientId" id="accessClientIdLabel"
-                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Client ID</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-                                <input class="mdc-text-field__input form-control" type="text"
-                                       name="accessClientId" data-param-name="client_id" tabindex="0" id="accessClientId"
-                                       size="50" title="The OAuth/OIDC client ID associated with the service"
-                                       autocomplete="off"/>
-                            </label>
-                            <label for="accessEntityId" id="accessEntityIdLabel"
-                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Entity ID</span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-                                <input class="mdc-text-field__input form-control" type="text"
-                                       name="accessEntityId" data-param-name="entityId" tabindex="0" id="accessEntityId"
-                                       size="50" title="The SAML2 entity ID of the service provider"
-                                       autocomplete="off"/>
-                            </label>
-                        </div>
+                            </div>
+                        </form>
 
-                    </section>
-                    <div class="d-flex">
-                        <button data-palantir-write="serviceAccess" type="submit" name="accessStrategyButton" id="accessStrategyButton"
-                                class="mdc-button mdc-button--raised">
-                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Verify</span>
-                        </button>
+                        <section id="accessRecentChecks" class="palantir-access__card" aria-labelledby="accessRecentChecksTitle" hidden>
+                            <p class="palantir-access__label" id="accessRecentChecksTitle">Recent Checks</p>
+                            <ul id="accessRecentList" class="palantir-access__recent"></ul>
+                        </section>
                     </div>
-                </form>
 
-                <div id="accessStrategyAttributesContainer" class="d-none py-3">
-                    <h3>Attributes</h3>
+                    <div id="accessResult" class="palantir-access__main" aria-live="polite">
+                        <div class="palantir-access__card palantir-access__empty">
+                            <i class="mdi mdi-shield-search" aria-hidden="true"></i>
+                            <p>Choose an application and a user. The answer shows each step CAS goes through, such as whether the
+                                application is enabled and which of its required attributes the user has.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <section id="accessStrategyAttributesContainer" class="palantir-access__card palantir-access__attributes" hidden>
+                    <p class="palantir-access__label" id="accessStrategyAttributesTitle">Attributes</p>
                     <table id="accessStrategyAttributesTable" class="mdc-data-table__table table table-striped noborder">
                         <thead>
                             <tr class="mdc-data-table__header-row">
@@ -122,16 +89,14 @@
                         <tbody class="mdc-data-table__content">
                         </tbody>
                     </table>
-                </div>
+                </section>
 
-                <span id="accessStrategyEditorContainer" class="d-none">
-                    <h3>Registered Service</h3>
-                    <p>This is the registered service definition that authorized the request. 
-                        <button class="mdc-button mdc-button--raised btn btn-link" type="button" id="authorizedServiceNavigation">Locate Definition</button></p>
+                <details id="accessStrategyEditorContainer" class="palantir-access__card palantir-access__definition" hidden>
+                    <summary>Application Definition</summary>
                     <section class="my-3 d-flex h-350px">
                         <pre class="ace-editor ace-relative w-100 h-100" id="accessStrategyEditor"></pre>
                     </section>
-                </span>
+                </details>
             </div>
 
             <div id="heimdall-tab">
@@ -164,14 +129,14 @@
                             <i class="mdc-tab__icon mdi mdi-shield-search" aria-hidden="true"></i>
                             Authorization Simulation
                         </h3>
-                        <div class="heimdall-authorization-mode-buttons" role="group" aria-label="Authorization protocol">
-                            <button type="button" id="heimdallAuthorizationHeimdallModeButton"
-                                    class="mdc-button mdc-button--raised" aria-pressed="true">
-                                <span class="mdc-button__label">Heimdall</span>
+                        <div class="palantir-view-switch heimdall-authorization-mode-buttons" role="group" aria-label="Authorization protocol">
+                            <button type="button" id="heimdallAuthorizationHeimdallModeButton" aria-pressed="true">
+                                <i class="mdi mdi-shield-key-outline" aria-hidden="true"></i>
+                                <span>Heimdall</span>
                             </button>
-                            <button type="button" id="heimdallAuthorizationAuthZenModeButton"
-                                    class="mdc-button mdc-button--outlined" aria-pressed="false">
-                                <span class="mdc-button__label">AuthZen</span>
+                            <button type="button" id="heimdallAuthorizationAuthZenModeButton" aria-pressed="false">
+                                <i class="mdi mdi-scale-balance" aria-hidden="true"></i>
+                                <span>AuthZen</span>
                             </button>
                         </div>
                     </div>

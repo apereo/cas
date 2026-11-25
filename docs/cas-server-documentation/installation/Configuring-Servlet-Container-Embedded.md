@@ -15,7 +15,16 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 ## Configuration
 
 {% include_cached casproperties.html 
-thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.use-forward-headers,server.connection-timeout" %}
+thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.request.header.forwarded" %}
+
+### Behind a Proxy
+
+When CAS runs behind a proxy or load balancer, the forwarded header settings above decide how CAS treats the headers
+the proxy adds: whether the embedded container (`web-server`) or the application (`framework`) applies them, or neither
+(`none`), and whether CAS reads the `X-Forwarded-*` headers (the default) or the standard `Forwarded` header. The
+`X-Forwarded-Prefix` header is ignored unless it is turned on. With the `web-server` strategy, the embedded Apache Tomcat
+applies neither that header nor the `Forwarded` header, so use the `framework` strategy for either; CAS fails to start
+when the container cannot apply the chosen combination.
 
 ## Execution
 

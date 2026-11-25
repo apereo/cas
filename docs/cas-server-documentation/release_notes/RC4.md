@@ -54,7 +54,7 @@ release:
       url: ../planning/Installation-Requirements.html
     - label: Built on
       value: Spring Boot 4.2
-    - value: "618"
+    - value: "636"
       suffix: browser test scenarios
       url: ../../developer/Test-Process.html
     - value: "94%"
@@ -95,6 +95,51 @@ release:
       text: no longer receive the Spring Webflow request context; custom inquirers drop that parameter, and Groovy interrupt scripts receive the logger as their fifth argument.
       section: Authentication Interrupts
       area: ui
+    - type: action
+      title: Forwarded headers
+      text: behind a proxy now follow Spring Boot 4.2; the `X-Forwarded-Prefix` header is ignored unless turned on, and the embedded Apache Tomcat applies it only with the `framework` strategy.
+      section: Spring Boot 4.2
+      area: operations
+    - type: action
+      title: SAML2 NameID formats
+      text: requested by a service provider's NameIDPolicy are now honored; a format the service provider metadata does not list is answered with InvalidNameIDPolicy. List the format in the metadata or set `requiredNameIdFormat` on the service.
+      section: SAML2
+      area: saml
+    - type: action
+      title: SAML2 signing
+      text: that is required but left with no usable algorithm by the allowed and blocked algorithm settings now fails with an error instead of sending the message unsigned.
+      section: SAML2
+      area: saml
+    - type: changed
+      title: WS-Federation delegated authentication
+      text: sends `wreply` set to the CAS login URL; make sure the passive endpoint of the ADFS relying party trust matches it.
+      section: Authentication and Session Security
+      area: authentication
+    - type: changed
+      title: Trusted device fingerprints
+      text: that use both the browser and the geolocation components with their default order now place geolocation before the browser; devices trusted before the upgrade are asked for multifactor authentication once more. Set `cas.authn.mfa.trusted.device-fingerprint.geolocation.order=6` to keep the previous fingerprint.
+      section: Multifactor Authentication
+      area: mfa
+    - type: action
+      title: Multitenancy
+      text: keeps tickets in their tenant; applications of a tenant validate tickets and request proxy tickets at that tenant's URL, and an `X-Tenant-Id` header that names another tenant than the URL is refused.
+      section: Authentication and Session Security
+      area: tickets
+    - type: action
+      title: Multitenancy devices and consent
+      text: Google Authenticator devices and consent decisions only apply in the tenant they were registered or made in; devices and decisions recorded outside of any tenant no longer apply at a tenant's URL, so users register a device or consent again there.
+      section: Authentication and Session Security
+      area: mfa
+    - type: changed
+      title: The multitenancy endpoint
+      text: shows passwords, keys and other secrets in tenant definitions as `******`; posting a definition back with `******` keeps the stored value.
+      section: Authentication and Session Security
+      area: operations
+    - type: changed
+      title: etcd configuration source
+      text: keeps the values it read at startup or at the last refresh and no longer defines an `etcdClient` bean; custom code that used that bean opens its own client.
+      section: Other Stuff
+      area: operations
   spotlight:
     section: Theme Properties
     kicker: User interface
@@ -142,7 +187,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 {: data-area="project"}
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `628` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `636` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
 
 - {: .changed data-area="project"} MariaDB integration tests and functional test scenarios use port `3307`, so they can run
@@ -177,6 +222,17 @@ test coverage of the CAS codebase is approximately `94%`.
   algorithms, Active Directory and OpenLDAP password policy warnings, X.509 revocation through CRLs, the ticket registry
   cleaner, concurrent ticket validation across nodes, ticket encryption at rest in MongoDb, masking of tickets in logs, and
   strict audit failure handling (`cas.audit.engine.ignore-audit-failures`{: .cas-setting}).
+- {: .changed data-area="project"} Browser tests now cover entity id patterns in SAML2 entity attribute release policies,
+  requested NameID formats, encrypted settings kept in JDBC and REST configuration sources, SSO sessions read across nodes
+  of a JPA ticket registry on MySQL, and WS-Federation delegated authentication between two CAS servers. The Palantir
+  browser test is split into six scenarios, one per area of the dashboard.
+- {: .changed data-area="project"} Browser tests now cover SAML2 metadata queries (MDQ) against a local server with basic
+  authentication and signed answers, service provider metadata served from its backup file while the metadata server fails,
+  the OPA, Cerbos, Permify and OpenFGA access strategies when they allow, deny or fail, the CAS back-channel logout message,
+  SMS messages for single sign-on notifications, password reset, impersonation, passwordless and account registration, the
+  Google Cloud Firestore and Pub/Sub ticket registries, and the etcd configuration source.
+- {: .changed data-area="project"} The OpenTelemetry collector used by the tracing and metrics browser tests now logs only
+  its warnings and errors instead of every batch CAS exports, and the test waits until the collector accepts data.
 
 ### JSpecify & NullAway
 {: data-area="project"}
@@ -189,19 +245,69 @@ during compile time.
 ### Gradle 9.9
 {: .changed data-area="project"}
 
-CAS is now built with Gradle `9.9` and the build process has been updated to use the
+CAS is now built with Gradle `9.9.2` and the build process has been updated to use the
 latest Gradle features and capabilities.
 
 ### Spring Boot 4.2
 {: .changed data-area="project"}
 
-CAS is now built on top of Spring Boot `4.2.x`. This is an in-progress ongoing minor platform upgrade that
-affects almost all aspects of the codebase including many of the third-party core libraries used by CAS
-as well as some CAS functionality.
+CAS is now built on top of the general availability releases of Spring Boot `4.2.0` and Spring Framework `7.1.0`,
+together with the matching releases of Spring Security, Spring Data, Spring Session, Spring Integration,
+Spring Cloud and Micrometer. This minor platform upgrade affects almost all aspects of the codebase
+including many of the third-party core libraries used by CAS as well as some CAS functionality.
 
 Please refer to the [Spring Boot Wiki](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.2-Release-Notes)
-for more information on the changes and updates in this release.
+for more information on the changes and updates in this release. The changes most likely to affect a CAS deployment:
 
+- {: .action data-area="operations"} Behind a proxy or load balancer, `server.forward-headers-strategy`{: .cas-setting} gives way to
+  `server.request.header.forwarded.strategy`{: .cas-setting}, the `X-Forwarded-Prefix` header is ignored unless turned on, and the
+  embedded Apache Tomcat applies that header and the standard `Forwarded` header only with the `framework` strategy. See
+  [running behind a proxy](../installation/Configuring-Servlet-Container-Embedded.html#behind-a-proxy).
+- {: .changed data-area="operations"} The embedded Apache Tomcat sends relative redirects by default, and its servlet-specific
+  settings move under `server.tomcat.servlet`{: .cas-setting}.
+- {: .changed data-area="operations"} Spring Boot deprecates its [Apache Pulsar](../ticketing/Pulsar-Ticket-Registry.html)
+  support, now that Spring for Apache Pulsar has moved to the Apache Software Foundation, and its
+  [AppOptics](../monitoring/Configuring-Metrics-Storage-AppOptics.html) metrics export, since AppOptics has been retired.
+- {: .changed data-area="operations"} Spring Cloud moves to the `2026.0` release train, with Spring Cloud Config, Bus, Vault,
+  Consul, Kubernetes, Eureka and Zookeeper at `5.1`.
+- {: .fixed data-area="operations"} [Zipkin tracing](../monitoring/Configuring-Tracing-Zipkin.html) brings in Spring Boot's
+  Zipkin and Brave support, which Spring Boot 4 moved into modules of their own. Without them, traces were not reported to
+  Zipkin and the Zipkin settings were missing from the configuration catalog.
+
+### Dependencies & Packaging
+{: .changed data-area="project"}
+
+- {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
+  follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
+  and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
+- {: .action} [SCIM provisioning](../integration/SCIM-Provisioning.html) identifies the members of
+  a group by `value`, set to the id of the user; it used to send the id in `$ref` alone, which SCIM servers that require
+  `value` rejected. Updating a group keeps its existing members as the SCIM server stored them and adds each user once.
+  Members that an earlier version provisioned on a SCIM server that stored them without a `value` are no longer
+  recognized and should be removed there.
+- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
+  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
+  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
+  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
+  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
+  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
+  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
+  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
+  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
+  Jackson 2 wherever Groovy scripting is included. CAS
+  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
+  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
+  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
+  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
+  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
+- {: .changed data-area="project"} Every Gradle build flag can also be supplied as an
+  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
+  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
+  Javadoc errors fail the build unless that flag is set.
+- {: .changed data-area="project"} The [Spring Cloud Bus](../configuration/Configuration-Management-Clustered.html#actuator-endpoints)
+  trace endpoint, which reports bus events sent and the acknowledgments received from each instance, is now documented
+  with the other bus endpoints.
+- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
 
 ### Theme Builder
 {: .new data-area="ui"}
@@ -220,23 +326,36 @@ theme property.
 
 [Palantir](../installation/Admin-Dashboard.html) has a search box, opened from the navigation bar or with `Ctrl+K`
 (`⌘K` on macOS) or `/`, that goes to any page or section, finds a registered application by name, identifier or service id,
-and runs common actions without leaving the keyboard. A new *Users* page looks up one user and gathers in one place their
+and runs common actions without leaving the keyboard; it reopens with the last search and the last match chosen. The access
+page's check now explains its answer: a verdict with its reason, the steps CAS went through, from finding the application
+to its required and rejected attributes, the values each rule names next to the user's, and links to the application
+and its access strategy, with the last checks kept in the browser. One field takes the application, shows which
+registered application CAS resolves it to, and each application's menu can open the check for it; the service access endpoint returns the same
+explanation, also when access is refused, naming the application without its definition, and asks an external
+authorization service or a script once; chained strategies and activation conditions are shown member by member. The
+application wizard edits chained policies: access strategies, their activation criteria and delegated authentication
+policies, attribute release policies, their activation criteria, value filters and consent policies, and single
+sign-on participation policies, a member at a time. A new *Users* page looks up one user and gathers in one place their
 single sign-on sessions, multifactor and trusted devices, consent decisions, resolved attributes, impersonation accounts,
 passwordless account, password history, throttled login attempts, the interrupt they would see at login and recent audit events, each with its usual actions
-such as ending a session, removing a device or releasing a throttled attempt. Only sources with something recorded for
+such as ending a session, removing a device or releasing a throttled attempt. The page also lists the user's OAuth and OpenID Connect
+access and refresh tokens, which can be revoked one by one or all at once, and previews the attributes an application
+would receive for the user, a preview also offered from the application's menu. Only sources with something recorded for
 the user are shown, and sources whose actuator endpoints are not enabled are left out. The change history of an application
 names who made each change, and compares any recorded version side by side with the current definition or the version before it, and restores the
 selected version from the same dialog. Under *Interrupts*, the authentication section shows which
 [interrupt](../webflow/Webflow-Customization-Interrupt.html) a user would see at login and what each interrupt
-source answered.
+source answered. Under *Impersonation*, the accounts a user may impersonate are shown as cards, each of which can
+open attribute resolution for its account.
 
 The JSON editor for application definitions is redesigned: a new definition starts from a gallery of templates, with
 many more templates for CAS, SAML2, OpenID Connect, OAuth and WS-Federation applications, filtered by protocol and
 searchable, and the editor checks the JSON as it is typed, shows problems on their line, follows the light or dark
 theme and can switch to the wizard. Templates of your own can be offered through a folder the dashboard reads. SAML2 applications whose metadata is held by a metadata
 manager, such as MongoDB, show that source and link to its management under protocols, and the settings dialog can
-reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog,
-which stores their feature flags in a chosen dynamic configuration source for the next start. System metrics open on a board of
+reset every preference Palantir keeps in the browser. Features and their modules can be turned off or on from the feature catalog, choosing in one dialog which modules of a feature run;
+their feature flags are stored in a chosen dynamic configuration source for the next start, and every switch and
+checkbox in Palantir shares one look. System metrics open on a board of
 pinned metrics with their current values, units and trends, flagged when usage runs high, and an explorer finds any
 metric by name and shows its statistics, a live trend and a breakdown by tag that narrows the metric with a click.
  Zen mode, on <kbd>Shift</kbd>+<kbd>Z</kbd>, puts away the header, navigation bar and footer, and the browser remembers it.
@@ -248,14 +367,22 @@ that give each definition's kind, the flags it turns on and the values it sets, 
 browser and device the user signed in, how often the session was used and the applications it reached, and so are
 Spring sessions, with a bar for how long each has left before it expires for being idle. Registered multifactor
 devices are cards as well, flagging the ones that expired. *System Info* lists the CAS modules the server runs, as
-cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day.
+cards that can be filtered by name or by kind, and *Home* greets the signed-in administrator by the time of day. *Home* can be
+refreshed as a whole or one card at a time without reloading the page, and the health charts include health checks made
+of several checks, such as one for each monitored LDAP server. The log stream shows every enabled log source together,
+in time order and marked with its source. The *Runtime* card also shows warnings logged, the share of processor time spent collecting
+garbage, the heap left after a collection and the open files.
 
 {% include imagegallery.html images=page.palantir_images gallery_id="palantir" %}
 
 Saving an application that someone else changed or deleted in the meantime shows what they changed and asks before
 overwriting it, and actions that would change something through a read-only endpoint are disabled with an explanation.
 The application wizard can fill a SAML2 service provider from its metadata, read from a URL, pasted, or chosen or
-dropped as a file, picking the provider out of an aggregate. The menu of a SAML2 application checks the health of its metadata:
+dropped as a file, picking the provider out of an aggregate. When SAML2 metadata management is available, the wizard can also upload a
+service provider's metadata to a metadata manager, the same way as under *Protocols*, and point the application at it,
+asking which service provider it is when the metadata is an aggregate, or close itself and show that manager's metadata
+entries under *Protocols*. A metadata manager backed by a REST service now
+reports an upload the service refused instead of treating it as stored. The menu of a SAML2 application checks the health of its metadata:
 whether it can be downloaded and holds the service provider, whether CAS resolves it, and when the metadata and the
 provider's certificates expire, showing the metadata it read; the separate list of SAML2 metadata sources is removed.
 Values held by dynamic configuration sources can be encrypted or decrypted in place from their menu when configuration
@@ -265,12 +392,41 @@ paragraph is saved as plain text. The applications chart, cards and search follo
 new ones, and the applications can be filtered by type, such as CAS, SAML2 or OpenID Connect, each listed with how many
 applications it has. The wizard keeps Save disabled, naming the required fields still missing, until they are filled in, and a definition without a name or service id is refused with the reason instead of failing on the server. Validating or saving an application definition that CAS cannot read is refused with the reason, rather than reported
 as valid, and the wizard keeps the principal attributes of a multifactor policy, with the policy's type, when it
-edits an application. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
+edits an application. It also keeps the contacts beyond the three it shows. Applications can be disabled and enabled from their context menu, selected and exported, disabled, enabled or deleted in bulk, or all deleted at
 once after a confirmation. Importing applications accepts YAML definitions and exported zip files as well as JSON, and imports each chosen file
-once. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
-closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days. A keyboard shortcut overlay opens
+once. A new application in the wizard starts by choosing its type from described cards with a single click; what the
+application answers, such as its service id, redirect URI or entity id, is entered with the settings of its protocol,
+and the
+wizard's fields that take standard values, such as SAML2 NameID formats, signing algorithms or OAuth token types,
+suggest them with a short description while still taking any value; the SAML2 entity attributes that
+filter metadata suggest the attribute names and values CAS supports, such as entity categories, Sirtfi and the
+required subject identifier. The wizard's whitelisted SAML2 signature
+algorithms are now saved as whitelisted rather than blacklisted algorithms, and its poll backchannel token delivery
+mode for OpenID Connect is saved as `poll`, which CAS accepts, rather than `pull`. The wizard also edits the delegated
+authentication policy of an application (allowed identity providers, whether any provider may be used when none is
+listed, exclusive use and a Groovy selection script), when the default access strategy checks its attributes, the
+attributes and services excluded from consent, and the attribute or Groovy script that limits interrupt
+notifications; a CAS application's proxy-granting ticket lifetime is saved with the proxy-granting ticket policy type. The wizard now covers the
+remaining policy types: access decided by Cerbos, Permit.io, Amazon Verified Permissions or surrogate rules, OpenID
+Connect claims released per scope with claim mappings, SAML2 attribute query and mapped entity attribute release,
+matching services by the start of their URL, opting applications out of single sign-on, the salt and attribute of
+anonymous identifiers, and the signing and user code options of OpenID Connect backchannel authentication. A pairwise
+identifier's salt now shows its value when an application is opened, rather than an unreadable placeholder; pairwise
+identifiers can also be computed from an attribute, and an application's identifier generator keeps its type. Opening
+an application in the wizard keeps the pattern of a regex proxy policy and the settings of a token exchange policy,
+which were emptied as the wizard filled itself in; a token exchange policy is now one type whose impersonation and
+delegation settings show together, so a delegation policy no longer opens as an impersonation one, and its required
+actor token attributes are saved in a form CAS accepts. Choosing another type of a policy puts that section's switches
+back to their defaults, rather than turning off every switch that was on. Applications can be duplicated into the wizard as new applications, and the wizard and the definition editor ask before
+closing with unsaved changes, keeping a draft in the browser that can be resumed for up to thirty days; drafts keep no secrets, such as client secrets or passwords. A keyboard shortcut overlay opens
 with `?`, and tables and dialogs are easier to use with a keyboard and a screen reader: tables are named, rows with actions
 take focus and open their actions with `Shift+F10`, modal dialogs announce themselves, and icon-only buttons are named.
+
+Palantir is hardened against misuse from other sites and pages: changes it makes to the actuator endpoints and to
+Palantir itself with the browser's session must carry a CSRF token, while scripts and other clients that authenticate
+each request are unaffected; signing in no longer follows a target address given in the request; the session id is no
+longer handed to the page; values such as user attributes, tenant ids, identity provider names and usernames are always
+shown as text; and the home page names health checks only to those the health endpoint shows its components to.
 
 ### Theme Properties
 {: .new data-area="ui"}
@@ -393,10 +549,27 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   read the whole service registry again.
 - {: .removed data-area="services"} The deprecated Azure CosmosDb service registry is removed, along with its settings.
   Definitions stored there should be exported and imported into another [service registry](../services/Service-Management.html).
+- {: .fixed data-area="services"} The [Permify access strategy](../services/Service-Access-Strategy-Permify.html) denies access
+  when the Permify server answers with an error status, instead of trusting the body of the response, and sends an
+  `Authorization` header only when a token is defined.
 
 ### Tickets & Sessions
 {: .changed data-area="tickets"}
 
+- {: .changed data-area="tickets"} Finding a user's Spring sessions kept in the ticket registry reads only the
+  session tickets, instead of every ticket the registry holds, which made the lookup slow with many tickets. Ticket
+  registries that have no query of their own, such as Hazelcast before this change, now answer it by reading their
+  tickets, and Hazelcast answers it from the map of the asked ticket type. With Redis, the keys of those tickets are
+  now read from Redis in large batches rather than ten at a time, since finding them walks every key Redis holds.
+- {: .fixed data-area="oidc"} An OpenID Connect application with a custom scope is saved without the attribute release
+  settings it leaves at their defaults, as applications with standard scopes are; they used to be written out in full.
+- {: .changed data-area="tickets"} Looking up the OAuth and OpenID Connect tokens of one user asks the ticket registry for
+  that user's access and refresh tokens instead of reading every ticket, so registries that keep track of users, such
+  as JPA, MongoDb, Hazelcast, DynamoDb, Cassandra, Ignite, Geode and Google Cloud Firestore, read only that user's
+  tokens. Redis keeps an index of each user's OAuth and OpenID Connect tokens and codes, as it does for single sign-on
+  sessions, and reads only those. Asking these
+  registries for the tickets of one type and user, as other features do, is answered the same way. [Palantir](../installation/Admin-Dashboard.html) shows the tokens of a user with the rest of the user's
+  records, without a separate button. How the user is matched, such as whether case matters, follows the registry.
 - {: .changed data-area="tickets"} The statistics endpoint reports the number of tickets the ticket registry holds, in
   all and for every kind of ticket, such as sessions, service tickets or OAuth tokens, named after their definitions
   and counted in one pass, instead of reading every ticket and removing the expired ones on each call; expired tickets
@@ -409,6 +582,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   per collection; Redis also counts sessions and service tickets that way. Other registries read their
   tickets to count them. Palantir's ticket registry chart shows all tickets and a bar for every kind of ticket, refreshed
   once a minute, and its health chart reads the same timed health checks as the *Home* page.
+- {: .fixed data-area="operations"} The [audit log endpoint](../audits/Audits.html) returns as many records as asked for
+  with an interval as well, the latest first and counted after its filters, instead of every record of the interval.
 - {: .new data-area="ui"} The [audit log endpoint](../audits/Audits.html) can count audit records per action and per hour
   over a period of up to a week, as the audit storage counts them for the whole cluster: databases with one grouped query,
   MongoDB with one aggregation, and Redis and DynamoDB from hourly counters kept as records are written. A
@@ -432,11 +607,18 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   an application opens it, and for multifactor authentication per provider on the *System Status* page. The audit
   events table shows the target of each record and opens the application it names. Saving or deleting an application,
   and checking access to one, record that application as well. Records written before this version have no target.
+- {: .new data-area="ui"} With [LDAP monitoring](../monitoring/Configuring-Monitoring-LDAP.html), the
+  [cluster topology](../high_availability/Cluster-Topology.html) includes the LDAP and Active Directory servers CAS connects to, each listed once however many LDAP features use it: which features use it, how many
+  of their pooled connections are on it, whether it answers and when it last did not, its vendor and version, how far
+  its replica has come, and for Active Directory its site and the other domain controllers of the domain. Servers named
+  by DNS SRV records are listed too.
 - {: .action data-area="operations"} [Database audit storage](../audits/Audits-Database.html) adds the `AUD_TARGET`
   column and an index on `AUD_DATE` and `AUD_ACTION` to the audit table. CAS adds them when it updates the schema
   itself; otherwise add them to the existing table before upgrading, or recording audit events fails.
 - {: .fixed data-area="services"} Importing an archive of application definitions reads and saves each definition once;
-  each one was read by every available format and could be saved twice, which doubled the time an import took.
+  each one was read by every available format and could be saved twice, which doubled the time an import took. A
+  definition in the archive that cannot be read no longer stops the rest, and the import now says how many definitions
+  were saved and how many were left out. Archives are held to the same size limits as other imports.
 - {: .fixed data-area="protocols"} [CAS 2.0 proxy validation](../protocol/CAS-Protocol-V2-Specification.html) responses list
   each proxy of a chain once; a ticket obtained through several proxies listed each of them as many times as there were proxies.
 - {: .action data-area="tickets"} New deployments of CAS, and upgrades to a new CAS version, should always start with a
@@ -476,9 +658,9 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   to be dropped.
 - {: .action data-area="tickets"} The compact form of tickets kept by the
   [stateless ticket registry](../ticketing/Stateless-Ticket-Registry.html) now carries the resources of OAuth codes,
-  access tokens, refresh tokens, device codes and pushed authorization requests, and the audience of exchanged access
-  tokens; its format version changes: tickets and tokens issued before the upgrade can no longer be read, so users sign in
-  again and clients obtain new tokens.
+  access tokens, refresh tokens, device codes and pushed authorization requests, the audience of exchanged access
+  tokens and the tenant of ticket-granting, service, proxy and proxy-granting tickets; its format version changes: tickets and tokens
+  issued before the upgrade can no longer be read, so users sign in again and clients obtain new tokens.
 - {: .removed data-area="tickets"} The deprecated Azure CosmosDb ticket registry is removed, along with its settings.
   Deployments that still use it should switch to another [ticket registry](../ticketing/Configuring-Ticketing-Components.html).
 - {: .changed data-area="tickets"} A [logout](../installation/Logout-Single-Signout.html) request now looks up its
@@ -487,6 +669,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [Redirecting logout to the service](../installation/Logout-Single-Signout.html#redirecting-logout-to-service) looks it
   up once more, and only when `cas.logout.follow-service-redirects`{: .cas-setting} is turned on. Logout requests that
   name unknown services, such as those sent by crawlers, cost far less.
+- {: .fixed data-area="tickets"} The [Google Cloud Pub/Sub ticket registry](../ticketing/GCP-PubSub-Ticket-Registry.html) finds its
+  topic by its exact name, so a node can no longer subscribe to the dead-letter topic by mistake and miss ticket changes.
 
 ### OAuth & OpenID Connect
 {: .changed data-area="oidc"}
@@ -820,6 +1004,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   feature toggle, and require the new `MCP_OPERATOR` role. With an OAuth access token, that role also requires the
   `mcp:write` scope and the principal attributes listed in `cas.mcp.oauth.operator-required-attributes`{: .cas-setting},
   which match nobody by default.
+- {: .fixed data-area="operations"} The [MCP server](../installation/Admin-MCP-Server.html#transport) answers requests to
+  open a stream of server-initiated messages with `405 Method Not Allowed`, as the Streamable HTTP transport allows. Such
+  requests used to stay open without a response status, so clients that wait for it before finishing initialization,
+  such as Antigravity, never connected. Messages the transport refuses, such as a request without a session, are answered
+  with a JSON-RPC error response instead of the serialized server exception and its stack trace.
 
 ### Attribute Release
 {: .fixed data-area="attributes"}
@@ -838,6 +1027,14 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 ### Authentication and Session Security
 {: .changed data-area="authentication"}
 
+- {: .fixed data-area="authentication"} `ALLOW` and `DENY` work as the expired CRL policy of
+  [X.509 authentication](../authentication/X509-Authentication-CRL.html) (`cas.authn.x509.crl-expired-policy`{: .cas-setting},
+  `cas.authn.x509.crl-resource-expired-policy`{: .cas-setting}); `ALLOW` used to refuse the login.
+- {: .changed data-area="authentication"} [WS-Federation delegated authentication](../integration/ADFS-Integration.html)
+  sends `wreply` (the CAS login URL), URL-encodes its request parameters, reads typed SAML 1.1 attribute values and accepts
+  WS-Trust 1.3 token responses, so it works against identity providers built on Apache CXF, including CAS.
+- {: .fixed data-area="protocols"} The [WS-Federation identity provider](../protocol/WS-Federation-Protocol.html) refuses a
+  sign-in request without `wreply` with an error page instead of failing with an internal error.
 - {: .action data-area="general"} The [SAML2 identity provider](../authentication/Configuring-SAML2-Authentication.html),
   [OAuth/OpenID Connect](../authentication/OAuth-Authentication.html), [UMA](../protocol/OAuth-UMA-Protocol.html),
   [Heimdall](../authorization/Heimdall-Authorization-Overview.html), [JWT authentication](../authentication/JWT-Authentication.html)
@@ -870,6 +1067,22 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication.html) no longer override each other's settings, and the
   [backchannel authentication](../authentication/OIDC-Authentication-CIBA.html) verification page is now protected.
   A custom CSRF token repository is defined once, as the `casCsrfTokenRepository` bean.
+- {: .new data-area="mfa"} Palantir lists the multifactor authentication providers by rank beside the selected
+  provider's key facts and settings: each setting once, with the value that takes effect, its source, its description
+  and whether it keeps its default, grouped and filterable, with secrets hidden. Duo Security providers show whether Duo
+  answers, from the Duo ping endpoint, and look a user up in Duo to see their status, account, devices and groups,
+  create bypass codes or change the account's status, name and email address. Updating a Duo account through the
+  Duo Admin API endpoint now changes its name and email address too, not only its status, and Duo's last login and
+  creation dates are read as the seconds Duo reports rather than as milliseconds.
+- {: .new data-area="mfa"} The actuator endpoints of the [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html),
+  [WebAuthn](../mfa/FIDO2-WebAuthn-Authentication-Registration.html) and [YubiKey](../mfa/YubiKey-Authentication.html)
+  repositories import the zip their export writes, so registrations move between servers or repositories, and report
+  how many records they hold and for how many users without returning the records. An import reports how many records
+  the repository accepted and how many it refused, refuses an archive none of whose records could be stored, and limits
+  how large an archive may grow once decompressed. The WebAuthn endpoint can also list
+  and remove every registration, and the YubiKey endpoint imports an exported account as it is, which before needed a
+  one-time password from the device. Palantir's multifactor section offers export, import and removal of every record
+  for each of these repositories.
 - {: .fixed data-area="mfa"} [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) scratch codes are
   compared by their exact value, and a stored scratch code that cannot be decrypted is ignored instead of being used as
   it was stored. With scratch codes encrypted (`cas.authn.mfa.gauth.core.scratch-codes.encryption.key`{: .cas-setting}),
@@ -883,11 +1096,60 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="authentication"} The `throttles` actuator endpoint of
   [authentication throttling](../authentication/Configuring-Authentication-Throttling-Failure.html) can return only the
   throttled records of one username, matched regardless of case, instead of every record. Palantir's throttles page
-  uses it to show the attempts of one username.
+  uses it to show the attempts of one username, and its consent and audit pages likewise show the consent decisions
+  and the audit records of one username.
+- {: .fixed data-area="authentication"} Setting `cas.authn.x509.crl-unavailable-policy`{: .cas-setting} or
+  `cas.authn.x509.crl-resource-unavailable-policy`{: .cas-setting} to `THRESHOLD`, which only applies to expired CRLs, now
+  applies `DENY` with a warning instead of failing the login with an error.
+- {: .fixed data-area="protocols"} [WS-Federation](../protocol/WS-Federation-Protocol.html) relying parties without `appliesTo`
+  receive tokens for their realm, as documented, and claim values that contain `&` or `<` reach them intact; the issued
+  token is no longer HTML-unescaped.
+- {: .fixed data-area="authentication"} [WS-Federation delegated authentication](../integration/ADFS-Integration.html) restores the
+  theme, locale and `method` saved before the redirect to the identity provider, and rejects a token that cannot be parsed,
+  that has no audience, issuer or `NotOnOrAfter` condition, or whose `NotBefore` has not yet been reached, instead of failing
+  with an error or accepting a token that is not valid yet.
+- {: .fixed data-area="authentication"} [Surrogate authentication](../authentication/Surrogate-Authentication.html) SMS and email
+  notifications are sent when multitenancy is not in use.
+- {: .fixed data-area="tickets"} Security: with [multitenancy](../multitenancy/Multitenancy-Overview.html#tenant-isolation),
+  a single sign-on session of one tenant could obtain service tickets that another tenant accepted, by replaying its
+  cookie or through the REST API with a tenant header. Tickets now stay in the tenant that issued them: single sign-on,
+  service and proxy tickets and ticket validation are refused across tenants, a tenant header that names another tenant
+  than the URL is refused, and the proxy endpoint is also available under the tenant URL.
+- {: .fixed data-area="operations"} Security: the [multitenancy](../multitenancy/Multitenancy-Overview.html#actuator-endpoints)
+  endpoint no longer shows the passwords, keys and other secrets of tenant definitions; it shows `******` in their place,
+  and a definition posted back with `******` keeps the stored value. Adding, changing or removing a tenant no longer
+  writes the decrypted values of encrypted settings back to the tenant definitions in plain text, and fails rather than
+  overwriting tenant definitions that cannot be read.
+- {: .fixed data-area="authentication"} With [multitenancy](../multitenancy/Multitenancy-Tenant-Properties.html), a tenant
+  that sets cookie or session settings without keys of its own keeps using the keys CAS uses outside of any tenant; it used
+  to get new, random keys on every request, so its single sign-on cookie and webflow state could not be read back.
+  Tenant lookups made while the tenant definitions reload no longer find an empty or partial list.
+- {: .fixed data-area="mfa"} Security: with [multitenancy](../multitenancy/Multitenancy-Overview.html#tenant-isolation),
+  Google Authenticator devices and consent decisions stay in the tenant they were registered or made in, even when tenants
+  share their storage. A device of one tenant no longer answers multifactor authentication at another tenant, and is no
+  longer listed or managed there; a consent decision made in one tenant no longer applies in another, and consenting in a
+  second tenant no longer moves the first tenant's decision. A login in progress at one tenant can no longer be continued
+  at another tenant, and [tenant ids](../multitenancy/Multitenancy-Tenant-Registration.html) that are not made of letters,
+  digits, dots, dashes and underscores are refused.
+- {: .fixed data-area="mfa"} Security: when a user picks one of their [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html)
+  devices to log in with, CAS accepts only a device it offered to that user; any other device id, such as one of another
+  user's devices, is refused and the device list is shown again, where it used to show that device on the login page.
+- {: .fixed data-area="authentication"} With [multitenancy](../multitenancy/Multitenancy-Performance.html), authentication
+  handlers built for a tenant, such as LDAP handlers with their connection pools, are closed once the request completes;
+  service ticket validation and other requests that only looked them up used to leave them open.
 
 ### SAML2
 {: .changed data-area="saml"}
 
+- {: .action data-area="saml"} The SAML2 identity provider honors the NameID format requested by the `NameIDPolicy` of an
+  authentication request when the service provider supports it, and answers `InvalidNameIDPolicy` when it does not; a service's
+  `requiredNameIdFormat` still takes precedence.
+- {: .action data-area="saml"} When [signing](../installation/Configuring-SAML2-Security.html) is required but the allowed and
+  blocked algorithm settings leave no usable algorithm, digest method and credential, CAS refuses with an error instead of
+  sending the response, assertion or logout message unsigned.
+- {: .fixed data-area="saml"} `validateMetadataCertificates` now applies to
+  [metadata aggregates](../installation/SAML2-ServiceProvider-Metadata-Filtering.html): entities with expired or invalid
+  certificates are removed while the others stay usable, and the check runs after metadata signature validation.
 - {: .fixed data-area="saml"} The [ECP profile](../authentication/Configuring-SAML2-Authentication.html) answers a
   successful login with the SAML2 response in the SOAP envelope again, instead of a SOAP fault.
 - {: .fixed data-area="saml"} [Back-channel SAML2 logout](../installation/Configuring-SAML2-Logout.html) with the SOAP binding
@@ -951,6 +1213,12 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .fixed data-area="saml"} A signed [SAML2 attribute query](../installation/Configuring-SAML2-AttributeQuery.html) is
   answered with the SOAP response alone. The identity provider also wrote the POST-binding form of the response before
   it, so the service provider received an HTML page and the SOAP response could not be sent.
+- {: .fixed data-area="saml"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html) downloaded
+  from a URL or an MDQ server that cannot be parsed, or that its filters refuse, no longer replaces the metadata backup file,
+  so CAS keeps falling back onto the last copy it trusted.
+- {: .changed data-area="saml"} Stores of [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html),
+  such as MongoDB, Redis, DynamoDB or Amazon S3, are listed by the metadata endpoint under names meant for people, such as
+  `Amazon S3` or `Relational Database`, rather than their class names, which the endpoint still accepts.
 
 ### Authentication Interrupts
 {: .changed data-area="ui"}
@@ -1015,6 +1283,11 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   are written to a temporary file that then replaces the JSON file in one step, so a failed or concurrent write no longer
   leaves a truncated file behind that stops CAS from starting; removing a single device no longer fails a change made
   at the same time.
+- {: .changed data-area="mfa"} The `browser` component of [trusted device fingerprints](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html)
+  has its own settings with a default order of `5`, after geolocation, instead of sharing the geolocation settings.
+- {: .fixed data-area="mfa"} [Simple multifactor authentication](../mfa/Simple-Multifactor-Authentication.html) sends the
+  token to every phone number the user selects, and SMS messages sent by CAS reach every phone number of the recipient,
+  where they used to stop at the first number the message was sent to.
 
 ### Documentation
 {: .changed data-area="docs"}
@@ -1023,6 +1296,10 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   `cas.authn.spnego.properties[0].jcifs-service-password`{: .cas-setting} is only used when
   `cas.authn.spnego.system.use-subject-creds-only`{: .cas-setting} is `true` (otherwise the service keys come from a keytab),
   and that setting both the Kerberos KDC and realm makes the JDK ignore the Kerberos configuration file.
+- {: .changed data-area="docs"} [SAML2 service provider metadata](../installation/SAML2-ServiceProvider-Metadata.html#metadata-caching--resolution)
+  explains `cas.authn.saml-idp.metadata.core.require-valid-metadata`{: .cas-setting}: a service provider whose own metadata
+  entry has passed its `validUntil` is always refused, and the setting decides whether metadata that has otherwise
+  expired, such as an aggregate, is still used.
 - {: .fixed data-area="docs"} Setting lists show default values in full instead of cutting them off; where a list is narrow, the
   value moves to a second row under the setting name. Each setting in the configuration catalog also has a *Copy link* button.
 - {: .new data-area="docs"} Every page of the documentation has a Markdown copy at the same address ending in `.md`, which
@@ -1031,8 +1308,44 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
 - {: .new data-area="docs"} The new [Configuration Properties Changes](../configuration/Configuration-Properties-Changes.html) page lists the
   CAS settings added, removed, replaced or given a new default since the previous version, generated from the configuration
   catalogs and also published as JSON.
+- {: .fixed data-area="docs"} Pages updated for Spring Boot 4.2 and Spring Cloud 2026.0 list the settings that apply today:
+  the [metrics storage](../monitoring/Configuring-Metrics-Storage.html) options, the MongoDb and Redis
+  [server-side sessions](../webflow/Webflow-Customization-Sessions-ServerSide.html), the
+  [embedded servlet container](../installation/Configuring-Servlet-Container-Embedded.html), the Kafka
+  [configuration bus](../configuration/Configuration-Management-Clustered-Kafka.html) and
+  [configuration encryption](../configuration/Configuration-Properties-Security-SpringCloud.html) used to show only renamed or
+  removed settings. The [Vault](../configuration/Configuration-Server-Management-SpringCloud-HashiCorpVault.html) page covers
+  AppRole authentication and the key-value backend instead of the AppId method and the generic backend, which Vault and
+  Spring Cloud Vault no longer offer.
+- {: .fixed data-area="docs"} Setting lists leave out third-party settings that Spring has removed and lists only so that
+  their use can be reported; the settings search still finds them, with their replacement where there is one.
 
 ## Other Stuff
+
+- {: .fixed data-area="authentication"} Devices authorized for [QR code authentication](../authentication/QRCode-Authentication.html)
+  and kept in a JSON file are no longer lost when several devices are authorized at the same time; a change could
+  overwrite another one made a moment earlier, and the device then stopped being recognized.
+
+- {: .changed data-area="operations"} With [multitenancy](../multitenancy/Multitenancy-Performance.html#what-cas-keeps-per-tenant),
+  the host name that routes requests to a tenant, the message bundles of a tenant and the keys a tenant uses for its cookies
+  are built once for each tenant definition, where they used to be built again for every request or message.
+
+- {: .fixed data-area="services"} A [chained consent policy](../integration/Attribute-Release-Consent.html) can be
+  given in an application's definition, and the policies it lists are read with it.
+
+- {: .fixed data-area="mfa"} Importing a YubiKey account into a [MongoDb repository](../mfa/YubiKey-Authentication-Registration-MongoDb.html)
+  no longer replaces another user's account that happens to have the same identifier; the imported account gets an
+  identifier of its own.
+- {: .fixed data-area="services"} With applications [defined in memory](../services/InMemory-Service-Management.html),
+  deleting every application no longer fails, and deleting an application removes it even when the definition given
+  differs from the stored one, where it used to report success and keep it.
+- {: .fixed data-area="ui"} Rotating and revoking the OpenID Connect keys in [Palantir](../installation/Admin-Dashboard.html)
+  work again; declining to revoke the keys no longer revokes them, and a key a client registered can be removed again.
+  OAuth and OpenID Connect applications can also rotate their client secrets from their menu.
+- {: .fixed data-area="ui"} [Palantir](../installation/Admin-Dashboard.html)'s application wizard offers only the
+  access strategies this deployment carries, keeps the order of a default access strategy it leaves out when going back to
+  the JSON editor, and keeps numbers and booleans in the maps it edits, such as a policy's context. Multifactor settings
+  are found for providers given an id of their own, and the credential repositories are read once when the page opens.
 
 - {: .fixed data-area="services"} When CAS runs as an executable web application, the initial load of
   [registered services](../services/Service-Management.html) after startup no longer fails intermittently with a
@@ -1045,28 +1358,8 @@ one-time codes can be added when `cas.authn.mfa.simple.mail.accepted-email-patte
   startup and after a refresh; they used to be applied as they were stored, still encrypted. The `casConfig` endpoint
   answers a bad request when a value cannot be encrypted or decrypted, where it used to answer with an empty value, and
   a value that cannot be encrypted is no longer written to the logs in plain text.
-- {: .fixed data-area="project"} The vulnerability report of the [dependencies endpoint](../installation/Dependency-Management-Versions.html#actuator-endpoints)
-  follows OSV pagination for each dependency, so vulnerabilities past the first page of a result are no longer left out,
-  and vulnerability details that cannot be read are reported as errors instead of being dropped silently.
-- {: .changed data-area="project"} The CAS web application packages fewer libraries. The [Apache Tomcat](../installation/Configuring-Servlet-Container-Embedded-Tomcat.html)
-  flavor no longer carries libraries the embedded container already provides, a second copy of the mail and AspectJ
-  runtimes, or the individual Material Design component packages next to the bundled stylesheet and script that CAS serves.
-  The [Spring Cloud configuration server](../configuration/Configuration-Server-Management-SpringCloud.html) no longer
-  carries the Servlet and Expression Language libraries that its embedded Tomcat already provides.
-  Every flavor drops the OSHI system probe, the Metro JAX-WS runtime, the Quartz scheduler and several Apache Commons
-  libraries, none of which CAS used, as well as JMS and a handful of other unused libraries, and keeps Velocity, ZXing, the Commons object pool, Commons Collections 4,
-  Apache HttpClient 4, Jackson 2, a JAXB runtime, the Nimbus OAuth and OpenID Connect SDK, WebSocket support and
-  Spring Integration only with the features that need them; Groovy scripts can still use HttpClient 4 and
-  Jackson 2 wherever Groovy scripting is included. CAS
-  schedules its background jobs with Spring, and the [WS-Federation](../protocol/WS-Federation-Protocol.html) security
-  token service runs on Apache CXF. The `quartz` actuator endpoint, which reported Quartz jobs that CAS never registered,
-  is no longer available. The [WebJARs](../ux/User-Interface-Customization-CSSJS.html#webjars-for-javascriptcss-libraries)
-  packaged with the web application keep only the files CAS serves; customized views that use other files from a WebJAR
-  should add that WebJAR to the overlay. The default Tomcat web application archive shrinks from about 123 MB to about 69 MB.
-- {: .changed data-area="project"} Every [build flag](../developer/Build-Process.html#build) can also be supplied as an
-  environment variable named after the flag in upper snake case, such as `GENERATE_GIT_PROPERTIES`. Boolean flags now turn off
-  when set to `false`, where some used to turn on merely by being defined, and `ignoreJavadocFailures` is no longer inverted:
-  Javadoc errors fail the build unless that flag is set.
-- {: .changed data-area="project"} A large number of dependencies and libraries have been updated to their latest versions.
+- {: .fixed data-area="operations"} The [etcd configuration source](../configuration/Configuration-Server-Management-SpringCloud-Etcd.html)
+  keeps working after a refresh: it keeps the values it read and opens its own client for each refresh or update, where
+  the shared client used to be closed with the bootstrap context after the first refresh.
 
 {% include release-footer.html %}

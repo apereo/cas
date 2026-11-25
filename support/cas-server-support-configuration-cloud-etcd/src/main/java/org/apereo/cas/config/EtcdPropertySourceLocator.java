@@ -19,12 +19,12 @@ import org.springframework.core.env.PropertySource;
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class EtcdPropertySourceLocator implements PropertySourceLocator {
-    private final Client client;
+    private final Supplier<Client> clientFactory;
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
         val sourceName = EtcdPropertySource.class.getSimpleName();
-        return new EtcdPropertySource(sourceName, client, List.of(environment.getActiveProfiles()));
+        return new EtcdPropertySource(sourceName, clientFactory, List.of(environment.getActiveProfiles()));
     }
 
 }
