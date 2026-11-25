@@ -282,6 +282,10 @@
                                 <form id="saml2MetadataUploadForm" onsubmit="return false;">
                                     <section class="cas-field form-group my-3 mdc-input-group d-flex">
                                         <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                            <div class="palantir-control-row mb-2 d-none" id="saml2MetadataUploadManagerRow">
+                                                <label for="saml2MetadataUploadManager">Metadata Manager:</label>
+                                                <select id="saml2MetadataUploadManager" class="palantir"></select>
+                                            </div>
                                             <label for="saml2MetadataUploadName"
                                                    class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
                                                 <span class="mdc-notched-outline">
@@ -357,25 +361,16 @@
 
                         <div id="saml2configprops-tab">
                             <div class="min-height-90" id="saml2ConfigurationPropsPanel">
-                                <div class="mdc-card p-4 gradient-card">
-                                    <h3>
-                                        <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
-                                        Configuration Properties
-                                    </h3>
-                                </div>
-                                <div class="p-2 palantir-card-body">
-                                    <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
-                                        <thead>
-                                        <tr class="mdc-data-table__header-row">
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="mdc-data-table__content">
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <table id="saml2ConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content">
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -651,6 +646,7 @@
                                 <table id="oidcClientJwksTable" class="mdc-data-table__table table table-striped noborder">
                                     <thead>
                                     <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Client ID</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JKT</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Created At</th>
                                         <th class="mdc-data-table__header-cell" role="columnheader" scope="col">JWK</th>
@@ -678,25 +674,16 @@
 
                         <div id="oidcconfigprops-tab">
                             <div class="min-height-90" id="oidcConfigurationPropsPanel">
-                                <div class="mdc-card p-4 gradient-card">
-                                    <h3>
-                                        <i class="p-1 mdc-tab__icon mdi" style="vertical-align:baseline;" aria-hidden="true"></i>
-                                        Configuration Properties
-                                    </h3>
-                                </div>
-                                <div class="p-2 palantir-card-body">
-                                    <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
-                                        <thead>
-                                        <tr class="mdc-data-table__header-row">
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
-                                            <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody class="mdc-data-table__content">
-
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <table id="oidcConfigurationPropsTable" class="mdc-data-table__table table table-striped noborder">
+                                    <thead>
+                                    <tr class="mdc-data-table__header-row">
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Property</th>
+                                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="mdc-data-table__content">
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

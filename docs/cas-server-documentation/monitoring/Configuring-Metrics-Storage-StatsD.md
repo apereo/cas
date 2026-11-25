@@ -14,4 +14,4 @@ The StatsD registry pushes metrics over UDP to a StatsD agent eagerly. By defaul
 metrics are exported to a StatsD agent running on your local machine.
 The StatsD agent host and port to use can be provided using:
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.statsd" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.statsd.metrics.export" %}

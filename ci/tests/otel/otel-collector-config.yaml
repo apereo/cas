@@ -1,3 +1,6 @@
+# Collector for the metrics-tracing-otlp scenario. It only needs to accept what CAS exports.
+# The debug exporter logs through the collector's own logger, so it stays silent while that
+# logger is at WARN; switch the level to INFO to see every batch CAS sends.
 receivers:
   otlp:
     protocols:
@@ -6,27 +9,16 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
-extensions:
-  zpages:
-    endpoint: 0.0.0.0:55679
-    
 exporters:
   debug:
     verbosity: basic
-    sampling_initial: 2
-    sampling_thereafter: 500
 
 service:
-  extensions: [zpages]
-  
   telemetry:
+    logs:
+      level: WARN
     metrics:
-      readers:
-        - pull:
-            exporter:
-              prometheus:
-                host: 0.0.0.0
-                port: 8888
+      level: none
   pipelines:
     traces:
       receivers: [ otlp ]
@@ -37,5 +29,3 @@ service:
     logs:
       receivers: [ otlp ]
       exporters: [ debug ]
-
-

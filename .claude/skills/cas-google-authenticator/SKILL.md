@@ -16,6 +16,13 @@ description: "Review and change Google Authenticator (GAuth) MFA credential repo
 - To make a range-filter bug visible in a DynamoDB delete test, pick keys that a wrong comparison would sweep up: the kept user's name sorts after the deleted one ("z…" vs "a…"), and the kept device ids are larger than the deleted id. Random UUIDs alone pass by luck half the time.
 - DynamoDB tables keyed by `id` should delete with `DeleteItem` on that key, not a scan followed by deletes.
 - Webflow actions and device managers that take a device id from the request must load it with the owner-scoped `get(principal.getId(), id)` and act only on what that returns. Unscoped `get(id)` / `delete(id)` are for the actuator and internal paths.
+- Accounts carry the tenant they were registered in, and one repository holds every tenant's accounts. Anything that acts
+  for a user (validator, webflow actions, device manager, account profile) reads through `getForCurrentTenant(...)` and
+  `countForCurrentTenant(...)`, which keep only the accounts of the `ClientInfo` tenant; an account without a tenant counts
+  only outside any tenant. Mocked repositories return defaults for these default methods: stub them with `thenCallRealMethod()`.
+- Device selection during login (`OneTimeTokenAccountConfirmSelectionRegistrationAction`) accepts only an id among the
+  devices offered in flow scope (`registeredDevices`) and reloads it by that device's owner; anything else returns `error`,
+  which vetoes the `select` transition and re-renders the device list.
 - Every repository read returns a decoded copy (JPA detaches before decoding); `update()` must persist `properties`, which the verification flags of the delete and confirm actions live in.
 - The delete/confirm verification flags are stored on the account as `<flag>:<epoch millis>` and expire (`GoogleAuthenticatorAccountVerificationUtils`). They cannot live in flow or conversation scope: the login webflow keeps its execution state client-side, and the AJAX check and the form submit carry different execution keys.
 - `CasReentrantLock.tryLock(supplier)` returns null when the lock is not acquired; never let that null reach a caller as "no accounts".

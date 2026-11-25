@@ -44,9 +44,9 @@ async function verifyFlowUsingQRCodeButtonSameWindow() {
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
     await cas.click(page, "#auth-tab");
     await cas.sleep(1000);
-    await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnAuthenticationHandler]");
-    await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[mfa-webauthn]");
-    await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", "[WebAuthnCredential]");
+    await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", "[WebAuthnAuthenticationHandler]");
+    await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", "[mfa-webauthn]");
+    await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", "[WebAuthnCredential]");
 
     await cas.sleep(2000);
     await cas.removeWebAuthnVirtualAuthenticator(virtualAuthenticator);

@@ -4,6 +4,8 @@ const assert = require("assert");
 const ACTUATOR = "https://localhost:8443/cas/actuator";
 const BACKEND = "http://localhost:5618/config";
 const SOURCE = "bootstrapProperties-org.apereo.cas.config.RestfulPropertySource";
+const SERVICE = "https://localhost:9859/anything/cas";
+const ENCRYPTED_PROPERTY = "cas.logout.follow-service-redirects";
 
 async function assertProperty(name, value) {
     const json = JSON.parse(await cas.doRequest(`${ACTUATOR}/env/${name}`, "GET", {"Accept": "application/json"}, 200));
@@ -18,6 +20,44 @@ async function login(page, username, success) {
     await cas.loginWith(page, username, "Mellon");
     await cas.sleep(1000);
     await cas.assertCookie(page, success);
+}
+
+/**
+ * An encrypted value kept in the backend is decrypted into the casConfigurationDecryptedProperties source once CAS
+ * refreshes (CasConfigurationDecryptionInitializer), while the REST source still answers with the encrypted value.
+ * A retry reuses the backend and CAS, so a value left by an earlier attempt is reset to false first: a removed
+ * property may not be unbound from the settings CAS already holds.
+ */
+async function verifyEncryptedProperty(page) {
+    const names = JSON.parse(await cas.doRequest(`${BACKEND}/names`, "GET", {"Accept": "application/json"}, 200));
+    if (names.includes(ENCRYPTED_PROPERTY)) {
+        await cas.doRequest(`${BACKEND}?name=${ENCRYPTED_PROPERTY}&value=false`, "POST", {}, 200);
+        await cas.refreshContext();
+        await cas.sleep(2000);
+    }
+    await cas.gotoLogout(page, SERVICE);
+    await cas.sleep(1000);
+    await cas.assertPageUrlStartsWith(page, "https://localhost:8443/cas/logout");
+
+    const encrypted = await cas.doRequest(`${ACTUATOR}/casConfig/encrypt`, "POST", {"Content-Type": "text/plain"}, 200, "true");
+    await cas.log(`Encrypted value: ${encrypted}`);
+    assert(encrypted.startsWith("{cas-cipher}"));
+    await cas.doRequest(`${BACKEND}?name=${ENCRYPTED_PROPERTY}&value=${encodeURIComponent(encrypted)}`, "POST", {}, 200);
+    assert.equal(await cas.doRequest(`${BACKEND}?name=${ENCRYPTED_PROPERTY}`, "GET", {}, 200), encrypted);
+
+    await cas.refreshContext();
+    await cas.sleep(2000);
+    const json = JSON.parse(await cas.doRequest(`${ACTUATOR}/env/${ENCRYPTED_PROPERTY}`, "GET", {"Accept": "application/json"}, 200));
+    await cas.log(json.property);
+    assert.equal(json.property.source, "casConfigurationDecryptedProperties");
+    assert.equal(json.property.value, "true");
+    const stored = json.propertySources.find((source) => source.name === SOURCE);
+    assert.equal(stored?.property?.value, encrypted);
+
+    await cas.gotoLogout(page, SERVICE);
+    await cas.sleep(1000);
+    await cas.logPage(page);
+    await cas.assertPageUrlStartsWith(page, SERVICE);
 }
 
 (async () => {
@@ -48,6 +88,9 @@ async function login(page, username, success) {
         await cas.refreshContext();
         await cas.sleep(2000);
         await assertProperty("cas.server.scope", "example.com");
+
+        await cas.logg("An encrypted value stored in the backend is applied decrypted after a refresh");
+        await verifyEncryptedProperty(page);
     } finally {
         await cas.closeBrowser(browser);
     }

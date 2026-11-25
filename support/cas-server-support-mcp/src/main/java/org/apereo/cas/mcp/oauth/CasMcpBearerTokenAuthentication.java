@@ -32,7 +32,7 @@ public class CasMcpBearerTokenAuthentication extends AbstractAuthenticationToken
         this.username = username;
         this.clientId = clientId;
         this.scopes = new LinkedHashSet<>(scopes);
-        super.setAuthenticated(true);
+        setAuthenticated(true);
     }
 
     @Override

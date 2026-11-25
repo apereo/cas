@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 import module java.base;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
@@ -17,9 +18,11 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Extensions;
+import org.opensaml.saml.saml2.core.NameIDPolicy;
 import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequesterID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -42,6 +45,11 @@ import static org.mockito.Mockito.*;
     "cas.authn.saml-idp.core.attribute-query-profile-enabled=true"
 })
 class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests {
+    private static final List<String> RSA_SIGNATURE_ALGORITHMS = List.of(
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA384,
+        SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA512);
 
     @Test
     void verifySamlResponseAllSigned() throws Throwable {
@@ -250,6 +258,26 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
+    void verifySamlResponseRefusedWhenEverySigningAlgorithmIsBlocked() throws Throwable {
+        val request = buildHttpRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(true, true);
+        service.setSigningSignatureAlgorithms(CollectionUtils.wrapArrayList(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256));
+        service.setSigningSignatureBlackListedAlgorithms(new ArrayList<>(RSA_SIGNATURE_ALGORITHMS));
+
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).orElseThrow();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val assertion = getAssertion();
+
+        assertThrows(SamlException.class, () -> buildResponse(request, response, service,
+            adaptor, authnRequest, assertion, SAMLConstants.SAML2_POST_BINDING_URI));
+        assertTrue(response.getContentAsString().isEmpty());
+    }
+
+    @Test
     void verifySamlResponseAllSignedEncryptedWithCBC() throws Throwable {
         val request = buildHttpRequest();
         val response = new MockHttpServletResponse();
@@ -348,6 +376,59 @@ class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurationTests
         val subject = samlResponse.getAssertions().getFirst().getSubject();
         val subjectConfirmation = subject.getSubjectConfirmations().getFirst();
         assertNull(subjectConfirmation.getSubjectConfirmationData().getInResponseTo());
+    }
+
+    @Test
+    void verifySamlResponseWithRequestedNameIdFormat() throws Throwable {
+        val request = buildHttpRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(false, false);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).orElseThrow();
+
+        val nameIdFormat = "urn:mace:shibboleth:1.0:nameIdentifier";
+        val authnRequest = getAuthnRequestFor(service);
+        val nameIdPolicy = samlProfileSamlResponseBuilder.newSamlObject(NameIDPolicy.class);
+        nameIdPolicy.setFormat(nameIdFormat);
+        authnRequest.setNameIDPolicy(nameIdPolicy);
+
+        val samlResponse = buildResponse(request, response, service,
+            adaptor, authnRequest, getAssertion(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertEquals(StatusCode.SUCCESS, samlResponse.getStatus().getStatusCode().getValue());
+        val nameId = samlResponse.getAssertions().getFirst().getSubject().getNameID();
+        assertEquals(nameIdFormat, nameId.getFormat());
+        assertEquals("casuser", nameId.getValue());
+    }
+
+    @Test
+    void verifySamlResponseWithUnsupportedNameIdPolicy() throws Throwable {
+        val request = buildHttpRequest();
+        val response = new MockHttpServletResponse();
+
+        val service = getSamlRegisteredServiceForTestShib(false, false);
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).orElseThrow();
+
+        val authnRequest = getAuthnRequestFor(service);
+        val nameIdPolicy = samlProfileSamlResponseBuilder.newSamlObject(NameIDPolicy.class);
+        nameIdPolicy.setFormat(NameIDType.EMAIL);
+        authnRequest.setNameIDPolicy(nameIdPolicy);
+
+        val samlResponse = buildResponse(request, response, service,
+            adaptor, authnRequest, getAssertion(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertEquals(authnRequest.getID(), samlResponse.getInResponseTo());
+        assertTrue(samlResponse.getAssertions().isEmpty());
+        assertTrue(samlResponse.getEncryptedAssertions().isEmpty());
+        val statusCode = samlResponse.getStatus().getStatusCode();
+        assertEquals(StatusCode.REQUESTER, statusCode.getValue());
+        assertEquals(StatusCode.INVALID_NAMEID_POLICY, statusCode.getStatusCode().getValue());
+
+        service.setRequiredNameIdFormat(NameIDType.TRANSIENT);
+        val requiredFormatResponse = buildResponse(buildHttpRequest(), new MockHttpServletResponse(), service,
+            adaptor, authnRequest, getAssertion(), SAMLConstants.SAML2_POST_BINDING_URI);
+        assertEquals(StatusCode.SUCCESS, requiredFormatResponse.getStatus().getStatusCode().getValue());
+        assertEquals(NameIDType.TRANSIENT, requiredFormatResponse.getAssertions().getFirst().getSubject().getNameID().getFormat());
     }
 
     private MockHttpServletRequest buildHttpRequest() throws Exception {

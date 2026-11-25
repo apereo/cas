@@ -3,6 +3,7 @@ package org.apereo.cas.multitenancy;
 import module java.base;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
@@ -52,17 +53,23 @@ public interface TenantExtractor {
     ApplicationContext getApplicationContext();
     
     /**
-     * Extract tenant id from request.
+     * Extract tenant id from request. The tenant header takes precedence over the request path,
+     * and is refused when the request path names another tenant.
      *
      * @param request the request
      * @return the tenant id
+     * @throws UnknownTenantException if the tenant header and the request path name different tenants
      */
     default Optional<TenantDefinition> extract(final @Nullable HttpServletRequest request) {
         val headerValue = request != null ? request.getHeader(HEADER_TENANT_ID) : null;
+        val flowId = request != null ? FLOW_URL_HANDLER.getFlowId(request) : StringUtils.EMPTY;
         if (StringUtils.isNotBlank(headerValue)) {
+            val pathTenant = tenantIdFromPath(flowId);
+            if (StringUtils.isNotBlank(pathTenant) && !Strings.CI.equals(pathTenant, headerValue)) {
+                throw new UnknownTenantException("Tenant header does not match the tenant %s of the request path".formatted(pathTenant));
+            }
             return getTenantsManager().findTenant(headerValue);
         }
-        val flowId = request != null ? FLOW_URL_HANDLER.getFlowId(request) : StringUtils.EMPTY;
         return extract(flowId);
     }
 

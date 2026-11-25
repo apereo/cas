@@ -126,6 +126,25 @@ class GoogleCloudPubSubTicketRegistryTests extends BaseTicketRegistryTests {
                 || context.subscription().getName().equals(expected)));
     }
 
+    /**
+     * The dead-letter topic is named after the ticket registry topic. Topics must be matched by their exact name, or a
+     * node that starts once both topics exist may subscribe to the dead-letter topic and never see a change.
+     */
+    @RepeatedTest(1)
+    void verifyTopicIsMatchedByExactName() {
+        val topic = Topic.newBuilder().setName("projects/apereo-cas-gcp/topics/" + GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC).build();
+        val deadLetter = Topic.newBuilder().setName("projects/apereo-cas-gcp/topics/" + GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC).build();
+        assertEquals(topic, CasGoogleCloudPubSubTicketRegistryAutoConfiguration.findTopicByName(
+            List.of(deadLetter, topic), GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC).orElseThrow());
+        assertEquals(deadLetter, CasGoogleCloudPubSubTicketRegistryAutoConfiguration.findTopicByName(
+            List.of(topic, deadLetter), GoogleCloudTicketRegistryQueuePublisher.DEAD_LETTER_TOPIC).orElseThrow());
+        assertTrue(CasGoogleCloudPubSubTicketRegistryAutoConfiguration.findTopicByName(
+            List.of(deadLetter), GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC).isEmpty());
+        assertTrue(googleCloudPubSubTopics.values().stream().allMatch(context ->
+            context.topic().getName().endsWith("/topics/" + GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC)
+                && context.subscription().getTopic().equals(context.topic().getName())));
+    }
+
     @RepeatedTest(1)
     void verifyConverter() {
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(),

@@ -209,7 +209,7 @@ class MongoDbTicketRegistryTests {
                 .setType(TicketGrantingTicket.PREFIX);
             val queryResults1 = getNewTicketRegistry().query(criteria1);
             assertEquals(criteria1.getCount(), queryResults1.size());
-            queryResults1.forEach(result -> assertFalse(result.toString().endsWith(":N/A"), "Principal missing from " + result));
+            queryResults1.forEach(result -> assertFalse(result.toString().endsWith(":N/A"), () -> "Principal missing from " + result));
 
             val criteria2 = new TicketRegistryQueryCriteria()
                 .setCount(5L)

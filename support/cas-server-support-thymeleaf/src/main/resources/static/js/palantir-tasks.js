@@ -6,12 +6,6 @@ async function initializeScheduledTasksOperations() {
         ? window.mdc.dialog.MDCDialog.attachTo(threadDumpStackDialogElement)
         : undefined;
 
-    function escapeHtml(value) {
-        return String(value ?? "").replace(/[&<>"']/g, s => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-        }[s]));
-    }
-
     function toThreadStackKey(thread) {
         return String(thread.threadId ?? thread.id ?? thread.threadName ?? "");
     }
@@ -46,13 +40,13 @@ async function initializeScheduledTasksOperations() {
             ? "<span class=\"thread-dump-virtual-badge\">virtual</span>"
             : "";
         return `<div class="thread-dump-name-cell">
-                    <code title="${escapeHtml(name)}">${escapeHtml(name)}</code>
+                    <code title="${escapePalantirMarkup(name)}">${escapePalantirMarkup(name)}</code>
                     ${virtualBadge}
                 </div>`;
     }
 
     function renderThreadState(state) {
-        const safeState = escapeHtml(state ?? "UNKNOWN");
+        const safeState = escapePalantirMarkup(state ?? "UNKNOWN");
         return `<span class="thread-state-badge ${threadStateClass(state)}">${safeState}</span>`;
     }
 
@@ -76,7 +70,7 @@ async function initializeScheduledTasksOperations() {
             return "-";
         }
         if (typeof cpuTime === "string") {
-            return escapeHtml(cpuTime);
+            return escapePalantirMarkup(cpuTime);
         }
         const milliseconds = cpuTime > 1_000_000 ? cpuTime / 1_000_000 : cpuTime;
         return `${Math.round(milliseconds)} ms`;
@@ -113,8 +107,8 @@ async function initializeScheduledTasksOperations() {
         const stackTrace = threadStackTrace(thread);
         $("#threadDumpStackDialog-title").text(`Thread Stack: ${thread.threadName ?? "N/A"}`);
         $("#threadDumpStackSummary").html(`
-            <span><strong>ID:</strong> ${escapeHtml(thread.threadId ?? "N/A")}</span>
-            <span><strong>State:</strong> ${escapeHtml(thread.threadState ?? "UNKNOWN")}</span>
+            <span><strong>ID:</strong> ${escapePalantirMarkup(thread.threadId ?? "N/A")}</span>
+            <span><strong>State:</strong> ${escapePalantirMarkup(thread.threadState ?? "UNKNOWN")}</span>
             <span><strong>Frames:</strong> ${stackTrace.length}</span>
         `);
         $("#threadDumpStackTrace").text(stackTrace.map(formatStackFrame).join("\n"));
@@ -245,14 +239,14 @@ async function initializeScheduledTasksOperations() {
     });
 
     function renderScheduledTaskType(value) {
-        return `<span class="scheduled-task-type">${escapeHtml(camelcaseToTitleCase(value ?? "Unknown"))}</span>`;
+        return `<span class="scheduled-task-type">${escapePalantirMarkup(camelcaseToTitleCase(value ?? "Unknown"))}</span>`;
     }
 
     function renderScheduledTaskTarget(value) {
         if (!value) {
             return "-";
         }
-        return `<code class="scheduled-task-target" title="${escapeHtml(value)}">${escapeHtml(value)}</code>`;
+        return `<code class="scheduled-task-target" title="${escapePalantirMarkup(value)}">${escapePalantirMarkup(value)}</code>`;
     }
 
     function renderOptionalCode(value) {
@@ -265,7 +259,7 @@ async function initializeScheduledTasksOperations() {
         }
         const duration = Number(value);
         if (!Number.isFinite(duration)) {
-            return escapeHtml(value);
+            return escapePalantirMarkup(value);
         }
         if (duration === 0) {
             return "0 ms";
@@ -287,7 +281,7 @@ async function initializeScheduledTasksOperations() {
             return "-";
         }
         const date = new Date(value);
-        return Number.isNaN(date.getTime()) ? escapeHtml(value) : escapeHtml(date.toLocaleString());
+        return Number.isNaN(date.getTime()) ? escapePalantirMarkup(value) : escapePalantirMarkup(date.toLocaleString());
     }
 
     function scheduledTaskStatusClass(status) {
@@ -309,8 +303,8 @@ async function initializeScheduledTasksOperations() {
     function renderScheduledTaskStatus(status, exception) {
         const value = status ?? "NONE";
         const title = exception?.message ?? exception?.type ?? value;
-        return `<span class="scheduled-task-status ${scheduledTaskStatusClass(value)}" title="${escapeHtml(title)}">
-                    ${escapeHtml(value)}
+        return `<span class="scheduled-task-status ${scheduledTaskStatusClass(value)}" title="${escapePalantirMarkup(title)}">
+                    ${escapePalantirMarkup(value)}
                 </span>`;
     }
 
@@ -319,8 +313,8 @@ async function initializeScheduledTasksOperations() {
             return "-";
         }
         const message = exception.message ? `: ${exception.message}` : "";
-        return `<code class="scheduled-task-exception" title="${escapeHtml(exception.type)}${escapeHtml(message)}">
-                    ${escapeHtml(exception.type)}${escapeHtml(message)}
+        return `<code class="scheduled-task-exception" title="${escapePalantirMarkup(exception.type)}${escapePalantirMarkup(message)}">
+                    ${escapePalantirMarkup(exception.type)}${escapePalantirMarkup(message)}
                 </code>`;
     }
 
@@ -386,7 +380,7 @@ async function initializeScheduledTasksOperations() {
                 threadDumpTable.row.add(thread);
                 threadStates[thread.threadState] = (threadStates[thread.threadState] ?? 0) + 1;
             }
-            threadDumpTable.draw();
+            threadDumpTable.draw(false);
             updateThreadDumpChart(threadStates);
         } catch (xhr) {
             console.error("Error fetching thread dump:", xhr);
@@ -400,11 +394,7 @@ async function initializeScheduledTasksOperations() {
 
     if (CasActuatorEndpoints.metrics() || CasActuatorEndpoints.threadDump()) {
         await refreshTasksMetrics();
-        setInterval(() => {
-            if (currentActiveTab === Tabs.TASKS.index && document.visibilityState === "visible") {
-                refreshTasksMetrics();
-            }
-        }, palantirSettings().refreshInterval);
+        PalantirPolling.every("tasks", refreshTasksMetrics, {tab: Tabs.TASKS, status: "#threaddump-tab"});
     }
 }
 
@@ -430,7 +420,7 @@ function updateThreadDumpChart(threadStates) {
 async function initializeJvmMetrics() {
     function fetchJvmThreadMetric(metricName) {
         return new Promise((resolve, reject) =>
-            $.get(`${CasActuatorEndpoints.metrics()}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
+            $.get(`${CasActuatorEndpoints.metrics()}/${encodeURIComponent(metricName)}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
                 reject(error);

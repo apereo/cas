@@ -44,7 +44,8 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     private final DataSource dataSource;
 
-    public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean,
+    public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties,
+                                                    final OpenSamlConfigBean configBean,
                                                     final DataSource dataSource) {
         super(samlIdPProperties, configBean);
         this.dataSource = dataSource;
@@ -82,6 +83,11 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     @Override
     public String getSourceId() {
         return "jdbc://";
+    }
+
+    @Override
+    public String getName() {
+        return "Relational Database";
     }
 
     @Override

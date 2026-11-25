@@ -1,5 +1,5 @@
 {
-  "dependencies": "configuration-cloud-jdbc",
+  "dependencies": "configuration-cloud-jdbc,reports",
   "conditions": {
     "docker": "true"
   },
@@ -7,7 +7,16 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
-    
+
+    "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
+    "--cas.standalone.configuration-security.iterations=1000",
+    "--cas.standalone.configuration-security.psw=x6Fcw2H&@RWHfi",
+
+    "--management.endpoint.env.show-values=ALWAYS",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=env,refresh,casConfig",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
     "--cas.spring.cloud.jdbc.user=postgres",
     "--cas.spring.cloud.jdbc.password=password",
     "--cas.spring.cloud.jdbc.driver-class=org.postgresql.Driver",

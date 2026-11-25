@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry.compact;
 import module java.base;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -14,9 +15,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -47,7 +50,7 @@ public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGran
     public void compactFields(final List<String> fields, final Ticket ticket) {
         val authentication = Objects.requireNonNull(((AuthenticationAwareTicket) ticket).getAuthentication(),
             "Ticket must carry an authentication");
-        fields.add(authenticationSerializer.toString(withoutPrincipalAttributes(authentication)));
+        fields.add(authenticationSerializer.toString(withoutPrincipalAttributes(authentication, ticket.getTenantId())));
     }
 
     @Override
@@ -79,17 +82,26 @@ public class TicketGrantingTicketCompactor implements TicketCompactor<TicketGran
             .build();
     }
 
-    private static Authentication withoutPrincipalAttributes(final Authentication authentication) {
+    /**
+     * Strip the principal attributes, and record the tenant of the ticket as an authentication attribute,
+     * from which the ticket-granting ticket factory restores the tenant when the ticket expands.
+     *
+     * @param authentication the authentication
+     * @param tenantId       the tenant of the ticket, if any
+     * @return the authentication to compact
+     */
+    private static Authentication withoutPrincipalAttributes(final Authentication authentication, final @Nullable String tenantId) {
         val successes = new LinkedHashMap<String, AuthenticationHandlerExecutionResult>();
         authentication.getSuccesses().forEach((name, result) -> {
             val principal = result.getPrincipal();
             successes.put(name, new DefaultAuthenticationHandlerExecutionResult(result.getHandlerName(), result.getCredential(),
                 principal == null ? null : principal.withoutAttributes(), result.getWarnings()));
         });
-        return DefaultAuthenticationBuilder
+        val builder = DefaultAuthenticationBuilder
             .newInstance(authentication)
             .setPrincipal(authentication.getPrincipal().withoutAttributes())
-            .setSuccesses(successes)
-            .build();
+            .setSuccesses(successes);
+        FunctionUtils.doIfNotBlank(tenantId, value -> builder.addAttribute(AuthenticationManager.TENANT_ID_ATTRIBUTE, value));
+        return builder.build();
     }
 }

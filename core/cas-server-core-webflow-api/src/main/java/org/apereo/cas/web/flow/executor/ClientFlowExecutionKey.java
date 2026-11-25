@@ -62,7 +62,7 @@ public class ClientFlowExecutionKey extends FlowExecutionKey {
             return new ClientFlowExecutionKey(uuid, decoded);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT);
+            throw new BadlyFormattedFlowExecutionKeyException(key, KEY_FORMAT, e);
         }
     }
 

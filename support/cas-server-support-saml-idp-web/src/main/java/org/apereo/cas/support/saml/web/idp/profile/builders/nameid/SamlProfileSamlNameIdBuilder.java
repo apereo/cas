@@ -33,6 +33,9 @@ import org.opensaml.saml.saml2.core.NameIDType;
 @Slf4j
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<SAMLObject> {
 
+    private static final Set<String> NAME_ID_FORMATS_WITHOUT_CONSTRAINT = Set.of(NameIDType.UNSPECIFIED,
+        "urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified", NameIDType.ENCRYPTED);
+
     private final PersistentIdGenerator persistentIdGenerator;
 
     private final MetadataResolver samlIdPMetadataResolver;
@@ -114,8 +117,8 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     protected NameID buildNameId(final SamlProfileBuilderContext context) throws SamlException {
         val supportedNameFormats = getSupportedNameIdFormats(context);
         val requiredNameFormat = getRequiredNameIdFormatIfAny(context);
-        validateRequiredNameIdFormatIfAny(supportedNameFormats, requiredNameFormat, context);
-        val nameID = determineNameId(supportedNameFormats, context);
+        val nameFormats = determineNameIdFormats(supportedNameFormats, requiredNameFormat, context);
+        val nameID = determineNameId(nameFormats, context);
         return finalizeNameId(nameID, context);
     }
 
@@ -143,17 +146,41 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         return nameid;
     }
 
-    protected void validateRequiredNameIdFormatIfAny(final List<String> supportedNameFormats,
-                                                     final String requiredNameFormat,
-                                                     final SamlProfileBuilderContext context) {
-        if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
-            LOGGER.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]. "
-                        + "The requested NameID format may not be honored. You should consult the metadata for this service "
-                        + "and ensure the requested NameID format is present in the collection of supported "
-                        + "metadata formats in the metadata, which are the following: [{}]",
-                requiredNameFormat, SamlIdPUtils.getIssuerFromSamlObject(context.getSamlRequest()),
-                context.getAdaptor().getEntityId(), context.getAdaptor().getSupportedNameIdFormats());
+    /**
+     * Determine the NameID formats to try, in order. A format requested by the {@code NameIDPolicy} of the
+     * request, other than {@code unspecified} or {@code encrypted}, is the only one tried, as SAML2 core
+     * section 3.4.1.1 requires the NameID to carry exactly that format; a requested format the service provider
+     * does not support is refused. A NameID format required by the service takes precedence over the request.
+     *
+     * @param supportedNameFormats the supported name formats
+     * @param requestedNameFormat  the name format requested by the request, if any
+     * @param context              the context
+     * @return the NameID formats to try
+     * @throws SamlIdPInvalidNameIdPolicyException when the requested format is not supported
+     */
+    protected List<String> determineNameIdFormats(final List<String> supportedNameFormats,
+                                                  final String requestedNameFormat,
+                                                  final SamlProfileBuilderContext context) {
+        if (StringUtils.isBlank(requestedNameFormat)
+            || NAME_ID_FORMATS_WITHOUT_CONSTRAINT.contains(requestedNameFormat.trim())) {
+            return supportedNameFormats;
         }
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(context.getSamlRequest());
+        val requiredNameIdFormat = context.getRegisteredService().getRequiredNameIdFormat();
+        if (StringUtils.isNotBlank(requiredNameIdFormat)) {
+            LOGGER.debug("NameID format [{}] requested by [{}] is ignored, since the service requires [{}]",
+                requestedNameFormat, issuer, requiredNameIdFormat);
+            return supportedNameFormats;
+        }
+        val nameFormat = requestedNameFormat.trim();
+        if (supportedNameFormats.stream().map(StringUtils::trim).anyMatch(nameFormat::equals)) {
+            LOGGER.debug("Using NameID format [{}] requested by [{}]", nameFormat, issuer);
+            return List.of(nameFormat);
+        }
+        LOGGER.warn("NameID format [{}] requested by [{}] is not supported for [{}], which supports [{}]",
+            nameFormat, issuer, context.getAdaptor().getEntityId(), supportedNameFormats);
+        throw new SamlIdPInvalidNameIdPolicyException("NameID format %s requested by %s is not supported"
+            .formatted(nameFormat, context.getAdaptor().getEntityId()));
     }
 
     protected NameID determineNameId(final List<String> supportedNameFormats, final SamlProfileBuilderContext context) {

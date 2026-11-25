@@ -141,8 +141,12 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(provider -> {
                 val duoService = provider.getDuoAuthenticationService().getAdminApiService().orElseThrow();
-                duoService.modifyDuoSecurityUserAccount(account.withUsername(username))
-                    .ifPresent(user -> results.put(provider.getId(), user));
+                val update = new DuoSecurityUserAccount(username)
+                    .setStatus(account.getStatus())
+                    .setEmail(account.getEmail())
+                    .setFirstName(account.getFirstName())
+                    .setLastName(account.getLastName());
+                duoService.modifyDuoSecurityUserAccount(update).ifPresent(user -> results.put(provider.getId(), user));
             }));
         return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
     }

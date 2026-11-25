@@ -16,6 +16,18 @@ public interface TenantsManager {
     String BEAN_NAME = "tenantsManager";
 
     /**
+     * Value shown in place of a property value that is not disclosed, such as a password or a key.
+     * Saving a definition with this value keeps the value already stored for that property.
+     */
+    String REDACTED_PROPERTY_VALUE = "******";
+
+    /**
+     * The form of a tenant id: letters, digits, dots, dashes and underscores, starting with a letter or a digit.
+     * Tenant ids become part of urls and cookie paths, so other characters are not accepted.
+     */
+    Pattern TENANT_ID_PATTERN = Pattern.compile("^[A-Za-z0-9][A-Za-z0-9_.-]*$");
+
+    /**
      * Find tenant.
      *
      * @param tenantId the tenant id

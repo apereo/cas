@@ -26,6 +26,8 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.hazelcast.config.Config;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.EntryEventType;
 import com.hazelcast.core.EntryView;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.internal.dynamicconfig.DynamicConfigurationAwareConfig;
@@ -39,7 +41,9 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -61,6 +65,19 @@ import static org.mockito.Mockito.*;
 @Slf4j
 @ExtendWith(CasTestExtension.class)
 class HazelcastTicketRegistryTests {
+    @Nested
+    class ExpirationListenerTests {
+        @Test
+        void verifyEventWithoutDocument() {
+            val registry = mock(HazelcastTicketRegistry.class);
+            val provider = mock(ObjectProvider.class);
+            when(provider.getIfAvailable()).thenReturn(registry);
+            val listener = new HazelcastTicketExpirationListener(provider);
+            assertDoesNotThrow(() -> listener.entryExpired(new EntryEvent<>("source", null, EntryEventType.EXPIRED.getType(), "TGT-1", null, null)));
+            verify(registry, never()).handleExpiredTicket(any());
+        }
+    }
+
     @Nested
     @Getter
     @ImportAutoConfiguration(CasHazelcastTicketRegistryAutoConfiguration.class)
@@ -185,6 +202,18 @@ class HazelcastTicketRegistryTests {
             assertEquals(2, registry.stream(TicketRegistryStreamCriteria.builder().from(5).build()).count());
             assertEquals(7, registry.stream().count());
             assertEquals(3, registry.sessionCount());
+
+            val sessions = registry.query(TicketRegistryQueryCriteria.builder().type(TransientSessionTicket.PREFIX).decode(true).build());
+            assertEquals(4, sessions.size());
+            assertTrue(sessions.stream().allMatch(TransientSessionTicket.class::isInstance));
+            val principal = CoreAuthenticationTestUtils.getAuthentication().getPrincipal().getId();
+            assertEquals(3, registry.query(TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX)
+                .principal(principal.toUpperCase(Locale.ENGLISH)).decode(true).build()).size());
+            assertEquals(0, registry.query(TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX)
+                .principal("nobody").decode(true).build()).size());
+            val sessionId = ((Ticket) sessions.getFirst()).getId();
+            assertEquals(List.of(sessionId), registry.query(TicketRegistryQueryCriteria.builder().type(TransientSessionTicket.PREFIX)
+                .id(sessionId).decode(true).build()).stream().map(Ticket.class::cast).map(Ticket::getId).toList());
 
             assertEquals(7, registry.deleteAll());
             hazelcastInstance.getMap(ticketGrantingTicketDefinition.getProperties().getStorageName()).destroy();

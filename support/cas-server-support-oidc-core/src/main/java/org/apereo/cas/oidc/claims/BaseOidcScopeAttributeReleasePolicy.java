@@ -13,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +36,7 @@ import org.jooq.lambda.Unchecked;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy
     implements OidcRegisteredServiceAttributeReleasePolicy {
 

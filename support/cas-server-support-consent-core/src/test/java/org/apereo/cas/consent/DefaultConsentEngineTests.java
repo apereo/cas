@@ -2,6 +2,10 @@ package org.apereo.cas.consent;
 
 import module java.base;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -16,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +38,20 @@ class DefaultConsentEngineTests {
     @Autowired
     @Qualifier(ConsentEngine.BEAN_NAME)
     private ConsentEngine consentEngine;
+
+    @Autowired
+    @Qualifier(ConsentRepository.BEAN_NAME)
+    private ConsentRepository consentRepository;
+
+    @Autowired
+    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
+    private ConsentDecisionBuilder consentDecisionBuilder;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeAll
     public static void beforeAll() {
@@ -63,6 +82,47 @@ class DefaultConsentEngineTests {
         policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
         consentService.setAttributeReleasePolicy(policy);
         assertTrue(consentEngine.isConsentRequiredFor(service, consentService, authentication).isRequired());
+    }
+
+    @Test
+    void verifyDecisionsStayInTheirTenant() throws Throwable {
+        val tenantsManager = mock(TenantsManager.class);
+        when(tenantsManager.findTenant(anyString())).thenAnswer(invocation ->
+            Optional.of(TenantDefinition.builder().id(invocation.getArgument(0)).build()));
+        val tenantExtractor = mock(TenantExtractor.class);
+        when(tenantExtractor.getTenantsManager()).thenReturn(tenantsManager);
+        val engine = new DefaultConsentEngine(consentRepository, consentDecisionBuilder, casProperties,
+            List.of(), applicationContext, tenantExtractor);
+
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val consentService = RegisteredServiceTestUtils.getRegisteredService("consentService");
+        val policy = new ReturnAllAttributeReleasePolicy();
+        policy.setConsentPolicy(new DefaultRegisteredServiceConsentPolicy());
+        consentService.setAttributeReleasePolicy(policy);
+        val serviceId = "https://consent-%s.example.org".formatted(UUID.randomUUID());
+        val shireService = RegisteredServiceTestUtils.getService(serviceId);
+        shireService.setTenant("shire");
+        val defaultService = RegisteredServiceTestUtils.getService(serviceId);
+        val mordorService = RegisteredServiceTestUtils.getService(serviceId);
+        mordorService.setTenant("mordor");
+
+        val shireDecision = engine.storeConsentDecision(shireService, consentService, authentication,
+            14, ChronoUnit.DAYS, ConsentReminderOptions.ATTRIBUTE_NAME);
+        assertEquals("shire", shireDecision.getTenant());
+        assertFalse(engine.isConsentRequiredFor(shireService, consentService, authentication).isRequired());
+        assertNotNull(engine.findConsentDecision(shireService, consentService, authentication));
+        assertNull(engine.findConsentDecision(defaultService, consentService, authentication));
+        assertNull(engine.findConsentDecision(mordorService, consentService, authentication));
+        assertTrue(engine.isConsentRequiredFor(defaultService, consentService, authentication).isRequired());
+
+        val defaultDecision = engine.storeConsentDecision(defaultService, consentService, authentication,
+            14, ChronoUnit.DAYS, ConsentReminderOptions.ATTRIBUTE_NAME);
+        assertNull(defaultDecision.getTenant());
+        assertNotEquals(shireDecision.getId(), defaultDecision.getId());
+        assertEquals(2, consentRepository.findConsentDecisions(authentication.getPrincipal().getId()).size());
+        assertEquals("shire", engine.findConsentDecision(shireService, consentService, authentication).getTenant());
+        assertNull(engine.findConsentDecision(defaultService, consentService, authentication).getTenant());
+        assertFalse(engine.isConsentRequiredFor(defaultService, consentService, authentication).isRequired());
     }
 
     @Test
