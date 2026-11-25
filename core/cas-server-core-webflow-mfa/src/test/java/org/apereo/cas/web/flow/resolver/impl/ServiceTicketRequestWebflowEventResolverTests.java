@@ -36,7 +36,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
         servicesManager.save(registeredService);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -50,7 +50,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
@@ -64,7 +64,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(registeredService);
@@ -80,7 +80,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         val context = MockRequestContext.create(applicationContext);
         val tgt = new MockTicketGrantingTicket("randomuser");
         ticketRegistry.addTicket(tgt);
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(registeredService);
@@ -96,7 +96,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, true));
         servicesManager.save(registeredService);
@@ -113,7 +113,7 @@ class ServiceTicketRequestWebflowEventResolverTests extends BaseCasWebflowMultif
         context.setParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
-        val service = RegisteredServiceTestUtils.getService("service-ticket-request");
+        val service = RegisteredServiceTestUtils.getService("https://" + UUID.randomUUID() + ".example.org");
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
         servicesManager.save(registeredService);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);

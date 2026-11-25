@@ -19,6 +19,10 @@
     "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
+    "--cas.authn.pm.reset.sms.from=3477465300",
+    "--cas.authn.pm.reset.sms.text=Reset:${url}",
+    "--cas.sms-provider.rest.url=http://localhost:5617",
+
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],
   "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle",

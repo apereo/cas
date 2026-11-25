@@ -164,6 +164,11 @@ public class RedisSamlRegisteredServiceMetadataResolver extends BaseSamlRegister
     public String getSourceId() {
         return "redis://";
     }
+
+    @Override
+    public String getName() {
+        return "Redis";
+    }
     
     @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {

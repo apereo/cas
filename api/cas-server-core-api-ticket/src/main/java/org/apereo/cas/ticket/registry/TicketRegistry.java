@@ -2,9 +2,12 @@ package org.apereo.cas.ticket.registry;
 
 import module java.base;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 
@@ -229,13 +232,25 @@ public interface TicketRegistry {
      * Query the registry and return the results.
      * This operations allows one to interact with the registry
      * in raw form without a lot of post-processing of the ticket objects.
-     * Registry implementations are to decide which criteria options they wish to support.
+     * Registry implementations decide how to answer it best, such as reading only the tickets of the asked type.
+     * By default, every ticket is read and those of the asked type, id and principal that have not expired are kept,
+     * so callers such as the Spring session repository get an answer from every registry.
      *
      * @param criteria the criteria
      * @return the results
      */
     default List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
-        return new ArrayList<>();
+        try (var tickets = getTickets(ticket -> Objects.equals(criteria.getType(), ticket.getPrefix())
+            && (StringUtils.isBlank(criteria.getId()) || Objects.equals(criteria.getId(), ticket.getId()))
+            && !ticket.isExpired()
+            && (StringUtils.isBlank(criteria.getPrincipal())
+                || (ticket instanceof final AuthenticationAwareTicket aware && Optional.ofNullable(aware.getAuthentication())
+                .filter(authentication -> Strings.CI.equals(criteria.getPrincipal(), authentication.getPrincipal().getId()))
+                .isPresent())))) {
+            return tickets
+                .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+                .collect(Collectors.toList());
+        }
     }
 
     /**

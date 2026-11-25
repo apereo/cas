@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -108,5 +109,21 @@ class OidcCustomScopeAttributeReleasePolicyTests extends AbstractOidcTests {
         var json = serializer.toString(service);
         assertNotNull(json);
         assertNotNull(serializer.from(json));
+    }
+
+    @Test
+    void verifySerializationLeavesOutUnchangedSettings() {
+        val policy = new OidcCustomScopeAttributeReleasePolicy("custom", CollectionUtils.wrap("mcp:read"));
+        val service = getOidcRegisteredService();
+        service.setAttributeReleasePolicy(policy);
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
+        val json = serializer.toString(service);
+        assertFalse(json.contains("principalAttributesRepository"), json);
+        assertFalse(json.contains("consentPolicy"), json);
+        assertFalse(json.contains("authorizedToReleaseAuthenticationAttributes"), json);
+        assertFalse(json.contains("canonicalizationMode"), json);
+        assertTrue(json.contains("mcp:read"), json);
+        val read = (OidcRegisteredService) serializer.from(json);
+        assertEquals(policy, read.getAttributeReleasePolicy());
     }
 }

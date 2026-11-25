@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
-import javax.security.auth.login.AccountLockedException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

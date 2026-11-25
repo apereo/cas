@@ -145,7 +145,7 @@ class DefaultOidcRequestParameterResolverTests extends AbstractOidcTests {
         servicesManager.save(service);
         for (val algorithm : List.of(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512)) {
             val request = requestWith(service.getClientId(), signWithSecret(algorithm, service.getClientSecret(), service.getClientId()));
-            assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request), algorithm.getName());
+            assertTrue(oauthRequestParameterResolver.isRequestObjectVerified(request), algorithm::getName);
             assertEquals(List.of(OidcConstants.StandardScopes.OPENID.getScope(), OidcConstants.StandardScopes.PROFILE.getScope()),
                 oauthRequestParameterResolver.resolveRequestParameter(request, OAuth20Constants.SCOPE, List.class).orElseThrow());
         }

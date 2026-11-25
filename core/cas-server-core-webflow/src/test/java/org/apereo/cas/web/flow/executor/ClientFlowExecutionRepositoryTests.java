@@ -31,6 +31,7 @@ import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionLocator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.execution.FlowExecution;
@@ -111,6 +112,40 @@ class ClientFlowExecutionRepositoryTests {
         }
 
         @Test
+        void verifyFlowKeepsFirstTenant() {
+            val repository = new ClientFlowExecutionRepository(mock(FlowExecutionFactory.class),
+                mock(FlowDefinitionLocator.class), CipherExecutorResolver.with(CipherExecutor.noOp()), casProperties.getWebflow());
+            val definition = mock(FlowDefinition.class);
+            when(definition.getId()).thenReturn("test-flow");
+            val execution = mock(FlowExecution.class);
+            when(execution.getDefinition()).thenReturn(definition);
+            val conversationScope = new LocalAttributeMap<Object>();
+            when(execution.getConversationScope()).thenReturn(conversationScope);
+            val tenantAttribute = ClientFlowExecutionKey.class.getName() + ".tenant";
+
+            val previousClientInfo = ClientInfoHolder.getClientInfo();
+            ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
+            try {
+                repository.recordWebflowTenant(execution);
+                assertNull(conversationScope.get(tenantAttribute));
+                ClientInfoHolder.getClientInfo().setTenant("shire");
+                repository.recordWebflowTenant(execution);
+                ClientInfoHolder.getClientInfo().setTenant(null);
+                repository.recordWebflowTenant(execution);
+                assertEquals("shire", conversationScope.get(tenantAttribute));
+
+                val state = new ClientFlowExecutionRepository.SerializedFlowExecutionState(execution);
+                assertDoesNotThrow(() -> repository.verifyWebflowTenantMatchesRequest(state));
+                ClientInfoHolder.getClientInfo().setTenant("rivendell");
+                assertThrows(ClientFlowExecutionRepositoryException.class, () -> repository.verifyWebflowTenantMatchesRequest(state));
+                ClientInfoHolder.getClientInfo().setTenant("SHIRE");
+                assertDoesNotThrow(() -> repository.verifyWebflowTenantMatchesRequest(state));
+            } finally {
+                ClientInfoHolder.setClientInfo(previousClientInfo);
+            }
+        }
+
+        @Test
         void verifyLaunchAndResumeFlow() {
             val context = new MockExternalContext();
             context.setNativeRequest(new MockHttpServletRequest());
@@ -158,6 +193,36 @@ class ClientFlowExecutionRepositoryTests {
             assertNotNull(launchResult.getPausedKey());
             val key = ClientFlowExecutionKey.parse(launchResult.getPausedKey());
             assertEquals(key.toString(), launchResult.getPausedKey());
+        }
+
+        @Test
+        void verifyFlowCannotMoveToAnotherTenant() {
+            val context = new MockExternalContext();
+            val request = new MockHttpServletRequest();
+            request.setRemoteAddr("223.456.789.101");
+            request.setLocalAddr("223.456.789.101");
+            request.setContextPath("/tenants/shire/login");
+            val previousClientInfo = ClientInfoHolder.getClientInfo();
+            ClientInfoHolder.setClientInfo(ClientInfo.from(request).setTenant("shire"));
+            context.setNativeRequest(request);
+            context.setNativeResponse(new MockHttpServletResponse());
+            try {
+                val launchResult = flowExecutor.launchExecution("test-flow", new LocalAttributeMap<>(), context);
+                assertNotNull(launchResult.getPausedKey());
+                context.setEventId("submit");
+                context.getRequestMap().put("vegan", "0");
+
+                ClientInfoHolder.getClientInfo().setTenant("rivendell");
+                assertThrows(ClientFlowExecutionRepositoryException.class,
+                    () -> flowExecutor.resumeExecution(launchResult.getPausedKey(), context));
+
+
+                ClientInfoHolder.getClientInfo().setTenant("SHIRE");
+                val resumeResult = flowExecutor.resumeExecution(launchResult.getPausedKey(), context);
+                assertEquals("lasagnaDinner", resumeResult.getOutcome().getId());
+            } finally {
+                ClientInfoHolder.setClientInfo(previousClientInfo);
+            }
         }
     }
 

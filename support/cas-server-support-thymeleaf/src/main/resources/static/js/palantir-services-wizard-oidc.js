@@ -16,6 +16,34 @@ function createOidcRegisteredServiceFields() {
         });
     }
     $registeredServiceUsernameAttributeProvider.selectmenu("refresh");
+
+    const $registeredServiceAttributeReleasePolicy = $("#registeredServiceAttributeReleasePolicy");
+    const scopePolicies = {
+        OidcOpenIdScopeAttributeReleasePolicy: "OPENID SCOPE",
+        OidcProfileScopeAttributeReleasePolicy: "PROFILE SCOPE",
+        OidcEmailScopeAttributeReleasePolicy: "EMAIL SCOPE",
+        OidcAddressScopeAttributeReleasePolicy: "ADDRESS SCOPE",
+        OidcPhoneScopeAttributeReleasePolicy: "PHONE SCOPE",
+        OidcOfflineAccessScopeAttributeReleasePolicy: "OFFLINE ACCESS SCOPE",
+        OidcAssuranceScopeAttributeReleasePolicy: "ASSURANCE SCOPE",
+        OidcCustomScopeAttributeReleasePolicy: "CUSTOM SCOPE",
+        OidcScopeFreeAttributeReleasePolicy: "SCOPE FREE"
+    };
+    Object.entries(scopePolicies)
+        .map(([type, text]) => ({
+            value: `org.apereo.cas.oidc.claims.${type}`,
+            text: text,
+            data: {
+                markerClass: true,
+                serviceClass: "OidcRegisteredService"
+            }
+        }))
+        .filter(option => $registeredServiceAttributeReleasePolicy.find(`option[value="${option.value}"]`).length === 0)
+        .forEach(option => appendOptionsToDropDown({
+            selectElement: $registeredServiceAttributeReleasePolicy,
+            options: [option]
+        }));
+    $registeredServiceAttributeReleasePolicy.selectmenu("refresh");
 }
 
 async function createRegisteredServiceOidcFields() {
@@ -320,7 +348,7 @@ async function createRegisteredServiceOidcFields() {
             {value: "", text: "DEFAULT", selected: true},
             {value: "ping", text: "PING"},
             {value: "push", text: "PUSH"},
-            {value: "pull", text: "POLL"}
+            {value: "poll", text: "POLL"}
         ],
         helpText: "Specify the backchannel token delivery mode for this OpenID Connect relying party."
     });
@@ -334,6 +362,17 @@ async function createRegisteredServiceOidcFields() {
         serviceClass: "class-OidcRegisteredService",
         containerId: "editServiceWizardOAuthOidcContainer",
         title: "Define the backchannel client notification endpoint for this OpenID Connect relying party."
+    });
+
+    createInputField({
+        cssClasses: "advanced-option",
+        labelTitle: "Backchannel Authentication Request Signing Algorithm",
+        name: "registeredServiceBackchannelAuthenticationRequestSigningAlg",
+        paramName: "backchannelAuthenticationRequestSigningAlg",
+        required: false,
+        serviceClass: "class-OidcRegisteredService",
+        containerId: "editServiceWizardOAuthOidcContainer",
+        title: "Define the algorithm this OpenID Connect relying party signs backchannel authentication requests with."
     });
 }
 
@@ -456,6 +495,9 @@ function addRegisteredServiceClientSecretRow(secret = {}) {
     const $expirationDate = $(`#${expirationDateId}`);
     $secret.val(secret.value || "");
     $expirationDate.val(secret.expirationDate || "");
+    if (secret.expiration) {
+        $expirationDate.data("recorded", {date: secret.expirationDate || "", expiration: String(secret.expiration)});
+    }
 
     row.find("input").on("input change", () => generateServiceDefinition());
     $(`#${generateButtonId}`).on("click", () => {
@@ -495,6 +537,13 @@ function buildRegisteredServiceClientSecretsDefinition() {
     })];
 }
 
+/**
+ * The client secrets the wizard shows, each with its expiration. An expiration CAS recorded keeps its exact time and
+ * offset while its date is left as it was, since the date field holds only the day, and so does one the date field
+ * cannot show; choosing another date replaces it.
+ *
+ * @returns {Array<{value: string, expiration: string}>} the secrets
+ */
 function getRegisteredServiceClientSecretRows() {
     return $(".registered-service-client-secret-row")
         .map(function () {
@@ -503,10 +552,12 @@ function getRegisteredServiceClientSecretRows() {
             if (!value) {
                 return null;
             }
-            const expirationDate = $row.find("input.registered-service-client-secret-expiration-date").val()?.trim();
+            const $expirationDate = $row.find("input.registered-service-client-secret-expiration-date");
+            const expirationDate = $expirationDate.val()?.trim();
+            const recorded = $expirationDate.data("recorded");
             return {
                 value,
-                expiration: expirationDate || ""
+                expiration: recorded && recorded.date === expirationDate ? recorded.expiration : expirationDate || ""
             };
         })
         .get()
@@ -551,6 +602,7 @@ function extractRegisteredServiceClientSecrets(serviceDefinition) {
         .filter(secret => secret && secret.value)
         .map(secret => ({
             value: secret.value,
+            expiration: secret.expiration,
             ...parseRegisteredServiceClientSecretExpiration(secret.expiration)
         }));
 }
@@ -563,7 +615,8 @@ function parseRegisteredServiceClientSecretExpiration(expiration) {
     if (/^\d+$/.test(value)) {
         return formatRegisteredServiceClientSecretExpirationDate(new Date(Number(value) * 1000));
     }
-    const isoDate = new Date(value.endsWith("Z") ? value : `${value}Z`);
+    const instant = value.replace(/\[[^\]]*\]$/, "");
+    const isoDate = new Date(/(Z|[+-]\d{2}:?\d{2})$/i.test(instant) ? instant : `${instant}Z`);
     if (!Number.isNaN(isoDate.getTime())) {
         return formatRegisteredServiceClientSecretExpirationDate(isoDate);
     }

@@ -16,6 +16,8 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,9 +26,11 @@ import org.springframework.boot.actuate.endpoint.EndpointAccessResolver;
 import org.springframework.boot.actuate.endpoint.EndpointsSupplier;
 import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
+import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.actuate.endpoint.web.WebEndpointsSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.autoconfigure.actuate.endpoint.HealthEndpointProperties;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -84,8 +88,9 @@ class CasPalantirWebMvcConfiguration {
     public PalantirOverviewController palantirOverviewController(
         @Qualifier("palantirOverview") final PalantirOverview palantirOverview,
         final EndpointLinksResolver endpointLinksResolver,
-        final WebEndpointProperties webEndpointProperties) {
-        return new PalantirOverviewController(palantirOverview, endpointLinksResolver, webEndpointProperties);
+        final WebEndpointProperties webEndpointProperties,
+        final ObjectProvider<HealthEndpointProperties> healthEndpointProperties) {
+        return new PalantirOverviewController(palantirOverview, endpointLinksResolver, webEndpointProperties, healthEndpointProperties);
     }
 
     @Bean
@@ -102,12 +107,31 @@ class CasPalantirWebMvcConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "palantirEndpointWebSecurityConfigurer")
-    public CasWebSecurityConfigurer<HttpSecurity> palantirEndpointWebSecurityConfigurer() {
+    public CasWebSecurityConfigurer<HttpSecurity> palantirEndpointWebSecurityConfigurer(
+        final WebEndpointProperties webEndpointProperties,
+        final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints) {
         return new CasWebSecurityConfigurer<>() {
+            @Override
+            public List<String> getCsrfProtectedSessionEndpoints() {
+                val endpoints = new ArrayList<String>();
+                endpoints.add(PalantirConstants.URL_PATH_PALANTIR + "/**");
+                val basePath = Strings.CI.removeEnd(StringUtils.defaultString(webEndpointProperties.getBasePath()), "/");
+                if (StringUtils.isNotBlank(basePath)) {
+                    endpoints.add(basePath + "/**");
+                } else {
+                    pathMappedEndpoints.ifAvailable(mapped -> mapped.getAllRootPaths()
+                        .stream()
+                        .map(path -> Strings.CI.removeEnd(Strings.CI.prependIfMissing(path, "/"), "/"))
+                        .filter(StringUtils::isNotBlank)
+                        .map(path -> path + "/**")
+                        .forEach(endpoints::add));
+                }
+                return endpoints;
+            }
+
             @Override
             public CasWebSecurityConfigurer<HttpSecurity> finish(final HttpSecurity http) {
                 val successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-                successHandler.setTargetUrlParameter("redirectTo");
                 successHandler.setDefaultTargetUrl(PalantirConstants.URL_PATH_PALANTIR);
                 http.authorizeHttpRequests(customizer -> customizer
                         .requestMatchers(PathPatternRequestMatcher.withDefaults()

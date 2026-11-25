@@ -15,6 +15,13 @@ function printyellow() {
   printf "${YELLOW}$1${ENDCOLOR}\n"
 }
 
+gradleUserHome="${GRADLE_USER_HOME:-$HOME/.gradle}"
+mkdir -p "${gradleUserHome}"
+if ! grep -q "org.gradle.internal.network.retry.max.attempts" "${gradleUserHome}/gradle.properties" 2>/dev/null; then
+  echo "Limiting Gradle to 2 download attempts in CI to stay under Maven Central's rate limits"
+  echo "systemProp.org.gradle.internal.network.retry.max.attempts=2" >> "${gradleUserHome}/gradle.properties"
+fi
+
 SCENARIO_CONFIG_FILE="$PWD/ci/tests/puppeteer/scenarios/$1/script.json"
 echo "Checking scenario configuration file: ${SCENARIO_CONFIG_FILE}"
 

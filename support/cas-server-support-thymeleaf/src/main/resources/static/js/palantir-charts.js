@@ -19,7 +19,6 @@ let threadDumpChart = null;
 const prometheusCharts = {};
 let prometheusAvailableMetrics = [];
 let prometheusEndpointUrl = null;
-let prometheusRefreshInterval = 10000;
 let prometheusRefreshTimer = null;
 let prometheusInitializationPromise = null;
 let prometheusInitialized = false;
@@ -413,7 +412,26 @@ function createPalantirCountsByTargetChart(canvasId, title, label, onSelect = nu
 }
 
 const palantirApplicationNames = new Map();
-const palantirMissingApplications = new Set();
+const palantirApplicationSightings = new Map();
+let palantirApplicationsListedAt = 0;
+let palantirApplicationSightingClock = 0;
+
+/**
+ * Note what reading one application on its own found: whether it exists, and when, so the newest observation decides.
+ *
+ * @param {string} id the id of the application
+ * @param {boolean} exists whether the server had it
+ */
+function palantirSawApplication(id, exists) {
+    palantirApplicationSightings.set(String(id), {exists, at: ++palantirApplicationSightingClock});
+}
+
+/**
+ * Note that the applications were listed just now; what an earlier reading on its own found counts for less.
+ */
+function palantirListedApplications() {
+    palantirApplicationsListedAt = ++palantirApplicationSightingClock;
+}
 
 /**
  * The name of an application by its id: from the applications Palantir already listed, or read once and kept.
@@ -433,10 +451,13 @@ async function palantirApplicationName(id) {
                 return;
             }
             $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`)
-                .done(service => resolve((Array.isArray(service) ? service[1]?.name : service?.name) || `Application ${id}`))
+                .done(service => {
+                    palantirSawApplication(id, true);
+                    resolve((Array.isArray(service) ? service[1]?.name : service?.name) || `Application ${id}`);
+                })
                 .fail(xhr => {
                     if (xhr.status === 404) {
-                        palantirMissingApplications.add(String(id));
+                        palantirSawApplication(id, false);
                     }
                     resolve(`Application ${id}`);
                 });
@@ -467,21 +488,30 @@ function drawPalantirCountsByTarget(chart, counts, names = []) {
 }
 
 /**
- * Whether an application counted in the audit trail is gone: the server no longer has it, or the applications
- * Palantir listed do not include it.
+ * Whether an application counted in the audit trail is gone. Only reading it on its own can say so, with a 404: the
+ * list of applications leaves out some that exist, such as CAS's own, so not being listed is no evidence. The newest
+ * observation wins: a deletion found after the list was read stands until the applications are listed again with it,
+ * and an application listed again after an earlier 404 is no longer reported gone.
  *
  * @param {string} id the id of the application
  * @returns {boolean} true when it no longer exists
  */
 function palantirApplicationIsGone(id) {
-    return palantirMissingApplications.has(String(id))
-        || (typeof registeredServicesById !== "undefined" && registeredServicesById.size > 0 && !registeredServicesById.has(String(id)));
+    const sighting = palantirApplicationSightings.get(String(id));
+    const listed = typeof registeredServicesById !== "undefined" && registeredServicesById.has(String(id));
+    if (listed && (!sighting || palantirApplicationsListedAt > sighting.at)) {
+        return false;
+    }
+    return sighting !== undefined && !sighting.exists;
 }
 
 /**
- * Open the definition of an application, from the Top applications chart, its list or the audit log, in the
- * application wizard, the way the Edit button of its card does, closing an enlarged copy of the chart first and
- * getting the applications page ready when it was not opened yet. An application that is gone says so instead.
+ * Open the definition of an application, from the Top applications chart, its list, the audit log or Home, in the
+ * application wizard, the way the Edit button of its card does, closing an enlarged copy of the chart first. Getting
+ * the applications page ready, building the wizard and reading the application's definition happen at the same time
+ * rather than one after the other, so the wizard shows as soon as the slowest of them is done. Whether the application
+ * still exists is decided by that read, not by the list of applications read earlier: one CAS no longer has says so
+ * instead.
  *
  * @param {string} id the id of the application
  */
@@ -490,25 +520,30 @@ async function openTopApplication(id) {
         return;
     }
     $(".palantir-magnifier.ui-dialog-content").dialog("close");
-    if (typeof applicationActionHandler !== "function" && typeof initializeDashboardTab === "function") {
-        await initializeDashboardTab(Tabs.APPLICATIONS);
-        const giveUpAt = Date.now() + 10000;
-        while (typeof applicationActionHandler !== "function" && Date.now() < giveUpAt) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-    }
-    if (palantirApplicationIsGone(id)) {
+    const definition = Promise.resolve($.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(id)}`))
+        .then(response => ({response}), xhr => ({xhr}));
+    await Promise.all([
+        PalantirScripts.load("applications").then(() => buildRegisteredServiceWizardFields(), () => undefined),
+        initializeDashboardTab(Tabs.APPLICATIONS)
+    ]);
+    const {response, xhr} = await definition;
+    if (response !== null && typeof response === "object") {
+        palantirSawApplication(id, true);
+    } else if (!xhr || xhr.status === 404) {
+        palantirSawApplication(id, false);
         Swal.fire({
             icon: "info",
-            title: "This application no longer exists",
+            title: "This Application No Longer Exists",
             text: `Application ${id} was deleted; what the audit log recorded about it is kept.`
         });
         return;
     }
-    if (typeof applicationActionHandler === "function") {
-        applicationActionHandler("editWizard", {rowData: {serviceId: id}});
-    } else if (typeof navigateToApplication === "function") {
-        navigateToApplication(id);
+    if (xhr) {
+        displayBanner(xhr);
+        return;
+    }
+    if (typeof PalantirServiceEditor !== "undefined") {
+        PalantirServiceEditor.openApplicationInWizard(response);
     }
 }
 
@@ -616,11 +651,8 @@ async function initializeApplicationsCharts() {
     $("#topApplicationsList").off("click").on("click", "[data-top-application]", event =>
         openTopApplication(String(event.currentTarget.dataset.topApplication)));
     refreshTopApplications();
-    setInterval(() => {
-        if (Date.now() - topApplicationsCounted >= 60000 && isPalantirPollingContextActive(Tabs.APPLICATIONS, "#applications-tab")) {
-            refreshTopApplications();
-        }
-    }, palantirSettings().refreshInterval);
+    PalantirPolling.every("top applications", refreshTopApplications,
+        {tab: Tabs.APPLICATIONS, panel: "#applications-tab", when: () => Date.now() - topApplicationsCounted >= 60000});
 }
 
 /**
@@ -800,7 +832,7 @@ async function initializeSystemCharts() {
                 },
                 title: {
                     display: true,
-                    text: "System Health · time each check took"
+                    text: "System Health · Time Each Check Took"
                 }
             }
         }
@@ -875,7 +907,7 @@ async function initializeSystemCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: "Sign-ins · last 2 hours"
+                    text: "Sign-Ins · Last 2 Hours"
                 },
                 legend: {
                     labels: {
@@ -973,10 +1005,8 @@ async function initializePrometheusCharts() {
     if (!prometheusEndpointUrl) {
         return;
     }
-    prometheusRefreshInterval = palantirSettings().refreshInterval;
-    window.addEventListener(palantirPollingContextEvent, refreshPrometheusCharts);
     startPrometheusRefresh();
-    await refreshPrometheusCharts();
+    await prometheusRefreshTimer();
 }
 
 async function initializePrometheusChartData() {
@@ -1014,11 +1044,8 @@ async function initializePrometheusChartData() {
 }
 
 function startPrometheusRefresh() {
-    if (prometheusRefreshTimer) {
-        clearInterval(prometheusRefreshTimer);
-    }
-
-    prometheusRefreshTimer = setInterval(refreshPrometheusCharts, prometheusRefreshInterval);
+    prometheusRefreshTimer ??= PalantirPolling.every("Prometheus charts", refreshPrometheusCharts,
+        {tab: Tabs.SYSTEM, panel: "#prometheusmetrics-tab", status: "#prometheusmetrics-tab"});
 }
 
 async function refreshPrometheusCharts() {
@@ -1311,7 +1338,7 @@ function palantirHealthScales(timed) {
                 type: "logarithmic",
                 min: 0.5,
                 grid: {
-                    color: context => PALANTIR_HEALTH_MARKS.includes(Number(context.tick?.value)) ? Chart.defaults.scale.grid.color : "transparent"
+                    color: context => PALANTIR_HEALTH_MARKS.includes(Number(context.tick?.value)) ? PalantirTheme.chartColors.grid : "transparent"
                 },
                 ticks: {
                     maxRotation: 0,
@@ -1476,4 +1503,63 @@ if (typeof Chart !== "undefined" && typeof Chart.register === "function") {
         afterUpdate: applyChartAccessibleDescription,
         afterRender: applyChartAccessibleDescription
     }, palantirChartStylePlugin, palantirChartCopyPlugin, palantirChartVisibilityPlugin);
+}
+
+/**
+ * What an audit record was for: an application, by name, that opens its definition, or another target, such as a
+ * multifactor provider, as it is recorded. Shared by the audit log and the activity of a user on the Users page.
+ *
+ * @param {string} target the target, or nothing
+ * @returns {string} the cell
+ */
+function palantirAuditTarget(target) {
+    if (!target) {
+        return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
+    }
+    const value = String(target);
+    if (/^\d+$/.test(value) && CasActuatorEndpoints.registeredServices()) {
+        const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(value)?.name : null;
+        return `<button type="button" class="audit-target-application" data-audit-application="${escapePalantirMarkup(value)}"
+                    title="Open application ${escapePalantirMarkup(value)}">
+                    <i class="mdi mdi-application-outline" aria-hidden="true"></i>
+                    <span>${escapePalantirMarkup(name ?? `Application ${value}`)}</span>
+                </button>`;
+    }
+    return `<code class="audit-target-value">${escapePalantirMarkup(value)}</code>`;
+}
+
+/**
+ * Name the applications of the audit targets shown in a table that Palantir has not listed yet, reading each once, and
+ * mark the ones that no longer exist.
+ *
+ * @param {string} table the table
+ */
+function namePalantirAuditTargetApplications(table) {
+    if (typeof palantirApplicationName !== "function") {
+        return;
+    }
+    $(table).find("[data-audit-application]").each((index, button) => {
+        const id = button.dataset.auditApplication;
+        palantirApplicationName(id).then(name => {
+            $(button).find("span").text(name);
+            if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
+                $(button).addClass("is-gone").attr("title", "This application no longer exists");
+            }
+        });
+    });
+}
+
+/**
+ * Open the application an audit target names, from any table that shows audit targets.
+ *
+ * @param {Event} event the click on the target
+ */
+function openPalantirAuditTargetApplication(event) {
+    event.stopPropagation();
+    const id = event.currentTarget.dataset.auditApplication;
+    if (typeof openTopApplication === "function") {
+        openTopApplication(id);
+    } else if (typeof navigateToApplication === "function") {
+        navigateToApplication(id);
+    }
 }

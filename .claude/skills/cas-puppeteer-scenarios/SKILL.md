@@ -12,7 +12,7 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
 - Drive jQuery UI select menus in dialogs through the widget (`selectmenu("open")`, then the `menuWidget()`'s `menu("focus", null, item)` and `menu("select", $.Event("click", {target}))`), not with a coordinate click on the item, which misses when the dialog scrolls; then wait for the result with `page.waitForFunction` rather than asserting at once.
 - `cas.newPage(browser)` returns the browser's first tab when one exists; it opens a new one only with `cas.newPage(browser, true)`. A helper that takes a page, intercepts its requests and closes it must force a new page, or it closes the scenario's main page and later calls fail with "Attempted to use detached Frame" (`saml2-idp-login-acs-signed`).
 - After a redirect to a `custom://` scheme, the tab stops taking keyboard input in CI (most likely Chrome's tab-modal external-protocol prompt): `cas.type` and `cas.pressEnter` report success but the form is never submitted, so a later `cas.loginWith` times out while navigation still works and CAS logs nothing. Continue on a fresh tab (`cas.newPage(context, true)`) after a custom-scheme step (`oidc-logout`).
-- Palantir's Users tab puts the focus in its username field once the tab has loaded, asynchronously, so a hotkey such as "/" pressed soon after opening it is typed into the field instead (`palantir-login` opens another tab before testing "/").
+- Palantir's Users tab puts the focus in its username field once the tab has loaded, asynchronously, so a hotkey such as "/" pressed soon after opening it is typed into the field instead (`palantir-search-users` opens another tab before testing "/").
 - WebAuthn scenarios drive the CDP virtual authenticator (`cas.createWebAuthnVirtualAuthenticator(page, protocol, resident, options)`
   spreads `options` into the authenticator, e.g. `isUserVerified`). `cas.setWebAuthnSignCount(device, n)` replaces each
   credential with the same key and a different sign count, which is how `mfa-webauthn-register-logout-login` proves a
@@ -78,6 +78,11 @@ description: "Write, fix and review the end-to-end puppeteer scenarios under ci/
   takes `characters-to-forbid` as space-separated single characters. `ValidateCaptchaAction` refuses a blank token without
   calling the verify URL, and a reCAPTCHA v3 score equal to the threshold is refused. Trusted-device storages drop expired
   records on every read, so the cleaner is only observable in the backend itself (the JSON file).
+- `palantir-login` was split by dashboard area into `palantir-login` (home, tabs, settings, shortcuts),
+  `palantir-search-users` (command palette, user lookup, interrupt inquiry, throttles), `palantir-services-editor` (wizard,
+  plain editor, edit conflicts, MFA policy), `palantir-services-saml` (metadata import and health), `palantir-services-actions`
+  (history, compare, restore, duplicate, import, bulk actions) and `palantir-system` (read-only endpoints, modules, metrics,
+  sign-ins). Add a new Palantir check to the scenario of its area, with only the modules that area needs.
 
 ## Storage backend scenarios (service registry, SAML2 metadata, MFA devices, consent)
 

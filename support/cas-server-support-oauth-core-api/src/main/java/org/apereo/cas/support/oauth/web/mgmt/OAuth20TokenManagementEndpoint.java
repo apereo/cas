@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
@@ -51,18 +54,28 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Gets access tokens. Every ticket is scanned to find them, inside a ticket transaction, so that a registry backed
-     * by a database reads the rows a batch at a time instead of collecting every ticket in memory first.
+     * Gets access and refresh tokens, all of them or only those issued to a user. The tokens of a user are asked of the
+     * ticket registry by type and user, so registries that look tickets up by user, such as those backed by a database,
+     * read only that user's tokens; a registry that keeps both kinds of token together may answer both queries with
+     * the same token, which is listed once. How the user is matched, such as whether case matters, is up to the registry. All
+     * tokens are found by scanning every ticket. Both run inside a ticket transaction, so that a registry backed by a
+     * database reads the rows a batch at a time instead of collecting every ticket in memory first.
      *
-     * @return the access tokens
+     * @param username the user whose tokens to get; all tokens when blank
+     * @return the access and refresh tokens
      */
     @ReadOperation
-    @Operation(summary = "Get access and/or refresh tokens")
-    public Collection<Ticket> getTokens() {
+    @Operation(summary = "Get access and/or refresh tokens, optionally only those issued to a user",
+        parameters = @Parameter(name = "username", required = false, description = "Only the tokens issued to this user"))
+    public Collection<Ticket> getTokens(@Nullable final String username) {
+        val user = StringUtils.trimToNull(username);
+        if (user != null) {
+            return getTokensIssuedTo(user);
+        }
         val tokens = ticketTransactionOperations.execute(_ -> {
             try (val found = ticketRegistry
                 .getObject()
-                .getTickets(ticket -> (ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken) && !ticket.isExpired())) {
+                .getTickets(ticket -> isToken(ticket) && !ticket.isExpired())) {
                 return found
                     .sorted(Comparator.comparing(Ticket::getId))
                     .<Ticket>map(Ticket.class::cast)
@@ -71,7 +84,6 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
         });
         return Objects.requireNonNullElseGet(tokens, List::of);
     }
-
 
     /**
      * Gets access token.
@@ -101,6 +113,29 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
         if (ticket instanceof OAuth20Token) {
             ticketRegistry.getObject().deleteTicket(ticket.getId());
         }
+    }
+
+    private Collection<Ticket> getTokensIssuedTo(final String username) {
+        val registry = ticketRegistry.getObject();
+        val tokens = ticketTransactionOperations.<Collection<Ticket>>execute(_ -> Stream.of(OAuth20AccessToken.PREFIX, OAuth20RefreshToken.PREFIX)
+            .map(prefix -> new TicketRegistryQueryCriteria().setType(prefix).setPrincipal(username).setDecode(true))
+            .flatMap(criteria -> registry.query(criteria).stream())
+            .filter(Ticket.class::isInstance)
+            .map(Ticket.class::cast)
+            .filter(ticket -> isToken(ticket) && !ticket.isExpired() && issuedTo(ticket, username))
+            .collect(Collectors.toMap(Ticket::getId, Function.identity(), (first, _) -> first, TreeMap::new))
+            .values());
+        return tokens == null ? List.of() : new ArrayList<>(tokens);
+    }
+
+    private static boolean isToken(final Ticket ticket) {
+        return ticket instanceof OAuth20AccessToken || ticket instanceof OAuth20RefreshToken;
+    }
+
+    private static boolean issuedTo(final Ticket ticket, final String username) {
+        return ticket instanceof final OAuth20Token token && Optional.ofNullable(token.getAuthentication())
+            .filter(authentication -> Strings.CI.equals(authentication.getPrincipal().getId(), username))
+            .isPresent();
     }
 
     protected @Nullable String extractAccessTokenFrom(final String token) {

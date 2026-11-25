@@ -30,6 +30,8 @@
                             class="mdc-icon-button mdc-top-app-bar__navigation-icon  btn btn-outline-light"
                             id="drawerButton"
                             type="button"
+                            aria-controls="app-drawer"
+                            aria-expanded="false"
                             aria-label="Menu"
                             data-bs-toggle="offcanvas"
                             data-bs-target="#app-drawer">
@@ -85,12 +87,17 @@
                             data-cas-theme-builder-toggle="cas.notifications-menu.enabled"
                             class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
                             type="button"
+                            aria-haspopup="dialog"
+                            aria-controls="cas-notification-dialog"
+                            aria-describedby="notifications-status"
                             data-bs-toggle="modal"
                             data-bs-target="#cas-notification-dialog">
                         <span class="mdi mdi-bell-outline fa fa-bell" aria-hidden="true"></span>
-                        <span class="visually-hidden">Notifications</span>
-                        <span id="notifications-count" class="notifications-count count"></span>
+                        <span class="visually-hidden" th:text="#{screen.notifications.title}">Notifications</span>
+                        <span id="notifications-count" class="notifications-count count" aria-hidden="true"></span>
                     </button>
+                    <span id="notifications-status" class="visually-hidden" role="status"
+                          th:data-unread="#{screen.notifications.unread}"></span>
 
                     <a id="cas-user-account"
                        th:href="@{/account}"
@@ -116,7 +123,7 @@
     <div
             th:if="${themeBuilder or #cas.isTrue(#cas.theme('cas.notifications-menu.enabled'))}"
             class="mdc-dialog cas-notification-dialog modal fade"
-            id="cas-notification-dialog" role="alertdialog" tabindex="-1"
+            id="cas-notification-dialog" role="dialog" tabindex="-1"
             aria-modal="true" aria-labelledby="cas-notification-dialog-title"
             aria-describedby="cas-notification-dialog-content">
         <div class="mdc-dialog__container modal-dialog modal-dialog-centered">
@@ -140,7 +147,7 @@
                 </div>
                 <div class="mdc-dialog__content modal-body" id="cas-notification-dialog-content">
                     <ul class="cas-notification-list">
-                        <li class="cas-notification-message is-warning" th:if="${staticAuthentication}">
+                        <li id="staticAuthenticationNotice" class="cas-notification-message is-warning" th:if="${staticAuthentication}">
                             <span class="cas-notification-icon mdi mdi-account-alert-outline fas fa-user-shield"
                                   aria-hidden="true"></span>
                             <div class="cas-notification-body">
@@ -151,7 +158,7 @@
                                 </p>
                             </div>
                         </li>
-                        <li class="cas-notification-message is-danger" th:unless="${httpRequestSecure}">
+                        <li id="insecureConnectionNotice" class="cas-notification-message is-danger" th:unless="${httpRequestSecure}">
                             <span class="cas-notification-icon mdi mdi-lock-open-alert-outline fas fa-unlock"
                                   aria-hidden="true"></span>
                             <div class="cas-notification-body">
@@ -204,12 +211,43 @@
             }
 
             const menu = document.getElementById('cas-notifications-menu');
-            const count = document.querySelectorAll('#cas-notification-dialog .cas-notification-message:not([hidden])').length;
-            if (menu !== null) {
-                if (count === 0) {
+            const dialog = document.getElementById('cas-notification-dialog');
+            if (menu && dialog) {
+                const notices = Array.from(dialog.querySelectorAll('.cas-notification-message:not([hidden])'), item => item.id);
+                if (notices.length === 0) {
                     menu.remove();
                 } else {
-                    document.getElementById('notifications-count').textContent = `${count}`;
+                    const badge = document.getElementById('notifications-count');
+                    const status = document.getElementById('notifications-status');
+                    const storage = typeof isStorageAvailable === 'function' && isStorageAvailable('sessionStorage') ? window.sessionStorage : null;
+                    const key = `cas.readNotifications.${window.location.pathname}`;
+                    const read = (storage?.getItem(key) || '').split(',');
+                    const unread = notices.filter(id => !id || !read.includes(id)).length;
+                    if (unread) {
+                        badge.textContent = unread;
+                        status.textContent = `${status.dataset.unread} ${unread}`;
+                    }
+                    const markRead = () => {
+                        badge.textContent = '';
+                        status.textContent = '';
+                        storage?.setItem(key, notices.join(','));
+                    };
+                    dialog.addEventListener('MDCDialog:opened', markRead);
+                    dialog.addEventListener('shown.bs.modal', () => {
+                        markRead();
+                        dialog.querySelector('[data-mdc-dialog-initial-focus]').focus();
+                    });
+                }
+            }
+
+            const drawer = document.getElementById('app-drawer');
+            const toggle = document.getElementById('drawerButton');
+            if (drawer && toggle) {
+                for (const event of ['MDCDrawer:opened', 'shown.bs.offcanvas']) {
+                    drawer.addEventListener(event, () => toggle.setAttribute('aria-expanded', 'true'));
+                }
+                for (const event of ['MDCDrawer:closed', 'hidden.bs.offcanvas']) {
+                    drawer.addEventListener(event, () => toggle.setAttribute('aria-expanded', 'false'));
                 }
             }
         });

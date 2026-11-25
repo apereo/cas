@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
 import module java.base;
+import module java.xml;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -31,6 +32,9 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.schema.XSAny;
+import org.opensaml.core.xml.schema.XSBase64Binary;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.ProtocolCriterion;
@@ -67,6 +71,9 @@ import java.security.cert.X509Certificate;
 @RequiredArgsConstructor
 @Deprecated(since = "8.0.0", forRemoval = true)
 public class WsFederationHelper {
+    private static final String WS_TRUST_13_NAMESPACE = "http://docs.oasis-open.org/ws-sx/ws-trust/200512";
+
+    private static final String REQUESTED_SECURITY_TOKEN = "RequestedSecurityToken";
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -130,6 +137,24 @@ public class WsFederationHelper {
         return decrypter;
     }
 
+    private static Element getFirstChildElement(final Node node) {
+        var child = node.getFirstChild();
+        while (child != null && child.getNodeType() != Node.ELEMENT_NODE) {
+            child = child.getNextSibling();
+        }
+        return (Element) child;
+    }
+
+    private static Object getAttributeValue(final XMLObject value) {
+        return switch (value) {
+            case final XSString string -> string.getValue();
+            case final XSURI uri -> uri.getURI();
+            case final XSBase64Binary binary -> binary.getValue();
+            case final XSAny any -> any.getTextContent();
+            default -> Optional.ofNullable(value.getDOM()).map(Node::getTextContent).orElse(null);
+        };
+    }
+
     /**
      * createCredentialFromToken converts a SAML 1.1 assertion to a WSFederationCredential.
      *
@@ -163,7 +188,8 @@ public class WsFederationHelper {
             .forEach(item -> {
                 LOGGER.trace("Processed attribute: [{}]", item.getAttributeName());
                 final List<Object> itemList = item.getAttributeValues().stream()
-                    .map(xmlObject -> ((XSAny) xmlObject).getTextContent())
+                    .map(WsFederationHelper::getAttributeValue)
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
                 if (!itemList.isEmpty()) {
                     attributes.put(item.getAttributeName(), itemList);
@@ -176,6 +202,10 @@ public class WsFederationHelper {
 
     /**
      * Gets request security token response from result.
+     * The result is either a WS-Federation {@code RequestSecurityTokenResponse}
+     * in the {@code http://schemas.xmlsoap.org/ws/2005/02/trust} namespace, as issued by ADFS,
+     * or a WS-Trust 1.3 {@code RequestSecurityTokenResponseCollection} or {@code RequestSecurityTokenResponse},
+     * as issued by Apache CXF security token services such as the CAS WS-Federation identity provider.
      *
      * @param wresult the wresult
      * @return the request security token response from result
@@ -186,6 +216,9 @@ public class WsFederationHelper {
             LOGGER.debug("Parsing token into a document");
             val document = openSamlConfigBean.getParserPool().parse(in);
             val metadataRoot = document.getDocumentElement();
+            if (WS_TRUST_13_NAMESPACE.equals(metadataRoot.getNamespaceURI())) {
+                return getRequestedSecurityTokenFromWsTrustResponse(metadataRoot);
+            }
             val unmarshallerFactory = openSamlConfigBean.getUnmarshallerFactory();
             val unmarshaller = unmarshallerFactory.getUnmarshaller(metadataRoot);
             LOGGER.debug("Unmarshalling the document into a security token response");
@@ -305,6 +338,24 @@ public class WsFederationHelper {
         }
         LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);
         return relyingPartyIdentifier;
+    }
+
+    private RequestedSecurityToken getRequestedSecurityTokenFromWsTrustResponse(final Element response) throws Exception {
+        val requestedTokens = response.getElementsByTagNameNS(WS_TRUST_13_NAMESPACE, REQUESTED_SECURITY_TOKEN);
+        val tokenElement = requestedTokens.getLength() > 0 ? getFirstChildElement(requestedTokens.item(0)) : null;
+        if (tokenElement == null) {
+            throw new IllegalArgumentException("No security token is found in the WS-Trust response");
+        }
+        val unmarshaller = openSamlConfigBean.getUnmarshallerFactory().getUnmarshaller(tokenElement);
+        if (unmarshaller == null) {
+            throw new IllegalArgumentException("Security token type %s is not supported".formatted(tokenElement.getLocalName()));
+        }
+        LOGGER.debug("Unmarshalling the security token from the WS-Trust response");
+        val securityToken = unmarshaller.unmarshall(tokenElement);
+        val builder = openSamlConfigBean.getBuilderFactory().getBuilder(RequestedSecurityToken.DEFAULT_ELEMENT_NAME);
+        val requestedSecurityToken = (RequestedSecurityToken) Objects.requireNonNull(builder).buildObject(RequestedSecurityToken.DEFAULT_ELEMENT_NAME);
+        requestedSecurityToken.getSecurityTokens().add(securityToken);
+        return requestedSecurityToken;
     }
 
     private SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) throws Exception {

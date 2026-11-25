@@ -53,8 +53,8 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
      **/
     private final Collection<Resource> resources;
 
-    public ResourceCRLRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
-                                        final RevocationPolicy<X509CRL> expiredCRLPolicy, final int refreshInterval,
+    public ResourceCRLRevocationChecker(final boolean checkAll, final RevocationPolicy<? super Void> unavailableCRLPolicy,
+                                        final RevocationPolicy<? super X509CRL> expiredCRLPolicy, final int refreshInterval,
                                         final CRLFetcher fetcher, final Collection<Resource> resources) {
         super(checkAll, unavailableCRLPolicy, expiredCRLPolicy);
         this.refreshInterval = refreshInterval;
@@ -63,15 +63,15 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     }
 
     public ResourceCRLRevocationChecker(final Resource crl,
-                                        final RevocationPolicy<Void> unavailableCRLPolicy,
-                                        final RevocationPolicy<X509CRL> expiredCRLPolicy) {
+                                        final RevocationPolicy<? super Void> unavailableCRLPolicy,
+                                        final RevocationPolicy<? super X509CRL> expiredCRLPolicy) {
         this(false, unavailableCRLPolicy, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
             new ResourceCRLFetcher(), CollectionUtils.wrap(crl));
 
     }
 
     public ResourceCRLRevocationChecker(final Resource[] crl,
-                                        final RevocationPolicy<X509CRL> expiredCRLPolicy) {
+                                        final RevocationPolicy<? super X509CRL> expiredCRLPolicy) {
         this(false, null, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
             new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
 

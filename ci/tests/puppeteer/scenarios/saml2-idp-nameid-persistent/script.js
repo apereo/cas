@@ -10,14 +10,20 @@ const IDP_SSO_URL = "https://localhost:8443/cas/idp/profile/SAML2/Redirect/SSO";
 const UNSOLICITED_SSO_URL = "https://localhost:8443/cas/idp/profile/SAML2/Unsolicited/SSO";
 const ACS_URL = "https://localhost:9859/post";
 const STATUS_SUCCESS = "urn:oasis:names:tc:SAML:2.0:status:Success";
+const STATUS_REQUESTER = "urn:oasis:names:tc:SAML:2.0:status:Requester";
+const STATUS_INVALID_NAMEID_POLICY = "urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy";
 const PERSISTENT = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent";
+const TRANSIENT = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
 const EMAIL = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
+const UNSPECIFIED = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
+const KERBEROS = "urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos";
 const PERSISTENT_ID_SALT = "Q0FTLXBlcnNpc3RlbnQtaWQtc2FsdA";
 
 const SP_PERSISTENT_REQUIRED = "https://localhost:9859/nameid-persistent-a";
 const SP_PERSISTENT_FROM_METADATA = "https://localhost:9859/nameid-persistent-c";
 const SP_EMAIL_QUALIFIED = "https://localhost:9859/nameid-email-qualified";
 const SP_EMAIL_UNQUALIFIED = "https://localhost:9859/nameid-email-unqualified";
+const SP_NAMEID_REQUESTED = "https://localhost:9859/nameid-requested";
 
 /*
  * ShibbolethCompatiblePersistentIdGenerator: base64(SHA-1(entityID "!" principal "!" salt)), where the entity id is the
@@ -42,13 +48,17 @@ async function loginIfNeeded(page) {
     await cas.logPage(page);
 }
 
-async function readNameId(page, entityId, requestId = undefined) {
+async function readSamlResponse(page, entityId) {
     assert(page.url().startsWith(ACS_URL), `Response for ${entityId} must be posted to ${ACS_URL}, but page is at ${page.url()}`);
     const content = JSON.parse(await cas.innerText(page, "body"));
     assert(content.form.SAMLResponse !== undefined);
     const xml = await cas.base64Decode(content.form.SAMLResponse);
     await cas.log(xml);
-    const response = (await cas.parseXML(xml, {tagNameProcessors: [processors.stripPrefix]})).Response;
+    return (await cas.parseXML(xml, {tagNameProcessors: [processors.stripPrefix]})).Response;
+}
+
+async function readNameId(page, entityId, requestId = undefined) {
+    const response = await readSamlResponse(page, entityId);
     assert(response.Status[0].StatusCode[0].$.Value === STATUS_SUCCESS);
     assert(response.$.InResponseTo === requestId, `InResponseTo must be ${requestId}, but is ${response.$.InResponseTo}`);
     const assertion = response.Assertion[0];
@@ -71,7 +81,7 @@ async function unsolicitedSso(page, entityId) {
     return readNameId(page, entityId);
 }
 
-async function authnRequestWithNameIdPolicy(page, entityId, format) {
+async function sendAuthnRequest(page, entityId, format) {
     const requestId = `_${crypto.randomUUID()}`;
     const xml = "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
         + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
@@ -82,6 +92,11 @@ async function authnRequestWithNameIdPolicy(page, entityId, format) {
     const samlRequest = zlib.deflateRawSync(Buffer.from(xml, "utf8")).toString("base64");
     await cas.goto(page, `${IDP_SSO_URL}?SAMLRequest=${encodeURIComponent(samlRequest)}`);
     await loginIfNeeded(page);
+    return requestId;
+}
+
+async function authnRequestWithNameIdPolicy(page, entityId, format) {
+    const requestId = await sendAuthnRequest(page, entityId, format);
     return readNameId(page, entityId, requestId);
 }
 
@@ -115,6 +130,34 @@ function assertPersistentNameId(nameId, entityId) {
         assert(qualified.value === "casuser@example.org");
         assert(qualified.nameQualifier === "https://idp.example.org/name-qualifier", `NameQualifier is ${qualified.nameQualifier}`);
         assert(qualified.spNameQualifier === "https://sp.example.org/sp-name-qualifier", `SPNameQualifier is ${qualified.spNameQualifier}`);
+
+        await cas.logg("Without a required format, the NameIDPolicy format of the AuthnRequest selects one of the formats in metadata");
+        const requestedEmail = await authnRequestWithNameIdPolicy(page, SP_NAMEID_REQUESTED, EMAIL);
+        assert(requestedEmail.format === EMAIL, `NameID format must be the requested ${EMAIL}, but is ${requestedEmail.format}`);
+        assert(requestedEmail.value === "casuser@example.org", `NameID must be the mail attribute, but is ${requestedEmail.value}`);
+        const requestedPersistent = await authnRequestWithNameIdPolicy(page, SP_NAMEID_REQUESTED, PERSISTENT);
+        assert(requestedPersistent.format === PERSISTENT, `NameID format must be the requested ${PERSISTENT}, but is ${requestedPersistent.format}`);
+        assert(requestedPersistent.value === "casuser@example.org", `NameID must be the mail attribute, but is ${requestedPersistent.value}`);
+
+        await cas.logg("The unspecified format places no constraint, so the first format in metadata is used");
+        const unspecified = await authnRequestWithNameIdPolicy(page, SP_NAMEID_REQUESTED, UNSPECIFIED);
+        assert(unspecified.format === TRANSIENT, `NameID format must be ${TRANSIENT}, but is ${unspecified.format}`);
+        assert(unspecified.value !== "casuser@example.org", "A transient NameID must not be the mail attribute");
+
+        await cas.logg("A format that the service provider metadata does not list is refused with InvalidNameIDPolicy");
+        const refusedRequestId = await sendAuthnRequest(page, SP_NAMEID_REQUESTED, KERBEROS);
+        const refused = await readSamlResponse(page, SP_NAMEID_REQUESTED);
+        assert(refused.$.InResponseTo === refusedRequestId, `InResponseTo must be ${refusedRequestId}, but is ${refused.$.InResponseTo}`);
+        const refusedStatus = refused.Status[0].StatusCode[0];
+        assert(refusedStatus.$.Value === STATUS_REQUESTER, `Top-level status must be ${STATUS_REQUESTER}, but is ${refusedStatus.$.Value}`);
+        assert(refusedStatus.StatusCode !== undefined && refusedStatus.StatusCode[0].$.Value === STATUS_INVALID_NAMEID_POLICY,
+            `Second-level status must be ${STATUS_INVALID_NAMEID_POLICY}`);
+        assert(refused.Assertion === undefined && refused.EncryptedAssertion === undefined, "A refused request must not carry an assertion");
+
+        await cas.logg("A format required by the service takes precedence over the NameIDPolicy of the AuthnRequest");
+        const requiredFormat = await authnRequestWithNameIdPolicy(page, SP_PERSISTENT_REQUIRED, EMAIL);
+        assertPersistentNameId(requiredFormat, SP_PERSISTENT_REQUIRED);
+        assert(requiredFormat.value === firstLogin.value, "The persistent id must not depend on how the login was started");
         await context.close();
 
         await cas.logg("A new login (new browser context, new single sign-on session) yields the same persistent id");
