@@ -10,12 +10,19 @@ async function initializeHotKeyOperations() {
         switch (key) {
         case "esc":
             event.preventDefault();
+            if ($(".ui-dialog-content:visible").length === 0 && !(typeof Swal !== "undefined" && Swal.isVisible())
+                && currentActiveTab === Tabs.HOME.index && typeof PalantirHome !== "undefined" && PalantirHome.spotlight !== null) {
+                PalantirHome.setSpotlight(null);
+                break;
+            }
             closeAllDialogs();
             break;
         case "w":
             event.preventDefault();
-            $(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]:visible`).click();
-            openRegisteredServiceWizardDialog();
+            if (PalantirPages.available(Tabs.APPLICATIONS)) {
+                PalantirPages.open(Tabs.APPLICATIONS);
+            }
+            openPalantirWizard();
             break;
         case "n":
             if (currentActiveTab === Tabs.CONFIGURATION.index && PalantirDashboardConfiguration.mutablePropertySourcesAvailable()) {
@@ -61,7 +68,7 @@ async function initializeHotKeyOperations() {
             }
             if (currentActiveTab === Tabs.APPLICATIONS.index) {
                 event.preventDefault();
-                openRegisteredServiceWizardDialog();
+                openPalantirWizard();
             }
             
             break;
@@ -71,7 +78,9 @@ async function initializeHotKeyOperations() {
             );
             if (tab) {
                 event.preventDefault();
-                $(`nav.sidebar-navigation ul li[data-tab-index=${tab.index}]:visible`).click();
+                if (PalantirPages.available(tab)) {
+                    PalantirPages.open(tab);
+                }
             }
         }
     });
@@ -106,11 +115,11 @@ function palantirShortcutGroups() {
                 {keys: [["Shift", "Z"]], label: "Zen mode: hide or show the navigation bar and the footer"},
                 {keys: [["w"]], label: "Create an application in the wizard"},
                 {keys: [["n"]], label: "Create an item on the current page: an application, property, logger, handler, attribute definition or repository, tenant or access resource"},
-                {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes"}
+                {keys: [["Esc"]], label: "Close open dialogs; Palantir asks first when an application has unsaved changes. On Home, leave the spotlight"}
             ]
         },
         {
-            title: "Search palette",
+            title: "Search Palette",
             items: [
                 {keys: [["↑"], ["↓"]], label: "Move between results"},
                 {keys: [["Enter"]], label: "Open the selected result"},
@@ -118,12 +127,14 @@ function palantirShortcutGroups() {
             ]
         },
         {
-            title: "Forms, tables and dialogs",
+            title: "Forms, Tables and Dialogs",
             items: [
                 {keys: [["Enter"]], label: "Submit the form you are typing in"},
+                {keys: [["Esc"]], label: "Leave the field you are typing in, so the single-key shortcuts work again"},
                 {keys: [["Tab"], ["Shift", "Tab"]], label: "Move to the next or previous control; focus stays inside an open dialog"},
                 {keys: [["Enter"]], label: "Sort by the focused column header, or choose the focused row"},
-                {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"}
+                {keys: [["Shift", "F10"]], label: "Open the actions of the focused row, like a right click"},
+                {keys: [["1–9"]], label: "Choose the type of a new application by the number on its card, while the types are shown"}
             ]
         },
         {
@@ -158,7 +169,7 @@ function renderPalantirShortcuts() {
 function openPalantirShortcuts() {
     let dialog = $("#palantirShortcutsDialog");
     if (dialog.length === 0) {
-        dialog = $("<div>", {id: "palantirShortcutsDialog", "class": "palantir-shortcuts", title: "Keyboard shortcuts"}).appendTo("body");
+        dialog = $("<div>", {id: "palantirShortcutsDialog", "class": "palantir-shortcuts", title: "Keyboard Shortcuts"}).appendTo("body");
         dialog.dialog({
             autoOpen: false,
             modal: true,

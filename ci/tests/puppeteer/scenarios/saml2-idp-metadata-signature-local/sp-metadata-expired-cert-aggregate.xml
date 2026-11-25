@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The certificate of sig-aggregate-expired-cert expired on 2016-01-01 (CN=expired-sp); that of sig-aggregate-valid-cert is valid until 2125-01-01 (CN=valid-sp). -->
+<EntitiesDescriptor Name="urn:cas:aggregate:expired-certificates" xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <EntityDescriptor entityID="https://localhost:9859/sig-aggregate-expired-cert">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <KeyDescriptor use="signing">
+                <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                        MIICtjCCAZ6gAwIBAgIUDTQL9AC5VK+xpO7+SLA3jhgaYHkwDQYJKoZIhvcNAQEL
+                        BQAwFTETMBEGA1UEAwwKZXhwaXJlZC1zcDAeFw0xNTAxMDEwMDAwMDBaFw0xNjAx
+                        MDEwMDAwMDBaMBUxEzARBgNVBAMMCmV4cGlyZWQtc3AwggEiMA0GCSqGSIb3DQEB
+                        AQUAA4IBDwAwggEKAoIBAQCN/vy3tRrVXyv40EHjU9LFVE3NfFj98t5Vwpv8NuQV
+                        +iUmFbb7yrZSCyV0Zi0kWx1JQByWKKHcsyDQ2nI2OdnNV5YRGWK2ByQpaBJRTJgL
+                        QdQ4rplOWkAqxicaF8n8d1fXOSbSflneudd6uZRaxUp0bykIEShluaEqYghWwiDh
+                        fujGhAcVCXkST7OfWJNfkD18o1LOcfflhe5UJlvuva0JnxOXa9+OxD2yAJO8MayT
+                        VasLI14HhhBKue0ricIWscKqLbur/4njVQL90YHJkpypPhlrW6Sk7Q+0HEwbpNER
+                        q0dbMcOgl0kH9oSbeKr0LY68UA865A/Pv2LuVVecFsOJAgMBAAEwDQYJKoZIhvcN
+                        AQELBQADggEBAEIkHS4Z8CTpK/MGAIaNYT44YbwBYcE5YyoEljIenqs7lUf5Qh/k
+                        3r1mMU6LzZX8qVmFCG7x7x+VMgExvZcL4MQZUX7nJnw54+gqyiwhUkQxOP01DBuL
+                        mcQr/vRZ2x+aqi/OnrS/BrTpqXfrUWFKiBPmrWTg+lmfgM1Ac/3WvE1WhYYmcZ7z
+                        Z3AUTvZTZySlbi0+sHt1gqW8Pb6Qopw+okZq2dZStTrv2BPeMPbyuPKCJPUL4eyb
+                        PqJDDS6ctmgLwXOLZ8wyWdejPlSRdRgrwMn3tXPaajxriYiB/UXPUf3OCXSqhbqU
+                        Va1H2wGDthkt5auqCYisOvr0v1gZ18MybQM=
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <EntityDescriptor entityID="https://localhost:9859/sig-aggregate-valid-cert">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <KeyDescriptor use="signing">
+                <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                    <ds:X509Data>
+                        <ds:X509Certificate>
+                        MIICnDCCAYQCAQEwDQYJKoZIhvcNAQELBQAwEzERMA8GA1UEAwwIdmFsaWQtc3Aw
+                        IBcNMjUwMTAxMDAwMDAwWhgPMjEyNTAxMDEwMDAwMDBaMBMxETAPBgNVBAMMCHZh
+                        bGlkLXNwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwq4QLetfqSQc
+                        O7p3EwftRarKa4T6qZ+kRQ+k7yyq0GZfEVNFVb/dUWCNaZWiUPWGF7bZSP73E2Dt
+                        UNRAqy1prRa8fSICQ1dmdbZrptRlVz1MTpTJ++NnMmRVPSo98unSRg6GjZU0ghNL
+                        BHebdPzqj8iqCeX672qDdXDO/mPFjNRGBNPJ1xmwWcmO+gpzoAm+9P9sDMJgygVM
+                        kWk4H1l2/jrTAofebHqjkTWS82cPh/WyqC7HwZKu3rSZjl0m88VlohnrsMa6WANU
+                        aJwEmzUEwFucNgQbiAOEMbGwPwUmIsncJ2aLoy/kLpB+ygm1aWlSu9yWhBSxWTyI
+                        tP3tSBFpAQIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQCZbCYDKhnrCFGHf57W4sq7
+                        kZ9VS70vVtKtozFgmMH/WU3yNwHS9i5q6Z0RSCy8twzs6TwPGeE2rqVxrnlQndD/
+                        s6lD58+/QhXuwRE0LFWwzXMPvsSZtv9q07Z9KboFMBqNKB1ZMrOJ1zy+uykV7iew
+                        xjIi50GuvBQdlklRzGvnGQMsOknoxpYyxJe+FaVwJ5l5kDNLbzx6BjiBsVZ7aheO
+                        MkpZMzv8FtmN5WbvcIwt8XHBpCsLe67J5/2JMX3WWJyj8GhmMmExFYPnoE9asR4Y
+                        3kmY6yA8y9RbrpwXnwfNI7ehr+fsNuOQKI9SM4tyeQX5LP8PxU0II2/GdKf/BHaX
+                        </ds:X509Certificate>
+                    </ds:X509Data>
+                </ds:KeyInfo>
+            </KeyDescriptor>
+            <NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</NameIDFormat>
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+</EntitiesDescriptor>

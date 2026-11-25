@@ -41,8 +41,8 @@ class JpaRuntimeHintsTests {
             protected void writeClassDescriptor(final ObjectStreamClass descriptor) throws IOException {
                 if (descriptor.getName().startsWith("org.apereo.cas.")) {
                     val hint = hints.reflection().getTypeHint(TypeReference.of(descriptor.getName()));
-                    assertNotNull(hint, descriptor.getName());
-                    assertTrue(hint.hasJavaSerialization(), descriptor.getName());
+                    assertNotNull(hint, descriptor::getName);
+                    assertTrue(hint.hasJavaSerialization(), descriptor::getName);
                 }
                 super.writeClassDescriptor(descriptor);
             }

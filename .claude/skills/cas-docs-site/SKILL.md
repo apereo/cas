@@ -101,3 +101,12 @@ description: "Edit the CAS documentation site (docs/cas-server-documentation, Je
   durations such as `10000` and `PT10S` are not a change) and writes `assets/data/<version>/settings-changes.json` and
   `_data/<data dir>/settings-changes.json`, which `configuration/Configuration-Properties-Changes.md` renders through
   `_includes_site/settings-changes.html`.
+- Third-party prefixes in `casproperties` includes must follow the current Spring Boot and Spring Cloud namespaces
+  (`management.<registry>.metrics.export`, `spring.data.redis`, `spring.mongodb`, `server.request.header.forwarded`,
+  `spring.cloud.vault.kv`). Spring keeps removed settings in its metadata at the `error` deprecation level so their use can
+  be reported; `cas_properties.rb` leaves those out of page lists (the Shift-Shift palette still finds them), so an old
+  prefix renders an empty list. After a Spring upgrade, compare every include against the new `index.json` for lists that
+  match nothing or only deprecated settings, and read the Spring Boot and Spring Cloud release notes for removed features.
+- Includes that emit raw HTML into a Markdown page wrap it in `{::nomarkdown}` / `{:/nomarkdown}`, and each marker must
+  stay on a line of its own in the rendered output: no `{%-` right after the opening marker and no `-%}` right before the
+  closing one, or kramdown treats the HTML as text and indented lines as code blocks.

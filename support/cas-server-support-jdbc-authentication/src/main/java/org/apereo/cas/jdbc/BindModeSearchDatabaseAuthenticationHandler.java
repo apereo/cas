@@ -42,7 +42,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             val principal = principalFactory.createPrincipal(username);
             return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final Throwable e) {
-            throw new FailedLoginException(e.getMessage());
+            throw (FailedLoginException) new FailedLoginException(e.getMessage()).initCause(e);
         }
     }
 }

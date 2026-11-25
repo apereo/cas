@@ -40,6 +40,42 @@ The following fields are supported for the authentication policy:
 | `exclusive`         | Decides whether authentication should be exclusively limited to allowed providers, disabling other methods such as username/password, etc. |
 | `selectionStrategy` | Decides how to [select and redirect](Delegate-Authentication-Redirection.html) to the identity provider in a scripted fashion.             |
 
+## Chaining Policies
+
+Authentication policies can be chained together, so that an identity provider is allowed when every policy of the
+chain allows it (`AND`, the default) or when any one of them does (`OR`). Whether authentication is exclusive to the
+allowed providers, and whether access is granted when no providers are defined, are decided by the same rule, and the
+first selection strategy found in the chain is used.
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy",
+      "operator" : "OR",
+      "strategies" : [ "java.util.ArrayList", [
+        {
+          "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+          "allowedProviders" : [ "java.util.ArrayList", [ "GitHub" ] ]
+        },
+        {
+          "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+          "allowedProviders" : [ "java.util.ArrayList", [ "Google" ] ]
+        }
+      ]]
+    }
+  }
+}
+```
+
+When the access strategy is itself a chain, its authentication policy is made from the policies of the strategies in
+the chain, combined by the chain's own operator.
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core" %}

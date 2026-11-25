@@ -19,6 +19,10 @@
     "--cas.authn.surrogate.mail.from=cas@example.com",
     "--cas.authn.surrogate.mail.subject=Token",
     "--cas.authn.surrogate.mail.text=${token}",
+
+    "--cas.authn.surrogate.sms.from=3477465300",
+    "--cas.authn.surrogate.sms.text=Impersonation:${details}",
+    "--cas.sms-provider.rest.url=http://localhost:5617",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.surrogate.simple.surrogates.casuser=user1,user2,user3"

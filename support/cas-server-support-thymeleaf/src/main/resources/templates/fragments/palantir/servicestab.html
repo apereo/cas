@@ -106,19 +106,19 @@
                 <span class="palantir-selection-bar__count" aria-live="polite"></span>
                 <span class="palantir-selection-bar__spacer"></span>
                 <button type="button" class="palantir-button" name="clearServiceSelection">
-                    <i class="mdi mdi-close" aria-hidden="true"></i>Clear selection
+                    <i class="mdi mdi-close" aria-hidden="true"></i>Clear Selection
                 </button>
                 <button type="button" class="palantir-button" name="exportSelectedServices">
-                    <i class="mdi mdi-export" aria-hidden="true"></i>Export selected
+                    <i class="mdi mdi-export" aria-hidden="true"></i>Export Selected
                 </button>
                 <button type="button" data-palantir-write="registeredServices" class="palantir-button" name="enableSelectedServices">
-                    <i class="mdi mdi-check-circle-outline" aria-hidden="true"></i>Enable selected
+                    <i class="mdi mdi-check-circle-outline" aria-hidden="true"></i>Enable Selected
                 </button>
                 <button type="button" data-palantir-write="registeredServices" class="palantir-button" name="disableSelectedServices">
-                    <i class="mdi mdi-cancel" aria-hidden="true"></i>Disable selected
+                    <i class="mdi mdi-cancel" aria-hidden="true"></i>Disable Selected
                 </button>
                 <button type="button" data-palantir-write="registeredServices" class="palantir-button is-danger" name="deleteSelectedServices">
-                    <i class="mdi mdi-delete" aria-hidden="true"></i>Delete selected
+                    <i class="mdi mdi-delete" aria-hidden="true"></i>Delete Selected
                 </button>
             </div>
         </section>
@@ -156,7 +156,7 @@
 
                 <section class="palantir-chart-card" aria-labelledby="servicesChartTitle" hidden>
                     <header class="palantir-chart-card__header">
-                        <h3 id="servicesChartTitle">Applications by type</h3>
+                        <h3 id="servicesChartTitle">Applications by Type</h3>
                         <button type="button" class="palantir-icon-button" data-palantir-magnify="servicesChart"
                                 data-palantir-magnify-title="Applications by type"
                                 aria-label="Magnify the applications chart" title="Magnify">
@@ -171,7 +171,7 @@
 
                 <section class="palantir-chart-card" aria-labelledby="topApplicationsChartTitle" hidden>
                     <header class="palantir-chart-card__header">
-                        <h3 id="topApplicationsChartTitle">Top applications</h3>
+                        <h3 id="topApplicationsChartTitle">Top Applications</h3>
                         <button type="button" class="palantir-icon-button" data-palantir-magnify="topApplicationsChart"
                                 data-palantir-magnify-title="Top applications"
                                 aria-label="Magnify the top applications chart" title="Magnify">
@@ -257,8 +257,8 @@
                                                   </div>
                                               </div>
 
-                                             <h3 data-section-group="Protocol" class="class-CasRegisteredService advanced-option">CAS Protocol Settings</h3>
-                                             <div class="class-CasRegisteredService" id="editServiceWizardCasContainer">
+                                             <h3 data-section-group="Protocol" class="class-CasRegisteredService">CAS Protocol Settings</h3>
+                                             <div class="class-CasRegisteredService mdc-input-group-field mdc-input-group-field-append w-100" id="editServiceWizardCasContainer">
                                                  <script type="text/javascript">
                                                      palantirWizardField(() => {
                                                          createCasRegisteredServiceFields();
@@ -294,6 +294,7 @@
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='encryptIdToken', label='#Encrypt ID Tokens', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='idTokenEncryptionOptional', label='#Encrypt ID Tokens Optionally', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                      <div th:replace="~{fragments/switchbutton :: switchbutton (id='includeIdTokenClaims', label='#Include Claims in ID Tokens', selected=true, cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-true=true')}"/>
+                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='backchannelUserCodeParameterSupported', label='#Backchannel User Code Supported', title='Determine if backchannel authentication requests of this relying party may carry a user code', cssClass='class-OidcRegisteredService pt-2 advanced-option', dataAttrs='param-skip-false=true')}"/>
                                                  </div>
                                              </div>
 
@@ -393,7 +394,7 @@
                                                  </div>
                                             </div>
 
-                                              <h3 data-section-group="Tickets & Tokens" class="advanced-option">Application Expiration Policy</h3>
+                                              <h3 data-section-group="Tickets & Tokens">Application Expiration Policy</h3>
                                               <div id="editServiceWizardMenuItemExpirationPolicy">
 
                                                     <script type="text/javascript">
@@ -438,7 +439,7 @@
                                                        });
                                                    </script>
                                              </div>
-                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Proxy-granting Ticket Expiration Policy</h3>
+                                             <h3 data-section-group="Tickets & Tokens" class="class-CasRegisteredService advanced-option">Proxy-Granting Ticket Expiration Policy</h3>
                                              <div class="class-CasRegisteredService"
                                                   id="editServiceWizardMenuItemPGTExpirationPolicy">
                                                  <script type="text/javascript">
@@ -736,18 +737,54 @@
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyRequireAllAttrs',
                                                         title='Require all attributes defined and available in the access strategy for access to be granted',
-                                                        label='#Require All Attributes', selected=true, cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
+                                                        label='#Require All Attributes', selected=true, cssClass='pt-2 DefaultRegisteredServiceAccessStrategy SurrogateRegisteredServiceAccessStrategy',
                                                         dataAttrs='param-skip-true=true,param-name=accessStrategy.requireAllAttributes,param-type=org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy')}"/>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyCaseInsensitive',
                                                         title='When enabled, attribute matching is performed in a case-insensitive manner',
-                                                        label='#Case Insensitive', cssClass='pt-2 DefaultRegisteredServiceAccessStrategy',
+                                                        label='#Case Insensitive', cssClass='pt-2 DefaultRegisteredServiceAccessStrategy SurrogateRegisteredServiceAccessStrategy',
                                                         dataAttrs='param-skip-false=true,param-name=accessStrategy.caseInsensitive')}"/>
 
                                                   <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyHeimdallAllowed',
                                                         title='Determine if tokens issued to this OAuth or OpenID Connect application may authenticate calls to the Heimdall authorization endpoints',
                                                         label='#Allowed to Call Heimdall', selected=true, cssClass='pt-3 hide HeimdallRegisteredServiceAccessStrategy',
                                                         dataAttrs='param-skip-true=true,param-name=accessStrategy.allowed')}"/>
+                                              </div>
+
+                                              <h3 data-section-group="Access & Authentication" id="registeredServiceAccessStrategyActivation" class="advanced-option">Access Strategy Activation</h3>
+                                              <div id="editServiceWizardMenuItemAccessStrategyActivation">
+                                                  <p>When the access strategy checks its required and rejected attributes: always, or only when the
+                                                      user's attributes or a Groovy script say so. When it does not check them, access is granted or
+                                                      refused as set below.</p>
+                                                  <script type="text/javascript">
+                                                      palantirWizardField(() => {
+                                                          createRegisteredServiceAccessStrategyActivationCriteria();
+                                                      });
+                                                  </script>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='accessStrategyActivationAllowIfInactive',
+                                                        title='When enabled, access is granted when the attributes are not checked; otherwise it is refused',
+                                                        label='#Allow Access While Inactive', selected=true,
+                                                        cssClass='pt-2 hide AttributeBasedRegisteredServiceAccessStrategyActivationCriteria GroovyRegisteredServiceAccessStrategyActivationCriteria',
+                                                        dataAttrs='param-skip-true=true,param-name=accessStrategy.activationCriteria.allowIfInactive')}"/>
+                                              </div>
+
+                                              <h3 data-section-group="Access & Authentication" id="registeredServiceDelegatedAuthenticationPolicy" class="advanced-option">Delegated Authentication Policy</h3>
+                                              <div id="editServiceWizardMenuItemDelegatedAuthenticationPolicy">
+                                                  <p>Which external identity providers users of this application may sign in with.</p>
+                                                  <script type="text/javascript">
+                                                      palantirWizardField(() => {
+                                                          createRegisteredServiceDelegatedAuthenticationPolicy();
+                                                      });
+                                                  </script>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='delegatedAuthenticationPermitUndefined',
+                                                        title='When enabled and no identity provider is listed, every identity provider may be used; otherwise none may',
+                                                        label='#Permit Any Provider When None Is Listed', selected=true,
+                                                        cssClass='pt-2 hide DefaultRegisteredServiceDelegatedAuthenticationPolicy',
+                                                        dataAttrs='param-skip-true=true,param-name=accessStrategy.delegatedAuthenticationPolicy.permitUndefined')}"/>
+                                                  <div th:replace="~{fragments/switchbutton :: switchbutton (id='delegatedAuthenticationExclusive',
+                                                        title='When enabled, users sign in only with the allowed identity providers, and the CAS login form is not offered',
+                                                        label='#Exclusive', cssClass='pt-2 hide DefaultRegisteredServiceDelegatedAuthenticationPolicy',
+                                                        dataAttrs='param-skip-false=true,param-name=accessStrategy.delegatedAuthenticationPolicy.exclusive')}"/>
                                               </div>
 
                                               <h3 data-section-group="Access & Authentication" class="advanced-option">Authentication Policy</h3>
@@ -855,7 +892,7 @@
                                                     </script>
                                                   
                                                     <div th:replace="~{fragments/switchbutton :: switchbutton (id='aupEnabled',
-                                                        title='When enabled, the acceptable usage policy is enforced for this service',
+                                                        title='When enabled, interrupt notifications are inquired for this service',
                                                         label='#Enabled', cssClass='pt-2',
                                                         dataAttrs='param-skip-false=true,param-name=webflowInterruptPolicy.enabled,param-type=org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy')}"/>
 

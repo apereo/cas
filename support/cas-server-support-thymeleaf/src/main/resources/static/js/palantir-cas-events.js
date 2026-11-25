@@ -10,11 +10,11 @@ async function initializeCasEventsOperations() {
             }
         });
 
-        function updateCasEventsTable() {
+        const updateCasEventsTable = PalantirPolling.every("CAS events", () => {
             if (!isPalantirPollingContextActive(Tabs.LOGGING, "#casEvents-tab")) {
-                return;
+                return null;
             }
-            $.ajax({
+            return $.ajax({
                 url: `${CasActuatorEndpoints.events()}`,
                 type: "GET",
                 headers: {
@@ -40,26 +40,17 @@ async function initializeCasEventsOperations() {
                             });
                         }
                     }
-                    casEventsTable.draw();
+                    casEventsTable.draw(false);
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown)
             });
-        }
-
-        setInterval(updateCasEventsTable, palantirSettings().refreshInterval);
-        window.addEventListener(palantirPollingContextEvent, updateCasEventsTable);
+        }, {tab: Tabs.LOGGING, panel: "#casEvents-tab", status: "#casEvents-tab"});
         updateCasEventsTable();
     }
 }
 
 async function initializeAuditEventsOperations() {
     if (CasActuatorEndpoints.auditLog()) {
-        function escapeHtml(str) {
-            return String(str).replace(/[&<>"']/g, s => ({
-                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-            }[s]));
-        }
-
         function splitAuditResourceParts(value, separator) {
             const parts = [];
             let depth = 0;
@@ -209,56 +200,16 @@ async function initializeAuditEventsOperations() {
         function renderAuditAction(action) {
             const type = auditActionType(action);
             const text = action || "N/A";
-            return `<span class="audit-action-tag audit-action-${type}" title="${escapeHtml(text)}">`
-                + `${escapeHtml(text).replaceAll("_", "_<wbr>")}</span>`;
+            return `<span class="audit-action-tag audit-action-${type}" title="${escapePalantirMarkup(text)}">`
+                + `${escapePalantirMarkup(text).replaceAll("_", "_<wbr>")}</span>`;
         }
 
         function renderAuditPrincipal(principal) {
-            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapeHtml(part));
-            return `<span class="audit-principal-value" title="${escapeHtml(principal)}">
+            const parts = String(principal).split(/(?<=[:@.\\/])/).map(part => escapePalantirMarkup(part));
+            return `<span class="audit-principal-value" title="${escapePalantirMarkup(principal)}">
                         <i class="mdi mdi-account" aria-hidden="true"></i>
                         <code>${parts.join("<wbr>")}</code>
                     </span>`;
-        }
-
-        /**
-         * What an audit record was for: an application, by name, that opens its definition, or another target, such
-         * as a multifactor provider, as it is recorded.
-         *
-         * @param {string} target the target, or nothing
-         * @returns {string} the cell
-         */
-        function renderAuditTarget(target) {
-            if (!target) {
-                return "<span class=\"audit-target-none\" aria-label=\"None\">—</span>";
-            }
-            if (/^\d+$/.test(target) && CasActuatorEndpoints.registeredServices()) {
-                const name = typeof registeredServicesById !== "undefined" ? registeredServicesById.get(target)?.name : null;
-                return `<button type="button" class="audit-target-application" data-audit-application="${escapeHtml(target)}"
-                            title="Open application ${escapeHtml(target)}">
-                            <i class="mdi mdi-application-outline" aria-hidden="true"></i>
-                            <span>${escapeHtml(name ?? `Application ${target}`)}</span>
-                        </button>`;
-            }
-            return `<code class="audit-target-value">${escapeHtml(target)}</code>`;
-        }
-
-        /**
-         * Name the applications of the rows shown that Palantir has not listed yet, reading each once.
-         */
-        function nameAuditTargetApplications() {
-            if (typeof palantirApplicationName !== "function") {
-                return;
-            }
-            $("#auditEventsTable [data-audit-application]").each((index, button) => {
-                const id = button.dataset.auditApplication;
-                palantirApplicationName(id).then(name => {
-                    $(button).find("span").text(name);
-                    if (typeof palantirApplicationIsGone === "function" && palantirApplicationIsGone(id)) {
-                        $(button).addClass("is-gone").attr("title", "This application no longer exists");
-                    }
-                });
-            });
         }
 
         function renderAuditResourceSummary(data, row) {
@@ -268,7 +219,7 @@ async function initializeAuditEventsOperations() {
                         ${renderAuditJsonValue(row.resourceDetails)}
                     </div>`;
             }
-            return `<code class="audit-resource-value">${escapeHtml(data)}</code>`;
+            return `<code class="audit-resource-value">${escapePalantirMarkup(data)}</code>`;
         }
 
         function normalizeAuditEvent(entry, index) {
@@ -302,13 +253,13 @@ async function initializeAuditEventsOperations() {
                 }
                 return `<dl class="audit-resource-fields">${entries.map(([key, entry]) => `
                     <div class="audit-resource-field">
-                        <dt class="audit-resource-json-key">${escapeHtml(isArray ? `[${key}]` : key)}</dt>
+                        <dt class="audit-resource-json-key">${escapePalantirMarkup(isArray ? `[${key}]` : key)}</dt>
                         <dd class="audit-resource-field-value">${renderAuditJsonValue(entry)}</dd>
                     </div>`).join("")}</dl>`;
             }
             const displayValue = value === null ? "null" : String(value);
             const valueType = value === null ? "null" : typeof value;
-            return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapeHtml(displayValue)}</code>`;
+            return `<code class="audit-resource-json-value audit-resource-json-value-${valueType}">${escapePalantirMarkup(displayValue)}</code>`;
         }
 
         let auditEventsTable;
@@ -378,7 +329,7 @@ async function initializeAuditEventsOperations() {
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: "Event count"
+                                text: "Event Count"
                             },
                             ticks: {
                                 precision: 0
@@ -446,7 +397,7 @@ async function initializeAuditEventsOperations() {
                 {
                     data: "target",
                     width: "11rem",
-                    render: (data, type) => type === "display" ? renderAuditTarget(data) : data
+                    render: (data, type) => type === "display" ? palantirAuditTarget(data) : data
                 },
                 {
                     data: "date",
@@ -461,44 +412,54 @@ async function initializeAuditEventsOperations() {
                 {
                     data: "userAgent",
                     width: "14rem",
-                    render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapeHtml(data)}</span>` : data
+                    render: (data, type) => type === "display" ? `<span class="audit-user-agent">${escapePalantirMarkup(data)}</span>` : data
                 }
             ],
             drawCallback: settings => {
                 $("#auditEventsTable tr").addClass("mdc-data-table__row");
                 $("#auditEventsTable td").addClass("mdc-data-table__cell");
-                nameAuditTargetApplications();
+                namePalantirAuditTargetApplications("#auditEventsTable");
                 updateAuditActionsChart();
             }
         });
-        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", event => {
-            event.stopPropagation();
-            const id = event.currentTarget.dataset.auditApplication;
-            if (typeof openTopApplication === "function") {
-                openTopApplication(id);
-            } else if (typeof navigateToApplication === "function") {
-                navigateToApplication(id);
-            }
-        });
+        $("#auditEventsTable").off("click.auditTarget").on("click.auditTarget", "[data-audit-application]", openPalantirAuditTargetApplication);
         updateAuditActionsChart();
 
         let auditEventsRequestInFlight = false;
+        let auditEventsRefreshWanted = false;
+        let auditEventsUsername = "";
         const auditEventsRefreshButton = $("#refreshAuditEventsButton");
 
+        function auditPrincipalPattern(username) {
+            return `^${username.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`;
+        }
+
+        function showAuditEventsUsername(count) {
+            $("#showAllAuditEventsButton").prop("hidden", auditEventsUsername === "");
+            $("#auditEventsUsernameHint").text(auditEventsUsername === ""
+                ? "The audit records of every username are shown; enter a username to see only that username's records, matched regardless of case."
+                : `${count} audit record${count === 1 ? "" : "s"} for ${auditEventsUsername} in the chosen interval and action.`);
+        }
+
         function updateAuditEventsTable() {
-            if (auditEventsRequestInFlight
-                || !isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
-                return;
+            if (!isPalantirPollingContextActive(Tabs.LOGGING, "#auditevents-tab")) {
+                return null;
+            }
+            if (auditEventsRequestInFlight) {
+                auditEventsRefreshWanted = true;
+                return null;
             }
 
             const interval = $("#auditEventsIntervalFilter").val();
             const count = $("#auditEventsCountFilter").val();
             const actionFilter = $("#auditEventsActionFilter").val();
+            const username = auditEventsUsername;
+            const principal = username === "" ? "" : `&principal=${encodeURIComponent(auditPrincipalPattern(username))}`;
 
             auditEventsRequestInFlight = true;
             auditEventsRefreshButton.prop("disabled", true);
-            $.ajax({
-                url: `${CasActuatorEndpoints.auditLog()}?interval=${interval}&count=${count}`,
+            return $.ajax({
+                url: `${CasActuatorEndpoints.auditLog()}?interval=${encodeURIComponent(interval)}&count=${encodeURIComponent(count)}${principal}`,
                 type: "GET",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
@@ -512,29 +473,48 @@ async function initializeAuditEventsOperations() {
                         console.error("Unable to parse audit events:", e);
                         return;
                     }
-                    auditEventsTable.clear();
-                    auditEvents
+                    if (username !== auditEventsUsername) {
+                        return;
+                    }
+                    const shown = auditEvents
                         .map(normalizeAuditEvent)
-                        .filter(entry => actionFilter === "all" || entry.actionType === actionFilter)
-                        .forEach(entry => auditEventsTable.row.add(entry));
-                    auditEventsTable.draw();
+                        .filter(entry => actionFilter === "all" || entry.actionType === actionFilter);
+                    auditEventsTable.clear();
+                    shown.forEach(entry => auditEventsTable.row.add(entry));
+                    auditEventsTable.draw(false);
+                    showAuditEventsUsername(shown.length);
                 },
                 error: (xhr, textStatus, errorThrown) => console.error("Error fetching data:", errorThrown),
                 complete: () => {
                     auditEventsRequestInFlight = false;
                     auditEventsRefreshButton.prop("disabled", false);
+                    if (auditEventsRefreshWanted) {
+                        auditEventsRefreshWanted = false;
+                        updateAuditEventsTable();
+                    }
                 }
             });
         }
+
+        $("#fmAuditEventsUsername").off("submit").on("submit", event => {
+            event.preventDefault();
+            auditEventsUsername = String($("#auditEventsUsername").val() ?? "").trim();
+            updateAuditEventsTable();
+        });
+        $("#showAllAuditEventsButton").off("click").on("click", () => {
+            $("#auditEventsUsername").val("").trigger("input");
+            auditEventsUsername = "";
+            updateAuditEventsTable();
+            $("#auditEventsUsername").trigger("focus");
+        });
 
         $("#auditEventsIntervalFilter, #auditEventsCountFilter, #auditEventsActionFilter").selectmenu({
             change: updateAuditEventsTable
         });
         auditEventsRefreshButton.off("click").on("click", updateAuditEventsTable);
 
-        const auditEventsRefreshInterval = palantirSettings().refreshInterval;
-        setInterval(updateAuditEventsTable, auditEventsRefreshInterval);
-        window.addEventListener(palantirPollingContextEvent, updateAuditEventsTable);
+        PalantirPolling.every("audit events", updateAuditEventsTable,
+            {tab: Tabs.LOGGING, panel: "#auditevents-tab", status: "#auditevents-tab"});
         updateAuditEventsTable();
     }
 }

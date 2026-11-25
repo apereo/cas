@@ -22,7 +22,9 @@ import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.mcp.CasMcpErrorHttpMessageConverter;
 import org.apereo.cas.mcp.CasMcpEvaluationContextFactory;
+import org.apereo.cas.mcp.CasMcpEventStreamFilter;
 import org.apereo.cas.mcp.audit.CasMcpAuditInterceptor;
 import org.apereo.cas.mcp.audit.CasMcpAuditor;
 import org.apereo.cas.mcp.audit.CasMcpOperationAuditActionResolver;
@@ -119,10 +121,14 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * This is {@link CasMcpAutoConfiguration}.
@@ -339,6 +345,17 @@ public class CasMcpAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "casMcpWebMvcConfigurer")
+    public WebMvcConfigurer casMcpWebMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void configureMessageConverters(final HttpMessageConverters.ServerBuilder builder) {
+                builder.addCustomConverter(new CasMcpErrorHttpMessageConverter());
+            }
+        };
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "casMcpEndpointConfigurer")
     public CasWebSecurityConfigurer<HttpSecurity> casMcpEndpointConfigurer(
         final McpServerStreamableHttpProperties mcpServerStreamableHttpProperties) {
@@ -349,7 +366,9 @@ public class CasMcpAutoConfiguration {
             public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
                 http.authorizeHttpRequests(customizer -> customizer
                         .requestMatchers(PathPatternRequestMatcher.withDefaults().matcher(endpoint)).authenticated())
-                    .httpBasic(Customizer.withDefaults());
+                    .httpBasic(Customizer.withDefaults())
+                    .addFilterAfter(new CasMcpEventStreamFilter(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.GET, endpoint)),
+                        AuthorizationFilter.class);
                 return this;
             }
         };

@@ -69,5 +69,22 @@ class CasReloadableMessageBundleTests {
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
         assertEquals("Hello, World!", messageSource.getMessage("cas.message",
             ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
+        assertEquals("Hello, World!", messageSource.getMessage("cas.message",
+            ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
+    }
+
+    @Test
+    void verifyUnknownTenantUsesDefaultMessages() {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.11");
+        request.setLocalAddr("185.88.151.11");
+        val previousClientInfo = ClientInfoHolder.getClientInfo();
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request).setTenant("unknown-tenant"));
+        try {
+            assertEquals("cas.message", messageSource.getMessage("cas.message",
+                ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
+        } finally {
+            ClientInfoHolder.setClientInfo(previousClientInfo);
+        }
     }
 }

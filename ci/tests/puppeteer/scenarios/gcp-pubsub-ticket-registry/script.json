@@ -1,0 +1,46 @@
+{
+  "dependencies": "reports,gcp-pubsub-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.ticket.st.time-to-kill-in-seconds=30",
+
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+
+    "--spring.cloud.gcp.project-id=apereo-cas-gcp",
+    "--spring.cloud.gcp.pubsub.emulator-host=localhost:8085",
+    "--spring.cloud.gcp.pubsub.publisher.enable-message-ordering=true",
+
+    "--cas.ticket.registry.in-memory.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+    "--cas.ticket.registry.in-memory.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+
+    "--management.health.pubsub.enabled=true",
+    "--management.endpoint.health.show-details=always",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/bootstrap.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.server.name=https://localhost:8443",
+      "--cas.host.name=cas-instance-8443",
+      "--cas.ticket.registry.core.queue-identifier=cas-node-8443"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.server.name=https://localhost:8444",
+      "--cas.host.name=cas-instance-8444",
+      "--cas.ticket.registry.core.queue-identifier=cas-node-8444"
+    ]
+  }
+}

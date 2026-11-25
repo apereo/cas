@@ -28,9 +28,8 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
 
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
-        return repository.get(principal.getId())
+        return repository.getForCurrentTenant(principal.getId())
             .stream()
-            .filter(Objects::nonNull)
             .map(this::mapAccount)
             .collect(Collectors.toList());
     }
@@ -46,7 +45,7 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
      */
     @Override
     public void removeRegisteredDevice(final Principal principal, final String deviceId) {
-        Optional.ofNullable(repository.get(principal.getId(), NumberUtils.toLong(deviceId)))
+        Optional.ofNullable(repository.getForCurrentTenant(principal.getId(), NumberUtils.toLong(deviceId)))
             .ifPresent(account -> repository.delete(account.getId()));
     }
 

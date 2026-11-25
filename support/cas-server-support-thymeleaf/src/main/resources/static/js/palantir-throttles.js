@@ -17,12 +17,9 @@ async function initializeThrottlesOperations() {
 
     function removeThrottledAttempt(context) {
         const key = context.rowData.key;
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this entry."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -107,12 +104,9 @@ async function initializeThrottlesOperations() {
         });
 
         $("button[name=releaseThrottlesButton]").off().on("click", () =>
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to release throttled entries?",
-                text: "Released entries, when eligible, will be removed from the authentication throttling store.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Released entries, when eligible, will be removed from the authentication throttling store."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -129,12 +123,9 @@ async function initializeThrottlesOperations() {
                 }));
 
         $("button[name=clearThrottlesButton]").off().on("click", () =>
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to clear throttled entries?",
-                text: "All entries will be removed from the authentication throttling store.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "All entries will be removed from the authentication throttling store."
             })
                 .then((result) => {
                     if (result.isConfirmed) {

@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://localhost:9859/sig-aggregate-(expired|valid)-cert$",
+  "name" : "AggregateExpiredCertificate",
+  "id" : 8,
+  "evaluationOrder" : 8,
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata-expired-cert-aggregate.xml",
+  "validateMetadataCertificates" : true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

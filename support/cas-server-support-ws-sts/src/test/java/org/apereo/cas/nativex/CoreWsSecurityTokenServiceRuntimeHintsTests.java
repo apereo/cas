@@ -44,7 +44,7 @@ class CoreWsSecurityTokenServiceRuntimeHintsTests {
         assertTrue(RuntimeHintsPredicates.proxies().forInterfaces(SoapAddress.class).test(hints));
         assertTrue(RuntimeHintsPredicates.reflection().onFieldAccess(OpenSAMLUtil.class.getDeclaredField("builderFactory")).test(hints));
         for (val type : List.of(W3CDomHandler.class, WSDLManagerImpl.class, SoapBindingFactory.class)) {
-            assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(type.getDeclaredConstructor()).test(hints), type.getName());
+            assertTrue(RuntimeHintsPredicates.reflection().onConstructorInvocation(type.getDeclaredConstructor()).test(hints), type::getName);
         }
     }
 }

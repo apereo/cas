@@ -233,6 +233,36 @@ public class GeodeTicketRegistry extends AbstractTicketRegistry implements Dispo
         });
     }
 
+    /**
+     * The decoded tickets of one type that belong to a principal are read through the index on the principal of that
+     * type's region, as {@link #getSessionsFor(String)} does for sessions; any other query is answered as every
+     * registry answers it.
+     *
+     * @param criteria the criteria
+     * @return the results
+     */
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val definition = StringUtils.isBlank(criteria.getType()) ? null : ticketCatalog.find(criteria.getType());
+        if (definition == null || !criteria.isDecode() || StringUtils.isBlank(criteria.getPrincipal())
+            || StringUtils.isNotBlank(criteria.getId())) {
+            return super.query(criteria);
+        }
+        return FunctionUtils.doUnchecked(() -> {
+            val cache = getCacheFromMetadata(definition);
+            val queryString = "SELECT * FROM /%s t WHERE t.principal = $1".formatted(cache.region().getName());
+            val query = cache.cache().getQueryService().newQuery(queryString);
+            val results = (SelectResults<GeodeTicketDocument>) query.execute(digestIdentifier(criteria.getPrincipal()));
+            return results
+                .stream()
+                .map(document -> decodeTicket(document.getTicket()))
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired())
+                .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+                .collect(Collectors.toList());
+        });
+    }
+
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         val metadata = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class).orElseThrow();

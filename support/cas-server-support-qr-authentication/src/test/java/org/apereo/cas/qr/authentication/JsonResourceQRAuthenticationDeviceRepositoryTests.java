@@ -36,4 +36,22 @@ class JsonResourceQRAuthenticationDeviceRepositoryTests {
         repo.removeDevice(device1);
         assertEquals(1, repo.getAuthorizedDevicesFor("casuser").size());
     }
+
+    @Test
+    void verifyConcurrentAuthorizationsAreKept() throws Throwable {
+        val resource = new FileSystemResource(Files.createTempFile("devices", ".json"));
+        val repo = new JsonResourceQRAuthenticationDeviceRepository(resource);
+        val devices = IntStream.range(0, 50).mapToObj(_ -> UUID.randomUUID().toString()).toList();
+        try (val executor = Executors.newFixedThreadPool(8)) {
+            val tasks = devices.stream().<Callable<Boolean>>map(device -> () -> {
+                repo.authorizeDeviceFor(device, "casuser");
+                return repo.isAuthorizedDeviceFor(device, "casuser");
+            }).toList();
+            for (val result : executor.invokeAll(tasks)) {
+                assertTrue(result.get());
+            }
+        }
+        assertEquals(devices.size(), repo.getAuthorizedDevicesFor("casuser").size());
+        assertEquals(devices.size(), new JsonResourceQRAuthenticationDeviceRepository(resource).getAuthorizedDevicesFor("casuser").size());
+    }
 }

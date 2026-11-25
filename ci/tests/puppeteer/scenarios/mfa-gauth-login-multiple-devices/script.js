@@ -21,6 +21,21 @@ const assert = require("assert");
     await cas.assertVisibility(page, "#register");
     await cas.sleep(1000);
 
+    await cas.log("Refusing a device that was not offered for selection");
+    await page.$eval("#form-1 input[name=accountId]", (el) => el.value = "999999");
+    await cas.click(page, "#useButton-1");
+    await cas.sleep(2000);
+    await cas.assertVisibility(page, "#form-1");
+    await cas.assertVisibility(page, "#form-2");
+
+    await cas.log("Selecting registered device 1");
+    await cas.click(page, "#useButton-1");
+    await cas.sleep(2000);
+    await cas.assertVisibility(page, "#selectDeviceButton");
+    await cas.click(page, "#selectDeviceButton");
+    await cas.sleep(2000);
+    await cas.assertVisibility(page, "#form-1");
+
     await cas.log("Deleting registered device 1");
     await cas.click(page, "#delButton-1");
     await cas.sleep(2000);

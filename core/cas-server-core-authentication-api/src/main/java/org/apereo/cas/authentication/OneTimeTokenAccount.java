@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.SuperBuilder;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.ObjectMapper;
@@ -134,6 +135,17 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .thenComparing(acct -> StringUtils.defaultString(acct.getSource()))
             .thenComparing(acct -> StringUtils.defaultString(acct.getTenant()))
             .compare(this, tokenAccount);
+    }
+
+    /**
+     * Whether the account belongs to the given tenant. An account registered in a tenant belongs only to that
+     * tenant, and an account registered without a tenant belongs only outside of any tenant.
+     *
+     * @param tenantId the tenant id, or blank outside of any tenant
+     * @return true if the account belongs to the tenant
+     */
+    public boolean isAssignedToTenant(@Nullable final String tenantId) {
+        return Strings.CI.equals(StringUtils.defaultString(tenant), StringUtils.defaultString(tenantId));
     }
 
     @Override

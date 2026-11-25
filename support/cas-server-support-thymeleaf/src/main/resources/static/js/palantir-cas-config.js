@@ -15,8 +15,8 @@ function searchForConfigPropertyButton(name) {
 }
 
 function effectiveConfigPropertyValue(name) {
-    $.get(`${CasActuatorEndpoints.env()}/${name}`, response => {
-        Swal.fire({
+    $.get(`${CasActuatorEndpoints.env()}/${encodeURIComponent(name)}`, response => {
+        PalantirDialogs.confirm({
             title: "Effective Property Value",
             html: `
                 The effective configuration value for ${palantirCode(name)} is:<p/>
@@ -24,7 +24,6 @@ function effectiveConfigPropertyValue(name) {
             `,
             icon: "info",
             width: "50%",
-            showDenyButton: true,
             confirmButtonText: "OK",
             denyButtonText: "Copy",
             didOpen: () => {
@@ -43,19 +42,12 @@ function effectiveConfigPropertyValue(name) {
         });
 }
 
-function configPropertySourceName(propertySource) {
-    return propertySource.replace("bootstrapProperties-", "");
-}
-
 function deleteConfigPropertyValueFromRow(currentRow, propertySource, name) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
         const source = configPropertySourceName(propertySource);
-        Swal.fire({
-            title: `Are you sure you want to delete this entry from ${source}?`,
-            text: "Once removed, you may not be able to revert this.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+        PalantirDialogs.confirm({
+            title: `Are You Sure You Want to Delete This Entry from ${source}?`,
+            text: "Once removed, you may not be able to revert this."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -110,15 +102,12 @@ function isEncryptedConfigValue(value) {
 async function toggleConfigPropertyEncryption(operation, name, propertySource) {
     const encrypting = operation === "encrypt";
     const source = configPropertySourceName(propertySource);
-    const confirmation = await Swal.fire({
+    const confirmation = await PalantirDialogs.confirm({
         title: encrypting ? "Encrypt this value?" : "Decrypt this value?",
         html: encrypting
             ? `The value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its encrypted form,
                which CAS decrypts when it applies its configuration.`
             : `The encrypted value of ${palantirCode(name)} in ${escapePalantirMarkup(source)} is replaced by its plain text.`,
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true,
         confirmButtonText: encrypting ? "Encrypt" : "Decrypt",
         denyButtonText: "Cancel"
     });
@@ -165,15 +154,11 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
         });
     } catch (error) {
         if (error?.status === 400) {
-            Swal.fire({
-                icon: "error",
-                title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`,
-                text: error.responseText || "Check that configuration security is set up."
-            });
+            PalantirDialogs.error(`The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, error.responseText || "Check that configuration security is set up.");
         } else if (error?.status !== undefined) {
             displayBanner(error);
         } else {
-            Swal.fire({icon: "error", title: `The value could not be ${encrypting ? "encrypted" : "decrypted"}`, text: error.message});
+            PalantirDialogs.error(`The Value Could Not Be ${encrypting ? "Encrypted" : "Decrypted"}`, error.message);
         }
         return;
     }
@@ -186,11 +171,7 @@ async function toggleConfigPropertyEncryption(operation, name, propertySource) {
     if (CasActuatorEndpoints.refresh()) {
         refreshCasServerConfiguration(title);
     } else {
-        Swal.fire({
-            icon: "success",
-            title: title,
-            text: "The new value takes effect once CAS refreshes its configuration or restarts."
-        });
+        PalantirDialogs.done(title, "The new value takes effect once CAS refreshes its configuration or restarts.");
     }
 }
 
@@ -226,13 +207,10 @@ function deleteAllConfigurationProperties(button) {
     function deletePropertiesFromSource(propertySource) {
         Swal.close();
 
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: `Delete Configuration Properties`,
             text: `Are you sure you want to delete all configuration properties from ${propertySource}?
-                Once deleted, you may not be able to recover the configuration properties.`,
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+                Once deleted, you may not be able to recover the configuration properties.`
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -268,7 +246,7 @@ function deleteAllConfigurationProperties(button) {
         deletePropertiesFromSource(PalantirDashboardConfiguration.mutablePropertySources()[0]);
     } else {
         Swal.fire({
-            title: "Which property source do you want to clear?",
+            title: "Which Property Source Do You Want to Clear?",
             input: "select",
             icon: "question",
             inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
@@ -311,7 +289,7 @@ function importConfigurationProperties(button) {
                 Swal.close();
                 $.get(CasActuatorEndpoints.env(), res => {
                     reloadConfigurationTable(res);
-                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                    refreshCasServerConfiguration(payload.length === 1 ? `Property ${payload[0].name} Imported` : `${payload.length} Properties Imported`);
                 })
                     .fail((xhr) => {
                         displayBanner(xhr);
@@ -325,17 +303,14 @@ function importConfigurationProperties(button) {
         });
     }
 
-    Swal.fire({
+    PalantirDialogs.confirm({
         title: "Are you sure you want to import configuration properties?",
         input: "select",
         inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
         html: `
             <p class="text-justify">Properties will be imported and applied to the CAS server configuration. You may import multiple files at once.
             Supported file formats are .properties and .yml/.yaml files. You may choose the target property source to which the properties will be applied.</p>
-        `,
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+        `
     }).then((result) => {
         if (result.isConfirmed) {
             const propertySource = PalantirDashboardConfiguration.mutablePropertySources()[Number(result.value)];
@@ -350,14 +325,7 @@ function importConfigurationProperties(button) {
                         const content = e.target.result;
                         const ext = file.name.split(".").pop().toLowerCase();
 
-                        Swal.fire({
-                            icon: "info",
-                            title: `${propertySource}: Importing Properties`,
-                            text: "Please wait while the configuration properties are being imported...",
-                            allowOutsideClick: false,
-                            showConfirmButton: false,
-                            didOpen: () => Swal.showLoading()
-                        });
+                        PalantirDialogs.wait(`${propertySource}: Importing Properties`, "Please wait while the configuration properties are being imported...");
                         if (ext === "properties") {
                             const props = parseProperties(content);
                             const payload = Object.entries(props).map(([key, value]) => ({
@@ -419,11 +387,13 @@ function openNewConfigurationPropertyDialog(config) {
         height: "auto",
         buttons: {
             OK: async function () {
-                const nameElem = $("#newConfigPropertyName")[0];
-                const selectedValue = nameElem.tomselect.getValue();
-                const typedValue = nameElem.tomselect.control_input.value?.trim();
-                if (!selectedValue && typedValue) {
-                    nameElem.tomselect.setValue(typedValue);
+                const nameSelect = $("#newConfigPropertyName")[0].tomselect;
+                const typedValue = nameSelect.control_input.value?.trim();
+                if (!nameSelect.getValue() && typedValue) {
+                    if (!nameSelect.options[typedValue]) {
+                        nameSelect.addOption({id: typedValue, name: typedValue});
+                    }
+                    nameSelect.setValue(typedValue);
                 }
 
                 if (!$("#newConfigurationForm")[0].reportValidity()) {
@@ -523,66 +493,6 @@ function openNewConfigurationPropertyDialog(config) {
     $("#newConfigurationDialog").dialog("open");
 }
 
-function refreshCasServerConfiguration(title) {
-    if (CasActuatorEndpoints.refresh()) {
-        Swal.fire({
-            showConfirmButton: true,
-            showCancelButton: true,
-            icon: "question",
-            title: title,
-            width: "35%",
-            confirmButtonText: "Refresh",
-            html: `Do you want to refresh the CAS runtime context to apply the changes?
-            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>,
-            allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
-            using the existing/old CAS components until they are fully refreshed in the runtime application context.
-            <p class="text-justify"/>
-            <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
-            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong>
-            may not be dynamically reloaded. In such cases, a full restart of the CAS server
-            may be required for the changes to take effect.
-            `
-        })
-            .then((reloadResult) => {
-                if (reloadResult.isConfirmed) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: "info",
-                        title: "Refreshing CAS Server",
-                        text: "Please wait while the CAS application context is being refreshed...",
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        didOpen: () => Swal.showLoading()
-                    });
-
-                    const endpoint = CasActuatorEndpoints.refresh();
-                    $.post(endpoint)
-                        .done(() => {
-                            reloadAuthenticationHandlersTable();
-                            reloadAttributeRepositoriesTable();
-                            loadExternalIdentityProvidersTable().then(r => {
-                                Swal.close();
-                                Swal.fire({
-                                    title: "Success!",
-                                    text: "CAS configuration has been reloaded successfully.",
-                                    icon: "success",
-                                    timer: 1000,
-                                    timerProgressBar: true,
-                                    showConfirmButton: true
-                                });
-                            });
-                        })
-                        .fail((jqXHR, textStatus, errorThrown) => {
-                            console.error("Error:", textStatus, errorThrown);
-                            Swal.close();
-                            Swal.fire("Error", "Failed to reload CAS configuration.", "error");
-                            displayBanner(jqXHR);
-                        });
-                }
-            });
-    }
-}
-
 function reloadConfigurationTable(response) {
     const configurationTable = $("#configurationTable").DataTable();
     configurationTable.clear();
@@ -677,12 +587,6 @@ async function populateConfigurationNameSelectOptions() {
     }
 }
 
-function escapeConfigHtml(str) {
-    return String(str ?? "").replace(/[&<>"']/g, s => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
-}
-
 function classifySpringBean(type) {
     const beanType = String(type ?? "");
     if (beanType.startsWith("org.springframework")
@@ -758,10 +662,10 @@ function springConditionLabel(condition) {
     const kind = kinds.find(([pattern]) => pattern.test(name));
     const label = kind ? kind[2] : name.replace(/^On/, "").replace(/Condition$/, "").replace(/([a-z0-9])([A-Z])/g, "$1 $2") || "Condition";
     return `
-        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapeConfigHtml(name)}">
-            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapeConfigHtml(label)}
+        <span class="spring-condition-kind kind-${kind ? kind[1] : "other"}" title="${escapePalantirMarkup(name)}">
+            <i class="mdi ${kind ? kind[3] : "mdi-help-circle-outline"}" aria-hidden="true"></i>${escapePalantirMarkup(label)}
         </span>
-        <code class="spring-condition-class">${escapeConfigHtml(name)}</code>`.trim();
+        <code class="spring-condition-class">${escapePalantirMarkup(name)}</code>`.trim();
 }
 
 /**
@@ -776,7 +680,7 @@ function springConditionMessage(message) {
     if (text === "") {
         return "<span class=\"spring-condition-message is-empty\">No condition message provided.</span>";
     }
-    const formatted = escapeConfigHtml(text)
+    const formatted = escapePalantirMarkup(text)
         .replace(/@(Conditional\w*|Profile)\b/g, "<span class=\"spring-condition-annotation\">@$1</span>")
         .replace(/\(([^()]+)\)/g, "<span class=\"spring-condition-details\">$1</span>")
         .replace(/(?:&#39;|&#x27;|')([^&']+?)(?:&#39;|&#x27;|')/g, "<code>$1</code>");
@@ -946,9 +850,7 @@ function initializeGroovyScriptCacheManagerOperations() {
     function fetchGroovyScriptResource(entry) {
         const key = groovyScriptCacheEntryKey(entry);
         const resourceName = groovyScriptCacheEntryResourceName(entry);
-        const title = resourceName
-            ? `${escapeConfigHtml(resourceName)} (${escapeConfigHtml(key)})`
-            : escapeConfigHtml(key);
+        const title = resourceName ? `${resourceName} (${key})` : key;
         $("#groovyScriptCacheResourceDialog").dialog("option", "title", `Groovy Script Resource: ${title}`);
         $.ajax({
             url: resourceUrl(key),
@@ -967,12 +869,9 @@ function initializeGroovyScriptCacheManagerOperations() {
     }
 
     function deleteGroovyScriptCacheKey(row, key) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this cache entry?",
-            text: "Once removed, the script resource will need to be resolved again before it is cached.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once removed, the script resource will need to be resolved again before it is cached."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -1052,14 +951,7 @@ function initializeGroovyScriptCacheManagerOperations() {
             Swal.fire("No Cache Entries", "There are no Groovy script cache keys to recompute.", "info");
             return;
         }
-        Swal.fire({
-            icon: "info",
-            title: "Recomputing Groovy Script Cache",
-            text: "Please wait while all Groovy script cache entries are recomputed.",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
+        PalantirDialogs.wait("Recomputing Groovy Script Cache", "Please wait while all Groovy script cache entries are recomputed.");
         Promise.all(keys.map(cacheKey => recomputeGroovyScriptCacheKey(cacheKey, false)))
             .then(() => {
                 Swal.fire("Success", `Recomputed ${keys.length} Groovy script cache entr${keys.length === 1 ? "y" : "ies"}.`, "success");
@@ -1085,7 +977,7 @@ async function initializeConfigurationOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1174,7 +1066,7 @@ async function initializeConfigurationOperations() {
             topStart: toolbar
         },
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1295,7 +1187,7 @@ async function initializeConfigurationOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0, render: palantirTextColumn}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1351,7 +1243,7 @@ async function initializeConfigurationOperations() {
                     const property = `${bean.prefix}.${prop}`;
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
-                            0: `${sourceBean}`,
+                            0: sourceBean,
                             1: `${palantirCode(property)}`,
                             2: `${palantirCode(propValue)}`,
                             propertyName: toKebabCase(property)
@@ -1365,7 +1257,7 @@ async function initializeConfigurationOperations() {
                     const property = `${bean.prefix}.${prop}`;
                     if (Object.keys(propValue).length > 0) {
                         configPropsTable.row.add({
-                            0: `${sourceBean}`,
+                            0: sourceBean,
                             1: `${palantirCode(toKebabCase(property))}`,
                             2: `${palantirCode(propValue)}`,
                             propertyName: toKebabCase(property)
@@ -1395,7 +1287,7 @@ async function initializeConfigurationOperations() {
                 className: "spring-bean-toggle-cell",
                 render: (data, type, row) => type === "display" && (row.dependencies.length > 0 || row.dependents.length > 0)
                     ? `<button type="button" class="spring-bean-toggle" aria-expanded="false"
-                               aria-label="Show what ${escapeConfigHtml(row.name)} depends on and what uses it">
+                               aria-label="Show what ${escapePalantirMarkup(row.name)} depends on and what uses it">
                            <i class="mdi mdi-chevron-right" aria-hidden="true"></i>
                        </button>`
                     : ""
@@ -1414,7 +1306,7 @@ async function initializeConfigurationOperations() {
                     if (row.dependents.length > 0) {
                         counts.push(`used by ${row.dependents.length}`);
                     }
-                    return `<code class="spring-bean-name">${escapeConfigHtml(data)}</code>${counts.length > 0
+                    return `<code class="spring-bean-name">${escapePalantirMarkup(data)}</code>${counts.length > 0
                         ? `<span class="spring-bean-counts">${counts.join(" · ")}</span>` : ""}`;
                 }
             },
@@ -1422,21 +1314,21 @@ async function initializeConfigurationOperations() {
                 data: "type",
                 width: "42%",
                 render: (data, type) => type === "display"
-                    ? `<code class="spring-bean-type">${escapeConfigHtml(data)}</code>`
+                    ? `<code class="spring-bean-type">${escapePalantirMarkup(data)}</code>`
                     : data
             },
             {
                 data: "scope",
                 width: "12%",
                 render: (data, type) => type === "display"
-                    ? `<span class="spring-bean-scope scope-${escapeConfigHtml(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapeConfigHtml(data || "singleton")}</span>`
+                    ? `<span class="spring-bean-scope scope-${escapePalantirMarkup(String(data || "singleton").toLowerCase().replace(/[^a-z0-9]+/g, "-"))}">${escapePalantirMarkup(data || "singleton")}</span>`
                     : data
             },
             {
                 data: "classification",
                 width: "15%",
                 render: (data, type) => type === "display"
-                    ? `<span class="spring-bean-classification classification-${escapeConfigHtml(String(data).toLowerCase())}">${escapeConfigHtml(data)}</span>`
+                    ? `<span class="spring-bean-classification classification-${escapePalantirMarkup(String(data).toLowerCase())}">${escapePalantirMarkup(data)}</span>`
                     : data
             },
             {
@@ -1463,8 +1355,8 @@ async function initializeConfigurationOperations() {
             <div class="spring-bean-relations">
                 <h5>${title} <span>${names.length}</span></h5>
                 ${names.length > 0
-        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapeConfigHtml(name)}"
-                        title="Find ${escapeConfigHtml(name)}">${escapeConfigHtml(name)}</button>`).join("")}</div>`
+        ? `<div class="spring-bean-chips">${names.map(name => `<button type="button" class="spring-bean-chip" data-spring-bean="${escapePalantirMarkup(name)}"
+                        title="Find ${escapePalantirMarkup(name)}">${escapePalantirMarkup(name)}</button>`).join("")}</div>`
         : `<p class="spring-bean-none">${empty}</p>`}
             </div>`;
         return `<div class="spring-bean-details">
@@ -1634,8 +1526,12 @@ async function initializeConfigurationOperations() {
         await populateConfigurationNameSelectOptions();
 
         const configSearchResultsTable = $("#configSearchResultsTable").DataTable({
-        deferRender: true,
+            deferRender: true,
             pageLength: 10,
+            columnDefs: [
+                {targets: 0, render: palantirTextColumn},
+                {targets: 1, render: (data, type) => type === "display" ? sanitizePalantirHtml(data) : palantirHtmlText(data)}
+            ],
             drawCallback: settings => {
                 $("#configSearchResultsTable tr").addClass("mdc-data-table__row");
                 $("#configSearchResultsTable td").addClass("mdc-data-table__cell").addClass("text-wrap");
@@ -1643,38 +1539,32 @@ async function initializeConfigurationOperations() {
         });
         configSearchResultsTable.clear();
 
-        $("button[name=configSearchButton]").off().on("click", () => {
-            $("#configSearchResults").hide();
-            configSearchResultsTable.clear();
-
+        $("button[name=configSearchButton]").off().on("click", async () => {
             const form = document.getElementById("fmConfigSearch");
             if (!form.reportValidity()) {
                 return false;
             }
             const searchQuery = $("#configSearchQuery").val();
-            Swal.fire({
-                icon: "info",
-                title: `Fetching Results`,
-                text: "Please wait while configuration metadata repository is consulted to find matches...",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-                didOpen: () => Swal.showLoading()
+            const {answered, value: response} = await PalantirBusy.during({
+                region: "#configSearchResults",
+                button: "#configSearchButton",
+                label: `Searching for ${searchQuery}`,
+                failure: "The configuration metadata could not be searched",
+                request: () => $.get(`${CasActuatorEndpoints.configurationMetadata()}/${encodeURIComponent(searchQuery)}`)
             });
-            $.get(`${CasActuatorEndpoints.configurationMetadata()}/${searchQuery}`, response => {
-                for (const entry of response) {
-                    configSearchResultsTable.row.add({
-                        0: entry.id,
-                        1: entry.description
-                    });
-                }
-                $("#configSearchResults").show();
-                configSearchResultsTable.draw();
-            })
-                .fail((xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    displayBanner(xhr);
-                })
-                .always(() => Swal.close());
+            if (!answered) {
+                return false;
+            }
+            configSearchResultsTable.clear();
+            for (const entry of response) {
+                configSearchResultsTable.row.add({
+                    0: entry.id ?? "",
+                    1: entry.description ?? ""
+                });
+            }
+            $("#configSearchResults").show();
+            configSearchResultsTable.draw();
+            return false;
         });
     }
 }
