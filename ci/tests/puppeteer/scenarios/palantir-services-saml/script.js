@@ -57,7 +57,8 @@ async function waitForDashboard(page) {
 
 /**
  * Answer the unsaved-changes question, if closing a dialog asked it, by discarding the changes, which also removes
- * the draft kept for them.
+ * the draft kept for them. The question's backdrop fades out after it is answered and takes clicks until it is gone,
+ * so this waits for it to leave the page before the next step clicks anything.
  *
  * @param page the puppeteer page
  * @param name the registered service type under test, for the log
@@ -68,6 +69,7 @@ async function discardUnsavedChanges(page, name) {
         && $(".swal2-title").text() === "Discard Your Changes?");
     if (asked) {
         await page.click(".swal2-deny");
+        await page.waitForFunction(() => document.querySelector(".swal2-container") === null, {timeout: 10000});
         await cas.logg(`${name}: closing the wizard with changes asked before discarding them`);
     }
 }
@@ -325,8 +327,7 @@ async function verifySamlMetadataManage(page) {
 /**
  * Register the SAML2 test service provider with its metadata URL, check the health of its metadata from the menu of
  * its card, and check that the metadata is downloaded, holds the service provider and is resolved by CAS, and that the
- * metadata is shown; then delete the application. The card's menu does not always open on the first click on a slower
- * machine, so it is opened again until it offers the check.
+ * metadata is shown; then delete the application.
  *
  * @param page the puppeteer page
  */
@@ -360,26 +361,7 @@ async function verifySamlMetadataHealth(page) {
     await page.evaluate(() => $("#applicationsTable").DataTable().search("MetadataHealthExample").draw());
     const menu = `#applicationsCards .palantir-application-card[data-service-id="${serviceId}"] [data-application-action="menu"]`;
     await page.waitForSelector(menu, {visible: true, timeout: 30000});
-    let opened = false;
-    for (let attempt = 1; attempt <= 3 && !opened; attempt++) {
-        const covered = await page.evaluate((selector) => {
-            const button = document.querySelector(selector);
-            const bounds = button.getBoundingClientRect();
-            const top = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
-            return button.contains(top) ? null : `${top?.tagName ?? "nothing"}#${top?.id ?? ""}.${String(top?.className ?? "").replace(/\s+/g, ".")}`;
-        }, menu);
-        if (covered !== null) {
-            await cas.logy(`The menu button of application ${serviceId} is covered by ${covered} before click ${attempt}`);
-        }
-        await page.click(menu);
-        opened = await page.waitForFunction(() => $(".context-menu-list:visible .context-menu-item:visible")
-            .filter((index, item) => $(item).text().includes("Check Metadata Health")).length > 0, {timeout: 5000})
-            .then(() => true, () => false);
-        if (!opened) {
-            await cas.logy(`The menu of application ${serviceId} did not open on click ${attempt}`);
-        }
-    }
-    assert(opened, `The menu of application ${serviceId} offers Check Metadata Health`);
+    await page.click(menu);
     await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").click();
     await page.waitForFunction(() => $("#samlMetadataHealthDialog").dialog("instance") !== undefined
         && $("#samlMetadataHealthDialog").dialog("isOpen")

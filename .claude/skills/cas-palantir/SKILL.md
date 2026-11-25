@@ -385,6 +385,9 @@ General view, theme and template rules are in the `cas-ui` skill.
   navigation does; it never waits for such a field right after opening the wizard.
 - A SweetAlert2 question that moves focus once answered passes `returnFocus: false`; otherwise SweetAlert2 hands focus
   back to the element that had it after it closes, undoing the move.
+- After a scenario answers a SweetAlert2 question, it waits for `.swal2-container` to leave the page before clicking
+  anything else: the backdrop fades out (`swal2-backdrop-hide`) and takes clicks until it is removed, which drops the
+  next click on a slower CI runner.
 - Settings CAS reads from a chain itself rather than its members (the access strategy's `unauthorizedRedirectUrl`) are
   listed as `lift` on the chain kind: the fields show the chain's value and packing moves it back to the chain.
 - Matching a draft's list entries to the saved definition (to restore secrets) never goes by position alone.
