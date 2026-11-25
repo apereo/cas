@@ -171,6 +171,9 @@ Configuration properties assigned to a tenant definition may be secured via
 ]
 ```
 
+Encrypted values stay encrypted in the tenant definitions: CAS decrypts them when it reads the definitions,
+and writes them back encrypted when a tenant is added, changed or removed.
+
 {% endtab %}
 
 {% tab multitenancyexamples Virtual Hosts & Routing %}

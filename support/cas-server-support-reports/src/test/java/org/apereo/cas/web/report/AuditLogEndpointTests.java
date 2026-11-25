@@ -75,6 +75,26 @@ class AuditLogEndpointTests extends AbstractCasEndpointTests {
 
     @Test
     @SuppressWarnings("unchecked")
+    void verifyCountAppliesWithInterval() throws Throwable {
+        for (var i = 0; i < 3; i++) {
+            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+        }
+        val records = (List<Map<String, Object>>) MAPPER.readValue(mockMvc.perform(get("/actuator/auditLog")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .queryParam("interval", "PT1H")
+                .queryParam("count", "2")
+                .queryParam("actionPerformed", AuditableActions.SAVE_SERVICE + ".*")
+            )
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString(), List.class);
+        assertEquals(2, records.size());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void verifySummary() throws Throwable {
         val action = "AUTHENTICATION_SUCCESS";
         val plan = applicationContext.getBean(AuditTrailExecutionPlan.BEAN_NAME, AuditTrailExecutionPlan.class);

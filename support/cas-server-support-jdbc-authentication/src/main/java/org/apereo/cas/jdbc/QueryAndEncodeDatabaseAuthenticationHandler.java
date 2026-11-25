@@ -75,9 +75,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             return createHandlerResult(transformedCredential, principal, new ArrayList<>());
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
-                throw new AccountNotFoundException(username + " not found with SQL query");
+                throw (AccountNotFoundException) new AccountNotFoundException(username + " not found with SQL query").initCause(e);
             }
-            throw new FailedLoginException("Multiple records found for " + username);
+            throw (FailedLoginException) new FailedLoginException("Multiple records found for " + username).initCause(e);
         } catch (final DataAccessException e) {
             throw new PreventedException(e);
         }

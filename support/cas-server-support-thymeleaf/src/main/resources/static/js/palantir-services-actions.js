@@ -97,9 +97,11 @@ class PalantirApplicationAccess {
     }
 
     /**
-     * The access strategy that turns the application on again: default strategies are switched on, the disabled
+     * The access strategy that turns the application on again: a default strategy is switched on, the disabled
      * default strategy added when the application was disabled is removed, and a chain left with one strategy gives
-     * way to it.
+     * way to it. Inside a chain, only the strategies that keep the application off are turned on; a strategy that
+     * already lets people in, such as an OR chain with one branch switched off, is left as it was, so enabling never
+     * allows more than the strategy did before the application was disabled.
      *
      * @param strategy the current access strategy
      * @returns {object} the enabled access strategy
@@ -118,7 +120,7 @@ class PalantirApplicationAccess {
             && Object.keys(entry).every(key => key === "@class" || key === "enabled");
         const kept = PalantirApplicationAccess.entries(strategy.strategies)
             .filter(entry => !added(entry))
-            .map(entry => PalantirApplicationAccess.enable(entry));
+            .map(entry => PalantirApplicationAccess.isDisabled(entry) ? PalantirApplicationAccess.enable(entry) : entry);
         if (kept.length === 0) {
             return {"@class": PalantirApplicationAccess.DEFAULT, enabled: true};
         }
@@ -173,7 +175,9 @@ class PalantirApplicationAccess {
     }
 
     /**
-     * Read an application again, switch its access strategy off or on and save it.
+     * Read an application again, switch its access strategy off or on and save it. It counts as saved only when CAS
+     * answers with the application it saved, switched as asked; a login page or an answer that leaves it as it was
+     * fails, so the operator is not told it changed when it did not.
      *
      * @param serviceId the numeric id of the application
      * @param disable true to disable it, false to enable it
@@ -189,12 +193,17 @@ class PalantirApplicationAccess {
         service.accessStrategy = disable
             ? PalantirApplicationAccess.disable(service.accessStrategy)
             : PalantirApplicationAccess.enable(service.accessStrategy);
-        await $.ajax({
+        const saved = await $.ajax({
             url: endpoint,
             type: "PUT",
             contentType: "application/json",
-            data: JSON.stringify(service)
+            dataType: "json",
+            headers: {"Accept": "application/json"},
+            data: palantirStringifyJson(service)
         });
+        if (!palantirSavedApplication(saved) || PalantirApplicationAccess.isDisabled(saved.accessStrategy) !== disable) {
+            throw new Error(`CAS did not confirm that the application was ${disable ? "disabled" : "enabled"}.`);
+        }
     }
 
     /**
@@ -219,7 +228,7 @@ class PalantirApplicationAccess {
             ? `<p>${skipped} selected application${skipped === 1 ? " is" : "s are"} already ${disable ? "disabled" : "enabled"} and ${skipped === 1 ? "is" : "are"} left as ${skipped === 1 ? "it is" : "they are"}.</p>`
             : "";
         const result = await Swal.fire({
-            titleText: `${verb} ${ids.length} application${ids.length === 1 ? "" : "s"}?`,
+            titleText: `${verb} ${ids.length} Application${ids.length === 1 ? "" : "s"}?`,
             html: `<p>${disable
                 ? "Nobody can sign in to these applications until they are enabled again."
                 : "People can sign in to these applications again, as their access strategies allow."}</p>
@@ -246,17 +255,22 @@ class PalantirApplicationAccess {
         PalantirProgress.update("Refreshing the applications...", null);
         await PalantirApplicationSelection.reload();
         PalantirProgress.close();
+        if (failed.length === 0) {
+            PalantirApplicationSelection.clear();
+        }
         const changed = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
-            titleText: `${changed} application${changed === 1 ? "" : "s"} ${disable ? "disabled" : "enabled"}`,
-            text: failed.length === 0 ? "" : `These were not changed: ${failed.join(", ")}.`
+            titleText: `${changed} Application${changed === 1 ? "" : "s"} ${disable ? "Disabled" : "Enabled"}`,
+            text: failed.length === 0 ? "" : `These were not changed, and the selection is kept: ${failed.join(", ")}.`
         });
     }
 }
 
 /**
  * Selecting applications, in the table or as cards, and deleting them: the selected ones, or every application.
+ * Once an action on the selection succeeds for every selected application, the selection is cleared and its bar goes
+ * away; when it fails for any of them, the selection is kept so the action can be tried again.
  */
 class PalantirApplicationSelection {
     static selected = new Set();
@@ -396,24 +410,28 @@ class PalantirApplicationSelection {
     }
 
     /**
-     * Reload the applications and wait for them, for a while at most.
+     * Read the applications again once they were changed, and wait for them. When they cannot be read, the change
+     * itself was still made: the operator is told the list may be out of date rather than kept waiting. When it is not
+     * known whether the change was made, as when CAS did not answer, the caller says so, and only the list is spoken of.
      *
-     * @returns {Promise<void>} resolved once the applications are reloaded
+     * @param confirmed whether CAS confirmed the change
+     * @returns {Promise<boolean>} resolved once the applications are read again, with whether they could be
      */
-    static async reload() {
-        await Promise.race([
-            new Promise(resolve => fetchServices(() => {
-                updateNavigationSidebar();
-                resolve();
-            })),
-            new Promise(resolve => setTimeout(resolve, 20000))
-        ]);
+    static async reload(confirmed = true) {
+        const refreshed = await fetchServices(() => updateNavigationSidebar());
         PalantirApplicationSelection.refresh();
+        if (refreshed === false) {
+            notyf.error(confirmed
+                ? "The change is saved, but the applications could not be read again; the list may be out of date."
+                : "The applications could not be read again; the list may be out of date.");
+        }
+        return refreshed !== false;
     }
 
     /**
      * Download the selected applications: the definition itself when one is selected, otherwise a zip of their
-     * definitions that Import accepts as it is.
+     * definitions that Import accepts as it is. Only an answer CAS gives as a download is saved, so a login page an
+     * expired session is sent to is never saved as the export, and the selection is kept.
      *
      * @returns {Promise<void>} resolved once the download is handed to the browser
      */
@@ -427,21 +445,11 @@ class PalantirApplicationSelection {
             : `${CasActuatorEndpoints.registeredServices()}/export?${ids.map(id => `ids=${encodeURIComponent(id)}`).join("&")}`;
         const button = $("button[name=exportSelectedServices]").prop("disabled", true);
         try {
-            const response = await fetch(url, {credentials: "include"});
-            if (!response.ok) {
-                throw new Error(`CAS answered ${response.status} ${response.statusText}`.trim());
-            }
-            const blob = await response.blob();
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = response.headers.get("filename") || (ids.length === 1 ? `${ids[0]}.json` : "services.zip");
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            setTimeout(() => window.URL.revokeObjectURL(link.href), 1000);
+            await palantirDownloadExport(url, ids.length === 1 ? `${ids[0]}.json` : "services.zip");
             notyf.success(`Exported ${ids.length} application${ids.length === 1 ? "" : "s"}.`);
+            PalantirApplicationSelection.clear();
         } catch (error) {
-            Swal.fire({icon: "error", titleText: "The selected applications were not exported", text: String(error?.message ?? error)});
+            PalantirDialogs.error("The Selected Applications Were Not Exported", String(error?.message ?? error));
         } finally {
             button.prop("disabled", false);
         }
@@ -461,7 +469,7 @@ class PalantirApplicationSelection {
         const listed = names.slice(0, 8).map(name => `<li>${escapePalantirMarkup(name)}</li>`).join("");
         const more = names.length > 8 ? `<li>and ${names.length - 8} more</li>` : "";
         const result = await Swal.fire({
-            titleText: `Delete ${ids.length} application${ids.length === 1 ? "" : "s"}?`,
+            titleText: `Delete ${ids.length} Application${ids.length === 1 ? "" : "s"}?`,
             html: `<p>These applications are removed from the service registry. This cannot be undone.</p>
                    <ul class="palantir-selection-list">${listed}${more}</ul>`,
             icon: "warning",
@@ -490,10 +498,13 @@ class PalantirApplicationSelection {
         PalantirProgress.update("Refreshing the applications...", null);
         await PalantirApplicationSelection.reload();
         PalantirProgress.close();
+        if (failed.length === 0) {
+            PalantirApplicationSelection.clear();
+        }
         const deleted = ids.length - failed.length;
         Swal.fire({
             icon: failed.length === 0 ? "success" : "warning",
-            titleText: `${deleted} application${deleted === 1 ? "" : "s"} deleted`,
+            titleText: `${deleted} Application${deleted === 1 ? "" : "s"} Deleted`,
             text: failed.length === 0 ? "" : `These were not deleted and stay selected: ${failed.join(", ")}.`
         });
     }
@@ -506,11 +517,11 @@ class PalantirApplicationSelection {
     static async deleteAll() {
         const count = registeredServicesById.size;
         if (count === 0) {
-            Swal.fire({icon: "info", titleText: "No applications are registered"});
+            Swal.fire({icon: "info", titleText: "No Applications Are Registered"});
             return;
         }
         const result = await Swal.fire({
-            titleText: `Delete all ${count} application${count === 1 ? "" : "s"}?`,
+            titleText: `Delete All ${count} Application${count === 1 ? "" : "s"}?`,
             text: "Every application is removed from the service registry, including its stored definition, and nobody can "
                 + "sign in to any of them. This cannot be undone; export them first if you may need them.",
             icon: "warning",
@@ -534,7 +545,7 @@ class PalantirApplicationSelection {
             PalantirApplicationSelection.selected.clear();
             await PalantirApplicationSelection.reload();
             PalantirProgress.close();
-            Swal.fire({icon: "success", titleText: "All applications are deleted"});
+            PalantirDialogs.done("All Applications Are Deleted");
         } catch (xhr) {
             PalantirProgress.close();
             if (xhr?.statusText !== PALANTIR_READ_ONLY) {
@@ -585,5 +596,173 @@ class PalantirApplicationSelection {
         $("button[name=clearServiceSelection]").off("click").on("click", () => PalantirApplicationSelection.clear());
         $("button[name=deleteAllServices]").off("click").on("click", () => PalantirApplicationSelection.deleteAll());
         PalantirApplicationSelection.refresh();
+    }
+}
+
+/**
+ * Rotating the client secrets of an OAuth or OpenID Connect application from its context menu, through the client
+ * secrets endpoint: every secret, or only the expired ones, is replaced by a new random secret that expires after the
+ * chosen duration. The new secrets are shown once, to be handed to the application, and the applications are read
+ * again. A public client, without secrets, is told so instead.
+ */
+class PalantirClientSecretRotation {
+    static DEFAULT_EXPIRATION = "P90D";
+
+    static applies(service) {
+        const type = String(service?.["@class"] ?? "");
+        return (type.includes("OAuthRegisteredService") || type.includes("OidcRegisteredService"))
+            && Boolean(CasActuatorEndpoints.oauthClientSecrets());
+    }
+
+    /**
+     * The address that rotates the secrets of a client.
+     *
+     * @param clientId the client id
+     * @param options expiredOnly to replace only expired secrets, expireIn for how long the new secrets last, and id for
+     *        the registration that must carry the client id, so that no other registration of that client id is changed
+     * @returns {string} the endpoint address with its query
+     */
+    static url(clientId, options = {}) {
+        return PalantirAvailability.clientSecretsUrl(clientId, options);
+    }
+
+    static secrets(service) {
+        return PalantirApplicationAccess.entries(service?.clientSecrets)
+            .map(secret => typeof secret === "string" ? {value: secret} : secret)
+            .filter(secret => secret?.value);
+    }
+
+    /**
+     * Whether a duration is one CAS reads: a number of seconds, or an ISO-8601 duration of days, hours, minutes and
+     * seconds such as P90D or PT12H, of at least one whole second, since secrets that expire at once would replace the
+     * working ones with nothing usable. Months, years and weeks are not durations CAS reads.
+     *
+     * @param value the duration
+     * @returns {boolean} true when it can be sent
+     */
+    static validDuration(value) {
+        const text = String(value ?? "").trim();
+        if (/^\d+$/.test(text)) {
+            return Number(text) >= 1;
+        }
+        const parts = text.match(/^P(?=\d|T\d)(?:(\d+)D)?(?:T(?=\d)(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)(?:[.,]\d+)?S)?)?$/i);
+        if (parts === null) {
+            return false;
+        }
+        const [, days, hours, minutes, seconds] = parts.map(part => Number(part ?? 0));
+        return days * 86400 + hours * 3600 + minutes * 60 + seconds >= 1;
+    }
+
+    static async open(serviceId) {
+        let service;
+        try {
+            service = await $.get(`${CasActuatorEndpoints.registeredServices()}/${encodeURIComponent(serviceId)}`);
+        } catch (xhr) {
+            displayBanner(xhr);
+            return;
+        }
+        const name = service?.name ?? String(serviceId);
+        const secrets = PalantirClientSecretRotation.secrets(service);
+        if (!service?.clientId || secrets.length === 0) {
+            await Swal.fire({
+                icon: "info",
+                titleText: "This Application Has No Client Secrets",
+                text: `${name} is a public client, so it has no secrets to rotate.`
+            });
+            return;
+        }
+        const result = await Swal.fire({
+            titleText: `Rotate Client Secrets of ${name}?`,
+            html: `
+                <form class="palantir-client-secret-rotation" onsubmit="return false;">
+                    <p>Each secret is replaced by a new one at once; ${escapePalantirMarkup(service.clientId)} stops working with the
+                       replaced secrets until it is given the new ones.</p>
+                    <label class="palantir-feature-switch" for="clientSecretRotationExpiredOnly">
+                        <input type="checkbox" role="switch" id="clientSecretRotationExpiredOnly">
+                        <span class="palantir-feature-switch__track" aria-hidden="true"></span>
+                        <span class="palantir-feature-switch__text">
+                            <strong>Only Expired Secrets</strong>
+                            <small>Keep the secrets that are still valid and replace only the expired ones.</small>
+                        </span>
+                    </label>
+                    <label for="clientSecretRotationExpireIn">New Secrets Expire In</label>
+                    <input id="clientSecretRotationExpireIn" class="swal2-input" autocomplete="off" spellcheck="false"
+                           value="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}" placeholder="${PalantirClientSecretRotation.DEFAULT_EXPIRATION}">
+                    <p class="palantir-client-secret-rotation__hint">Days, hours, minutes or seconds, such as P90D or PT12H, or a number of seconds.</p>
+                </form>`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Rotate Secrets",
+            focusConfirm: false,
+            preConfirm: () => {
+                const expireIn = String($("#clientSecretRotationExpireIn").val() ?? "").trim() || PalantirClientSecretRotation.DEFAULT_EXPIRATION;
+                if (!PalantirClientSecretRotation.validDuration(expireIn)) {
+                    Swal.showValidationMessage("Enter days, hours, minutes or seconds, such as P90D or PT12H, or a number of seconds.");
+                    return false;
+                }
+                return {expireIn, expiredOnly: $("#clientSecretRotationExpiredOnly").prop("checked") === true};
+            }
+        });
+        if (!result.isConfirmed) {
+            return;
+        }
+        let updated;
+        try {
+            updated = await $.ajax({
+                url: PalantirClientSecretRotation.url(service.clientId, {...result.value, id: service.id ?? serviceId}),
+                type: "POST",
+                headers: {"Content-Type": "application/json"}
+            });
+        } catch (xhr) {
+            displayBanner(xhr);
+            return;
+        }
+        const before = new Set(secrets.map(secret => secret.value));
+        const fresh = PalantirClientSecretRotation.secrets(updated).filter(secret => !before.has(secret.value));
+        await fetchServices();
+        await PalantirClientSecretRotation.show(name, fresh);
+    }
+
+    /**
+     * When a secret expires, as a date: CAS records it as epoch seconds, sent as text, or as a date.
+     *
+     * @param expiration the expiration as recorded
+     * @returns {string} the date, or the expiration as recorded when it cannot be read as one
+     */
+    static expires(expiration) {
+        const text = String(expiration).trim();
+        const date = palantirRecordDate(/^\d+$/.test(text) ? Number(text) : text);
+        return date ? palantirRecordWhen(date) : text;
+    }
+
+    static async show(name, fresh) {
+        if (fresh.length === 0) {
+            await Swal.fire({
+                icon: "info",
+                titleText: "No Secrets Were Rotated",
+                text: `None of the secrets of ${name} had expired, so they were all kept.`
+            });
+            return;
+        }
+        const rows = fresh.map((secret, index) => `
+            <li class="palantir-client-secret-rotation__secret">
+                <code>${escapePalantirMarkup(secret.value)}</code>
+                <button type="button" class="mdc-button mdc-button--outlined" data-client-secret="${index}">
+                    <i class="mdi mdi-content-copy" aria-hidden="true"></i><span class="mdc-button__label">Copy</span>
+                </button>
+                ${secret.expiration ? `<small>Expires ${escapePalantirMarkup(PalantirClientSecretRotation.expires(secret.expiration))}</small>` : ""}
+            </li>`).join("");
+        await Swal.fire({
+            icon: "success",
+            titleText: `${fresh.length} Client Secret${fresh.length === 1 ? "" : "s"} Rotated`,
+            html: `<p>Give the new secret${fresh.length === 1 ? "" : "s"} to ${escapePalantirMarkup(name)} now; they are not shown again.</p>
+                   <ul class="palantir-client-secret-rotation__secrets">${rows}</ul>`,
+            didOpen: popup => {
+                $(popup).on("click", "[data-client-secret]", event => {
+                    const secret = fresh[Number(event.currentTarget.dataset.clientSecret)];
+                    copyToClipboard(secret.value).then(() => notyf.success("Copied the client secret."));
+                });
+            }
+        });
     }
 }

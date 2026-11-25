@@ -103,6 +103,30 @@ class DefaultTicketRegistryTests {
                     .type(TicketGrantingTicket.PREFIX).build()).size());
         }
 
+        /**
+         * A registry without its own query reads its tickets and keeps those of the asked type, id and principal.
+         */
+        @RepeatedTest(1)
+        void verifyDefaultQueryReadsTicketsOfType() {
+            val user = UUID.randomUUID().toString();
+            val ticketGrantingTicket = new MockTicketGrantingTicket(user);
+            val serviceTicket = new MockServiceTicket("ST-654321", RegisteredServiceTestUtils.getService(), ticketGrantingTicket);
+            val registry = mock(TicketRegistry.class);
+            when(registry.getTickets(any())).thenAnswer(invocation -> {
+                val predicate = (Predicate<Ticket>) invocation.getArgument(0);
+                return Stream.<Ticket>of(ticketGrantingTicket, serviceTicket).filter(predicate);
+            });
+            when(registry.query(any())).thenCallRealMethod();
+            assertEquals(List.of(ticketGrantingTicket), registry.query(TicketRegistryQueryCriteria.builder()
+                .type(TicketGrantingTicket.PREFIX).build()));
+            assertEquals(List.of(ticketGrantingTicket), registry.query(TicketRegistryQueryCriteria.builder()
+                .type(TicketGrantingTicket.PREFIX).principal(user.toUpperCase(Locale.ENGLISH)).build()));
+            assertEquals(List.of(), registry.query(TicketRegistryQueryCriteria.builder()
+                .type(TicketGrantingTicket.PREFIX).principal("nobody").build()));
+            assertEquals(List.of(serviceTicket), registry.query(TicketRegistryQueryCriteria.builder()
+                .type(ServiceTicket.PREFIX).id("ST-654321").build()));
+        }
+
         @RepeatedTest(2)
         void verifyCountForService() throws Throwable {
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());

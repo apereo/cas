@@ -9,6 +9,8 @@
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
     "--cas.slo.disabled=false",
+    "--cas.slo.asynchronous=false",
+    "--cas.logout.redirect-url=http://localhost:5612/loggedout",
     
     "--cas.http-client.host-name-verifier=none"
   ],

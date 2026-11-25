@@ -42,6 +42,11 @@ description: "Review and change attribute consent: ConsentDecision, the consent 
   and one more from the `generateServiceTicketAfterConsent` clone that re-runs the check;
   `getRegisteredServiceForConsent`, and with it the access strategy, still runs twice per
   prompt. Count these by request before claiming a number.
+- Decisions carry the tenant of the service they were made for (`service.getTenant()`), and tenants without their own
+  consent store share the global one. `DefaultConsentEngine.findConsentDecision` keeps only a decision of the service's
+  tenant (strict: no tenant matches only no tenant) and falls back to the user's decisions when the repository's single
+  answer belongs to another tenant, so `storeConsentDecision` never updates, and moves, another tenant's decision. The
+  account profile lists only the current tenant's decisions.
 - `DefaultConsentEngine.executeRepositoryOperation` calls `toConsentRepository(tenant)` on
   every operation, and `TenantJdbcConsentRepositoryBuilder` builds a DataSource plus a
   Hibernate `EntityManagerFactory` inside it, then destroys them. Check the multitenant

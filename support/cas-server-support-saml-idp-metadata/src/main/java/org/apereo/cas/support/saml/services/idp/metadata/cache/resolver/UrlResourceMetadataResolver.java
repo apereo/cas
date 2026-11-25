@@ -208,9 +208,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 return null;
             }
             if (status != null && status.is2xxSuccessful()) {
-                val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
-                configureAndInitializeSingleMetadataResolver(metadataProvider, service);
-                return metadataProvider;
+                return getMetadataResolverFromResponse(service, response, backupFile);
             }
             val reason = "%s: HTTP %s %s".formatted(metadataLocation, response.getCode(),
                 StringUtils.defaultString(response.getReasonPhrase())).trim();
@@ -235,8 +233,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
      * backup <i>instead of</i> contacting the remote source requires the root to be positively
      * valid. Falling back onto it <i>because</i> the remote source could not be reached only
      * requires that the root is not known to be invalid, since a document that carries no
-     * {@code validUntil} reports its validity as unknown and is the common case; expired
-     * descriptors within it are still filtered out by {@code require-valid-metadata}.
+     * {@code validUntil} reports its validity as unknown and is the common case; a service
+     * provider whose own entry within it has expired is still refused when it is looked up.
      *
      * @param service          the registered service
      * @param backupFile       the metadata backup file
@@ -303,27 +301,33 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
     }
     
     /**
-     * Builds the metadata resolver from the downloaded document and stores the document as the backup file.
+     * Builds and initializes the metadata resolver from the downloaded document, and only then stores the document
+     * as the backup file. The backup file is the last known good copy of the metadata: a document that cannot be
+     * parsed or is refused by the metadata filters (signature, validity, certificates) must not replace it, or the
+     * next outage of the source would find nothing to fall back onto.
      * The resolver is built from the document in memory, never by reading the backup file back: other resolutions
      * may replace that file at any moment. The document stays in bytes throughout, the form it was downloaded in,
      * which is what the parser, the backup file and the validators digest all take: decoding it into a string
      * would double its size in memory, and encoding it back would copy it again.
      *
+     * @param service    the registered service
      * @param response   the response
      * @param backupFile the metadata backup file
-     * @return the metadata resolver
-     * @throws Exception the exception
+     * @return the initialized metadata resolver
+     * @throws Exception the exception, when the document cannot be parsed or is refused
      */
-    protected AbstractMetadataResolver getMetadataResolverFromResponse(final HttpResponse response,
+    protected AbstractMetadataResolver getMetadataResolverFromResponse(final SamlRegisteredService service,
+                                                                       final HttpResponse response,
                                                                        final File backupFile)
             throws Exception {
         val entity = ((HttpEntityContainer) response).getEntity();
         val metadata = EntityUtils.toByteArray(entity);
-        writeMetadataToBackupFile(metadata, backupFile);
-        writeMetadataValidators(response, metadata, backupFile);
         EntityUtils.consume(entity);
         val metadataResolver = new InMemoryResourceMetadataResolver(new ByteArrayInputStream(metadata), configBean);
         metadataResolver.setId("RegisteredServiceMetadata-" + backupFile.getName());
+        configureAndInitializeSingleMetadataResolver(metadataResolver, service);
+        writeMetadataToBackupFile(metadata, backupFile);
+        writeMetadataValidators(response, metadata, backupFile);
         return metadataResolver;
     }
 

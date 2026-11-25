@@ -53,6 +53,10 @@ The basic construct for a tenant definition should match the following:
 ]
 ```
 
+Tenant ids become part of urls and cookie paths. An id must start with a letter or a digit and may contain only
+letters, digits, dots, dashes and underscores; tenant definitions with other ids are skipped when tenant definitions are
+loaded, and refused when they are registered.
+
 ## Custom Tenant Registration
 
 If you need to customize the tenant registration process, you may do so by providing a custom implementation

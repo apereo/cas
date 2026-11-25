@@ -63,7 +63,7 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
                         .principal(principal)
                         .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
                         .from(sms.getFrom())
-                        .tenant(Objects.requireNonNull(event.getClientInfo().getTenant()))
+                        .tenant(event.getClientInfo().getTenant())
                         .text(text)
                         .build())
                 .collect(Collectors.<SmsRequest>toList());

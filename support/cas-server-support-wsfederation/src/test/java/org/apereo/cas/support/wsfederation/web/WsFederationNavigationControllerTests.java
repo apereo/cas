@@ -2,13 +2,17 @@ package org.apereo.cas.support.wsfederation.web;
 
 import module java.base;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
+import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.util.UriComponentsBuilder;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -20,6 +24,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @Tag("WSFederation")
 class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     void verifyOperation() throws Throwable {
         val config = wsFederationConfigurations.toList().getFirst();
@@ -41,7 +48,14 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
                 }))
             .andReturn();
         assertEquals(302, result.getResponse().getStatus());
-        assertNotNull(result.getResponse().getRedirectedUrl());
+        val redirectedUrl = result.getResponse().getRedirectedUrl();
+        assertNotNull(redirectedUrl);
+        assertTrue(redirectedUrl.startsWith(config.getIdentityProviderUrl()));
+        val parameters = UriComponentsBuilder.fromUriString(redirectedUrl).build().getQueryParams();
+        assertEquals("wsignin1.0", parameters.getFirst("wa"));
+        assertEquals(config.getRelyingPartyIdentifier(), EncodingUtils.urlDecode(parameters.getFirst("wtrealm")));
+        assertEquals(id, EncodingUtils.urlDecode(parameters.getFirst("wctx")));
+        assertEquals(casProperties.getServer().getLoginUrl(), EncodingUtils.urlDecode(parameters.getFirst("wreply")));
     }
 
     @Test

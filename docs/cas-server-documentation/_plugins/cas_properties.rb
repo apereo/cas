@@ -16,6 +16,12 @@ module Jekyll
         @catalogs[data.object_id] ||= build_catalog(data)
       end
 
+      # Third-party metadata keeps settings that were removed, at the "error" deprecation level, only so that
+      # their use can be reported; setting lists on documentation pages leave them out.
+      def removed?(entry)
+        entry["kind"] == "thirdparty" && entry["deprecationLevel"].to_s.casecmp?("error")
+      end
+
       def split(value)
         value.to_s.split(",").map(&:strip).reject(&:empty?)
       end
@@ -87,7 +93,8 @@ module Jekyll
       excluded = CasPropertiesFilter.split(excludes)
       CasPropertiesFilter.catalog(data).select do |entry|
         name = entry["name"]
-        wanted.any? { |p| name.include?(p) } &&
+        !CasPropertiesFilter.removed?(entry) &&
+          wanted.any? { |p| name.include?(p) } &&
           excluded.none? { |x| name.include?(x) } &&
           (included.empty? || included.any? { |i| name.include?(i) })
       end
@@ -102,6 +109,7 @@ module Jekyll
       CasPropertiesFilter.catalog(data).select do |entry|
         name = entry["name"]
         entry["kind"] == "thirdparty" &&
+          !CasPropertiesFilter.removed?(entry) &&
           excluded.none? { |x| name.include?(x) } &&
           (containing.any? { |p| name.include?(p) } ||
             exactly.include?(name) ||

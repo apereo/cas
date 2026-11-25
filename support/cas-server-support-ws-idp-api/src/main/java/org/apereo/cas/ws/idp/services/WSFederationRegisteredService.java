@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link WSFederationRegisteredService}.
@@ -49,6 +50,17 @@ public class WSFederationRegisteredService extends BaseWebBasedRegisteredService
     private String wsdlEndpoint = WSFederationConstants.SECURITY_TOKEN_SERVICE_ENDPOINT;
 
     private String appliesTo;
+
+    /**
+     * Gets the party to whom security tokens apply, which defaults to the realm
+     * when {@code appliesTo} is undefined.
+     *
+     * @return the applies-to value or the realm
+     */
+    @JsonIgnore
+    public String getAppliesToOrRealm() {
+        return StringUtils.defaultIfBlank(appliesTo, realm);
+    }
 
     @JsonIgnore
     @Override

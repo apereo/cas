@@ -13,4 +13,4 @@ Export CAS metrics to Netflix Atlas, a dimensional time-series database.
 By default, metrics are exported to Atlas running on your
 local machine. The location of the Atlas server to use can be provided using:
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.atlas" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.atlas.metrics.export" %}

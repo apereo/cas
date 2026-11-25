@@ -112,6 +112,10 @@ description: "Review and change CAS actuator endpoints: the security filter chai
 - `ThrottledSubmissionHandlerEndpoint` obtains entries from a raw `ThrottledSubmissionsStore`; declare the local
   `Stream<ThrottledSubmission>` explicitly so username-filter predicates receive submissions instead of `Object`.
 
+- CAS runs with `spring.aop.proxy-target-class=false`, so beans that carry `@Audit` or `@Transactional` reach an
+  endpoint as JDK proxies. To match a bean by its class (such as a SAML2 metadata manager looked up by class name), use
+  `AopProxyUtils.ultimateTargetClass`, not `ClassUtils.getUserClass`, which only unwraps class-based proxies.
+
 ## Configuration encryption
 
 - `{cas-cipher}` values are decrypted while configuration files load (`BaseConfigurationPropertiesLoader`); dynamic

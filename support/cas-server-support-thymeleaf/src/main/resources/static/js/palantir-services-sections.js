@@ -61,18 +61,18 @@ class RegisteredServiceSections {
         {
             key: "basics",
             title: "Basics",
-            description: "Name the application, say which requests it answers, and describe it to people.",
+            description: "Name the application and describe it to people.",
             groups: ["Basics"]
         },
         {
             key: "protocol",
             title: "Protocol",
-            description: "Settings of the protocol this application speaks.",
+            description: "Which requests the application answers, and the settings of the protocol it speaks.",
             groups: ["Protocol"]
         },
         {
             key: "access",
-            title: "Access & attributes",
+            title: "Access & Attributes",
             description: "Who may use the application, how they authenticate, and which attributes it receives.",
             groups: ["Attributes", "Access & Authentication"]
         },
@@ -587,7 +587,7 @@ class RegisteredServiceSections {
                         <span class="registered-service-steps__bar" aria-hidden="true"></span>
                         <span class="registered-service-steps__label">
                             <span class="registered-service-steps__number" aria-hidden="true">${position + 2}</span>
-                            <span>${RegisteredServiceSections.escape(step.title)}</span>
+                            <span>${escapePalantirMarkup(step.title)}</span>
                             ${hint}
                         </span>
                     </button>
@@ -646,19 +646,19 @@ class RegisteredServiceSections {
                             <button type="button" class="registered-service-sections__link${selected ? " is-selected" : ""}${filled ? " has-value" : ""}"
                                     data-section-key="${section.key}" ${selected ? "aria-current=\"true\"" : ""}>
                                 <span class="registered-service-sections__dot" aria-hidden="true"></span>
-                                <span class="registered-service-sections__link-text">${RegisteredServiceSections.escape(RegisteredServiceSections.titleOf(section))}</span>
+                                <span class="registered-service-sections__link-text">${escapePalantirMarkup(RegisteredServiceSections.titleOf(section))}</span>
                                 <span class="registered-service-sections__state">${filled ? "Has values" : "Not set"}</span>
                             </button>
                         </li>`;
                 }).join("");
                 const heading = groups.length > 1 || term !== ""
-                    ? `<h4 class="registered-service-sections__group-heading">${RegisteredServiceSections.escape(entry.group)}</h4>` : "";
+                    ? `<h4 class="registered-service-sections__group-heading">${escapePalantirMarkup(entry.group)}</h4>` : "";
                 return `<div class="registered-service-sections__group">${heading}<ul class="registered-service-sections__tiles">${tiles}</ul></div>`;
             }).join("");
             const single = sections.length === 1 && term === "";
             return `
                 <div class="registered-service-sections__step${single ? " is-single" : ""}" data-step="${step.key}"${shown ? "" : " hidden"}>
-                    ${term !== "" ? `<p class="registered-service-sections__step-name">${RegisteredServiceSections.escape(step.title)}</p>` : ""}
+                    ${term !== "" ? `<p class="registered-service-sections__step-name">${escapePalantirMarkup(step.title)}</p>` : ""}
                     ${body}
                 </div>`;
         }).join("");
@@ -725,7 +725,7 @@ class RegisteredServiceSections {
         }
         let definition;
         try {
-            definition = JSON.parse(ace.edit("wizardServiceEditor").getValue() || "{}");
+            definition = palantirParseJson(ace.edit("wizardServiceEditor").getValue() || "{}");
         } catch (error) {
             definition = {};
         }
@@ -736,8 +736,8 @@ class RegisteredServiceSections {
             .map(([key]) => key);
         const rows = scalar.map(([key, value]) => `
             <div class="registered-service-review__row">
-                <dt>${RegisteredServiceSections.escape(RegisteredServiceSections.humanize(key))}</dt>
-                <dd>${RegisteredServiceSections.escape(value)}</dd>
+                <dt>${escapePalantirMarkup(RegisteredServiceSections.humanize(key))}</dt>
+                <dd>${escapePalantirMarkup(value)}</dd>
             </div>`).join("");
         const steps = RegisteredServiceSections.STEPS
             .filter(step => RegisteredServiceSections.sectionsOf(step).length > 0)
@@ -746,14 +746,14 @@ class RegisteredServiceSections {
                 const filled = sections.filter(RegisteredServiceSections.hasValue);
                 const links = filled.map(section => `
                     <li><button type="button" class="registered-service-review__link" data-review-section="${section.key}">
-                        ${RegisteredServiceSections.escape(RegisteredServiceSections.titleOf(section))}
+                        ${escapePalantirMarkup(RegisteredServiceSections.titleOf(section))}
                     </button></li>`).join("");
                 return `
                     <div class="registered-service-review__step">
                         <div class="registered-service-review__step-head">
-                            <h4>${RegisteredServiceSections.escape(step.title)}</h4>
+                            <h4>${escapePalantirMarkup(step.title)}</h4>
                             <button type="button" class="registered-service-review__edit" data-review-step="${step.key}"
-                                    aria-label="Edit ${RegisteredServiceSections.escape(step.title)}">Edit</button>
+                                    aria-label="Edit ${escapePalantirMarkup(step.title)}">Edit</button>
                         </div>
                         <p>Values in ${filled.length} of ${sections.length} section${sections.length === 1 ? "" : "s"}</p>
                         ${links ? `<ul>${links}</ul>` : ""}
@@ -768,7 +768,7 @@ class RegisteredServiceSections {
                 <div class="registered-service-review__card">
                     <h4>Definition</h4>
                     ${rows ? `<dl>${rows}</dl>` : "<p>The definition holds no values yet.</p>"}
-                    ${policies.length > 0 ? `<p class="registered-service-review__policies">Includes ${policies.map(key => RegisteredServiceSections.escape(RegisteredServiceSections.humanize(key))).join(", ")}.</p>` : ""}
+                    ${policies.length > 0 ? `<p class="registered-service-review__policies">Includes ${policies.map(key => escapePalantirMarkup(RegisteredServiceSections.humanize(key))).join(", ")}.</p>` : ""}
                 </div>
                 <div class="registered-service-review__steps">${steps}</div>
             </div>`;
@@ -799,18 +799,6 @@ class RegisteredServiceSections {
                 link.removeAttribute("aria-current");
             }
         });
-    }
-
-    /**
-     * Escapes text for insertion into markup.
-     *
-     * @param value the text to escape
-     * @returns {string} the escaped text
-     */
-    static escape(value) {
-        return String(value).replace(/[&<>"']/g, character => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-        })[character]);
     }
 
     /**

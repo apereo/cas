@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.adaptive.intel.DefaultIPAddressIntelligence
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.VpnDetectionIPAddressIntelligenceService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.TenantExtractor;
@@ -58,6 +59,9 @@ class CasCoreAuthenticationPolicyConfiguration {
         }
         if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
             return new BlackDotIPAddressIntelligenceService(tenantExtractor, adaptive);
+        }
+        if (intel.getVpnDetection().isEnabled()) {
+            return new VpnDetectionIPAddressIntelligenceService(tenantExtractor, adaptive);
         }
         return new DefaultIPAddressIntelligenceService(tenantExtractor, adaptive);
     }

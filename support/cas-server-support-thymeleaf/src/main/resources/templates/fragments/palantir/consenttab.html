@@ -9,6 +9,36 @@
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-10">
         <h3>Attribute Consent</h3>
+        <form id="fmConsentUsername" class="passwordless-account-search throttles-username-search mt-3 mb-3"
+              aria-label="Show the consent decisions of a username">
+            <label for="consentUsername"
+                   class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon passwordless-account-search-field">
+                <i class="mdi mdi-account-search mdc-text-field__icon mdc-text-field__icon--leading" aria-hidden="true"></i>
+                <input class="mdc-text-field__input form-control" type="text" name="consentUsername" id="consentUsername"
+                       autocomplete="off" spellcheck="false" aria-labelledby="consentUsernameLabel"
+                       aria-describedby="consentUsernameHint"/>
+                <span class="mdc-notched-outline">
+                    <span class="mdc-notched-outline__leading"></span>
+                    <span class="mdc-notched-outline__notch">
+                        <span class="mdc-floating-label" id="consentUsernameLabel">Username</span>
+                    </span>
+                    <span class="mdc-notched-outline__trailing"></span>
+                </span>
+            </label>
+            <button type="submit" id="filterConsentButton" class="mdc-button mdc-button--raised passwordless-account-search-button">
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-filter-variant" aria-hidden="true"></i>Show Decisions
+                </span>
+            </button>
+            <button type="button" id="showAllConsentButton" class="mdc-button mdc-button--outlined passwordless-account-search-button" hidden>
+                <span class="mdc-button__label">
+                    <i class="mdc-tab__icon mdi mdi-close" aria-hidden="true"></i>Show All
+                </span>
+            </button>
+        </form>
+        <p id="consentUsernameHint" class="throttles-username-hint" aria-live="polite">
+            Every consent decision is shown; enter a username to see only the decisions of that username.
+        </p>
         <table id="consentTable" class="mdc-data-table__table table table-striped noborder">
             <thead>
             <tr class="mdc-data-table__header-row">

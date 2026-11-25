@@ -23,6 +23,12 @@ import org.springframework.core.io.WritableResource;
 @Slf4j
 @UtilityClass
 public class CompressionUtils {
+    /**
+     * The number of entries, files and folders together, an archive read with
+     * {@link #readZipEntries(InputStream, int, long, Predicate)} may hold at most.
+     */
+    public static final int MAXIMUM_ZIP_ENTRIES = 100_000;
+
     private static final int INFLATED_ARRAY_LENGTH = 10000;
     private static final int BUFFER_LENGTH = 1024;
 
@@ -247,5 +253,84 @@ public class CompressionUtils {
             }
             return new TemporaryFileSystemResource(file);
         }).get();
+    }
+
+    /**
+     * The text of every file in a zip archive, such as one {@link #toZipFile(Stream, Function, String)} writes, in the
+     * order the archive holds them. A file larger than the given size is refused, so an archive cannot make its reader
+     * hold more than it expects.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, a file in the archive may have at most
+     * @return the text of each file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize) throws IOException {
+        return readZipEntries(input, maximumEntrySize, Long.MAX_VALUE);
+    }
+
+    /**
+     * The text of every file in a zip archive, in the order the archive holds them. A file larger than the given size
+     * is refused, and so is an archive whose files together, once decompressed, are larger than the given total, so a
+     * small archive that expands to many large files cannot exhaust its reader's memory.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, a file in the archive may have at most
+     * @param maximumTotalSize the size, in bytes, the files of the archive may have together at most
+     * @return the text of each file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize,
+                                              final long maximumTotalSize)
+            throws IOException {
+        return readZipEntries(input, maximumEntrySize, maximumTotalSize, name -> true);
+    }
+
+    /**
+     * The text of the files of a zip archive whose names are accepted, in the order the archive holds them, with the
+     * same limits as {@link #readZipEntries(InputStream, int, long)}. A file whose name is not accepted, or a folder,
+     * is not kept, but whatever data it carries is still decompressed to move past it, so it counts toward the total
+     * like any other; and an archive with more
+     * than {@value #MAXIMUM_ZIP_ENTRIES} entries is refused, so the work an archive can cause stays bounded whatever it
+     * holds.
+     *
+     * @param input            the archive
+     * @param maximumEntrySize the size, in bytes, an accepted file in the archive may have at most
+     * @param maximumTotalSize the size, in bytes, the files of the archive may have together at most, once decompressed
+     * @param accepted         whether a file, by its name in the archive, is read
+     * @return the text of each accepted file
+     * @throws IOException when the archive cannot be read
+     */
+    public static List<String> readZipEntries(final InputStream input, final int maximumEntrySize,
+                                              final long maximumTotalSize, final Predicate<String> accepted)
+            throws IOException {
+        val entries = new ArrayList<String>();
+        val buffer = new byte[BUFFER_LENGTH * 8];
+        var total = 0L;
+        var count = 0;
+        try (val zip = new ZipInputStream(input, StandardCharsets.UTF_8)) {
+            for (var entry = zip.getNextEntry(); entry != null; entry = zip.getNextEntry()) {
+                count++;
+                if (count > MAXIMUM_ZIP_ENTRIES) {
+                    throw new IllegalArgumentException("Archive holds more than %s entries".formatted(MAXIMUM_ZIP_ENTRIES));
+                }
+                if (!entry.isDirectory() && accepted.test(entry.getName())) {
+                    val content = zip.readNBytes(maximumEntrySize + 1);
+                    if (content.length > maximumEntrySize) {
+                        throw new IllegalArgumentException("Archive entry %s is larger than %s bytes".formatted(entry.getName(), maximumEntrySize));
+                    }
+                    total += content.length;
+                    entries.add(new String(content, StandardCharsets.UTF_8));
+                } else {
+                    for (var read = zip.read(buffer); read >= 0 && total <= maximumTotalSize; read = zip.read(buffer)) {
+                        total += read;
+                    }
+                }
+                if (total > maximumTotalSize) {
+                    throw new IllegalArgumentException("Archive is larger than %s bytes once decompressed".formatted(maximumTotalSize));
+                }
+            }
+        }
+        return entries;
     }
 }

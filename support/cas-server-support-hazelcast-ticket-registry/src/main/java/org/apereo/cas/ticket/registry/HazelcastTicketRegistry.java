@@ -305,6 +305,33 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
+     * Answers a query from the map of the asked ticket type alone: the ticket with the asked id, the tickets of the asked
+     * principal through the principal index, or else every ticket of the map, read a batch at a time. Expired tickets
+     * are left out.
+     *
+     * @param criteria the criteria
+     * @return the tickets, decoded when asked
+     */
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val ticketMap = StringUtils.isBlank(criteria.getType()) ? null : getTicketMapInstanceByPrefix(criteria.getType());
+        if (ticketMap == null) {
+            return List.of();
+        }
+        val documents = StringUtils.isNotBlank(criteria.getId())
+            ? Stream.ofNullable(ticketMap.get(digestIdentifier(criteria.getId())))
+            : StringUtils.isNotBlank(criteria.getPrincipal())
+                ? ticketMap.values(Predicates.equal("principal", digestPrincipal(criteria.getPrincipal()))).stream()
+                : streamTicketDocuments(ticketMap);
+        return documents
+            .map(document -> criteria.isDecode() ? toTicket(document) : SerializationUtils.deserialize(document.getTicket(), Ticket.class))
+            .filter(Objects::nonNull)
+            .filter(ticket -> !ticket.isExpired())
+            .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+            .collect(Collectors.toList());
+    }
+
+    /**
      * Streams tickets of all ticket maps, in catalog order and by key within a map.
      * The criteria apply to the whole registry, not to each map: {@code from} tickets are skipped
      * and at most {@code count} tickets are returned.

@@ -21,7 +21,8 @@ async function startUnsolicitedSso(page, entityId) {
 
 /*
  * Metadata that fails a filter (signature trust, required signed root, certificate expiry) is not loaded at all,
- * so the service provider has no metadata and unsolicited SSO is refused before any login.
+ * so the service provider has no metadata and unsolicited SSO is refused before any login. In an aggregate,
+ * certificate expiry only removes the entities whose certificates expired.
  */
 async function assertMetadataRefused(page, entityId, reason) {
     await cas.logg(`${entityId} must be refused: ${reason}`);
@@ -66,6 +67,8 @@ async function assertMetadataTrusted(page, entityId, reason) {
             "the aggregate is not signed and the service requires a signed root");
         await assertMetadataRefused(page, "https://localhost:9859/sig-expired-cert",
             "the certificate in the service provider metadata has expired and metadata certificates are validated");
+        await assertMetadataRefused(page, "https://localhost:9859/sig-aggregate-expired-cert",
+            "the certificate of this entity of the aggregate has expired and metadata certificates are validated");
 
         await assertMetadataTrusted(page, "https://localhost:9859/sig-trusted",
             "the aggregate is signed by the certificate the service trusts");
@@ -73,6 +76,8 @@ async function assertMetadataTrusted(page, entityId, reason) {
             "the aggregate is not signed and the service does not require a signed root");
         await assertMetadataTrusted(page, "https://localhost:9859/sig-expired-cert-unchecked",
             "the certificate in the metadata has expired, but metadata certificates are not validated");
+        await assertMetadataTrusted(page, "https://localhost:9859/sig-aggregate-valid-cert",
+            "the certificate of this entity is valid, though another entity of the same aggregate is refused for an expired one");
         success = true;
     } finally {
         if (success) {

@@ -13,4 +13,4 @@ Export CAS metrics to Datadog, which receives them periodically using your API k
 Datadog registry pushes metrics to `datadoghq` periodically. To export
 metrics to Datadog, your API key must be provided:
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.datadog" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.datadog.metrics.export" %}
