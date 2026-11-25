@@ -1,6 +1,6 @@
 /* global $, CAS_FEATURES, CasActuatorEndpoints, PalantirDashboardConfiguration, openRegisteredServiceWizardDialog,
    isPopulatingWizard, ace, currentActiveTab, Swal, fetchServices, PalantirSamlMetadataImport, PalantirSamlMetadataNames, PalantirSamlMetadataUpload,
-   Tabs, PalantirScripts, RegisteredServiceSections, registeredServicesById, PalantirSamlMetadataHealth */
+   Tabs, PalantirScripts, RegisteredServiceSections */
 const assert = require("assert");
 const path = require("path");
 const cas = require("../../cas.js");
@@ -325,7 +325,8 @@ async function verifySamlMetadataManage(page) {
 /**
  * Register the SAML2 test service provider with its metadata URL, check the health of its metadata from the menu of
  * its card, and check that the metadata is downloaded, holds the service provider and is resolved by CAS, and that the
- * metadata is shown; then delete the application.
+ * metadata is shown; then delete the application. The card's menu does not always open on the first click on a slower
+ * machine, so it is opened again until it offers the check.
  *
  * @param page the puppeteer page
  */
@@ -359,39 +360,18 @@ async function verifySamlMetadataHealth(page) {
     await page.evaluate(() => $("#applicationsTable").DataTable().search("MetadataHealthExample").draw());
     const menu = `#applicationsCards .palantir-application-card[data-service-id="${serviceId}"] [data-application-action="menu"]`;
     await page.waitForSelector(menu, {visible: true, timeout: 30000});
-    await page.click(menu);
-    try {
-        await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").setTimeout(15000).click();
-    } catch (error) {
-        const state = await page.evaluate((id) => {
-            const service = registeredServicesById.get(String(id));
-            const items = $(".context-menu-list .context-menu-item").filter((index, item) => $(item).text().includes("Metadata Health"));
-            return {
-                viewport: {width: window.innerWidth, height: window.innerHeight, scrollY: window.scrollY},
-                lists: $(".context-menu-list").length,
-                visibleLists: $(".context-menu-list:visible").length,
-                visibleItems: $(".context-menu-list:visible .context-menu-item:visible").map((index, item) => $(item).text().trim()).get(),
-                healthItems: items.map((index, item) => ({
-                    display: getComputedStyle(item).display,
-                    visible: $(item).is(":visible"),
-                    disabled: $(item).hasClass("context-menu-disabled"),
-                    rect: JSON.stringify(item.getBoundingClientRect())
-                })).get(),
-                serviceKnown: Boolean(service),
-                serviceClass: service?.["@class"] ?? null,
-                cacheEndpoint: Boolean(CasActuatorEndpoints.samlIdpRegisteredServiceMetadataCache()),
-                applies: typeof PalantirSamlMetadataHealth === "undefined" ? "undefined" : PalantirSamlMetadataHealth.applies(service),
-                rowFound: $("#applicationsTable tbody tr").filter((index, row) => {
-                    const data = $("#applicationsTable").DataTable().row(row).data();
-                    return String(data?.serviceId) === String(id);
-                }).length,
-                layer: $("#context-menu-layer:visible").length
-            };
-        }, serviceId);
-        await cas.logr(`Check Metadata Health could not be clicked: ${JSON.stringify(state)}`);
-        await cas.screenshot(page);
-        throw error;
+    let opened = false;
+    for (let attempt = 1; attempt <= 3 && !opened; attempt++) {
+        await page.click(menu);
+        opened = await page.waitForFunction(() => $(".context-menu-list:visible .context-menu-item:visible")
+            .filter((index, item) => $(item).text().includes("Check Metadata Health")).length > 0, {timeout: 5000})
+            .then(() => true, () => false);
+        if (!opened) {
+            await cas.logy(`The menu of application ${serviceId} did not open on click ${attempt}`);
+        }
     }
+    assert(opened, `The menu of application ${serviceId} offers Check Metadata Health`);
+    await page.locator(".context-menu-list ::-p-text(Check Metadata Health)").click();
     await page.waitForFunction(() => $("#samlMetadataHealthDialog").dialog("instance") !== undefined
         && $("#samlMetadataHealthDialog").dialog("isOpen")
         && ["ok", "warn", "fail"].includes($("#samlMetadataHealthSummary").attr("data-status")), {timeout: 60000});
@@ -430,6 +410,8 @@ async function verifySamlMetadataHealth(page) {
  * Delete the applications an earlier attempt of this scenario left behind, found by name. In-process retries run
  * against the same CAS server, so a step that failed before deleting what it created would otherwise meet its own
  * leftovers on the next attempt.
+ * The Applications page is not open yet, and opening it reads the applications, so they are not read again here:
+ * in CI, the attempts that read them first, before the page had built its table, stopped answering.
  *
  * @param page the puppeteer page
  * @param names the names of the applications this scenario creates
@@ -444,9 +426,6 @@ async function removeLeftoverApplications(page, names) {
                 method: "DELETE",
                 headers: {"Content-Type": "application/json"}
             });
-        }
-        if (services.length > 0) {
-            await fetchServices();
         }
         return services.map((service) => `${service.name} (${service.id})`);
     }, names);
