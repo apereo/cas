@@ -362,6 +362,15 @@ async function verifySamlMetadataHealth(page) {
     await page.waitForSelector(menu, {visible: true, timeout: 30000});
     let opened = false;
     for (let attempt = 1; attempt <= 3 && !opened; attempt++) {
+        const covered = await page.evaluate((selector) => {
+            const button = document.querySelector(selector);
+            const bounds = button.getBoundingClientRect();
+            const top = document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+            return button.contains(top) ? null : `${top?.tagName ?? "nothing"}#${top?.id ?? ""}.${String(top?.className ?? "").replace(/\s+/g, ".")}`;
+        }, menu);
+        if (covered !== null) {
+            await cas.logy(`The menu button of application ${serviceId} is covered by ${covered} before click ${attempt}`);
+        }
         await page.click(menu);
         opened = await page.waitForFunction(() => $(".context-menu-list:visible .context-menu-item:visible")
             .filter((index, item) => $(item).text().includes("Check Metadata Health")).length > 0, {timeout: 5000})
