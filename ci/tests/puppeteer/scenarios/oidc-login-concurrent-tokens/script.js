@@ -1,4 +1,6 @@
 const assert = require("assert");
+const axios = require("axios");
+const https = require("https");
 const cas = require("../../cas.js");
 const performance = require("perf_hooks").performance;
 const fs = require("fs");
@@ -108,4 +110,21 @@ async function printSummary(durations) {
         await cas.separator();
         await printSummary(idTokenDurations);
     });
+
+    await cas.separator();
+    const tokensUrl = "https://localhost:8443/cas/actuator/oauthTokens";
+    const listTokens = async (url) => (await axios.get(url, {
+        httpsAgent: new https.Agent({rejectUnauthorized: false}),
+        headers: {"Accept": "application/json"},
+        timeout: 60000
+    })).data;
+    const all = await listTokens(tokensUrl);
+    const start = performance.now();
+    const issued = await listTokens(`${tokensUrl}?username=client`);
+    const duration = performance.now() - start;
+    const ids = issued.map((token) => token.id);
+    await cas.log(`Tokens: ${all.length} in all, ${issued.length} issued to client, found in ${duration.toFixed(2)} ms`);
+    assert(issued.length >= totalTokens);
+    assert(issued.length === all.length);
+    assert(new Set(ids).size === ids.length);
 })();

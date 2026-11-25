@@ -44,7 +44,17 @@ async function replayToken(execution, token) {
     assert(body.includes(TOKEN_FAILURE), "Replayed token must be refused");
 }
 
+async function tokenFromSms(sms) {
+    const message = await sms.waitForMessage("1234567890", (msg) => msg.text.startsWith("Passwordless:"));
+    sms.clear();
+    assert(message.from === "3477465300");
+    const token = message.text.substring("Passwordless:".length).split("\n")[0];
+    assert(message.text === `Passwordless:${token}\n\n@localhost #${token}`, `Unexpected SMS text ${message.text}`);
+    return token;
+}
+
 (async () => {
+    const sms = await cas.mockSmsServer();
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
@@ -69,9 +79,12 @@ async function replayToken(execution, token) {
     await cas.attributeValue(page, "#token", "type", "text");
     await cas.assertAccessibility(page, "Passwordless token");
 
-    const code = await cas.extractFromEmail(browser);
+    const emailedCode = await cas.extractFromEmail(browser);
+    const code = await tokenFromSms(sms);
+    assert(code === emailedCode, `The token sent by SMS ${code} must be the one sent by email ${emailedCode}`);
     const execution = await cas.elementValue(page, "#fm1 input[name=execution]");
 
+    await cas.log("Logging in with the token received by SMS");
     await submitToken(page, code);
 
     await cas.assertCookie(page);
@@ -113,4 +126,5 @@ async function replayToken(execution, token) {
     await assertTokenRefused(page);
 
     await cas.closeBrowser(browser);
+    await sms.close();
 })();

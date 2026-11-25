@@ -37,7 +37,7 @@ let cas = {
         if (banners != null) {
             banners.forEach(b => new mdc.banner.MDCBanner(b))
         }
-        let dialogs = document.querySelectorAll(`${selector} .mdc-dialog`);
+        let dialogs = document.querySelectorAll(`${selector} .mdc-dialog:not(#cas-notification-dialog)`);
         if (dialogs != null) {
             dialogs.forEach(b => new mdc.dialog.MDCDialog.attachTo(b))
         }

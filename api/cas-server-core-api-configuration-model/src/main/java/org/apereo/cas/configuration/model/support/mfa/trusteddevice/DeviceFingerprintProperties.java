@@ -53,7 +53,7 @@ public class DeviceFingerprintProperties implements Serializable {
     /**
      * Configure usage of browser within trusted device fingerprints.
      */
-    private GeoLocation browser = new GeoLocation();
+    private Browser browser = new Browser();
 
     @Getter
     @Setter
@@ -154,7 +154,7 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final long serialVersionUID = -4125531035180836136L;
 
         /**
-         * Default Order for GeoLocation component.
+         * Default Order for Browser component.
          */
         private static final int DEFAULT_ORDER = 5;
 

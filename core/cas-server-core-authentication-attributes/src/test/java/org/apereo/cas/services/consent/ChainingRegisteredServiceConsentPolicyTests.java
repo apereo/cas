@@ -2,9 +2,12 @@ package org.apereo.cas.services.consent;
 
 import module java.base;
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.services.RegisteredServiceConsentPolicy;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,6 +18,34 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("RegisteredService")
 class ChainingRegisteredServiceConsentPolicyTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Test
+    void verifyChainReadFromJson() {
+        val json = """
+            {
+              "@class": "org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy",
+              "policies": [ "java.util.ArrayList", [
+                {
+                  "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+                  "status": "TRUE",
+                  "excludedAttributes": [ "java.util.LinkedHashSet", [ "cn" ] ]
+                },
+                {
+                  "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+                  "excludedAttributes": [ "java.util.LinkedHashSet", [ "mail" ] ]
+                }
+              ]]
+            }
+            """;
+        val chain = (ChainingRegisteredServiceConsentPolicy) MAPPER.readValue(json, RegisteredServiceConsentPolicy.class);
+        assertEquals(2, chain.getPolicies().size());
+        assertEquals(Set.of("cn", "mail"), chain.getExcludedAttributes());
+        assertTrue(chain.getStatus().isTrue());
+        val written = MAPPER.writeValueAsString(chain);
+        assertEquals(chain, MAPPER.readValue(written, RegisteredServiceConsentPolicy.class));
+    }
 
     @Test
     void verifyOperation() {

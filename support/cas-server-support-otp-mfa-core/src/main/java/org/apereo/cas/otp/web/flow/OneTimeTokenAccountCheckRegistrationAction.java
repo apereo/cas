@@ -32,8 +32,8 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractMultifac
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
         val uid = principal.getId();
 
-        val accounts = repository.get(uid);
-        if (accounts == null || accounts.isEmpty()) {
+        val accounts = repository.getForCurrentTenant(uid);
+        if (accounts.isEmpty()) {
             return routeToRegistration(requestContext, principal);
         }
         if (accounts.size() > 1) {

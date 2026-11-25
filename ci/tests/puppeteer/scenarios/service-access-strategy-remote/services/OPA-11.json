@@ -1,0 +1,16 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/pdp-opa.*",
+  "id": 11,
+  "name": "OPA",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.OpenPolicyAgentRegisteredServiceAccessStrategy",
+    "apiUrl": "http://localhost:5611/opa/",
+    "decision": "cas/authz/allow",
+    "token": "opa-token",
+    "context": {
+      "@class": "java.util.TreeMap",
+      "tier": "gold"
+    }
+  }
+}

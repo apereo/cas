@@ -546,6 +546,7 @@ public class LdapUtils {
                 }
             }
         }
+        LdapConnectionFactoryRegistry.register(pooledCf, props);
         LOGGER.debug("Initializing LDAP connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
         pooledCf.initialize();
         return pooledCf;
@@ -883,7 +884,9 @@ public class LdapUtils {
     public static ConnectionFactory newLdaptiveDefaultConnectionFactory(final AbstractLdapProperties properties) {
         LOGGER.debug("Creating LDAP connection factory for [{}]", properties.getLdapUrl());
         val connectionConfig = newLdaptiveConnectionConfig(properties);
-        return new DefaultConnectionFactory(connectionConfig);
+        val factory = new DefaultConnectionFactory(connectionConfig);
+        LdapConnectionFactoryRegistry.register(factory, properties);
+        return factory;
     }
 
     /**

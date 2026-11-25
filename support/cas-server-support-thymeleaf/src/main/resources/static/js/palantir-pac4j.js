@@ -1,14 +1,11 @@
 function removeIdentityProvider(idp, type) {
     if (PalantirDashboardConfiguration.mutablePropertySourcesAvailable() && CasActuatorEndpoints.casConfig()) {
-        Swal.fire({
-            title: `Are you sure you want to delete ${idp}?`,
+        PalantirDialogs.confirm({
+            title: `Are You Sure You Want to Delete ${idp}?`,
             text: `
                 Removing this identity provider is only possible if it's owned and managed by a dynamic configuration source.
                 Once removed, you may not be able to revert this.
-            `,
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            `
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -63,7 +60,7 @@ function removeIdentityProvider(idp, type) {
                                         Promise.all(requests)
                                             .then(() => {
                                                 $.get(CasActuatorEndpoints.env(), res => {
-                                                    reloadConfigurationTable(res);
+                                                    reloadPalantirConfigurationTable(res);
                                                     refreshCasServerConfiguration(`The identity provider ${idp} has been removed.`);
                                                 })
                                                     .fail((xhr) => {
@@ -130,23 +127,18 @@ function configureSaml2ClientMetadataButtons() {
         $.get(url, payload => showSamlMetadata(payload));
     }
 
-    function showSaml2ClientIdpMetadata(clientName) {
+    async function showSaml2ClientIdpMetadata(clientName) {
         const url = `${PalantirDashboardConfiguration.casServerPrefix()}/sp/${clientName}/idp/metadata`;
-
-        Swal.fire({
-            icon: "info",
-            title: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
-            text: "Please wait while data is being retrieved...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
+        const {answered, value: payload} = await PalantirBusy.during({
+            region: "#delegatedClientsCards",
+            label: `Reading the identity provider metadata of ${clientName}`,
+            failure: `The identity provider metadata of ${clientName} could not be read`,
+            request: () => $.get(url)
         });
-
-        $.get(url, async payload => {
+        if (answered) {
             await showSamlMetadata(payload);
             await updateNavigationSidebar();
-            Swal.close();
-        });
+        }
     }
 
     initializeContextMenu({
@@ -229,7 +221,7 @@ function createExternalIdentityProviderCard(name, identityProvider) {
     identity.append($("<i>", {class: "mdi mdi-account-key", "aria-hidden": "true"}));
     const titleGroup = $("<div>", {class: "ticket-item-title-group"});
     titleGroup.append($("<code>", {class: "ticket-item-title"}).text(name));
-    titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("External identity provider"));
+    titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("External Identity Provider"));
     identity.append(titleGroup);
     header.append(identity);
     header.append($("<span>", {class: "ticket-item-badge ticket-item-badge-catalog"})
@@ -242,7 +234,7 @@ function createExternalIdentityProviderCard(name, identityProvider) {
         .append($("<i>", {class: "mdi mdi-tag-multiple", "aria-hidden": "true"}))
         .append(document.createTextNode(`${properties.length} ${properties.length === 1 ? "field" : "fields"}`)));
     if (properties.length === 0) {
-        fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No additional fields"));
+        fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No Additional Fields"));
     } else {
         const fieldList = $("<dl>", {class: "ticket-card-field-list"});
         for (const [fieldName, value] of properties) {
@@ -262,14 +254,6 @@ async function loadExternalIdentityProvidersTable() {
     $("#delegatedClientsSummary").addClass("d-none");
     if (CasActuatorEndpoints.delegatedClients()) {
         setExternalIdentityProviderStatus("mdi-loading mdi-spin", "Loading external identity providers...");
-        Swal.fire({
-            icon: "info",
-            title: `Loading Identity Providers`,
-            text: "Please wait while external identity providers are being retrieved...",
-            allowOutsideClick: false,
-            showConfirmButton: false,
-            didOpen: () => Swal.showLoading()
-        });
         $.get(CasActuatorEndpoints.delegatedClients(), response => {
             const identityProviders = response && typeof response === "object" && !Array.isArray(response)
                 ? Object.entries(response).sort(([first], [second]) => first.localeCompare(second))
@@ -289,7 +273,6 @@ async function loadExternalIdentityProvidersTable() {
             showElements($("#delegatedclients").parent());
             updateNavigationSidebar();
             configureSaml2ClientMetadataButtons();
-            Swal.close();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             delegatedClientsCards.empty();
@@ -298,7 +281,6 @@ async function loadExternalIdentityProvidersTable() {
             hideElements("#delegatedClientsContainer");
             hideElements($("#delegatedclients").parent());
             displayBanner(xhr);
-            Swal.close();
         });
     } else {
         delegatedClientsCards.empty();
@@ -655,8 +637,8 @@ function newExternalIdentityProvider() {
                             success: response => {
                                 $(this).dialog("close");
                                 $.get(CasActuatorEndpoints.env(), async res => {
-                                    reloadConfigurationTable(res);
-                                    refreshCasServerConfiguration(`New Property ${name} Created`);
+                                    reloadPalantirConfigurationTable(res);
+                                    refreshCasServerConfiguration("New External Identity Provider Created");
                                 })
                                     .fail((xhr) => {
                                         displayBanner(xhr);

@@ -135,12 +135,14 @@
                                     
                                         let nameSettings = {
                                             create: true,
+                                            createFilter: input => input.trim() !== "" && !/\s/.test(input),
+                                            addPrecedence: true,
                                             persist: false,
                                             dropdownParent: 'body',
                                             plugins: ['remove_button'],
                                             valueField: "id",
                                             labelField: "name",
-                                            searchField: ["id", "name", "description"],
+                                            searchField: [{field: "id", weight: 2}, {field: "description", weight: 0.5}],
                                             onChange: function(value) {
                                                 hideElements("#configurationPropertyInfo");
                                             

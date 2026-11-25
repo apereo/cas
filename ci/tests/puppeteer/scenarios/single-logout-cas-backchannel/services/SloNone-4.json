@@ -1,0 +1,7 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^http://localhost:5612/app-c.*",
+  "id": 4,
+  "name": "SloNone",
+  "logoutType": "NONE"
+}

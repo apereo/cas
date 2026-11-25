@@ -49,6 +49,10 @@ class CasDiscoveryProfile {
         return this.profile?.availableAttributes ?? [];
     }
 
+    static availableAuthenticationHandlers() {
+        return this.profile?.availableAuthenticationHandlers ?? [];
+    }
+
     static multifactorAuthenticationProviders() {
         return this.profile?.multifactorAuthenticationProviderTypesSupported ?? [];
     }

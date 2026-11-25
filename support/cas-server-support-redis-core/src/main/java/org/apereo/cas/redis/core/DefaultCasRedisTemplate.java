@@ -87,7 +87,7 @@ public class DefaultCasRedisTemplate<K, V> extends RedisTemplate<K, V> implement
                     IOUtils.closeQuietly(cursor);
                     connection.close();
                 });
-        } catch (final RuntimeException e) {
+        } catch (final Exception e) {
             connection.close();
             throw e;
         }

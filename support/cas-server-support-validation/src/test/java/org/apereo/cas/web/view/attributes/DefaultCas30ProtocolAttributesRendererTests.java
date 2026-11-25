@@ -38,7 +38,7 @@ class DefaultCas30ProtocolAttributesRendererTests {
             val rendered = renderer.render(Map.<String, Object>of(name, "casuser"));
             val line = rendered.iterator().next();
             assertTrue(SAFE_ELEMENT.matcher(line).matches(),
-                "Name [%s] rendered as [%s], which is not a single well-formed element".formatted(name, line));
+                () -> "Name [%s] rendered as [%s], which is not a single well-formed element".formatted(name, line));
         });
     }
 

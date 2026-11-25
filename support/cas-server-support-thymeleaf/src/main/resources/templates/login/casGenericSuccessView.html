@@ -31,13 +31,14 @@
                  th:if="${#cas.isTrue(#cas.theme('cas.successful-login.display-attributes'))}">
                 <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
                     <span th:utext="#{screen.success.attributes(${#strings.escapeXml(authentication.principal.id)})}">The following attributes and services are resolved and available for <strong>username</strong>:</span>
+                </p>
 
                     <div id="attribute-tabs" class="mdc-tab-bar cas-segmented" role="tablist">
                         <div class="mdc-tab-scroller">
                             <div class="mdc-tab-scroller__scroll-area">
                                 <div class="nav nav-tabs mdc-tab-scroller__scroll-content">
                                     <button id="principal-tab" type="button" class="mdc-tab nav-link" role="tab"
-                                            aria-selected="true" aria-controls="attribute-tab-0" data-toggle="tab" data-target="attribute-tab-0">
+                                            aria-selected="true" aria-controls="attribute-tab-0" data-bs-toggle="tab" data-bs-target="#attribute-tab-0">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.principal}">Principal</span>
                                             </span>
@@ -47,7 +48,7 @@
                                         <span class="mdc-tab__ripple"></span>
                                     </button>
                                     <button id="auth-tab" type="button" class="mdc-tab nav-link" role="tab"
-                                            aria-selected="false" aria-controls="attribute-tab-1" data-toggle="tab" data-target="attribute-tab-1">
+                                            aria-selected="false" aria-controls="attribute-tab-1" data-bs-toggle="tab" data-bs-target="#attribute-tab-1">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.authentication}">Authentication</span>
                                             </span>
@@ -58,7 +59,7 @@
                                     </button>
                                     <button id="services-tab" th:if="${authorizedServices}" type="button"
                                             class="mdc-tab nav-link" role="tab" aria-selected="false"
-                                            aria-controls="attribute-tab-2" data-toggle="tab" data-target="attribute-tab-2">
+                                            aria-controls="attribute-tab-2" data-bs-toggle="tab" data-bs-target="#attribute-tab-2">
                                             <span class="mdc-tab__content">
                                                 <span class="mdc-tab__text-label" th:utext="#{screen.success.tab.services}">Services</span>
                                             </span>
@@ -72,9 +73,9 @@
                         </div>
                     </div>
 
-                    <section id="attribute-tab-0" class="attribute-tab tab-pane active">
-                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes" role="tabpanel" aria-labelledby="principal-tab">
-                            <table id="attributesTable" class="table table-striped auto-init" style="white-space: unset">
+                    <section id="attribute-tab-0" class="attribute-tab tab-pane active" role="tabpanel" aria-labelledby="principal-tab">
+                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divPrincipalAttributes">
+                            <table id="attributesTable" class="table table-striped" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.attribute}">Attribute</th>
@@ -86,7 +87,7 @@
                                 <tr th:each="attribute : ${authentication.principal.attributes}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell"><code><kbd th:utext="${attribute.getKey()}"/></code></td>
                                     <td class="mdc-data-table__cell">
-                                        <code><kbd th:utext="${#strings.abbreviate(attribute.getValue(), 80)}"/></code>
+                                        <code><kbd th:text="${#strings.toString(attribute.getValue())}"/></code>
                                     </td>
                                 </tr>
 
@@ -95,9 +96,9 @@
                         </div>
                     </section>
 
-                    <section id="attribute-tab-1" class="d-none attribute-tab tab-pane">
-                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAuthenticationAttributes" role="tabpanel" aria-labelledby="auth-tab">
-                            <table id="attributesTable" class="mdc-data-table__table table table-striped auto-init" style="white-space: unset">
+                    <section id="attribute-tab-1" class="d-none attribute-tab tab-pane" role="tabpanel" aria-labelledby="auth-tab">
+                        <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divAuthenticationAttributes">
+                            <table id="authenticationAttributesTable" class="mdc-data-table__table table table-striped" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.attribute}">Attribute</th>
@@ -110,7 +111,7 @@
                                     th:each="attribute : ${authentication.attributes}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell attribute-key"><code><span th:utext="${attribute.getKey()}"/></code></td>
                                     <td class="mdc-data-table__cell attribute-value">
-                                        <code><kbd th:utext="${#strings.abbreviate(attribute.getValue(), 80)}"/></code>
+                                        <code><kbd th:text="${#strings.toString(attribute.getValue())}"/></code>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -118,12 +119,12 @@
                         </div>
                     </section>
 
-                    <section id="attribute-tab-2" class="d-none attribute-tab tab-pane" th:if="${authorizedServices}">
-                        <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices" role="tabpanel" aria-labelledby="services-tab">
-                            <table id="attributesTable" class="mdc-data-table__table table table-striped auto-init" style="white-space: unset">
+                    <section id="attribute-tab-2" class="d-none attribute-tab tab-pane" th:if="${authorizedServices}" role="tabpanel" aria-labelledby="services-tab">
+                        <div class="w-100 mdc-data-table mx-auto my-4" id="divAuthorizedServices">
+                            <table id="authorizedServicesTable" data-order='[[1,"asc"]]' class="mdc-data-table__table table table-striped" style="white-space: unset">
                                 <thead>
                                 <tr class="mdc-data-table__header-row">
-                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col" data-dt-order="disable"></th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.service}">Service</th>
                                     <th class="mdc-data-table__header-cell" role="columnheader" scope="col" th:utext="#{screen.success.column.description}">Description</th>
 
@@ -164,22 +165,43 @@
 
 
         <script type="text/javascript" th:inline="javascript">
-            let divs = ["divPrincipalAttributes", "divAuthenticationAttributes", "divAuthorizedServices"]
-            divs.forEach(id => {
-                let div = document.querySelector(`#${id}`);
-                if (div !== null) {
-                    $(() => {
-                        if (typeof mdc === 'undefined') {
-                            $('#principal-tab').tab('show');
-                            $('button[data-toggle="tab"]').on('shown.bs.tab', event => {
-                                let id = $(event.target).data('target');
-                                $('.tab-pane').addClass('d-none');
-                                $(`#${id}`).removeClass('d-none');
-
-                            })
-                        } else {
-                            
+            $(() => {
+                if (typeof $.fn.DataTable !== "undefined") {
+                    $("#view-genericsuccess-authn-data .mdc-data-table > table").DataTable({
+                        autoWidth: false,
+                        layout: {top2Start: "info", bottomStart: null},
+                        language: {
+                            search: /*[[#{screen.success.filter}]]*/ "Filter entries",
+                            aria: {
+                                orderable: /*[[#{screen.success.sort.ascending}]]*/ ", sort ascending",
+                                orderableReverse: /*[[#{screen.success.sort.descending}]]*/ ", sort descending"
+                            }
+                        },
+                        initComplete: function () {
+                            const input = this.api().table().container().querySelector(".dt-search input");
+                            if (!input) {
+                                return;
+                            }
+                            const clear = document.createElement("button");
+                            clear.type = "button";
+                            clear.textContent = /*[[#{screen.success.clearfilter}]]*/ "Clear filter";
+                            clear.setAttribute("aria-controls", input.getAttribute("aria-controls"));
+                            clear.disabled = !input.value;
+                            input.addEventListener("input", () => clear.disabled = !input.value);
+                            clear.addEventListener("click", () => {
+                                input.value = "";
+                                input.dispatchEvent(new Event("input", {bubbles: true}));
+                                input.focus();
+                            });
+                            input.after(clear);
                         }
+                    });
+                }
+                if (typeof $.fn.tab === "function") {
+                    $('#principal-tab').tab('show');
+                    $('#attribute-tabs button[data-bs-toggle="tab"]').on('shown.bs.tab', event => {
+                        $('.attribute-tab').addClass('d-none');
+                        document.getElementById(event.target.getAttribute('aria-controls')).classList.remove('d-none');
                     });
                 }
             });

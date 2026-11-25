@@ -226,6 +226,22 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    void verifyExpandedTicketsKeepTheirTenant() throws Throwable {
+        val tenant = UUID.randomUUID().toString();
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = RegisteredServiceTestUtils.getService("https://apereo.github.io/cas");
+        service.setTenant(tenant);
+        for (val ticket : newTicketsOfEveryType(authentication, service)) {
+            val foundTicket = newTicketRegistry.getTicket(newTicketRegistry.addTicket(ticket).getId());
+            assertNotNull(foundTicket, () -> "Ticket not found: " + ticket.getPrefix());
+            assertEquals(tenant, foundTicket.getTenantId(), () -> "Tenant lost: " + ticket.getPrefix());
+            if (foundTicket instanceof final ServiceAwareTicket serviceAware) {
+                assertEquals(tenant, serviceAware.getService().getTenant());
+            }
+        }
+    }
+
+    @RepeatedTest(2)
     void verifyTicketsCannotBeRelabelledAsAnotherType() throws Throwable {
         val tickets = newTicketsOfEveryType(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()));
         val addedIds = new ArrayList<String>();
@@ -294,9 +310,13 @@ class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     }
 
     private List<Ticket> newTicketsOfEveryType(final Authentication authentication) throws Throwable {
-        val service = RegisteredServiceTestUtils.getService("https://apereo.github.io/cas");
+        return newTicketsOfEveryType(authentication, RegisteredServiceTestUtils.getService("https://apereo.github.io/cas"));
+    }
+
+    private List<Ticket> newTicketsOfEveryType(final Authentication authentication, final Service service) throws Throwable {
         val tgt = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             authentication, new TicketGrantingTicketExpirationPolicy(5000, 2000));
+        tgt.setTenantId(service.getTenant());
         val serviceTicket = (ProxyGrantingTicketIssuerTicket) tgt.grantServiceTicket(UUID.randomUUID().toString(), service,
             new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 100), true, TicketTrackingPolicy.noOp());
         val proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(TestTicketIdentifiers.generate().proxyGrantingTicketId(),

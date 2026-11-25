@@ -77,8 +77,8 @@ description: "Change CAS views and presentation: Thymeleaf render path, theme re
 - Palantir, the admin dashboard: see the `cas-palantir` skill.
 - Header panels (`fragments/header.html`, `fragments/logindrawer.html`) carry `.cas-ui` and serve both themes: MDC
   (`MDCDialog`, modal `MDCDrawer` with its `.mdc-drawer-scrim` as the next sibling) and Bootstrap (`modal`, `offcanvas`), so
-  keep both class sets. The notification count is the number of `.cas-notification-message` items not `[hidden]`; an item
-  shown client-side starts `hidden`. The twbs theme does not load `cas.css` and styles them in its own `cas.css`. Puppeteer
+  keep both class sets. The badge counts visible unread `.cas-notification-message` items. Give each a stable id so opening the dialog can
+  mark it read for the current path in session storage. An item shown client-side starts `hidden`. The twbs theme does not load `cas.css` and styles them in its own `cas.css`. Puppeteer
   uses `#drawerButton`; `#drawerCloseButton` and `#cas-notifications-menu` are wired in `material.js`.
 
 ## Theme builder, theme properties and view previews

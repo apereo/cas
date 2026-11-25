@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.multitenancy.BaseMultitenancyTests;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.test.CasTestExtension;
@@ -43,6 +42,21 @@ class DefaultCipherExecutorResolverTests {
     private TenantExtractor tenantExtractor;
 
     @Test
+    void verifyTenantCipherOnlyForTenantCryptoSettings() {
+        val defaultCipher = CipherExecutor.noOp();
+        val resolver = new DefaultCipherExecutorResolver(defaultCipher, tenantExtractor,
+            "cas.tgc.crypto", bindingContext -> CipherExecutorUtils.newStringCipherExecutor(
+                bindingContext.value().getTgc().getCrypto(), TicketGrantingCookieCipherExecutor.class));
+        assertSame(defaultCipher, resolver.resolve(newTenantRequest("cookie-settings")));
+        assertSame(defaultCipher, resolver.resolve("cookie-settings"));
+
+        val tenantCipher = resolver.resolve(newTenantRequest("cookie"));
+        assertNotSame(defaultCipher, tenantCipher);
+        assertSame(tenantCipher, resolver.resolve(newTenantRequest("cookie")));
+        assertSame(tenantCipher, resolver.resolve("cookie"));
+    }
+
+    @Test
     void verifyOperation() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("185.86.151.12");
@@ -50,7 +64,7 @@ class DefaultCipherExecutorResolverTests {
         request.addHeader(HttpHeaders.USER_AGENT, "firefox");
         request.setContextPath("/cas/tenants/cookie/login");
         val resolver = new DefaultCipherExecutorResolver(CipherExecutor.noOp(), tenantExtractor,
-            TicketGrantingCookieProperties.class, bindingContext -> {
+            "cas.tgc.crypto", bindingContext -> {
             val properties = bindingContext.value();
             return CipherExecutorUtils.newStringCipherExecutor(properties.getTgc().getCrypto(), TicketGrantingCookieCipherExecutor.class);
         });
@@ -62,5 +76,14 @@ class DefaultCipherExecutorResolverTests {
         assertNotEquals(cookieValue, encoded);
         val decoded = cipher.decode(encoded);
         assertEquals(cookieValue, decoded);
+    }
+
+    private static MockHttpServletRequest newTenantRequest(final String tenant) {
+        val request = new MockHttpServletRequest();
+        request.setRemoteAddr("185.86.151.12");
+        request.setLocalAddr("185.88.151.11");
+        request.addHeader(HttpHeaders.USER_AGENT, "firefox");
+        request.setContextPath("/cas/tenants/%s/login".formatted(tenant));
+        return request;
     }
 }

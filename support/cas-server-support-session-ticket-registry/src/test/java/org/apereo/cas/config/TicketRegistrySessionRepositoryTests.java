@@ -167,6 +167,33 @@ class TicketRegistrySessionRepositoryTests {
         assertEquals(List.of("auditor"), Objects.requireNonNull(repository.findById("TST-stored")).getAttribute("roles"));
     }
 
+    /**
+     * The sessions of a principal are found among the transient session tickets the registry is asked for, without
+     * reading every ticket it holds.
+     */
+    @Test
+    void verifyFindByPrincipalNameReadsOnlySessionTickets() throws Throwable {
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTicket(anyString(), eq(TransientSessionTicket.class))).thenThrow(new InvalidTicketException("TST-missing"));
+        when(registry.addTicket(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        val repository = new TicketRegistrySessionRepository(new DirectObjectProvider<>(registry), new DirectObjectProvider<>(ticketFactory));
+
+        val session = new MapSession();
+        session.setAttribute(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, "casuser");
+        repository.save(session);
+        val other = new MapSession();
+        other.setAttribute(FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME, "someone");
+        repository.save(other);
+        val captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(registry, times(2)).addTicket(captor.capture());
+
+        when(registry.query(any())).thenAnswer(_ -> captor.getAllValues());
+        val found = repository.findByPrincipalName("casuser");
+        assertEquals(Set.of(TransientSessionTicketFactory.normalizeTicketId(session.getId())), found.keySet());
+        verify(registry, never()).getTickets(any());
+        verify(registry).query(argThat(criteria -> TransientSessionTicket.PREFIX.equals(criteria.getType()) && criteria.isDecode()));
+    }
+
     @Test
     void verifySaveKeepsPropertiesOfSharedTicket() throws Throwable {
         val session = new MapSession();
