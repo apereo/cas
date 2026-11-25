@@ -10,13 +10,13 @@ class PalantirHome {
     static MAX_SAMPLES = 30;
 
     static PAGES = {
-        system: () => Tabs.SYSTEM.index,
-        applications: () => Tabs.APPLICATIONS.index,
-        sessions: () => Tabs.SSO_SESSIONS.index
+        system: () => Tabs.SYSTEM,
+        applications: () => Tabs.APPLICATIONS,
+        sessions: () => Tabs.SSO_SESSIONS
     };
 
     static WIDGETS = [
-        {id: "status", title: "Server", span: 4, needs: ["server"], render: summary => PalantirHome.renderStatus(summary)},
+        {id: "status", title: "Server", span: 4, needs: ["server"], uses: ["health"], render: summary => PalantirHome.renderStatus(summary)},
         {id: "health", title: "System Health", span: 2, needs: ["health"], page: "system", render: summary => PalantirHome.renderHealth(summary)},
         {id: "resources", title: "Resources", span: 2, needs: ["resources"], page: "system", render: summary => PalantirHome.renderResources(summary)},
         {id: "http", title: "HTTP Requests", span: 2, needs: ["traffic"], page: "system", available: summary => Boolean(summary.sections.traffic?.http), render: summary => PalantirHome.renderHttp(summary)},
@@ -39,6 +39,11 @@ class PalantirHome {
     static timer = null;
     static dragged = null;
     static healthChart = null;
+    static refreshing = new Set();
+    static spotlight = null;
+    static queued = false;
+    static reads = 0;
+    static readings = {};
 
     static layout() {
         const ids = PalantirHome.WIDGETS.map(widget => widget.id);
@@ -103,6 +108,10 @@ class PalantirHome {
      * progress bar showing, rather than at the next refresh.
      */
     static activated() {
+        if (CasActuatorEndpoints.registeredServices()) {
+            PalantirScripts.whenIdle().then(() => prepareRegisteredServiceWizardWhenIdle(),
+                error => console.debug("The application wizard was not fetched ahead of use", error));
+        }
         if (PalantirHome.summary !== null && Date.now() - PalantirHome.fetched > PalantirHome.FRESH_FOR) {
             PalantirHome.refresh({visible: true});
         }
@@ -111,16 +120,16 @@ class PalantirHome {
     static async initialize() {
         PalantirHome.bind();
         if (PalantirHome.timer === null) {
-            PalantirHome.timer = setInterval(() => {
-                if (PalantirHome.visible()) {
-                    PalantirHome.refresh();
-                }
-            }, palantirSettings().refreshInterval);
+            PalantirHome.timer = PalantirPolling.every("home", () => PalantirHome.refresh(), {when: () => PalantirHome.visible()});
         }
         await PalantirHome.refresh({visible: true});
     }
 
     static bind() {
+        $("#homeRefresh").off("click").on("click", () => {
+            $("#homeRefresh").addClass("is-refreshing").attr("aria-busy", "true");
+            PalantirHome.refresh({visible: true, fresh: true});
+        });
         $("#homeCustomize").off("click").on("click", () => PalantirHome.toggleMenu());
         $("#homeCustomizeMenu").off("click keydown")
             .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
@@ -141,13 +150,20 @@ class PalantirHome {
                 PalantirHome.toggleMenu(false);
             }
         });
-        $("#homeGrid").off("click dragstart dragover dragleave drop dragend")
+        $("#homeGrid").off("click dragstart dragover dragleave drop dragend keydown")
             .on("click", "[data-home-action]", event => PalantirHome.act(event.currentTarget))
+            .on("keydown", event => {
+                if (event.key === "Escape" && PalantirHome.spotlight !== null) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    PalantirHome.setSpotlight(null);
+                }
+            })
             .on("click", "[data-home-application]", event => openTopApplication(event.currentTarget.dataset.homeApplication))
             .on("click", "[data-home-page]", event => {
                 const page = PalantirHome.PAGES[event.currentTarget.dataset.homePage];
                 if (page) {
-                    $(`nav.sidebar-navigation ul li[data-tab-index=${page()}]`).trigger("click");
+                    PalantirPages.open(page());
                 }
             })
             .on("dragstart", ".palantir-home__widget", event => {
@@ -219,7 +235,7 @@ class PalantirHome {
             class: "palantir-home__customize-item is-reset",
             "data-home-action": "reset"
         }).append($("<i>", {class: "mdi mdi-restore", "aria-hidden": "true"}))
-            .append($("<span>", {text: "Reset the layout"})));
+            .append($("<span>", {text: "Reset the Layout"})));
     }
 
     static act(button) {
@@ -227,7 +243,16 @@ class PalantirHome {
         const layout = PalantirHome.layout();
         const shown = layout.order.filter(entry => !layout.hidden.includes(entry) && PalantirHome.available(PalantirHome.widget(entry)));
         const position = shown.indexOf(id);
+        if (["hide", "show", "reset"].includes(button.dataset.homeAction)) {
+            PalantirHome.spotlight = null;
+        }
         switch (button.dataset.homeAction) {
+        case "spotlight":
+            PalantirHome.setSpotlight(PalantirHome.spotlight === id ? null : id);
+            return;
+        case "refresh":
+            PalantirHome.refreshWidget(id);
+            return;
         case "earlier":
         case "later": {
             const neighbor = shown[position + (button.dataset.homeAction === "earlier" ? -1 : 1)];
@@ -273,6 +298,82 @@ class PalantirHome {
     }
 
     /**
+     * Put a card in the spotlight, or take the one there out of it: the other cards are put away and the card fills the
+     * page, until it leaves the spotlight and the page is as it was. Only the page shows it; the layout is not changed.
+     *
+     * @param id the card to put in the spotlight, or null to leave it
+     */
+    static setSpotlight(id) {
+        const leaving = PalantirHome.spotlight;
+        PalantirHome.spotlight = id;
+        PalantirHome.applySpotlight();
+        const title = PalantirHome.widget(id ?? leaving)?.title ?? "The card";
+        PalantirHome.announce(id ? `${title} is in the spotlight; the other cards are put away.` : `${title} left the spotlight.`);
+        const card = $(`#homeGrid [data-home-widget="${id ?? leaving}"]`);
+        card.find('[data-home-action="spotlight"]').trigger("focus");
+        if (id && card.length > 0) {
+            card[0].scrollIntoView({block: "nearest", behavior: "smooth"});
+        }
+    }
+
+    /**
+     * Show the spotlight as it stands on the cards on the page: the card in it is marked and its button says it leaves
+     * the spotlight, and a card in the spotlight that is no longer shown takes the spotlight with it.
+     */
+    static applySpotlight() {
+        const grid = $("#homeGrid");
+        const cards = grid.children("[data-home-widget]");
+        if (PalantirHome.spotlight !== null && !cards.toArray().some(card => card.dataset.homeWidget === PalantirHome.spotlight)) {
+            PalantirHome.spotlight = null;
+        }
+        const id = PalantirHome.spotlight;
+        grid.toggleClass("is-spotlight", id !== null);
+        cards.each((index, card) => {
+            const spotlit = card.dataset.homeWidget === id;
+            const title = PalantirHome.widget(card.dataset.homeWidget)?.title ?? "";
+            $(card).toggleClass("is-spotlight", spotlit).attr("draggable", String(id === null));
+            $(card).find('[data-home-action="spotlight"]')
+                .attr({
+                    "aria-pressed": String(spotlit),
+                    title: spotlit ? "Leave the Spotlight" : "Spotlight",
+                    "aria-label": `${spotlit ? "Leave the Spotlight" : "Spotlight"}: ${title}`
+                })
+                .find("i").attr("class", `mdi ${spotlit ? "mdi-arrow-collapse-all" : "mdi-arrow-expand-all"}`);
+        });
+        PalantirHome.magnifyHealthChart();
+    }
+
+    /**
+     * Draw the text of the health chart as large as the rest of its card: the chart is a canvas, which the magnifying
+     * of a card in the spotlight does not reach, so its labels are sized to match it, and back when it leaves.
+     */
+    static magnifyHealthChart() {
+        const chart = PalantirHome.healthChart;
+        if (!chart) {
+            return;
+        }
+        const spotlit = $(chart.canvas).closest(".palantir-home__widget").hasClass("is-spotlight");
+        const zoom = spotlit ? Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--palantir-spotlight-zoom")) || 1 : 1;
+        const size = Math.round((Chart.defaults.font.size ?? 12) * zoom);
+        const font = zoom === 1 ? undefined : {size};
+        const set = (options, key) => {
+            if (font) {
+                options[key] = font;
+            } else {
+                delete options[key];
+            }
+        };
+        Object.keys(chart.config.options.scales ?? {}).forEach(axis => set(chart.config.options.scales[axis].ticks ??= {}, "font"));
+        const tooltip = chart.config.options.plugins?.tooltip;
+        if (tooltip) {
+            set(tooltip, "bodyFont");
+            set(tooltip, "titleFont");
+        }
+        chart.resize();
+        chart.update("none");
+    }
+
+    /**
      * Ask for the summary again when a widget brought back reads a section the last summary did not include.
      */
     static refreshIfMissing() {
@@ -291,39 +392,36 @@ class PalantirHome {
     }
 
     /**
-     * Ask for the summary and draw it. A refresh asked for while one is waiting for the server is skipped; a summary
-     * that cannot be read leaves the widgets as they were and says so.
+     * Ask for the summary and draw it. A refresh asked for while one is waiting for the server is skipped, unless the
+     * operator asked for it, in which case it runs once the one under way is done; a summary that cannot be read
+     * leaves the widgets as they were and says so.
      *
+     * @param visible whether to show the progress bar while the summary is read
+     * @param fresh whether the operator asked for it, so the server computes every section again
      * @returns {Promise<void>} resolved once the widgets are drawn
      */
-    static async refresh({visible = false} = {}) {
+    static async refresh({visible = false, fresh = false} = {}) {
         if (PalantirHome.pending) {
+            PalantirHome.queued = PalantirHome.queued || fresh;
             return;
         }
         const wanted = PalantirHome.wantedSections();
         if (wanted.length === 0) {
             PalantirHome.summary = PalantirHome.summary ?? {sections: {}};
+            $("#homeRefresh").removeClass("is-refreshing").attr("aria-busy", "false");
             PalantirHome.render();
             return;
         }
         PalantirHome.pending = true;
+        $("#homeRefresh").toggleClass("is-refreshing", fresh).attr("aria-busy", String(fresh));
         const progress = visible
             ? setTimeout(() => $("#homeProgress").prop("hidden", PalantirHome.summary === null), PalantirHome.PROGRESS_DELAY)
             : null;
         try {
-            const query = new URLSearchParams({sections: wanted.join(",")});
-            const response = await fetch(`${retrieveDashboardUrl()}/overview?${query}`, {credentials: "include", headers: {"Accept": "application/json"}});
-            if (!response.ok) {
-                throw new Error(`${response.status}`);
-            }
-            PalantirHome.summary = await response.json();
+            const read = ++PalantirHome.reads;
+            PalantirHome.sample(PalantirHome.apply(await PalantirHome.read(wanted, fresh), read));
             PalantirHome.fetched = Date.now();
-            const sessions = PalantirHome.summary.sections?.tickets?.sessions;
-            if (Number.isFinite(sessions)) {
-                PalantirHome.sessions = [...PalantirHome.sessions, sessions].slice(-PalantirHome.MAX_SAMPLES);
-            }
-            PalantirHome.sampleRequests(PalantirHome.summary.sections.traffic?.http?.count);
-            $("#homeUpdated").text(`Updated ${new Date().toLocaleTimeString()} · every ${Math.round(palantirSettings().refreshInterval / 1000)} s`);
+            $("#homeUpdated").text(`Updated ${new Date().toLocaleTimeString()} · every ${Math.round(palantirSettings().refreshInterval / 1000)}s`);
             if (currentActiveTab === Tabs.HOME.index) {
                 $("#palantirPageTitle").text(palantirGreeting());
             }
@@ -335,12 +433,106 @@ class PalantirHome {
         } finally {
             clearTimeout(progress);
             $("#homeProgress").prop("hidden", true);
+            if (!PalantirHome.queued) {
+                $("#homeRefresh").removeClass("is-refreshing").attr("aria-busy", "false");
+            }
             PalantirHome.pending = false;
         }
-        if (PalantirHome.again) {
+        if (PalantirHome.queued) {
+            PalantirHome.queued = false;
+            PalantirHome.again = false;
+            await PalantirHome.refresh({visible: true, fresh: true});
+        } else if (PalantirHome.again) {
             PalantirHome.again = false;
             PalantirHome.refreshIfMissing();
         }
+    }
+
+    /**
+     * Read the summary of some sections from the server.
+     *
+     * @param sections the section names
+     * @param fresh whether the server should compute them again rather than use the values it kept
+     * @returns {Promise<object>} the summary
+     */
+    static async read(sections, fresh) {
+        const query = new URLSearchParams({sections: sections.join(",")});
+        if (fresh) {
+            query.set("fresh", "true");
+        }
+        const response = await fetch(`${retrieveDashboardUrl()}/overview?${query}`, {credentials: "include", headers: {"Accept": "application/json"}});
+        if (!response.ok) {
+            throw new Error(`${response.status}`);
+        }
+        return response.json();
+    }
+
+    /**
+     * Take the sections of a summary that are newer than what the page shows. The page and its cards read sections
+     * independently, so an answer to an earlier request, such as the page's own refresh, can arrive after a card was
+     * refreshed; a section is only taken from an answer to a request made after the one it was last taken from.
+     *
+     * @param summary the summary read
+     * @param read the number of the request it answers, counted when the request was made
+     * @returns {object} the summary of the sections taken
+     */
+    static apply(summary, read) {
+        const taken = Object.fromEntries(Object.entries(summary?.sections ?? {})
+            .filter(([name]) => read > (PalantirHome.readings[name] ?? 0)));
+        Object.keys(taken).forEach(name => PalantirHome.readings[name] = read);
+        PalantirHome.summary = {
+            ...(PalantirHome.summary ?? {}),
+            ...summary,
+            sections: {...(PalantirHome.summary?.sections ?? {}), ...taken}
+        };
+        return {sections: taken};
+    }
+
+    /**
+     * Keep the readings the sparklines draw from a summary.
+     *
+     * @param summary the summary, or part of it
+     */
+    static sample(summary) {
+        const sessions = summary.sections?.tickets?.sessions;
+        if (Number.isFinite(sessions)) {
+            PalantirHome.sessions = [...PalantirHome.sessions, sessions].slice(-PalantirHome.MAX_SAMPLES);
+        }
+        PalantirHome.sampleRequests(summary.sections?.traffic?.http?.count);
+    }
+
+    /**
+     * Read again only the sections one card shows, and redraw the page with them; the other cards keep what they
+     * show. The card's refresh button turns while the read is under way.
+     *
+     * @param id the card
+     * @returns {Promise<void>} resolved once the card is drawn
+     */
+    static async refreshWidget(id) {
+        const widget = PalantirHome.widget(id);
+        if (!widget || PalantirHome.refreshing.has(id)) {
+            return;
+        }
+        PalantirHome.refreshing.add(id);
+        PalantirHome.markRefreshing(id, true);
+        try {
+            const read = ++PalantirHome.reads;
+            PalantirHome.sample(PalantirHome.apply(await PalantirHome.read([...new Set([...widget.needs, ...(widget.uses ?? [])])], true), read));
+            PalantirHome.announce(`${widget.title} updated ${new Date().toLocaleTimeString()}`);
+        } catch (error) {
+            console.warn(`The ${widget.id} card could not be read just now:`, error);
+            PalantirHome.announce(`${widget.title} could not be read just now; trying again at the next refresh.`);
+        } finally {
+            PalantirHome.refreshing.delete(id);
+            PalantirHome.render();
+            PalantirHome.markRefreshing(id, false);
+        }
+    }
+
+    static markRefreshing(id, refreshing) {
+        $(`#homeGrid [data-home-action="refresh"][data-home-for="${id}"]`)
+            .toggleClass("is-refreshing", refreshing)
+            .attr("aria-busy", String(refreshing));
     }
 
     static render() {
@@ -360,23 +552,55 @@ class PalantirHome {
                 : active.dataset.homePage ? `[data-home-widget="${active.closest("[data-home-widget]")?.dataset.homeWidget}"] [data-home-page]`
                     : active.dataset.homeApplication ? `[data-home-application="${CSS.escape(active.dataset.homeApplication)}"]` : null)
             : null;
-        grid.empty();
         const shown = layout.order
             .filter(id => !layout.hidden.includes(id))
             .map(id => PalantirHome.widget(id))
             .filter(widget => PalantirHome.available(widget));
-        shown.forEach((widget, index) => grid.append(PalantirHome.frame(widget, index, shown.length)));
-        if (layout.order.every(id => layout.hidden.includes(id))) {
-            grid.append($("<p>", {class: "palantir-home__muted palantir-home__empty",
-                text: "Every card is hidden. Bring them back from Customize."}));
+        const cards = grid.children();
+        const unchanged = shown.length > 0 && cards.length === shown.length
+            && shown.every((widget, index) => cards[index].dataset.homeWidget === widget.id);
+        if (unchanged) {
+            shown.forEach((widget, index) => PalantirHome.update(cards.eq(index), PalantirHome.frame(widget, index, shown.length)));
+        } else {
+            grid.empty();
+            shown.forEach((widget, index) => grid.append(PalantirHome.frame(widget, index, shown.length)));
+            if (layout.order.every(id => layout.hidden.includes(id))) {
+                grid.append($("<p>", {class: "palantir-home__muted palantir-home__empty",
+                    text: "Every card is hidden. Bring them back from Customize."}));
+            }
         }
         if (!$("#homeCustomizeMenu").prop("hidden")) {
             PalantirHome.renderMenu();
         }
         PalantirHome.drawHealthChart();
+        PalantirHome.applySpotlight();
         if (restore) {
             grid.find(restore).first().trigger("focus");
         }
+    }
+
+    /**
+     * Bring a card already on the page up to date with a newly drawn one, keeping the card and its header, so a
+     * refresh does not move the page or take the focus away. The health chart keeps its canvas, and is updated in
+     * place once the page is drawn.
+     *
+     * @param card the card on the page
+     * @param drawn the card drawn from the latest summary
+     */
+    static update(card, drawn) {
+        const body = card.children(".palantir-home__widget-body");
+        const next = drawn.children(".palantir-home__widget-body");
+        const box = body.find(".palantir-home__health");
+        const nextBox = next.find(".palantir-home__health");
+        if (box.length === 0 || nextBox.length === 0) {
+            body.replaceWith(next);
+            return;
+        }
+        box.attr("style", nextBox.attr("style"));
+        box.find("canvas").attr("aria-label", nextBox.find("canvas").attr("aria-label"));
+        body.find(".palantir-home__ring").replaceWith(next.find(".palantir-home__ring"));
+        body.children().not(".palantir-home__health-layout").remove();
+        body.append(next.children().not(".palantir-home__health-layout"));
     }
 
     static frame(widget, index, count) {
@@ -391,7 +615,9 @@ class PalantirHome {
                 ? $("<button>", {type: "button", class: "palantir-home__title-link", "data-home-page": widget.page, text: widget.title, title: `Go to ${widget.title}`})
                 : document.createTextNode(widget.title)));
         const actions = $("<span>", {class: "palantir-home__widget-actions"});
-        [["earlier", "mdi-arrow-left", "Move earlier", index === 0],
+        [["spotlight", "mdi-arrow-expand-all", "Spotlight", false],
+            ["refresh", "mdi-refresh", "Refresh", false],
+            ["earlier", "mdi-arrow-left", "Move earlier", index === 0],
             ["later", "mdi-arrow-right", "Move later", index === count - 1],
             ["hide", "mdi-eye-off-outline", "Hide", false]].forEach(([action, icon, label, disabled]) => {
             actions.append($("<button>", {
@@ -402,7 +628,8 @@ class PalantirHome {
                 "aria-label": `${label}: ${widget.title}`,
                 title: label,
                 disabled
-            }).append($("<i>", {class: `mdi ${icon}`, "aria-hidden": "true"})));
+            }).toggleClass("is-refreshing", action === "refresh" && PalantirHome.refreshing.has(widget.id))
+                .append($("<i>", {class: `mdi ${icon}`, "aria-hidden": "true"})));
         });
         head.append(actions);
         const body = $("<div>", {class: "palantir-home__widget-body"});
@@ -477,16 +704,20 @@ class PalantirHome {
         const health = summary.sections.health;
         const components = Array.isArray(health?.components) ? health.components : [];
         const attention = components.filter(component => component.status !== "UP");
+        const overall = String(health?.status ?? "UNKNOWN").toUpperCase();
         const state = !health || health.unavailable ? "neutral"
             : health.pending ? "pending"
-                : health.status !== "UP" ? "down"
-                    : attention.length > 0 ? "attention" : "up";
+                : overall === "DOWN" || overall === "OUT_OF_SERVICE" || health.failing === true ? "down"
+                    : overall !== "UP" || attention.length > 0 ? "attention" : "up";
         const checks = attention.length === 1 ? "1 check" : `${attention.length} checks`;
+        const named = {WARN: "Warning", UNKNOWN: "Unknown"}[overall]
+            ?? camelcaseToTitleCase(overall.toLowerCase().replace(/_(\w)/g, (match, letter) => letter.toUpperCase()));
         const label = {
             neutral: "CAS is running",
             pending: "Checking health...",
             up: "All systems healthy",
-            attention: `Up, with ${checks} to look at`,
+            attention: overall === "UP" ? `Up, with ${checks} to look at`
+                : attention.length > 0 ? `${named}, with ${checks} to look at` : `Health is ${named}`,
             down: "Something is down"
         }[state];
         const icon = {neutral: "mdi-server", pending: "mdi-timer-sand", up: "mdi-check-bold", attention: "mdi-exclamation-thick", down: "mdi-close-thick"}[state];
@@ -590,16 +821,30 @@ class PalantirHome {
             </svg>`));
     }
 
+    /**
+     * Draw the health chart, or update the one already drawn on the same canvas with the latest checks.
+     */
     static drawHealthChart() {
-        const copies = PalantirHome.healthChart?.$palantirCopies;
-        if (PalantirHome.healthChart) {
-            PalantirHome.healthChart.destroy();
-            PalantirHome.healthChart = null;
-        }
         const canvas = document.getElementById("homeHealthChart");
         const health = PalantirHome.summary?.sections?.health;
         const components = health?.components;
-        if (!canvas || !Array.isArray(components) || typeof Chart === "undefined") {
+        const usable = canvas && Array.isArray(components) && typeof Chart !== "undefined";
+        const chart = PalantirHome.healthChart;
+        if (chart && usable && chart.canvas === canvas) {
+            const colors = components.map(component => palantirHealthColor(component.status));
+            chart.data.labels = components.map(component => camelcaseToTitleCase(component.name));
+            chart.data.datasets[0].data = components.map(component => Math.max(1, Number(component.millis) || 1));
+            chart.data.datasets[0].backgroundColor = colors;
+            chart.data.datasets[0].borderColor = colors;
+            chart.update("none");
+            return;
+        }
+        const copies = chart?.$palantirCopies;
+        if (chart) {
+            chart.destroy();
+            PalantirHome.healthChart = null;
+        }
+        if (!usable) {
             return;
         }
         const colors = components.map(component => palantirHealthColor(component.status));
@@ -628,8 +873,8 @@ class PalantirHome {
                     tooltip: {
                         callbacks: {
                             label: context => {
-                                const component = components[context.dataIndex];
-                                return palantirHealthDescription(component.status, component.millis);
+                                const component = PalantirHome.summary?.sections?.health?.components?.[context.dataIndex];
+                                return component ? palantirHealthDescription(component.status, component.millis) : "";
                             }
                         }
                     }
@@ -641,6 +886,7 @@ class PalantirHome {
             PalantirHome.healthChart.$palantirCopies = copies;
             PalantirHome.healthChart.update("none");
         }
+        PalantirHome.magnifyHealthChart();
     }
 
     /**
@@ -776,6 +1022,26 @@ class PalantirHome {
             stats.append(PalantirHome.stat("System load", traffic.loadAverage.toFixed(2),
                 processors ? `last minute, ${processors} processors` : "last minute",
                 processors && traffic.loadAverage > processors ? "warning" : ""));
+        }
+        if (Number.isFinite(traffic.warningsLogged)) {
+            stats.append(PalantirHome.stat("Warnings logged", PalantirHome.number(traffic.warningsLogged), "since CAS started"));
+        }
+        if (Number.isFinite(traffic.gcOverhead)) {
+            stats.append(PalantirHome.stat("GC overhead", `${(traffic.gcOverhead * 100).toFixed(1)}%`, "of CPU time, last 5 min",
+                traffic.gcOverhead >= 0.1 ? "warning" : ""));
+        }
+        const share = usage => Number.isFinite(usage?.max) ? usage.used / usage.max : NaN;
+        if (Number.isFinite(traffic.liveData?.used)) {
+            const live = share(traffic.liveData);
+            stats.append(PalantirHome.stat("Heap after GC", PalantirHome.bytes(traffic.liveData.used),
+                Number.isFinite(live) ? `${Math.round(live * 100)}% of the old generation` : "live data in the old generation",
+                live >= 0.8 ? "warning" : ""));
+        }
+        if (Number.isFinite(traffic.files?.used)) {
+            const files = share(traffic.files);
+            stats.append(PalantirHome.stat("Open files", PalantirHome.number(traffic.files.used),
+                Number.isFinite(files) ? `of ${PalantirHome.number(traffic.files.max)} allowed` : "file descriptors in use",
+                files >= 0.8 ? "warning" : ""));
         }
         return stats.children().length > 0 ? stats : PalantirHome.muted("This server records no runtime metrics.");
     }

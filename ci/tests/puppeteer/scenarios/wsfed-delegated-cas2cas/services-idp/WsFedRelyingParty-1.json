@@ -1,0 +1,18 @@
+{
+  "@class" : "org.apereo.cas.ws.idp.services.WSFederationRegisteredService",
+  "serviceId" : "^https://localhost:8443/cas/login.*",
+  "name" : "WsFedRelyingParty",
+  "id" : 1,
+  "realm" : "urn:org:apereo:cas:ws:idp:realm-CAS",
+  "tokenType" : "http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.ws.idp.services.WSFederationClaimsReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "USER_PRINCIPAL_NAME_2005" : "uid",
+      "GIVEN_NAME" : "givenName",
+      "SURNAME" : "sn",
+      "EMAIL_ADDRESS_2005" : "email"
+    }
+  }
+}

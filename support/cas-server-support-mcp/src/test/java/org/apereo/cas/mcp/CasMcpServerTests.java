@@ -131,6 +131,44 @@ class CasMcpServerTests {
         }
 
         @Test
+        void verifyEventStreamIsNotOffered() throws Throwable {
+            val sessionId = initialize(MCP_ADMIN);
+            mockMvc.perform(get(MCP_ENDPOINT)
+                    .with(MCP_ADMIN)
+                    .header(MCP_SESSION_ID, sessionId)
+                    .accept(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string(HttpHeaders.ALLOW, CasMcpEventStreamFilter.ALLOWED_METHODS));
+            mockMvc.perform(get(MCP_ENDPOINT)
+                    .header(MCP_SESSION_ID, sessionId)
+                    .accept(MediaType.TEXT_EVENT_STREAM))
+                .andExpect(status().isUnauthorized());
+            assertTrue(send(MCP_ADMIN, sessionId, jsonRpcRequest("tools/list", "{}")).contains("explainLogin"));
+        }
+
+        @Test
+        void verifyTransportErrorsAreJsonRpcResponses() throws Throwable {
+            val body = mockMvc.perform(post(MCP_ENDPOINT)
+                    .with(MCP_ADMIN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON, MediaType.TEXT_EVENT_STREAM)
+                    .content(jsonRpcRequest("tools/list", "{}")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.jsonrpc").value("2.0"))
+                .andExpect(jsonPath("$.error.code").value(-32601))
+                .andExpect(jsonPath("$.error.message").value("Session ID missing"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+            val response = JsonPath.<Map<String, Object>>read(body, "$");
+            assertEquals(Set.of("jsonrpc", "id", "error"), response.keySet());
+            assertNull(response.get("id"));
+            assertEquals(Set.of("code", "message"), ((Map<?, ?>) response.get("error")).keySet());
+            assertFalse(body.contains("stackTrace"), body);
+        }
+
+        @Test
         void verifyOtherRequestsGetBasicChallengeOnly() throws Throwable {
             val endpoint = PathPatternRequestMatcher.withDefaults().matcher(MCP_ENDPOINT);
             val entryPoint = new CasMcpAuthenticationEntryPoint(endpoint, CasMcpProtectedResource.of(new CasConfigurationProperties(), MCP_ENDPOINT));

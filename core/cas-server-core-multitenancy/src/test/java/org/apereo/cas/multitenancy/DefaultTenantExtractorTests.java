@@ -59,6 +59,19 @@ class DefaultTenantExtractorTests {
     }
 
     @Test
+    void verifyHeaderMustMatchTenantInPath() throws Exception {
+        val requestContext = MockRequestContext.create(applicationContext);
+        requestContext.setContextPath("/cas/tenants/b9584c42/login");
+        requestContext.addHeader(TenantExtractor.HEADER_TENANT_ID, "B9584C42");
+        assertEquals("b9584c42", tenantExtractor.extract(requestContext).orElseThrow().getId());
+
+        val conflictingContext = MockRequestContext.create(applicationContext);
+        conflictingContext.setContextPath("/cas/tenants/b9584c42/login");
+        conflictingContext.addHeader(TenantExtractor.HEADER_TENANT_ID, UUID.randomUUID().toString());
+        assertThrows(UnknownTenantException.class, () -> tenantExtractor.extract(conflictingContext));
+    }
+
+    @Test
     void verifyOperation() throws Exception {
         val requestContext = MockRequestContext.create(applicationContext);
         requestContext.setContextPath("/cas/tenants/b9584c42/login");

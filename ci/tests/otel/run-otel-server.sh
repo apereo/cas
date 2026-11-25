@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-
 RED="\e[31m"
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
@@ -16,21 +14,25 @@ function printred() {
 
 printgreen "Running OpenTelemetry Collector docker container..."
 export DOCKER_IMAGE="otel/opentelemetry-collector:0.166.0"
-docker stop otel-server || true && docker rm otel-server || true
-docker run --quiet  --rm -p 4317:4317 -p 4318:4318 -p 8888:8888 -p 55679:55679 --name otel-server \
+docker rm -f otel-server >/dev/null 2>&1 || true
+docker run --quiet --rm -d -p 4317:4317 -p 4318:4318 --name otel-server \
   -v "$PWD"/ci/tests/otel/otel-collector-config.yaml:/etc/otelcol/config.yaml \
-  -d ${DOCKER_IMAGE}
+  ${DOCKER_IMAGE} >/dev/null
 
-sleep 2
-docker ps | grep "otel-server"
-retVal=$?
-if [ $retVal == 0 ]; then
-    printgreen "OpenTelemetry Collector docker container is running."
-    docker logs -f otel-server &
-else
-    printred "OpenTelemetry Collector docker container failed to start."
-    exit $retVal
+for _ in $(seq 1 60); do
+  otelStatus=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Content-Type: application/json" \
+    -d "{}" http://localhost:4318/v1/traces)
+  if [[ "${otelStatus}" == "200" ]]; then
+    break
+  fi
+  sleep 1
+done
+
+if [[ "${otelStatus}" != "200" ]]; then
+  printred "OpenTelemetry Collector did not accept OTLP requests in time."
+  docker logs otel-server
+  exit 1
 fi
 
-
-  
+printgreen "OpenTelemetry Collector is accepting OTLP requests; only its warnings and errors are logged."
+docker logs -f otel-server &

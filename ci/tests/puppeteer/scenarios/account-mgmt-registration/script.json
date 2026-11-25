@@ -18,6 +18,8 @@
     "--cas.account-registration.mail.from=cas@apereo.org",
     "--cas.account-registration.mail.html=false",
     "--cas.account-registration.mail.text=${url}",
+    "--cas.account-registration.sms.from=3477465300",
+    "--cas.sms-provider.rest.url=http://localhost:5617",
 
     "--cas.account-registration.core.password-policy-pattern=.+",
     "--cas.account-registration.provisioning.rest.url=https://localhost:9859/post",

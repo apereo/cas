@@ -6,7 +6,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import io.etcd.jetcd.Client;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -31,18 +30,12 @@ public class CasEtcdCloudConfigBootstrapAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "etcdPropertySourceLocator")
-    public PropertySourceLocator etcdPropertySourceLocator(
-        @Qualifier("etcdClient") final Client etcdClient) {
-        return new EtcdPropertySourceLocator(etcdClient);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "etcdClient")
-    public Client etcdClient(final ConfigurableEnvironment environment) {
-        val endpoints = environment.getRequiredProperty(CAS_CONFIGURATION_PREFIX + ".endpoints");
-        return Client.builder()
-            .endpoints(StringUtils.commaDelimitedListToSet(endpoints).toArray(String[]::new))
-            .executorService(Executors.newVirtualThreadPerTaskExecutor())
-            .build();
+    public PropertySourceLocator etcdPropertySourceLocator(final ConfigurableEnvironment environment) {
+        val endpoints = StringUtils.commaDelimitedListToSet(environment.getRequiredProperty(CAS_CONFIGURATION_PREFIX + ".endpoints"));
+        val executorService = Executors.newVirtualThreadPerTaskExecutor();
+        return new EtcdPropertySourceLocator(() -> Client.builder()
+            .endpoints(endpoints.toArray(String[]::new))
+            .executorService(executorService)
+            .build());
     }
 }

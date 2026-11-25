@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.monitor.LdapMonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.ha.ClusterTopologyManager;
+import org.apereo.cas.monitor.LdapClusterTopologyManager;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -17,6 +19,7 @@ import org.ldaptive.SearchConnectionValidator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.health.autoconfigure.contributor.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.health.contributor.CompositeHealthContributor;
@@ -34,6 +37,16 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Monitoring, module = "ldap")
 @AutoConfiguration
 public class CasLdapMonitorAutoConfiguration {
+    private static final Duration TOPOLOGY_PROBE_TIMEOUT = Duration.ofSeconds(5);
+
+    private static final Duration TOPOLOGY_LIFETIME = Duration.ofSeconds(30);
+
+    @Bean
+    @ConditionalOnMissingBean(name = "ldapClusterTopologyManager")
+    public ClusterTopologyManager ldapClusterTopologyManager() {
+        return new LdapClusterTopologyManager(TOPOLOGY_PROBE_TIMEOUT, TOPOLOGY_LIFETIME);
+    }
+
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ListFactoryBean pooledLdapConnectionFactoryHealthIndicatorListFactoryBean() {

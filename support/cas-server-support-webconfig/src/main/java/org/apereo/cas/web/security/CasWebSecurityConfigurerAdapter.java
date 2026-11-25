@@ -26,6 +26,7 @@ import org.springframework.boot.security.autoconfigure.actuate.web.servlet.Endpo
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -55,6 +56,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Order(CasWebSecurityConstants.SECURITY_CONFIGURATION_ORDER)
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter {
+    private static final String SEC_FETCH_SITE = "Sec-Fetch-Site";
 
     private final ObjectPostProcessor<BasicAuthenticationFilter> basicAuthFilterPostProcessor = new ObjectPostProcessor<>() {
         @Override
@@ -167,25 +169,65 @@ public class CasWebSecurityConfigurerAdapter {
         return http;
     }
 
+    private static List<RequestMatcher> toPathMatchers(final List<CasWebSecurityConfigurer<?>> configurers,
+                                                       final Function<CasWebSecurityConfigurer<?>, List<String>> patterns) {
+        return configurers
+            .stream()
+            .map(patterns)
+            .flatMap(List::stream)
+            .distinct()
+            .<RequestMatcher>map(endpoint -> PathPatternRequestMatcher.withDefaults().matcher(endpoint))
+            .toList();
+    }
+
+    /**
+     * Whether a request is one a browser may have been made to send on someone's behalf, so it must carry the CSRF
+     * token: a request another site started, which the browser marks with a {@code Sec-Fetch-Site} header other than
+     * {@code same-origin} (browsers send that header, scripts and other clients do not, and credentials the browser
+     * remembered, such as basic authentication, do not exempt it; a bearer token does when the request carries no
+     * session, since a browser never adds one on its own, so an application on another origin that calls with its own
+     * token is not asked, while a bearer header sent along with the browser's session, which would still authenticate
+     * the request, is), or a request that relies on a session the browser keeps, rather than authenticating itself with
+     * an {@code Authorization} header. The session counts whatever cookie carries it, such as the {@code SESSION}
+     * cookie of Spring Session, whose requests do not report their session as coming from a cookie; only a session id
+     * given in the URL, which a browser does not send on its own, does not.
+     *
+     * @param request the request
+     * @return true when the request must carry the CSRF token
+     */
+    static boolean isBrowserSessionRequest(final HttpServletRequest request) {
+        val session = request.getRequestedSessionId() != null && !request.isRequestedSessionIdFromURL();
+        val fetchSite = request.getHeader(SEC_FETCH_SITE);
+        val bearer = Strings.CI.startsWith(StringUtils.trimToEmpty(request.getHeader(HttpHeaders.AUTHORIZATION)), "Bearer ");
+        if ((session || !bearer) && StringUtils.isNotBlank(fetchSite) && !Strings.CI.equals(fetchSite.trim(), "same-origin")) {
+            return true;
+        }
+        return session && StringUtils.isBlank(request.getHeader(HttpHeaders.AUTHORIZATION));
+    }
+
     /**
      * Configure CSRF protection once, for the endpoints that all configurers declare through
-     * {@link CasWebSecurityConfigurer#getCsrfProtectedEndpoints()}: a request that is not a {@code GET}, {@code HEAD},
-     * {@code TRACE} or {@code OPTIONS} request to one of them must carry the token of the CSRF token repository, masked or raw
-     * (see {@link CasCsrfTokenRequestHandler}). CSRF protection stays disabled when no configurer declares an endpoint.
+     * {@link CasWebSecurityConfigurer#getCsrfProtectedEndpoints()}, and for those they declare through
+     * {@link CasWebSecurityConfigurer#getCsrfProtectedSessionEndpoints()} when a browser calls them with its session:
+     * a request that is not a {@code GET}, {@code HEAD}, {@code TRACE} or {@code OPTIONS} request to one of them must carry
+     * the token of the CSRF token repository, masked or raw (see {@link CasCsrfTokenRequestHandler}). CSRF protection
+     * stays disabled when no configurer declares an endpoint.
      *
      * @param http the http security
      * @throws Exception the exception
      */
     protected void configureCsrfProtection(final HttpSecurity http) throws Exception {
-        val endpoints = webSecurityConfigurers
+        val configurers = webSecurityConfigurers
             .getObject()
             .stream()
             .filter(BeanSupplier::isNotProxy)
-            .map(CasWebSecurityConfigurer::getCsrfProtectedEndpoints)
-            .flatMap(List<String>::stream)
-            .distinct()
-            .<RequestMatcher>map(endpoint -> PathPatternRequestMatcher.withDefaults().matcher(endpoint))
+            .<CasWebSecurityConfigurer<?>>map(configurer -> configurer)
             .toList();
+        val endpoints = new ArrayList<>(toPathMatchers(configurers, CasWebSecurityConfigurer::getCsrfProtectedEndpoints));
+        val sessionEndpoints = toPathMatchers(configurers, CasWebSecurityConfigurer::getCsrfProtectedSessionEndpoints);
+        if (!sessionEndpoints.isEmpty()) {
+            endpoints.add(new AndRequestMatcher(new OrRequestMatcher(sessionEndpoints), CasWebSecurityConfigurerAdapter::isBrowserSessionRequest));
+        }
         if (!endpoints.isEmpty()) {
             LOGGER.debug("Configuring CSRF protection for [{}]", endpoints);
             val protectedEndpoints = new OrRequestMatcher(endpoints);
@@ -217,7 +259,7 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add("/favicon.ico");
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
-        patterns.add(webEndpointProperties.getBasePath());
+        FunctionUtils.doIfNotBlank(webEndpointProperties.getBasePath(), patterns::add);
         FunctionUtils.doIfNotBlank(managementServerProperties.getBasePath(), patterns::add);
         patterns.addAll(casProperties.getMonitor().getEndpoints().getIgnoredEndpoints());
         return patterns;

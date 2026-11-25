@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/pdp-openfga.*",
+  "id": 14,
+  "name": "OpenFGA",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.OpenFGARegisteredServiceAccessStrategy",
+    "apiUrl": "http://localhost:5611/openfga",
+    "storeId": "s1",
+    "relation": "viewer",
+    "token": "openfga-token"
+  }
+}

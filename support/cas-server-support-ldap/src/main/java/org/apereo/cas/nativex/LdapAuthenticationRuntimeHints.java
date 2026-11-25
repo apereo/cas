@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.RuntimeHints;
-import javax.security.auth.login.AccountLockedException;
 
 /**
  * This is {@link LdapAuthenticationRuntimeHints}.

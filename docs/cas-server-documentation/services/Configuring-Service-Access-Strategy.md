@@ -41,3 +41,14 @@ single sign-on session, the attributes the access strategy evaluates also includ
 The following endpoints are provided by CAS:
 
 {% include_cached actuators.html endpoints="serviceAccess" casModule="cas-server-support-reports" %}
+
+The `serviceAccess` endpoint explains its answer, whether access is allowed or refused, as the steps CAS goes
+through: whether an application matches and is enabled, active and not expired, whether the user signed in, and the
+access strategy's activation and required and rejected attributes, one attribute at a time with the user's values.
+A strategy that decides by other means, such as an external authorization service or a script, including attribute
+rules that use scripts, is asked once, when CAS decides, and reported with that answer; within a chain, such a strategy
+is not asked again to explain its part, and a chain of strategies is reported with the steps of each. An application
+is named by its service URL, by the client id of an OAuth or OpenID Connect application, or by the entity id of a SAML2
+service provider; a client id or an entity id alone is only answered by such an application. The answer names the
+application without its definition, and a check that fails for another reason answers with a server error rather than
+a decision.

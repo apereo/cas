@@ -40,6 +40,11 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
      */
     private BlackDot blackDot = new BlackDot();
 
+    /**
+     * Fetch IP diagnostic information via <a href="https://vpndetection.io">VPNDetection</a>.
+     */
+    private VpnDetection vpnDetection = new VpnDetection();
+
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
@@ -88,5 +93,32 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
          * </ul>
          */
         private String mode = "DYNA_LIST";
+    }
+
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    public static class VpnDetection implements Serializable {
+        @Serial
+        private static final long serialVersionUID = -3108843474512092275L;
+
+        /**
+         * Whether client IP addresses should be examined by this service.
+         * Lookups do not require an API key.
+         */
+        private boolean enabled;
+
+        /**
+         * URL endpoint of the service to make API calls.
+         * The client IP address is substituted for {@code %s}.
+         */
+        private String url = "https://api.vpndetection.io/%s";
+
+        /**
+         * Ban IP addresses of relays such as iCloud Private Relay, in addition to VPNs and Tor exit nodes.
+         * Relays are often used by regular users of a browser or device, so they are allowed by default.
+         */
+        private boolean banRelays;
     }
 }

@@ -55,7 +55,7 @@ public class CasMcpAuthenticationEntryPoint implements AuthenticationEntryPoint 
             @Override
             public void setHeader(final String name, final String value) {
                 if (Strings.CI.equals(name, HttpHeaders.WWW_AUTHENTICATE)) {
-                    super.addHeader(name, value);
+                    addHeader(name, value);
                 } else {
                     super.setHeader(name, value);
                 }

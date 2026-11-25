@@ -22,7 +22,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.Event;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**

@@ -15,6 +15,4 @@ This feature is enabled via the following module:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-session-hazelcast" %}
 
-{% include_cached casproperties.html 
-properties="cas.webflow.session.server.hazelcast" 
-thirdPartyStartsWith="spring.session.hazelcast,spring.session.hazelcast" %}
+{% include_cached casproperties.html properties="cas.webflow.session.server.hazelcast" %}

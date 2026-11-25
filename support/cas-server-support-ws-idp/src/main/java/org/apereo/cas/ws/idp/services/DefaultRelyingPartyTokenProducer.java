@@ -90,7 +90,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getId());
             val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getId());
             properties.put(SecurityConstants.PASSWORD, uid);
-            return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesTo()));
+            return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesToOrRealm()));
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
                 throw new IllegalArgumentException(new ProcessingException(ex.getMessage(), ex, ProcessingException.TYPE.BAD_REQUEST));

@@ -10,6 +10,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import tools.jackson.databind.ObjectMapper;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -57,6 +59,68 @@ class PermifyRegisteredServiceAccessStrategyTests {
             webServer.start();
             strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
             assertTrue(strategy.authorizeRequest(request));
+        }
+    }
+
+    @Test
+    void verifyAuthorizationHeaderOnlyWithToken() throws Throwable {
+        val strategy = new PermifyRegisteredServiceAccessStrategy();
+        strategy.setSubjectRelation("reader");
+        strategy.setTenantId("123456");
+        strategy.setPermission("view");
+
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .service(RegisteredServiceTestUtils.getService())
+            .principalId("casuser")
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .attributes(CoreAuthenticationTestUtils.getAttributes())
+            .build();
+        val received = new ConcurrentHashMap<String, String>();
+        try (val webServer = new MockWebServer(Map.of("can", "CHECK_RESULT_ALLOWED"))) {
+            webServer.headersConsumer(received::putAll);
+            webServer.start();
+            strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
+            assertTrue(strategy.authorizeRequest(request));
+        }
+        assertFalse(received.isEmpty());
+        assertTrue(received.keySet().stream().noneMatch(HttpHeaders.AUTHORIZATION::equalsIgnoreCase));
+
+        received.clear();
+        strategy.setToken("my-token");
+        try (val webServer = new MockWebServer(Map.of("can", "CHECK_RESULT_ALLOWED"))) {
+            webServer.headersConsumer(received::putAll);
+            webServer.start();
+            strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
+            assertTrue(strategy.authorizeRequest(request));
+        }
+        assertTrue(received.entrySet().stream().anyMatch(entry ->
+            HttpHeaders.AUTHORIZATION.equalsIgnoreCase(entry.getKey()) && "Bearer my-token".equals(entry.getValue())));
+    }
+
+    @Test
+    void verifyFailedResponseIsDenied() throws Throwable {
+        val strategy = new PermifyRegisteredServiceAccessStrategy();
+        strategy.setTenantId("123456");
+        strategy.setPermission("view");
+        strategy.setToken(UUID.randomUUID().toString());
+
+        val request = RegisteredServiceAccessStrategyRequest.builder()
+            .service(RegisteredServiceTestUtils.getService())
+            .principalId("casuser")
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .attributes(CoreAuthenticationTestUtils.getAttributes())
+            .build();
+        for (val status : List.of(HttpStatus.FORBIDDEN, HttpStatus.UNAUTHORIZED, HttpStatus.BAD_REQUEST)) {
+            try (val webServer = new MockWebServer("{\"can\":\"CHECK_RESULT_ALLOWED\"}", status)) {
+                webServer.start();
+                strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
+                assertFalse(strategy.authorizeRequest(request));
+            }
+        }
+        try (val webServer = new MockWebServer("not-json", HttpStatus.OK)) {
+            webServer.start();
+            strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
+            assertFalse(strategy.authorizeRequest(request));
         }
     }
 }

@@ -26,7 +26,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -261,11 +260,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             evaluateFinalAuthentication(authenticationBuilder, transaction, handlerSet);
             return authenticationBuilder;
         } finally {
-            for (val handler : handlerSet) {
-                if (handler.isDisposable() && handler instanceof final DisposableBean db) {
-                    db.destroy();
-                }
-            }
+            DisposableAuthenticationHandlers.release(handlerSet);
         }
     }
 

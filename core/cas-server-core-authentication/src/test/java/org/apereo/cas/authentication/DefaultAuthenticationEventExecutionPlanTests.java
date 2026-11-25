@@ -20,6 +20,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
+import org.apereo.cas.multitenancy.TenantDefinition;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -33,6 +36,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -43,6 +47,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -117,6 +123,51 @@ class DefaultAuthenticationEventExecutionPlanTests {
 
     @Nested
     class DefaultHandlers extends BaseTests {
+        @Test
+        void verifyTenantHandlersDisposedOnceWhenRequestCompletes() throws Throwable {
+            val tenant = TenantDefinition.builder()
+                .id(UUID.randomUUID().toString())
+                .properties(CollectionUtils.wrap("cas.server.name", "https://sso.example.org"))
+                .build();
+            val tenantsManager = mock(TenantsManager.class);
+            when(tenantsManager.findTenant(tenant.getId())).thenReturn(Optional.of(tenant));
+            val tenantExtractor = mock(TenantExtractor.class);
+            when(tenantExtractor.getTenantsManager()).thenReturn(tenantsManager);
+            val plan = new DefaultAuthenticationEventExecutionPlan(mock(AuthenticationHandlerResolver.class), tenantExtractor);
+            val builtHandlers = new ArrayList<AuthenticationHandler>();
+            plan.registerTenantAuthenticationHandlerBuilder((definition, bindingContext) -> {
+                val handler = mock(AuthenticationHandler.class, withSettings().extraInterfaces(DisposableBean.class));
+                when(handler.isDisposable()).thenReturn(true);
+                when(handler.getName()).thenReturn(UUID.randomUUID().toString());
+                builtHandlers.add(handler);
+                return List.of(handler);
+            });
+            val previousClientInfo = ClientInfoHolder.getClientInfo();
+            ClientInfoHolder.setClientInfo(ClientInfo.empty().setTenant(tenant.getId()));
+            val requestAttributes = new ServletRequestAttributes(new MockHttpServletRequest());
+            RequestContextHolder.setRequestAttributes(requestAttributes);
+            try {
+                val handlers = plan.resolveAuthenticationHandlers();
+                assertEquals(1, handlers.size());
+                assertEquals(1, plan.resolveAuthenticationHandlers().size());
+                DisposableAuthenticationHandlers.release(handlers);
+                assertEquals(2, builtHandlers.size());
+                for (val handler : builtHandlers) {
+                    verify((DisposableBean) handler, never()).destroy();
+                }
+                requestAttributes.requestCompleted();
+                for (val handler : builtHandlers) {
+                    verify((DisposableBean) handler).destroy();
+                }
+            } finally {
+                RequestContextHolder.resetRequestAttributes();
+                ClientInfoHolder.setClientInfo(previousClientInfo);
+            }
+            val handler = builtHandlers.getFirst();
+            DisposableAuthenticationHandlers.release(List.of(handler));
+            verify((DisposableBean) handler, times(2)).destroy();
+        }
+
         @Test
         void verifyDefaults() {
             val input = mock(AuthenticationEventExecutionPlan.class);

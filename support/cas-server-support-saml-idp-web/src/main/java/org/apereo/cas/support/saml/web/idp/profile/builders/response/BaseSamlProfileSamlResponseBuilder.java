@@ -49,11 +49,15 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
         resourceResolverName = AuditResourceResolvers.SAML2_RESPONSE_RESOURCE_RESOLVER)
     @Override
     public T build(final SamlProfileBuilderContext context) throws Exception {
+        val finalResponse = buildSamlResponse(context);
+        return encodeFinalResponse(context, finalResponse);
+    }
+
+    protected T buildSamlResponse(final SamlProfileBuilderContext context) throws Exception {
         val assertion = context.getAuthenticatedAssertion().isPresent()
             ? Optional.of(buildSamlAssertion(context))
             : Optional.<Assertion>empty();
-        val finalResponse = buildResponse(assertion, context);
-        return encodeFinalResponse(context, finalResponse);
+        return buildResponse(assertion, context);
     }
 
     protected T encodeFinalResponse(final SamlProfileBuilderContext context,

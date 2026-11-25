@@ -13,10 +13,13 @@ const CRL_FILES = ["ca.crl", "expired-ca.crl", "unlisted-ca.crl"];
  * Whether each client certificate (made by init.sh) logs in, per variation:
  * crlvalid and crlrevoked come from CasTestCA, whose current CRL lists crlrevoked; crlexpired comes from
  * CasTestExpiredCrlCA, whose CRL expired on 2025-01-02; no CRL exists for CasTestUnlistedCA, the issuer of crlunlisted.
+ * THRESHOLD only applies to expired CRL data: as the unavailable policy, CAS applies DENY instead.
  */
 const EXPECTATIONS = {
     "resource": {crlvalid: true, crlrevoked: false, crlexpired: false, crlunlisted: false},
     "resource-lenient": {crlvalid: true, crlrevoked: false, crlexpired: true, crlunlisted: true},
+    "resource-threshold-unavailable": {crlvalid: true, crlrevoked: false, crlexpired: true, crlunlisted: false},
+    "resource-allow-expired": {crlvalid: true, crlrevoked: false, crlexpired: true, crlunlisted: false},
     "crl": {crlvalid: true, crlrevoked: false, crlexpired: false, crlunlisted: false}
 };
 

@@ -2,7 +2,10 @@
 const assert = require("assert");
 const cas = require("../../cas.js");
 
+const PHONES = ["13477465342", "14477465342"];
+
 (async () => {
+    const sms = await cas.mockSmsServer();
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple");
@@ -34,6 +37,19 @@ const cas = require("../../cas.js");
     const code = await cas.textContent(page2, "div[name=bodyPlainText] .well");
     await cas.log(`Code to use is extracted as ${code}`);
     await page2.close();
+
+    await cas.log("Checking the SMS sent to the selected phone numbers");
+    const message = await sms.waitForMessage(undefined, (msg) => PHONES.includes(msg.to));
+    assert(message.from === "3477465300");
+    assert(message.text === `SMS-code:${code}`, `Unexpected SMS text ${message.text}`);
+    assert(message.authorization === `Basic ${Buffer.from("casuser:paSSw0rd").toString("base64")}`);
+    await cas.log("Checking that every selected phone number received the code");
+    for (const phone of PHONES) {
+        await sms.waitForMessage(phone, (msg) => msg.text === `SMS-code:${code}`);
+    }
+    assert(sms.messages.every((msg) => PHONES.includes(msg.to) && msg.text === `SMS-code:${code}`));
+    assert(sms.messages.length === PHONES.length, `Expected one SMS per phone, got ${JSON.stringify(sms.messages)}`);
+
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
@@ -42,4 +58,5 @@ const cas = require("../../cas.js");
     await cas.sleep(2000);
     await cas.assertCookie(page);
     await cas.closeBrowser(browser);
+    await sms.close();
 })();

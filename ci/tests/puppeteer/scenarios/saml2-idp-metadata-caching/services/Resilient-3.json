@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://resilient\\.sp\\.example\\.org$",
+  "name" : "Resilient",
+  "id" : 3,
+  "evaluationOrder" : 3,
+  "metadataLocation" : "http://localhost:5615/metadata/resilient.xml",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
