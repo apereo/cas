@@ -7,6 +7,10 @@
     },
     {
       "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "rivendell"
+    },
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
       "id": "webflow",
       "properties": {
         "@class": "java.util.LinkedHashMap",

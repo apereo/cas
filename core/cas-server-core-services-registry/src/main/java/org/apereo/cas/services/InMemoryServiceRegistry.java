@@ -26,7 +26,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
                                    final List<RegisteredService> registeredServices,
                                    final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
-        this.registeredServices = registeredServices;
+        this.registeredServices = new CopyOnWriteArrayList<>(registeredServices);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return !registeredServices.contains(registeredService)
-            || registeredServices.removeIf(rs -> rs.getId() == registeredService.getId());
+        registeredServices.removeIf(rs -> rs.getId() == registeredService.getId());
+        return true;
     }
 
     @Override

@@ -30,7 +30,7 @@
         </div>
         <div class="palantir-nav-primary">
             <ul class="palantir-nav-direct">
-                <li th:if="${isRoleAdmin}" id="homeTabButton" data-tab-index="17">
+                <li th:if="${isRoleAdmin}" id="homeTabButton" data-tab-index="17" data-page="home">
                     <button type="button" class="sidebar-navigation-button">
                         <i class="mdi mdi-home-variant-outline" aria-hidden="true"></i>
                         <span class="sidebar-navigation-text">
@@ -39,7 +39,7 @@
                         </span>
                     </button>
                 </li>
-                <li id="applicationsTabButton" class="active" data-tab-index="0">
+                <li id="applicationsTabButton" class="active" data-tab-index="0" data-page="applications">
                     <button type="button" class="sidebar-navigation-button" aria-current="page">
                         <i class="mdi mdi-apps" aria-hidden="true"></i>
                         <span class="sidebar-navigation-text">
@@ -57,7 +57,7 @@
                 <div class="palantir-nav-menu" id="palantirNavGroupIdentity">
                     <p class="palantir-nav-menu-title" aria-hidden="true">Identity</p>
                     <ul>
-                        <li th:if="${isRoleAdmin}" id="usersTabButton" data-tab-index="16">
+                        <li th:if="${isRoleAdmin}" id="usersTabButton" data-tab-index="16" data-page="users">
                             <button type="button" class="sidebar-navigation-button" title="Users">
                                 <i class="mdi mdi-account-search" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -66,7 +66,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="authenticationTabButton" data-tab-index="9">
+                        <li th:if="${isRoleAdmin}" id="authenticationTabButton" data-tab-index="9" data-page="authentication">
                             <button type="button" class="sidebar-navigation-button" title="Authentication">
                                 <i class="mdi mdi-account-check" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -75,7 +75,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="personDirectoryTabButton" data-tab-index="8">
+                        <li th:if="${isRoleAdmin}" id="personDirectoryTabButton" data-tab-index="8" data-page="attributes">
                             <button type="button" class="sidebar-navigation-button" title="Attribute Resolution">
                                 <i class="mdi mdi-card-account-details" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -84,7 +84,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="mfaTabButton" data-tab-index="13">
+                        <li th:if="${isRoleAdmin}" id="mfaTabButton" data-tab-index="13" data-page="mfa">
                             <button type="button" class="sidebar-navigation-button" title="Multifactor Authentication">
                                 <i class="mdi mdi-two-factor-authentication" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -93,7 +93,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="consentTabButton" data-tab-index="10">
+                        <li th:if="${isRoleAdmin}" id="consentTabButton" data-tab-index="10" data-page="consent">
                             <button type="button" class="sidebar-navigation-button" title="Attribute Consent">
                                 <i class="mdi mdi-checkerboard" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -102,7 +102,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="accessStrategyTabButton" data-tab-index="4">
+                        <li th:if="${isRoleAdmin}" id="accessStrategyTabButton" data-tab-index="4" data-page="access">
                             <button type="button" class="sidebar-navigation-button" title="Access Strategy">
                                 <i class="mdi mdi-shield-check" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -122,7 +122,7 @@
                 <div class="palantir-nav-menu" id="palantirNavGroupSessions">
                     <p class="palantir-nav-menu-title" aria-hidden="true">Sessions</p>
                     <ul>
-                        <li th:if="${isRoleAdmin}" id="ssoSessionsTabButton" data-tab-index="6">
+                        <li th:if="${isRoleAdmin}" id="ssoSessionsTabButton" data-tab-index="6" data-page="sessions">
                             <button type="button" class="sidebar-navigation-button">
                                 <i class="mdi mdi-account-multiple" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -131,7 +131,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="ticketsTabButton" data-tab-index="2">
+                        <li th:if="${isRoleAdmin}" id="ticketsTabButton" data-tab-index="2" data-page="tickets">
                             <button type="button" class="sidebar-navigation-button">
                                 <i class="mdi mdi-database" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -140,7 +140,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="throttlesTabButton" data-tab-index="12">
+                        <li th:if="${isRoleAdmin}" id="throttlesTabButton" data-tab-index="12" data-page="throttles">
                             <button type="button" class="sidebar-navigation-button" title="Throttled Authentication">
                                 <i class="mdi mdi-account-lock" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -160,7 +160,7 @@
                 <div class="palantir-nav-menu" id="palantirNavGroupPlatform">
                     <p class="palantir-nav-menu-title" aria-hidden="true">Platform</p>
                     <ul>
-                        <li th:if="${isRoleAdmin}" id="systemTabButton" data-tab-index="1">
+                        <li th:if="${isRoleAdmin}" id="systemTabButton" data-tab-index="1" data-page="system">
                             <button type="button" class="sidebar-navigation-button">
                                 <i class="mdi mdi-laptop" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -169,7 +169,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="configurationTabButton" data-tab-index="7">
+                        <li th:if="${isRoleAdmin}" id="configurationTabButton" data-tab-index="7" data-page="configuration">
                             <button type="button" class="sidebar-navigation-button" title="CAS Configuration">
                                 <i class="mdi mdi-wrench" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -178,7 +178,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="loggingTabButton" data-tab-index="5">
+                        <li th:if="${isRoleAdmin}" id="loggingTabButton" data-tab-index="5" data-page="logging">
                             <button type="button" class="sidebar-navigation-button">
                                 <i class="mdi mdi-text" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -187,7 +187,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="tasksTabButton" data-tab-index="3">
+                        <li th:if="${isRoleAdmin}" id="tasksTabButton" data-tab-index="3" data-page="tasks">
                             <button type="button" class="sidebar-navigation-button">
                                 <i class="mdi mdi-tire" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -196,7 +196,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="protocolsTabButton" data-tab-index="11">
+                        <li th:if="${isRoleAdmin}" id="protocolsTabButton" data-tab-index="11" data-page="protocols">
                             <button type="button" class="sidebar-navigation-button" title="Authentication Protocols">
                                 <i class="mdi mdi-protocol" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -205,7 +205,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="tenantsTabButton" data-tab-index="14">
+                        <li th:if="${isRoleAdmin}" id="tenantsTabButton" data-tab-index="14" data-page="tenants">
                             <button type="button" class="sidebar-navigation-button" title="Multitenancy">
                                 <i class="mdi mdi-home-circle" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -214,7 +214,7 @@
                                 </span>
                             </button>
                         </li>
-                        <li th:if="${isRoleAdmin}" id="clusterTabButton" data-tab-index="15">
+                        <li th:if="${isRoleAdmin}" id="clusterTabButton" data-tab-index="15" data-page="cluster">
                             <button type="button" class="sidebar-navigation-button" title="Cluster &amp; High Availability">
                                 <i class="mdi mdi-server" aria-hidden="true"></i>
                                 <span class="sidebar-navigation-text">
@@ -239,13 +239,13 @@
                 <i class="mdi mdi-weather-night" aria-hidden="true"></i>
             </button>
             <ul class="sidebar-navigation-actions">
-                <li th:if="${isRoleAdmin}" id="palantirSettingsTabButton" data-tab-index="100">
+                <li th:if="${isRoleAdmin}" id="palantirSettingsTabButton" data-tab-index="100" data-page="settings">
                     <button type="button" class="sidebar-navigation-button" title="Palantir Settings">
                         <i class="mdi mdi-cog-outline" aria-hidden="true"></i>
                         <span class="sidebar-navigation-label">Settings</span>
                     </button>
                 </li>
-                <li id="palantirLogoutButton" data-tab-index="200">
+                <li id="palantirLogoutButton" data-tab-index="200" data-page="logout">
                     <button type="button" class="sidebar-navigation-button" title="Sign out">
                         <i class="mdi mdi-logout-variant" aria-hidden="true"></i>
                         <span class="sidebar-navigation-label">Sign out</span>

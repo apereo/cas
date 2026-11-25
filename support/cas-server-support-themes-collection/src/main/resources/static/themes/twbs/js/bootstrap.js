@@ -6,7 +6,7 @@ function resourceLoadedSuccessfully() {
             requestGeoPosition();
         }
 
-        if ($(':focus').length === 0) {
+        if ($(':focus').length === 0 && document.documentElement.dataset.casAutofocus !== "false") {
             $('input:visible:enabled:first').focus();
         }
 
@@ -15,7 +15,9 @@ function resourceLoadedSuccessfully() {
 
         $('.caps-warn').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
-        $('#fm1 input[name="username"]').focus();
+        if (document.documentElement.dataset.casAutofocus !== "false") {
+            $('#fm1 input[name="username"]').focus();
+        }
 
         $('#password').keypress(e => {
             let s = String.fromCharCode(e.which);

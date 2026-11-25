@@ -38,6 +38,7 @@ public abstract class BaseAuthenticationServiceSelectionStrategy implements Auth
         val attributes = new LinkedHashMap<>(original.getAttributes());
         attributes.put(Service.class.getName(), CollectionUtils.wrapList(original.getOriginalUrl()));
         result.setAttributes(attributes);
+        result.setTenant(original.getTenant());
         return result;
     }
 }

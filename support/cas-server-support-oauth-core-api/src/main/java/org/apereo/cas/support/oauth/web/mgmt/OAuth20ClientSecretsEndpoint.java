@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredServiceClientSecret;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
+import org.springframework.boot.actuate.endpoint.InvalidEndpointRequestException;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
@@ -50,6 +52,7 @@ public class OAuth20ClientSecretsEndpoint extends BaseCasActuatorEndpoint {
      * @param clientId    the client id
      * @param expireIn    the expire in
      * @param expiredOnly the expired only
+     * @param id          the numeric id of the registration that must carry the client id, if given
      * @return the registered service
      */
     @WriteOperation
@@ -60,16 +63,20 @@ public class OAuth20ClientSecretsEndpoint extends BaseCasActuatorEndpoint {
             @Parameter(name = "expiredOnly", required = false, in = ParameterIn.QUERY,
                 allowEmptyValue = true, description = "If true, only expired secrets will be rotated"),
             @Parameter(name = "expireIn", required = false, in = ParameterIn.QUERY,
-                allowEmptyValue = true, description = "Duration value (Default P90D) to set the expiration date")
+                allowEmptyValue = true, description = "Duration value (Default P90D) to set the expiration date"),
+            @Parameter(name = "id", required = false, in = ParameterIn.QUERY,
+                description = "The numeric id of the registration to rotate; it must carry the client id, so that only that registration is changed")
         })
     public RegisteredService rotate(@Selector final String clientId,
                                     @Nullable final String expireIn,
-                                    @Nullable final Boolean expiredOnly) {
-        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId);
+                                    @Nullable final Boolean expiredOnly,
+                                    @Nullable final Long id) {
+        val requestedExpiration = StringUtils.trimToNull(expireIn);
+        val clientSecretExp = requestedExpiration != null ? secondsOf(requestedExpiration) : Beans.newDuration("P90D").toSeconds();
+        val registeredService = id == null
+            ? OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager.getObject(), clientId)
+            : findRegistrationOfClient(id, clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        val clientSecretExp = StringUtils.isNotBlank(expireIn)
-            ? Beans.newDuration(expireIn).toSeconds()
-            : Beans.newDuration("P90D").toSeconds();
         val currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         val expirationDate = currentTime.plusSeconds(clientSecretExp);
         val secrets = registeredService
@@ -81,5 +88,23 @@ public class OAuth20ClientSecretsEndpoint extends BaseCasActuatorEndpoint {
             .collect(Collectors.toList());
         registeredService.setClientSecrets(secrets);
         return servicesManager.getObject().save(registeredService);
+    }
+
+    private static long secondsOf(final String expireIn) {
+        try {
+            val seconds = Beans.newDuration(expireIn).toSeconds();
+            if (seconds >= 1) {
+                return seconds;
+            }
+        } catch (final DateTimeParseException e) {
+            LOGGER.debug("Unable to read [{}] as a duration: [{}]", expireIn, e.getMessage());
+        }
+        throw new InvalidEndpointRequestException("New client secrets must stay valid for at least one second: " + expireIn,
+            "expireIn must be a duration of at least one second");
+    }
+
+    private @Nullable OAuthRegisteredService findRegistrationOfClient(final long id, final String clientId) {
+        val registeredService = servicesManager.getObject().findServiceBy(id, OAuthRegisteredService.class);
+        return registeredService != null && StringUtils.equals(registeredService.getClientId(), clientId) ? registeredService : null;
     }
 }

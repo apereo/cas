@@ -36,6 +36,11 @@ Support is enabled by including the following dependency in the overlay:
 
 ## CAS Configuration
 
+<div class="alert alert-info">:information_source: <strong>Spring Boot Support</strong><p>Spring for Apache Pulsar has moved to the
+Apache Software Foundation, where it continues as <a href="https://pulsar.apache.org/pulsar-spring/reference/migration.html">Apache Pulsar support for Spring</a>,
+and Spring Boot deprecates its own Apache Pulsar support, which provides the connection settings listed below. The
+settings keep their names and keep working in this version.</p></div>
+
 {% include_cached casproperties.html
     thirdPartyStartsWith="spring.pulsar"
     properties="cas.ticket.registry.in-memory,cas.ticket.registry.pulsar" %}

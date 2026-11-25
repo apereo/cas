@@ -133,13 +133,8 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
             },
             {
                 value: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
-                text: "IMPERSONATION"
-            },
-            {
-                value: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
-                text: "DELEGATION"
+                text: "DEFAULT"
             }
-
         ],
         helpText: "Specifies the OAuth token exchange policy type.",
         changeEventHandlers: "handleRegisteredServiceTokenExchangePolicyChange"
@@ -149,7 +144,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         });
 
     createInputField({
-        cssClasses: "hide IMPERSONATION",
+        cssClasses: "hide DefaultRegisteredServiceOAuthTokenExchangePolicy",
         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
         labelTitle: "Allowed Resources (separated by comma)",
         name: "registeredServiceOAuthTokenExchangePolicyAllowedResources",
@@ -162,7 +157,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
     });
 
     createInputField({
-        cssClasses: "hide IMPERSONATION",
+        cssClasses: "hide DefaultRegisteredServiceOAuthTokenExchangePolicy",
         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
         labelTitle: "Allowed Audience(s) (separated by comma)",
         name: "registeredServiceOAuthTokenExchangePolicyAllowedAudiences",
@@ -175,7 +170,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
     });
 
     createInputField({
-        cssClasses: "hide IMPERSONATION",
+        cssClasses: "hide DefaultRegisteredServiceOAuthTokenExchangePolicy",
         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
         labelTitle: "Allowed Token Types(s) (separated by comma)",
         name: "registeredServiceOAuthTokenExchangePolicyAllowedTokenTypes",
@@ -188,7 +183,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
     });
 
     createInputField({
-        cssClasses: "hide DELEGATION",
+        cssClasses: "hide DefaultRegisteredServiceOAuthTokenExchangePolicy",
         paramType: "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
         labelTitle: "Allowed Actor Token Types(s) (separated by comma)",
         name: "registeredServiceOAuthTokenExchangePolicyAllowedActorTokenTypes",
@@ -202,7 +197,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
 
     createMappedInputField({
         header: "Required Actor Token Attributes",
-        cssClasses: "hide DELEGATION",
+        cssClasses: "hide DefaultRegisteredServiceOAuthTokenExchangePolicy",
         containerId: "editServiceWizardMenuItemOAuthOidcTokenExchangePolicy",
         keyField: "tokenExchangePolicyActorTokenAttributeName",
         keyLabel: "Attribute Name",
@@ -210,7 +205,7 @@ function createRegisteredServiceOidcTokenExchangePolicy() {
         valueLabel: "Attribute Value Pattern",
         containerField: "tokenExchangePolicy.requiredActorTokenAttributes",
         multipleValues: true,
-        multipleValuesType: "java.util.HashSet"
+        multipleValuesType: "java.util.ArrayList"
     });
 }
 
@@ -271,7 +266,7 @@ function createRegisteredServiceOidcRefreshTokenExpirationPolicy() {
 }
 
 function handleRegisteredServiceTokenExchangePolicyChange(select) {
-    const type = $(select).find("option:selected").text();
+    const type = getLastWord($(select).val()) || "UNDEFINED";
     $(`#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy .${type}`).show();
     $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='FieldContainer']")
         .not(`.${type}`)
@@ -282,15 +277,11 @@ function handleRegisteredServiceTokenExchangePolicyChange(select) {
     $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='ButtonPanel']")
         .not(`.${type}`)
         .hide();
-    $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='FieldContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='MapContainer'] input")
-        .val("");
-    $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='ButtonPanel'] button")
-        .each(function () {
-            const selected = $(this).data("param-selected");
-            if (selected) {
-                $(this).click();
-            }
-        });
+    if (!isPopulatingWizard) {
+        $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='FieldContainer'] input")
+            .val("");
+        $("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy [id$='MapContainer'] input")
+            .val("");
+        resetWizardSwitches("#editServiceWizardMenuItemOAuthOidcTokenExchangePolicy");
+    }
 }

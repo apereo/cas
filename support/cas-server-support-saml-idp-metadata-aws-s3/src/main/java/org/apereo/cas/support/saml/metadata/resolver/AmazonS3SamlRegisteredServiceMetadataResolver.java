@@ -156,6 +156,11 @@ public class AmazonS3SamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
+    public String getName() {
+        return "Amazon S3";
+    }
+
+    @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         try {
             return supports(service) && doesBucketExist();

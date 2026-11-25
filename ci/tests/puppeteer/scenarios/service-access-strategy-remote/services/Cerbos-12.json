@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/pdp-cerbos.*",
+  "id": 12,
+  "name": "Cerbos",
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.CerbosRegisteredServiceAccessStrategy",
+    "apiUrl": "http://localhost:5611/cerbos",
+    "token": "cerbos-token",
+    "requestId": "cas-scenario-request",
+    "kind": "application",
+    "scope": "cas",
+    "actions": [ "java.util.ArrayList", [ "read" ] ],
+    "auxData": {
+      "@class": "java.util.HashMap",
+      "source": "cas"
+    }
+  }
+}

@@ -25,6 +25,17 @@ class PalantirDashboardConfiguration {
         return this.all().supportedServiceTypes || {};
     }
 
+    /**
+     * Whether this deployment carries an access strategy, since some live in modules of their own.
+     *
+     * @param type the access strategy class name
+     * @returns {boolean} true when the strategy is present, or when CAS did not say which strategies are
+     */
+    static accessStrategyAvailable(type) {
+        const strategies = this.all().supportedAccessStrategies ?? [];
+        return strategies.length === 0 || strategies.includes(type);
+    }
+
     static serviceProperties() {
         return this.all().serviceProperties || {};
     }
@@ -64,63 +75,65 @@ class PalantirDashboardConfiguration {
  *
  * Nothing here runs yet. Each entry is invoked the first time its tab is activated, which keeps a
  * cold load down to the requests the visible tab actually needs instead of every tab's data tables
- * and actuator calls at once.
+ * and actuator calls at once. Each is named only when it runs, because the page's scripts are fetched
+ * when the page is first opened.
  */
 function registerPalantirTabInitializers() {
     registerDashboardTabInitializers(Tabs.APPLICATIONS,
-        initializeApplicationsCharts,
-        initializeServicesOperations);
+        () => initializeApplicationsCharts(),
+        () => initializeServicesOperations());
     registerDashboardTabInitializers(Tabs.SYSTEM,
-        initializeSystemCharts,
-        initializeSystemOperations,
-        initializeCasSpringWebflowOperations,
-        initializePrometheusCharts);
+        () => initializeSystemCharts(),
+        () => initializeSystemOperations(),
+        () => initializeCasSpringWebflowOperations(),
+        () => initializePrometheusCharts());
     registerDashboardTabInitializers(Tabs.TICKETS,
-        initializeTicketsOperations);
+        () => initializeTicketsOperations());
     registerDashboardTabInitializers(Tabs.TASKS,
-        initializeTasksCharts,
-        initializeScheduledTasksOperations);
+        () => initializeTasksCharts(),
+        () => initializeScheduledTasksOperations());
     registerDashboardTabInitializers(Tabs.ACCESS_STRATEGY,
-        initializeAccessStrategyOperations,
-        initializeHeimdallOperations);
+        () => initializeAccessStrategyOperations(),
+        () => initializeHeimdallOperations());
     registerDashboardTabInitializers(Tabs.LOGGING,
-        initializeLoggingOperations,
-        initializeAuditEventsOperations,
-        initializeCasEventsOperations);
+        () => initializeLoggingOperations(),
+        () => initializeAuditEventsOperations(),
+        () => initializeCasEventsOperations());
     registerDashboardTabInitializers(Tabs.SSO_SESSIONS,
-        initializeSsoSessionOperations);
+        () => initializeSsoSessionOperations());
     registerDashboardTabInitializers(Tabs.CONFIGURATION,
-        initializeConfigurationOperations);
+        () => initializeConfigurationOperations());
     registerDashboardTabInitializers(Tabs.PERSON_DIRECTORY,
-        initializePersonDirectoryOperations);
+        () => initializePersonDirectoryOperations());
     registerDashboardTabInitializers(Tabs.AUTHENTICATION,
-        initializeAuthenticationOperations);
+        () => initializeAuthenticationOperations());
     registerDashboardTabInitializers(Tabs.CONSENT,
-        initializeConsentOperations);
+        () => initializeConsentOperations());
     registerDashboardTabInitializers(Tabs.PROTOCOLS,
-        initializeCasProtocolOperations,
-        initializeSAML1ProtocolOperations,
-        initializeSAML2ProtocolOperations,
-        initializeOidcProtocolOperations);
+        () => initializeCasProtocolOperations(),
+        () => initializeSAML1ProtocolOperations(),
+        () => initializeSAML2ProtocolOperations(),
+        () => initializeOidcProtocolOperations());
     registerDashboardTabInitializers(Tabs.THROTTLES,
-        initializeThrottlesOperations);
+        () => initializeThrottlesOperations());
     registerDashboardTabInitializers(Tabs.MFA,
-        initializeMultifactorOperations,
-        initializeTrustedMultifactorOperations);
+        () => initializeMultifactorOperations(),
+        () => initializeTrustedMultifactorOperations(),
+        () => PalantirCredentialRepositories.initialize());
     registerDashboardTabInitializers(Tabs.MULTITENANCY,
-        initializeMultitenancyOperations);
+        () => initializeMultitenancyOperations());
     registerDashboardTabInitializers(Tabs.CLUSTER,
-        initializeClusterTopologyOperations);
+        () => initializeClusterTopologyOperations());
     registerDashboardTabInitializers(Tabs.USERS,
-        initializeUserLookupOperations);
+        () => initializeUserLookupOperations());
     registerDashboardTabInitializers(Tabs.HOME,
-        initializePalantirHome);
+        () => initializePalantirHome());
 }
 
 /**
  * Resolve the tab to open.
  *
- * A reload stays on the page this browser tab was showing; a new visit opens Home. Without Home, the
+ * A link to a page opens that page. A reload stays on the page this browser tab was showing; a new visit opens Home. Without Home, the
  * tab the operator last used is preferred, then Applications, then whichever destination the
  * deployment's enabled actuator endpoints actually left on the rail. Only the first visible entry
  * is guaranteed to exist, so it is the last resort rather than Applications, which a deployment
@@ -130,10 +143,13 @@ function registerPalantirTabInitializers() {
  */
 function resolveInitialDashboardTab() {
     const shown = value => {
-        const index = Number.parseInt(value, 10);
-        return Number.isInteger(index) && String(index) === String(value)
-            && $(`nav.sidebar-navigation ul li[data-tab-index=${index}]`).is(":visible") ? index : null;
+        const tab = Tabs.of(value);
+        return tab && tab.index < Tabs.SETTINGS.index && PalantirPages.available(tab) ? tab.index : null;
     };
+    const linked = PalantirLinks.parse(location.hash).tab;
+    if (linked && shown(linked) !== null) {
+        return linked.index;
+    }
     let reloadedTab = null;
     let storedTab = null;
     try {
@@ -153,7 +169,7 @@ function resolveInitialDashboardTab() {
     if (stored !== null) {
         return stored;
     }
-    if ($(`nav.sidebar-navigation ul li[data-tab-index=${Tabs.APPLICATIONS.index}]`).is(":visible")) {
+    if (PalantirPages.available(Tabs.APPLICATIONS)) {
         return Tabs.APPLICATIONS.index;
     }
     const firstContentTab = $("nav.sidebar-navigation ul li:visible")
@@ -188,7 +204,7 @@ async function initializePalantir() {
         if (visibleCount === 0 || selectedTab < 0) {
             $("#dashboard").hide();
             Swal.fire({
-                title: "Palantir is unavailable!",
+                title: "Palantir Is Unavailable!",
                 text: "Palantir requires a number of actuator endpoints to be enabled and exposed, "
                     + "and your CAS deployment fails to do so.",
                 icon: "warning",
@@ -198,13 +214,20 @@ async function initializePalantir() {
         }
 
         registerPalantirTabInitializers();
+        PalantirServiceEditGuard.removeExpiredDrafts();
 
         await initializeHotKeyOperations();
         initializeCommandPalette();
         await initializePalantirSession();
 
-        $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
-        await initializeDashboardTab(selectedTab);
+        PalantirLinks.bind();
+        const linked = PalantirLinks.parse(location.hash);
+        if (linked.tab?.index === selectedTab) {
+            await PalantirLinks.follow(location.hash);
+        } else {
+            PalantirPages.open(Tabs.byIndex(selectedTab));
+            await initializeDashboardTab(selectedTab);
+        }
     } catch (error) {
         console.error("An error occurred:", error);
     }
@@ -419,6 +442,7 @@ document.addEventListener("DOMContentLoaded", () => {
     PalantirTheme.initialize();
     PalantirZenMode.initialize();
     initializePalantirFocusRings();
+    PalantirPanelFocus.initialize();
     initializeSidebarSections();
     initializePalantirNavigationMenus();
     $("nav.sidebar-navigation ul li").off().on("click", function () {

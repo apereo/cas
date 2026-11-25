@@ -128,8 +128,15 @@ class PalantirTheme {
         return value || fallback;
     }
 
+    static chartColors = {text: "#52606d", grid: "rgba(0, 0, 0, .1)"};
+
     /**
      * Point Chart.js at the theme's text and grid colors and redraw the charts already on screen.
+     *
+     * The colors are given as functions that read the theme in force whenever a chart is drawn: Chart.js copies the
+     * defaults of its axes into each chart when the chart is made, so a color given as a value stays the color of
+     * the theme the chart was made in, and its labels and grid would only follow the theme once the chart is made
+     * again, as when its page refreshes.
      *
      * The grid and axis lines are themed through the scale defaults rather than the global
      * {@code Chart.defaults.borderColor}: Chart.js only fills in its dataset palette while the global
@@ -137,13 +144,16 @@ class PalantirTheme {
      * leaves every chart that relies on that palette with gray, nearly invisible bars.
      */
     static updateCharts() {
+        PalantirTheme.chartColors = {
+            text: PalantirTheme.color("--palantir-text-muted", "#52606d"),
+            grid: PalantirTheme.color("--palantir-chart-grid", "rgba(0, 0, 0, .1)")
+        };
         if (typeof Chart === "undefined") {
             return;
         }
-        const grid = PalantirTheme.color("--palantir-chart-grid", "rgba(0, 0, 0, .1)");
-        Chart.defaults.color = PalantirTheme.color("--palantir-text-muted", "#52606d");
-        Chart.defaults.scale.grid.color = grid;
-        Chart.defaults.scale.border.color = grid;
+        Chart.defaults.color = () => PalantirTheme.chartColors.text;
+        Chart.defaults.scale.grid.color = () => PalantirTheme.chartColors.grid;
+        Chart.defaults.scale.border.color = () => PalantirTheme.chartColors.grid;
         Object.values(Chart.instances || {}).forEach(chart => {
             try {
                 chart.update("none");
