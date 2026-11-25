@@ -32,11 +32,11 @@ public class GoogleAuthenticatorPrepareLoginAction extends AbstractMultifactorAu
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
         val enabled = isMultipleDeviceRegistrationEnabled(requestContext)
-            && repository.count(principal.getId()) >= 1
+            && repository.countForCurrentTenant(principal.getId()) >= 1
             && MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
         
         MultifactorAuthenticationWebflowUtils.putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(requestContext, enabled);
-        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccounts(requestContext, repository.get(principal.getId()));
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccounts(requestContext, repository.getForCurrentTenant(principal.getId()));
         return null;
     }
 

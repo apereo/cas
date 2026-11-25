@@ -1,0 +1,24 @@
+{
+  "dependencies": "reports,gcp-firestore-ticket-registry,gcp-firestore-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.cloud.gcp.project-id=apereo-cas-gcp",
+    "--spring.cloud.gcp.firestore.project-id=apereo-cas-gcp",
+    "--spring.cloud.gcp.firestore.emulator.enabled=true",
+    "--spring.cloud.gcp.firestore.host-port=localhost:9980",
+
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

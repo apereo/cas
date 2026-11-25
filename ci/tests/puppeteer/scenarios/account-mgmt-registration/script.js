@@ -1,7 +1,10 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function verifyAccountRegistrationWithOidcService() {
+const PHONE = "+1 347 745 1234";
+const SMS_PREFIX = "Activate your account registration via this link: ";
+
+async function verifyAccountRegistrationWithOidcService(sms) {
     const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -12,7 +15,7 @@ async function verifyAccountRegistrationWithOidcService() {
     await cas.goto(page, url);
     await cas.logPage(page);
     await cas.sleep(1000);
-    await submitAccountRegistrationRequest(page, browser);
+    await submitAccountRegistrationRequest(page, browser, sms);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
@@ -27,7 +30,7 @@ async function verifyAccountRegistrationWithOidcService() {
     await cas.closeBrowser(browser);
 }
 
-async function submitAccountRegistrationRequest(page, browser, checkAccessibility = false) {
+async function submitAccountRegistrationRequest(page, browser, sms, checkAccessibility = false) {
     await cas.sleep(2000);
     await cas.assertTextContent(page, "#accountSignUpLink", "Sign Up");
     await cas.submitForm(page, "#accountMgmtSignupForm");
@@ -41,7 +44,7 @@ async function submitAccountRegistrationRequest(page, browser, checkAccessibilit
     await cas.type(page, "#firstName", "CAS");
     await cas.type(page, "#lastName", "Person");
     await cas.type(page, "#email", "cas@example.org");
-    await cas.type(page, "#phone", "+1 347 745 1234");
+    await cas.type(page, "#phone", PHONE);
     await cas.screenshot(page);
     await cas.click(page, "#submit");
     await cas.waitForNavigation(page);
@@ -53,7 +56,13 @@ async function submitAccountRegistrationRequest(page, browser, checkAccessibilit
 
     const link = await cas.extractFromEmail(browser);
     assert(link !== undefined);
-    await cas.goto(page, link);
+    const message = await sms.waitForMessage(PHONE, (msg) => msg.text.startsWith(SMS_PREFIX));
+    sms.clear();
+    assert(message.from === "3477465300");
+    assert(message.text === `${SMS_PREFIX}${link}`, `Unexpected SMS text ${message.text}`);
+    const smsLink = message.text.substring(SMS_PREFIX.length);
+    await cas.log(`Following the activation link received by SMS: ${smsLink}`);
+    await cas.goto(page, smsLink);
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Account Registration");
     await cas.assertInnerTextStartsWith(page, "#content p", "Welcome back!");
@@ -81,13 +90,13 @@ async function submitAccountRegistrationRequest(page, browser, checkAccessibilit
     await cas.logPage(page);
 }
 
-async function verifyAccountRegistrationWithCasService() {
+async function verifyAccountRegistrationWithCasService(sms) {
     const service = "https://localhost:9859/anything/cas";
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     await cas.gotoLogin(page, service);
-    await submitAccountRegistrationRequest(page, browser, true);
+    await submitAccountRegistrationRequest(page, browser, sms, true);
     await cas.assertPageUrlStartsWith(page, service);
     await cas.assertTicketParameter(page);
     await cas.gotoLogin(page);
@@ -97,8 +106,10 @@ async function verifyAccountRegistrationWithCasService() {
 }
 
 (async () => {
-    await verifyAccountRegistrationWithCasService();
-    await verifyAccountRegistrationWithOidcService();
+    const sms = await cas.mockSmsServer();
+    await verifyAccountRegistrationWithCasService(sms);
+    await verifyAccountRegistrationWithOidcService(sms);
+    await sms.close();
 })();
 
 async function typePassword(page, pswd, confirm) {

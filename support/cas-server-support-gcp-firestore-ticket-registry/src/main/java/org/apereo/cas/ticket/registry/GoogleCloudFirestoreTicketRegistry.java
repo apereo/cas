@@ -279,6 +279,40 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
             .filter(ticket -> !ticket.isExpired());
     }
 
+    /**
+     * The decoded tickets of one type that belong to a principal are read through the index on the principal of that
+     * type's collection, as {@link #getSessionsFor(String)} does for sessions; any other query is answered as every
+     * registry answers it.
+     *
+     * @param criteria the criteria
+     * @return the results
+     */
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val definition = StringUtils.isBlank(criteria.getType()) ? null : ticketCatalog.find(criteria.getType());
+        if (definition == null || !criteria.isDecode() || StringUtils.isBlank(criteria.getPrincipal())
+            || StringUtils.isNotBlank(criteria.getId())) {
+            return super.query(criteria);
+        }
+        return FunctionUtils.doUnchecked(() -> {
+            val collection = getTicketCollectionInstanceByMetadata(definition);
+            val documents = firestore.collection(collection)
+                .whereEqualTo("principal", digestIdentifier(criteria.getPrincipal()))
+                .get()
+                .get()
+                .getDocuments();
+            return documents
+                .stream()
+                .map(document -> document.toObject(GoogleCloudFirestoreTicketDocument.class))
+                .filter(Objects::nonNull)
+                .map(document -> decodeTicket(deserializeTicket(document.getJson(), document.getType())))
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired())
+                .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+                .collect(Collectors.toList());
+        });
+    }
+
     @Override
     public long countTicketsFor(final Service service) {
         return ticketCatalog

@@ -244,10 +244,13 @@ description: "Review and change SAML2 SP and IdP metadata handling (resolvers, M
 - Puppeteer coverage: `saml2-idp-metadata-caching`, `saml2-idp-login-idp-initiated-mdq`,
   `saml2-idp-login-sp-metadata-{directory,groovy,jdbc,json,mongodb}`,
   `saml2-idp-login-sp-override-metadata`, `saml2-idp-login-metadata-aws-s3`, `saml-mdui`,
-  `delegated-login-saml2-mongodb-metadata`. All are single-threaded happy paths against a
-  reachable metadata source, so nothing here covers concurrency, a metadata host that is down,
-  signature-validation failure, or MDQ content negotiation. Changes in those areas need new
-  scenarios rather than a rerun.
+  `delegated-login-saml2-mongodb-metadata`. `saml2-idp-metadata-caching` also serves URL
+  metadata from an in-script server and covers backup files, a server answering 500 or HTML,
+  a stopped server, stale backups and expired metadata; the `local` variation of
+  `saml2-idp-login-idp-initiated-mdq` covers MDQ with basic auth, the `Accept` header, signed and
+  wrongly signed answers, 404s and backup fallback (the `incommon` variation still needs the live
+  InCommon MDQ). `UrlResourceMetadataResolver` writes the backup only after the download parsed and
+  passed its filters; keep it that way.
 
 ## SAML2 identity provider session state
 

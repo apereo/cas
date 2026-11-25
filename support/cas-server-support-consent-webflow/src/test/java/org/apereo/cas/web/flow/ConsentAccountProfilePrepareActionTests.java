@@ -54,4 +54,19 @@ class ConsentAccountProfilePrepareActionTests extends BaseConsentActionTests {
         assertNull(result);
         assertTrue(context.getFlowScope().contains("consentDecisions"));
     }
+
+    @Test
+    void verifyDecisionsOfTenantsAreNotListed() throws Throwable {
+        val uid = UUID.randomUUID().toString();
+        val decision = consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService(), uid,
+            CoreAuthenticationTestUtils.getAttributes());
+        decision.setTenant("shire");
+        consentRepository.storeConsentDecision(decision);
+
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(uid), context);
+        assertNull(consentAccountProfilePrepareAction.execute(context));
+        assertFalse(context.getFlowScope().contains("consentDecisions"));
+    }
 }

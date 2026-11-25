@@ -41,20 +41,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     private final boolean throwOnFetchFailure;
 
     public CRLDistributionPointRevocationChecker(final Cache<URI, byte[]> crlCache,
-                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
-                                                 final RevocationPolicy<Void> unavailableCRLPolicy) {
+                                                 final RevocationPolicy<? super X509CRL> expiredCRLPolicy,
+                                                 final RevocationPolicy<? super Void> unavailableCRLPolicy) {
         this(crlCache, expiredCRLPolicy, unavailableCRLPolicy, false);
     }
 
     public CRLDistributionPointRevocationChecker(final Cache<URI, byte[]> crlCache,
-                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
-                                                 final RevocationPolicy<Void> unavailableCRLPolicy,
+                                                 final RevocationPolicy<? super X509CRL> expiredCRLPolicy,
+                                                 final RevocationPolicy<? super Void> unavailableCRLPolicy,
                                                  final boolean throwOnFetchFailure) {
         this(false, unavailableCRLPolicy, expiredCRLPolicy, crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
     }
 
-    public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
-                                                 final RevocationPolicy<X509CRL> expiredCRLPolicy,
+    public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<? super Void> unavailableCRLPolicy,
+                                                 final RevocationPolicy<? super X509CRL> expiredCRLPolicy,
                                                  final Cache<URI, byte[]> crlCache,
                                                  final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
         super(checkAll, unavailableCRLPolicy, expiredCRLPolicy);

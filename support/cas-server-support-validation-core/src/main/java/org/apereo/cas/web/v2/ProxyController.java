@@ -74,7 +74,7 @@ public class ProxyController extends AbstractDelegateController {
     }
 
     @Override
-    @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY)
+    @GetMapping(path = {CasProtocolConstants.ENDPOINT_PROXY, "/tenants/{tenant}" + CasProtocolConstants.ENDPOINT_PROXY})
     @Operation(summary = "Proxy authentication endpoint",
         parameters = {
             @Parameter(name = "ticket", in = ParameterIn.QUERY, required = true, description = "Proxy granting ticket"),

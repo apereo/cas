@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 
 const ROOT = "/tmp/cas-saml-metadata-git";
 const ENTITY_ID = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
-const MANAGER_URL = "https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadata/managers/GitSamlRegisteredServiceMetadataResolver";
+const MANAGER_URL = "https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadata/managers/Git%20Repository";
 
 async function remoteFiles() {
     const output = execFileSync("git", ["--git-dir", `${ROOT}/remote.git`, "ls-tree", "-r", "--name-only", "master"]).toString().trim();

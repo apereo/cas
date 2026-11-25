@@ -7,7 +7,9 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.authn.accept.users=casuser::Mellon,casblock::Mellon,casslow::Mellon",
+    "--cas.authn.accept.users=casuser::Mellon,casblock::Mellon,casslow::Mellon,pdpallow::Mellon,pdpdeny::Mellon,pdperror::Mellon,pdpgarbage::Mellon,pdpdrop::Mellon",
+    "--cas.authn.attribute-repository.stub.attributes.memberOf=staff",
+    "--cas.authn.attribute-repository.stub.attributes.mail=pdp@example.org",
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 

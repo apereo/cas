@@ -224,6 +224,17 @@ public class CasJpaTicketRegistryAutoConfiguration {
     static class JpaTicketRegistryLockingConfiguration {
         private static final BeanCondition CONDITION_LOCKING = BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 
+        /**
+         * The JDBC lock repository. The container calls {@code afterPropertiesSet} on the returned repository, which on
+         * PostgreSQL appends a conflict hint to the insert query; calling it here as well would append the hint twice
+         * and break every lock. Refresh-scoped beans do not receive {@code afterSingletonsInstantiated}, so that one is
+         * called here.
+         *
+         * @param ticketTransactionManager the ticket transaction manager
+         * @param applicationContext       the application context
+         * @param dataSourceTicket         the ticket data source
+         * @return the lock repository
+         */
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public org.springframework.integration.jdbc.lock.LockRepository jdbcLockRepository(
@@ -238,7 +249,6 @@ public class CasJpaTicketRegistryAutoConfiguration {
                     val repo = new org.springframework.integration.jdbc.lock.DefaultLockRepository(dataSourceTicket);
                     repo.setApplicationContext(applicationContext);
                     repo.setTransactionManager(ticketTransactionManager);
-                    repo.afterPropertiesSet();
                     repo.afterSingletonsInstantiated();
                     return repo;
                 })

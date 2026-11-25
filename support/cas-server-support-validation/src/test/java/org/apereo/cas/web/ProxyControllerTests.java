@@ -68,6 +68,24 @@ class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
     }
 
     @Test
+    void verifyProxyGrantingTicketOfAnotherTenant() throws Throwable {
+        val ticket = new ProxyGrantingTicketImpl("PGT-" + UUID.randomUUID(),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticket.setTenantId("shire");
+        getTicketRegistry().addTicket(ticket);
+        val result = mockMvc.perform(get("/tenants/shire" + CasProtocolConstants.ENDPOINT_PROXY)
+                .param(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId())
+                .param(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "testDefault"))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        assertNotNull(result.getModelAndView());
+        val model = result.getModelAndView().getModel();
+        assertFalse(model.containsKey(CasProtocolConstants.PARAMETER_TICKET));
+        assertEquals(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, model.get("code"));
+    }
+
+    @Test
     void verifyNotAuthorizedPGT() throws Throwable {
         val ticket = new ProxyGrantingTicketImpl(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID,
             CoreAuthenticationTestUtils.getAuthentication(),

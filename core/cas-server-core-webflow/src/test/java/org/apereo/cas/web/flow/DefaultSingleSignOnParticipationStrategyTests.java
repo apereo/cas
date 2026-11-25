@@ -28,6 +28,9 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,6 +69,33 @@ class DefaultSingleSignOnParticipationStrategyTests {
     @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @BeforeEach
+    void clearClientInfo() {
+        ClientInfoHolder.clear();
+    }
+
+    @Test
+    void verifyDoesNotParticipateWithTicketOfAnotherTenant() throws Throwable {
+        val tgt = new MockTicketGrantingTicket("casuser");
+        tgt.setTenantId("shire");
+        val ticketRegistrySupport = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupport.getTicket(anyString())).thenReturn(tgt);
+        val strategy = new DefaultSingleSignOnParticipationStrategy(mock(ServicesManager.class), new SingleSignOnProperties(),
+            ticketRegistrySupport, authenticationSystemSupport, mock(AuthenticationServiceSelectionPlan.class));
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        val ssoRequest = getSingleSignOnParticipationRequest(context);
+
+        ClientInfoHolder.setClientInfo(ClientInfo.empty().setTenant("shire"));
+        assertTrue(strategy.isParticipating(ssoRequest));
+        ClientInfoHolder.setClientInfo(ClientInfo.empty().setTenant("london"));
+        assertFalse(strategy.isParticipating(ssoRequest));
+        ClientInfoHolder.clear();
+        assertFalse(strategy.isParticipating(ssoRequest));
+        tgt.setTenantId(null);
+        assertTrue(strategy.isParticipating(ssoRequest));
+    }
 
     @Test
     void verifyParticipationDisabledWithService() throws Throwable {

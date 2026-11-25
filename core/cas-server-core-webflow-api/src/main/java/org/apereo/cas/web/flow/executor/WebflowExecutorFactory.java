@@ -77,7 +77,7 @@ public class WebflowExecutorFactory {
         executionFactory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 
         val cipherExecutorResolver = new DefaultCipherExecutorResolver(webflowCipherExecutor, tenantExtractor,
-            WebflowProperties.class, bindingContext -> {
+            "cas.webflow.crypto", bindingContext -> {
             val properties = bindingContext.value();
             return WebflowConversationStateCipherExecutor.from(properties.getWebflow().getCrypto());
         });

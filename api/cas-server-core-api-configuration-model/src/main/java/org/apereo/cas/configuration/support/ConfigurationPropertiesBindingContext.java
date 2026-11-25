@@ -30,6 +30,17 @@ public record ConfigurationPropertiesBindingContext<T>(T value, Map<String, Conf
     }
 
     /**
+     * Whether any bound property is the given property or sits under it, such as
+     * {@code cas.tgc.crypto.encryption.key} under {@code cas.tgc.crypto}.
+     *
+     * @param prefix the property prefix
+     * @return true/false
+     */
+    public boolean containsBindingUnder(final String prefix) {
+        return bindings.keySet().stream().anyMatch(name -> name.equals(prefix) || name.startsWith(prefix + '.'));
+    }
+
+    /**
      * Is bound successfully.
      *
      * @return true/false

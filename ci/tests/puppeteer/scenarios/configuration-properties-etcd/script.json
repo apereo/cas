@@ -1,0 +1,23 @@
+{
+  "dependencies": "configuration-cloud-etcd,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
+    "--cas.standalone.configuration-security.iterations=1000",
+    "--cas.standalone.configuration-security.psw=x6Fcw2H&@RWHfi",
+
+    "--management.endpoint.env.show-values=ALWAYS",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=env,refresh,casConfig",
+    "--management.endpoints.access.default=UNRESTRICTED",
+
+    "--cas.spring.cloud.etcd.endpoints=http://localhost:2379"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

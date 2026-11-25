@@ -60,7 +60,7 @@ class Cas20ProtocolValidationSpecificationTests extends BaseCasCoreTests {
             val request = new MockHttpServletRequest();
             request.addParameter(CasProtocolConstants.PARAMETER_RENEW, value);
             assertTrue(validationSpecification.isSatisfiedBy(CoreValidationTestUtils.getAssertion(false), request),
-                "Value [%s] must not be understood as a request for renewed authentication".formatted(value));
+                () -> "Value [%s] must not be understood as a request for renewed authentication".formatted(value));
         });
     }
 }

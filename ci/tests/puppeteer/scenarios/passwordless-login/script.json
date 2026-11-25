@@ -18,6 +18,10 @@
     "--cas.authn.passwordless.tokens.mail.text=${token}",
     "--cas.authn.passwordless.tokens.mail.from=casuser@apereo.org",
     "--cas.authn.passwordless.tokens.mail.subject=Passwordless AuthN",
+
+    "--cas.authn.passwordless.tokens.sms.from=3477465300",
+    "--cas.authn.passwordless.tokens.sms.text=Passwordless:${token}",
+    "--cas.sms-provider.rest.url=http://localhost:5617",
     
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],

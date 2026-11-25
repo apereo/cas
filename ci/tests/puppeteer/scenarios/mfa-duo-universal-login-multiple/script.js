@@ -35,6 +35,6 @@ async function login(page, providerId, service = undefined) {
         await page.waitForSelector("#content", {visible: true});
         await cas.assertInnerText(page, "#content div h2", "Log In Successful");
         await cas.assertCookie(page);
-        await cas.assertInnerTextContains(page, "#attribute-tab-1 table#attributesTable tbody", providerId);
+        await cas.assertInnerTextContains(page, "#authenticationAttributesTable tbody", providerId);
     }
 }

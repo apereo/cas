@@ -174,18 +174,15 @@ async function initializePersonDirectoryOperations() {
                 return false;
             }
             const username = $("#personUsername").val();
-            Swal.fire({
-                title: `Are you sure you want to delete the cache for ${username}?`,
-                text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+            PalantirDialogs.confirm({
+                title: `Are You Sure You Want to Delete the Cache for ${username}?`,
+                text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`
             })
                 .then((result) => {
                     if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
-                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                            url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                             type: "DELETE",
                             contentType: "application/json",
                             error: (xhr, status, error) => {
@@ -207,7 +204,7 @@ async function initializePersonDirectoryOperations() {
             const username = $("#personUsername").val();
             personDirectoryTable.clear();
             $.ajax({
-                url: `${CasActuatorEndpoints.personDirectory()}/cache/${username}`,
+                url: `${CasActuatorEndpoints.personDirectory()}/cache/${encodeURIComponent(username)}`,
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
@@ -720,7 +717,7 @@ function renderNewAttributeRepositoryDialog() {
             success: () => {
                 dialogContainer.dialog("close");
                 $.get(CasActuatorEndpoints.env(), response => {
-                    reloadConfigurationTable(response);
+                    reloadPalantirConfigurationTable(response);
                     refreshCasServerConfiguration(`New ${type} Attribute Repository Created`);
                 }).fail(xhr => displayBanner(xhr));
             },
@@ -783,7 +780,7 @@ function renderNewAttributeRepositoryDialog() {
                         submitAttributeRepository(repositoryType, propertySources[0]);
                     } else {
                         Swal.fire({
-                            title: "Which property source should receive the configuration?",
+                            title: "Which Property Source Should Receive the Configuration?",
                             input: "select",
                             icon: "question",
                             inputOptions: propertySources,
@@ -941,15 +938,15 @@ function attributeDefinitionRow(definition) {
 function attributeDefinitionKind(definition) {
     const type = definition["@class"] || "";
     if (type.includes("SamlIdPAttributeDefinition")) {
-        return {key: "saml", short: "SAML", label: "SAML2 attribute"};
+        return {key: "saml", short: "SAML", label: "SAML2 Attribute"};
     }
     if (type.includes("OidcAttributeDefinition")) {
-        return {key: "oidc", short: "OIDC", label: "OpenID Connect claim"};
+        return {key: "oidc", short: "OIDC", label: "OpenID Connect Claim"};
     }
     if (type.includes("OAuthAttributeDefinition")) {
-        return {key: "oauth", short: "OAuth", label: "OAuth attribute"};
+        return {key: "oauth", short: "OAuth", label: "OAuth Attribute"};
     }
-    return {key: "default", short: "", label: "Attribute definition"};
+    return {key: "default", short: "", label: "Attribute Definition"};
 }
 
 /**
@@ -1093,12 +1090,9 @@ function deleteAllAttributeDefinitions() {
         Swal.fire("Pay Attention!", "There are no attribute definitions to delete.", "info");
         return;
     }
-    Swal.fire({
-        title: `Are you sure you want to delete all ${keys.length} attribute definition(s)?`,
-        text: "Once deleted, you may not be able to recover these entries.",
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+    PalantirDialogs.confirm({
+        title: `Are You Sure You Want to Delete All ${keys.length} Attribute Definition(s)?`,
+        text: "Once deleted, you may not be able to recover these entries."
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
@@ -1195,12 +1189,9 @@ function bindAttrDefDeleteButtons() {
  */
 function runAttributeDefinitionAction(action, definitionKey) {
     if (action === "delete" && CasActuatorEndpoints.attributeDefinitions()) {
-        Swal.fire({
+        PalantirDialogs.confirm({
             title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "question",
-            showConfirmButton: true,
-            showDenyButton: true
+            text: "Once deleted, you may not be able to recover this entry."
         })
             .then((result) => {
                 if (result.isConfirmed) {
@@ -1220,7 +1211,7 @@ function runAttributeDefinitionAction(action, definitionKey) {
                 }
             });
     } else if (action === "view" && CasActuatorEndpoints.attributeDefinitions()) {
-        $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${definitionKey}`, response => {
+        $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${encodeURIComponent(definitionKey)}`, response => {
             const editor = initializeAceEditor("viewAttrDefEditor", "json");
             editor.setReadOnly(true);
             editor.setValue(JSON.stringify(response, null, 2), -1);
@@ -1247,7 +1238,7 @@ function toggleAttrDefEditorVisibility() {
 
     if (showEditor === "true" || showEditor === true) {
         showElements($editorContainer);
-        $controlsPanel.css({"max-width": "520px"});
+        $controlsPanel.removeClass("is-wide");
         const editor = ace.edit("attrDefEditor");
         if (editor) {
             editor.resize();
@@ -1255,7 +1246,7 @@ function toggleAttrDefEditorVisibility() {
         }
     } else {
         hideElements($editorContainer);
-        $controlsPanel.css({"max-width": "none"});
+        $controlsPanel.addClass("is-wide");
     }
 }
 
@@ -1381,8 +1372,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
 
     const controlsPanel = $("<div>", {
         id: "attrDefControlsPanel",
-        class: "mr-2",
-        css: {"min-width": "450px", "max-width": "520px"}
+        class: "mr-2"
     });
 
     const editorContainer = $("<div>", {
@@ -1726,7 +1716,7 @@ function openAttributeDefinitionDialog(existingDefinition) {
             const showEditor = localStorage.getItem("showAttrDefEditorPreference");
             if (showEditor === "false") {
                 hideElements($("#attrDefEditorContainer"));
-                $("#attrDefControlsPanel").css({"max-width": "none"});
+                $("#attrDefControlsPanel").addClass("is-wide");
             }
 
             $("#newAttributeDefinitionDialog .jqueryui-selectmenu").selectmenu({
@@ -1865,7 +1855,7 @@ function editAttributeDefinition(key) {
     if (!CasActuatorEndpoints.attributeDefinitions()) {
         return;
     }
-    $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${key}`, response => {
+    $.get(`${CasActuatorEndpoints.attributeDefinitions()}/${encodeURIComponent(key)}`, response => {
         openAttributeDefinitionDialog(response);
     }).fail((xhr, status, error) => {
         console.error("Error fetching attribute definition:", error);

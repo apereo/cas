@@ -28,6 +28,13 @@ fi
 echo -e "Setting build environment...\n"
 $SUDO mkdir -p /etc/cas/config /etc/cas/saml /etc/cas/services /tmp /temp
 
+gradleUserHome="${GRADLE_USER_HOME:-$HOME/.gradle}"
+mkdir -p "${gradleUserHome}"
+if ! grep -q "org.gradle.internal.network.retry.max.attempts" "${gradleUserHome}/gradle.properties" 2>/dev/null; then
+  echo "Limiting Gradle to 2 download attempts in CI to stay under Maven Central's rate limits"
+  echo "systemProp.org.gradle.internal.network.retry.max.attempts=2" >> "${gradleUserHome}/gradle.properties"
+fi
+
 echo -e "Configuring Gradle wrapper...\n"
 chmod +x ./gradlew
 echo "Gradle Home directory:"

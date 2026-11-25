@@ -92,7 +92,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseSamlIdPConfigurationTests}.

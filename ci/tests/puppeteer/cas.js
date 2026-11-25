@@ -10,6 +10,7 @@ const fs = require("fs");
 const util = require("util");
 const path = require("path");
 const mockServer = require("mock-json-server");
+const express = require("express");
 const {Buffer} = require("buffer");
 const ps = require("ps-node");
 const NodeStaticAuth = require("node-static-auth");
@@ -1199,6 +1200,69 @@ exports.mockJsonServer = async (pathMappings, port = 8000) => {
     const app = mockServer(pathMappings, port, "localhost");
     await app.start();
     return app;
+};
+
+/**
+ * Starts a mock of the REST SMS gateway that CAS calls through cas.sms-provider.rest.url.
+ * Either request style of RestfulSmsSender is accepted: from and to as query parameters
+ * with the text as the raw request body (QUERY_PARAMETERS, the default), or a JSON body
+ * carrying from, to and text (REQUEST_BODY). Every message is recorded and answered with 200.
+ *
+ * @param port the port to listen on; set cas.sms-provider.rest.url=http://localhost:<port>
+ * @returns {Promise<{messages: Array, waitForMessage: Function, clear: Function, close: Function}>}
+ */
+exports.mockSmsServer = async (port = 5617) => {
+    const messages = [];
+    const app = express();
+    app.use(express.text({type: () => true}));
+    app.use((req, res) => {
+        const body = typeof req.body === "string" ? req.body : "";
+        let fields = {from: req.query.from, to: req.query.to, text: body};
+        if (req.query.to === undefined && body.length > 0) {
+            try {
+                const json = JSON.parse(body);
+                fields = {from: json.from, to: json.to, text: json.text};
+            } catch {
+                this.logr(`SMS request body is neither JSON nor accompanied by a recipient: ${body}`);
+            }
+        }
+        const message = {
+            ...fields,
+            method: req.method,
+            path: req.path,
+            authorization: req.get("authorization"),
+            receivedAt: Date.now()
+        };
+        messages.push(message);
+        this.log(`SMS received for ${message.to} from ${message.from}: ${message.text}`);
+        res.sendStatus(200);
+    });
+    const server = await new Promise((resolve, reject) => {
+        const started = app.listen(port, (error) => error ? reject(error) : resolve(started));
+    });
+    await this.log(`Mock SMS server is listening on port ${port}`);
+    return {
+        messages,
+        waitForMessage: async (to, predicate = () => true, timeout = 15000) => {
+            const deadline = Date.now() + timeout;
+            while (Date.now() <= deadline) {
+                const found = messages.find((message) => (to === undefined || message.to === to) && predicate(message));
+                if (found !== undefined) {
+                    return found;
+                }
+                await new Promise((resolve) => setTimeout(resolve, 250));
+            }
+            throw new Error(`No SMS for ${to} matched within ${timeout}ms; received: ${JSON.stringify(messages)}`);
+        },
+        clear: () => {
+            messages.length = 0;
+        },
+        close: async () => {
+            server.closeAllConnections();
+            await new Promise((resolve) => server.close(() => resolve()));
+            await this.log(`Mock SMS server on port ${port} is stopped`);
+        }
+    };
 };
 
 exports.httpServer = async (root,
