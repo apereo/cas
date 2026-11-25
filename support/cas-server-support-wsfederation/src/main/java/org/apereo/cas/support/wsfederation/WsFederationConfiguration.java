@@ -3,6 +3,7 @@ package org.apereo.cas.support.wsfederation;
 import module java.base;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +27,6 @@ public class WsFederationConfiguration implements Serializable {
     @Serial
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
-
     private transient Resource encryptionPrivateKey;
 
     private transient Resource encryptionCertificate;
@@ -41,6 +40,8 @@ public class WsFederationConfiguration implements Serializable {
     private String identityProviderUrl;
 
     private String relyingPartyIdentifier;
+
+    private String replyUrl;
 
     private long tolerance;
 
@@ -59,15 +60,21 @@ public class WsFederationConfiguration implements Serializable {
     private String signingCertificates;
 
     /**
-     * Gets authorization url.
+     * Gets authorization url. The {@code wreply} parameter carries the reply url,
+     * when defined, so the identity provider can locate the relying party and
+     * knows where to post the security token.
      *
      * @param relyingPartyIdentifier the relying party identifier
      * @param wctx                   the wctx
      * @return the authorization url
      */
     public String getAuthorizationUrl(final String relyingPartyIdentifier, final String wctx) {
-        val url = getIdentityProviderUrl() + QUERYSTRING;
-        return String.format(url, relyingPartyIdentifier, wctx);
+        val url = new StringBuilder(getIdentityProviderUrl())
+            .append("?wa=wsignin1.0&wtrealm=%s&wctx=%s".formatted(EncodingUtils.urlEncode(relyingPartyIdentifier), EncodingUtils.urlEncode(wctx)));
+        if (StringUtils.isNotBlank(replyUrl)) {
+            url.append("&wreply=").append(EncodingUtils.urlEncode(replyUrl));
+        }
+        return url.toString();
     }
 
     public String getName() {

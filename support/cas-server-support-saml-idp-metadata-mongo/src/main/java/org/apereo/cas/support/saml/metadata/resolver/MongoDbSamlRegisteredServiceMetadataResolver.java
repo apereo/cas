@@ -121,6 +121,11 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
+    public String getName() {
+        return "MongoDB";
+    }
+
+    @Override
     public boolean isAvailable(final SamlRegisteredService service) {
         return supports(service) && mongoTemplate.collectionExists(this.collectionName);
     }

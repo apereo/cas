@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo;
 
 import module java.base;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -116,12 +117,48 @@ public class DuoSecurityUserAccount implements Serializable {
         return this.metadata.get("firstname");
     }
 
+    /**
+     * Set the first name, as Duo Security names it; a blank name is left out.
+     *
+     * @param firstName the first name
+     * @return the duo security user account
+     */
+    @JsonSetter("firstName")
+    @CanIgnoreReturnValue
+    public DuoSecurityUserAccount setFirstName(final String firstName) {
+        return addAttribute("firstname", firstName);
+    }
+
     public String getLastName() {
         return this.metadata.get("lastname");
     }
 
+    /**
+     * Set the last name, as Duo Security names it; a blank name is left out.
+     *
+     * @param lastName the last name
+     * @return the duo security user account
+     */
+    @JsonSetter("lastName")
+    @CanIgnoreReturnValue
+    public DuoSecurityUserAccount setLastName(final String lastName) {
+        return addAttribute("lastname", lastName);
+    }
+
     public String getEmail() {
         return this.metadata.get("email");
+    }
+
+    /**
+     * Set the email address, as Duo Security names it; a blank address is left out.
+     *
+     * @param email the email address
+     * @return the duo security user account
+     */
+    @JsonSetter("email")
+    @CanIgnoreReturnValue
+    public DuoSecurityUserAccount setEmail(final String email) {
+        return addAttribute("email", email);
     }
 
     public String getRealName() {
@@ -129,11 +166,11 @@ public class DuoSecurityUserAccount implements Serializable {
     }
 
     public Instant getLastLogin() {
-        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("last_login", "0")));
+        return Instant.ofEpochSecond(Long.parseLong(metadata.getOrDefault("last_login", "0")));
     }
 
     public Instant getCreated() {
-        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("created", "0")));
+        return Instant.ofEpochSecond(Long.parseLong(metadata.getOrDefault("created", "0")));
     }
 
     public boolean isEnrolled() {

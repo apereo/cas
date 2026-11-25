@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -67,6 +68,26 @@ class MultitenancyEndpointTests {
         }
 
         @Test
+        void verifySecretsAreRedacted() throws Throwable {
+            mockMvc.perform(get("/actuator/multitenancy/tenants/cookie")
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("A128CBC-HS256")))
+                .andExpect(content().string(containsString(TenantsManager.REDACTED_PROPERTY_VALUE)))
+                .andExpect(content().string(not(containsString("u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w"))))
+                .andExpect(content().string(not(containsString("zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w"))));
+        }
+
+        @Test
+        void verifyStaticUsersAreRedacted() throws Throwable {
+            mockMvc.perform(get("/actuator/multitenancy/tenants/cookie-settings")
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("P1D")))
+                .andExpect(content().string(not(containsString("casuser::Mellon"))));
+        }
+
+        @Test
         void verifyOperationById() throws Throwable {
             mockMvc.perform(get("/actuator/multitenancy/tenants/b9584c42")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +97,7 @@ class MultitenancyEndpointTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.multitenancy.json.location=file://${java.io.tmpdir}/ExternalTenants.json")
+    @TestPropertySource(properties = "cas.multitenancy.json.location=file://${java.io.tmpdir}/ExternalTenants-${random.uuid}.json")
     class ExternalTests extends BaseTests {
         @Test
         void verifyOperation() throws Throwable {
@@ -98,6 +119,18 @@ class MultitenancyEndpointTests {
                 .andExpect(status().isNotFound());
             mockMvc.perform(delete("/actuator/multitenancy/tenants/{tenantId}", tenant.getId()))
                 .andExpect(status().isNotFound());
+        }
+
+        @Test
+        void verifyInvalidTenantIdIsRefused() throws Throwable {
+            for (val id : List.of("../shire", "shire/login", " ", ".hidden")) {
+                val tenant = TenantDefinition.builder().id(id).build();
+                mockMvc.perform(post("/actuator/multitenancy/tenants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(MAPPER.writeValueAsString(tenant))
+                        .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
+            }
         }
     }
 }

@@ -90,6 +90,11 @@ public class GitSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     }
 
     @Override
+    public String getName() {
+        return "Git Repository";
+    }
+
+    @Override
     public List<SamlMetadataDocument> load() {
         try {
             pullIfNecessary();

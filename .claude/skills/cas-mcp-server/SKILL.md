@@ -34,6 +34,18 @@ description: "Review and extend the CAS MCP server (support/cas-server-support-m
   findPerson/previewAttributeRelease. Ticket-granting ticket ids are bearer tokens: return
   `CasMcpSessionReferences.of(id)` and accept references back through `CasMcpSessionReferences.resolve` (with the
   username). Service JSON from findService/matchService goes through the secret redaction in `CasServiceManagementTools`.
+- Spring AI's WebMVC Streamable HTTP transport keeps a standalone `GET` stream open without a status or headers until its
+  first event, which never comes in CAS; clients that wait for the headers (Antigravity) hang at initialization.
+  `CasMcpEventStreamFilter`, added after `AuthorizationFilter` by `casMcpEndpointConfigurer`, answers authenticated `GET`
+  with `405` and `Allow: POST, DELETE` (`ProtocolTests.verifyEventStreamIsNotOffered`). Do not rely on server-initiated
+  messages (list-changed notifications, sampling, elicitation) outside a request's own response stream.
+- The same transport answers refused messages (no session id, unknown session, wrong `Accept`) with
+  `ServerResponse.body(McpError)`; the default Jackson converter would write the whole exception, stack trace included.
+  `CasMcpErrorHttpMessageConverter`, added ahead of the defaults by the `casMcpWebMvcConfigurer` bean
+  (`configureMessageConverters(ServerBuilder)` with `addCustomConverter`), writes a JSON-RPC error response with a `null`
+  id instead (`ProtocolTests.verifyTransportErrorsAreJsonRpcResponses`). Test contexts lack Boot's
+  `HttpMessageConvertersAutoConfiguration`, so register converters through `WebMvcConfigurer`, not
+  `ServerHttpMessageConvertersCustomizer`.
 - MCP capabilities are set in `webapp/cas-server-webapp-resources/src/main/resources/application.properties`
   (`spring.ai.mcp.server.capabilities.*`) and mirrored in `BaseCasMcpTests`; a `@McpResource` or `@McpPrompt` bean is
   silently not advertised while its capability is false. Resources (`org.apereo.cas.mcp.resources`) return JSON built

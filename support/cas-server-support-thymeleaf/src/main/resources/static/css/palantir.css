@@ -3,14 +3,6 @@
     overflow: auto;
 }
 
-.mfa-provider-table td.wrap {
-    overflow-wrap: anywhere;
-    white-space: normal;
-    word-break: break-word;
-    overflow: visible;
-    text-overflow: clip;
-}
-
 .ts-dropdown, .jqueryui-multiselectmenu {
     background-color: #d7ebf9 !important;
     z-index: 10000 !important;
@@ -2875,10 +2867,7 @@ select + span[role="combobox"] {
 }
 
 .heimdall-authorization-mode-buttons {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .5rem;
+    flex: 0 0 auto;
 }
 
 .heimdall-authorization-section-title {
@@ -2892,8 +2881,89 @@ select + span[role="combobox"] {
     gap: 1rem;
 }
 
+#attrDefControlsPanel {
+    min-width: 450px;
+    max-width: 520px;
+}
+
+#attrDefControlsPanel.is-wide {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+    column-gap: 1.5rem;
+    align-content: start;
+    max-width: none;
+    margin-right: 0 !important;
+}
+
+#attrDefControlsPanel.is-wide > :not([id$='FieldContainer'], [id$='SelectContainer']) {
+    grid-column: 1 / -1;
+}
+
+#attrDefControlsPanel.is-wide .ui-selectmenu-button {
+    width: 100% !important;
+}
+
+.heimdall-authorization-map-host {
+    container-type: inline-size;
+}
+
 .heimdall-authorization-map-host [data-mapped-input-row="true"] {
-    flex-wrap: wrap;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+    gap: .5rem .75rem;
+}
+
+@container (max-width: 32rem) {
+    .heimdall-authorization-map-host [data-mapped-input-row="true"] {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .heimdall-authorization-map-host [data-mapped-input-row="true"] > label:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+:is(#registeredServiceHeimdallResourcePropertyKeyMapContainer, .heimdall-authorization-map-host, .heimdall-policy-map-host)
+:is(.mdc-button--inline-row, .mdc-button--round.add-row) {
+    display: inline-grid;
+    flex: 0 0 44px;
+    place-items: center;
+    width: 44px;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px;
+    margin: 0 0 4px !important;
+    padding: 0 !important;
+    border: 1px solid var(--cas-ui-border, #c3ccd6) !important;
+    border-radius: 50% !important;
+    background: var(--cas-ui-surface, #fff) !important;
+    box-shadow: none !important;
+    color: var(--cas-theme-primary, #114377) !important;
+}
+
+:is(#registeredServiceHeimdallResourcePropertyKeyMapContainer, .heimdall-authorization-map-host, .heimdall-policy-map-host)
+.mdc-button--round.add-row {
+    margin: 8px 8px 0 0 !important;
+}
+
+:is(#registeredServiceHeimdallResourcePropertyKeyMapContainer, .heimdall-authorization-map-host, .heimdall-policy-map-host)
+:is(.mdc-button--inline-row, .mdc-button--round.add-row[id$="DeleteAllButton"]) {
+    color: var(--cas-ui-danger, #a20323) !important;
+}
+
+:is(#registeredServiceHeimdallResourcePropertyKeyMapContainer, .heimdall-authorization-map-host, .heimdall-policy-map-host)
+:is(.mdc-button--inline-row, .mdc-button--round.add-row):hover {
+    border-color: currentColor !important;
+    background: var(--cas-ui-subtle, #f3f6f9) !important;
+}
+
+:is(#registeredServiceHeimdallResourcePropertyKeyMapContainer, .heimdall-authorization-map-host, .heimdall-policy-map-host)
+:is(.mdc-button--inline-row, .mdc-button--round.add-row) .mdc-button__label {
+    display: grid;
+    place-items: center;
+    margin: 0;
 }
 
 .heimdall-authorization-editor-container {
@@ -3140,13 +3210,6 @@ select + span[role="combobox"] {
     min-width: 0;
     width: 100%;
     text-overflow: ellipsis;
-}
-
-#registeredServiceHeimdallResourcePropertyKeyMapContainer .mdc-button--inline-row,
-.heimdall-authorization-map-host .mdc-button--inline-row,
-.heimdall-policy-map-host .mdc-button--inline-row {
-    flex: 0 0 auto;
-    min-width: 2.5rem;
 }
 
 .heimdall-policy-fields > .mdc-text-field {
@@ -3536,15 +3599,19 @@ select + span[role="combobox"] {
 
 .cluster-member-identity {
     display: flex;
-    align-items: flex-start;
-    gap: .45rem;
+    align-items: center;
+    gap: .5rem;
     min-width: 0;
+    min-height: 1.75rem;
 }
 
 .cluster-member-identity > .mdi {
+    display: inline-flex;
     flex: 0 0 auto;
+    align-items: center;
     color: var(--cas-theme-primary, #153e50);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+    line-height: 1;
 }
 
 .cluster-member-card-unhealthy .cluster-member-identity > .mdi {
@@ -3565,6 +3632,36 @@ select + span[role="combobox"] {
     overflow-wrap: anywhere;
 }
 
+html.palantir-page .cluster-member-card .cluster-member-description.cluster-member-description-state {
+    display: flex;
+    align-items: flex-start;
+    gap: .45rem;
+    margin: 0 1rem .75rem;
+    padding: .5rem .7rem;
+    border-left: 3px solid;
+    border-radius: 6px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+html.palantir-page .cluster-member-card .cluster-member-description.cluster-member-description-state > .mdi {
+    flex: 0 0 auto;
+    font-size: 1.05rem;
+    line-height: 1.35;
+}
+
+html.palantir-page .cluster-member-card .cluster-member-description.cluster-member-description-healthy {
+    border-left-color: var(--palantir-success-line, #3f9f82);
+    background: var(--palantir-success-bg, #e6f4e2);
+    color: var(--palantir-success, #2b5e21);
+}
+
+html.palantir-page .cluster-member-card .cluster-member-description.cluster-member-description-unhealthy {
+    border-left-color: var(--palantir-danger-line, #b4232f);
+    background: var(--palantir-danger-bg, #f8d7da);
+    color: var(--palantir-danger, #8a1f2b);
+}
+
 .cluster-member-metadata {
     display: grid;
     gap: .35rem;
@@ -3573,24 +3670,32 @@ select + span[role="combobox"] {
 
 .cluster-member-metadata-row {
     display: grid;
-    grid-template-columns: 1.1rem minmax(4.5rem, auto) 1fr;
-    align-items: start;
-    gap: .35rem;
+    grid-template-columns: 1.3rem minmax(4.5rem, auto) 1fr;
+    align-items: center;
+    gap: .5rem;
     min-width: 0;
+    min-height: 1.5rem;
 }
 
 .cluster-member-metadata-row > .mdi {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: var(--cas-theme-primary, #153e50);
+    font-size: 1.15rem;
+    line-height: 1;
 }
 
 .cluster-member-metadata-label {
     color: #536471;
     font-size: .84rem;
     font-weight: 700;
+    line-height: 1.4;
 }
 
 .cluster-member-metadata-value {
     min-width: 0;
+    line-height: 1.4;
     color: var(--palantir-text, #26323d);
     font-size: .84rem;
     overflow-wrap: anywhere;

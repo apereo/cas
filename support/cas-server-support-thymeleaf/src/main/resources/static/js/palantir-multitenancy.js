@@ -52,31 +52,25 @@ async function initializeMultitenancyOperations() {
         }
     });
 
-    function fetchTenants() {
+    const loadTenants = () => $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
         tenantsTable.clear();
-        $.get(`${CasActuatorEndpoints.multitenancy()}/tenants`, response => {
-            for (const tenant of Object.values(response)) {
-                tenantsTable.row.add({
-                    0: `${palantirCode(tenant.id)}`,
-                    1: `${palantirCode(tenant.description ?? "")}`,
-                    tenantId: tenant.id
-                });
-            }
-            tenantsTable.draw();
-        })
-            .fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayBanner(xhr);
+        for (const tenant of Object.values(response)) {
+            tenantsTable.row.add({
+                0: `${palantirCode(tenant.id)}`,
+                1: `${palantirCode(tenant.description ?? "")}`,
+                tenantId: tenant.id
             });
-    }
+        }
+        tenantsTable.draw(false);
+    })
+        .fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    const fetchTenants = PalantirPolling.every("tenants", loadTenants, {tab: Tabs.MULTITENANCY, status: "#tenants-tab"});
 
     fetchTenants();
-    reloadTenantsTable = fetchTenants;
-    setInterval(() => {
-        if (currentActiveTab === Tabs.MULTITENANCY.index && document.visibilityState === "visible") {
-            fetchTenants();
-        }
-    }, palantirSettings().refreshInterval);
+    reloadTenantsTable = loadTenants;
 }
 
 function toggleTenantJsonEditorVisibility() {
@@ -217,7 +211,7 @@ function exportTenants() {
 }
 
 function editTenant(id) {
-    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${encodeURIComponent(id)}`, response => {
         newTenant(response, {editMode: true});
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
@@ -226,7 +220,7 @@ function editTenant(id) {
 }
 
 function duplicateTenant(id) {
-    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${encodeURIComponent(id)}`, response => {
         newTenant(response);
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
@@ -610,16 +604,13 @@ function newTenant(prefillData = null, options = {}) {
 }
 
 function deleteTenant(id, btn) {
-    Swal.fire({
-        title: `Are you sure you want to delete tenant <strong>${id}</strong>?`,
-        text: "Once removed, you may not be able to revert this.",
-        icon: "question",
-        showConfirmButton: true,
-        showDenyButton: true
+    PalantirDialogs.confirm({
+        title: `Are You Sure You Want to Delete Tenant ${id}?`,
+        text: "Once removed, you may not be able to revert this."
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `${CasActuatorEndpoints.multitenancy()}/tenants/${id}`,
+                url: `${CasActuatorEndpoints.multitenancy()}/tenants/${encodeURIComponent(id)}`,
                 method: "DELETE",
                 contentType: "application/json"
             })
@@ -636,7 +627,7 @@ function deleteTenant(id, btn) {
 }
 
 function showTenantDefinition(id) {
-    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${id}`, response => {
+    $.get(`${CasActuatorEndpoints.multitenancy()}/tenants/${encodeURIComponent(id)}`, response => {
         let tenantDefinitionDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("tenantDefinitionDialog"));
         const editor = initializeAceEditor("tenantDefinitionDialogEditor", "json");
         editor.setValue(JSON.stringify(response, null, 2));

@@ -11,4 +11,4 @@ category: Monitoring & Statistics
 By default, metrics are exported to Elastic running on your local machine. You can 
 provide the location of the Elastic server via CAS settings.
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.elastic" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.elastic.metrics.export" %}

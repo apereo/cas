@@ -227,7 +227,9 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
                     .accept(MediaType.APPLICATION_JSON)
                     .content(out.toByteArray())
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.imported").value(1))
+                .andExpect(jsonPath("$.skipped").value(0));
         }
     }
 
@@ -257,9 +259,71 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
                     .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(out.toByteArray()))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.imported").value(3))
+                .andExpect(jsonPath("$.skipped").value(0));
         }
         assertEquals(Map.of(prefix + "-0", 1, prefix + "-1", 1, prefix + "-2", 1), saved);
+    }
+
+    @Test
+    void verifyBulkImportReportsWhatWasImported() throws Throwable {
+        try (val out = new ByteArrayOutputStream(4096);
+             val zipStream = new ZipOutputStream(out)) {
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+            registeredService.setId(RandomUtils.nextLong());
+            zipStream.putNextEntry(new ZipEntry("Readable.json"));
+            zipStream.write(new RegisteredServiceJsonSerializer(applicationContext).toString(registeredService).getBytes(StandardCharsets.UTF_8));
+            zipStream.closeEntry();
+            zipStream.putNextEntry(new ZipEntry("Broken.json"));
+            zipStream.write("{ not a definition".getBytes(StandardCharsets.UTF_8));
+            zipStream.closeEntry();
+            zipStream.putNextEntry(new ZipEntry("Notes.txt"));
+            zipStream.write("ignored".getBytes(StandardCharsets.UTF_8));
+            zipStream.closeEntry();
+            zipStream.finish();
+            mockMvc.perform(post("/actuator/registeredServices/import")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(out.toByteArray()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.imported").value(1))
+                .andExpect(jsonPath("$.skipped").value(1));
+        }
+    }
+
+    @Test
+    void verifyBulkImportWithNothingReadable() throws Throwable {
+        try (val out = new ByteArrayOutputStream(1024);
+             val zipStream = new ZipOutputStream(out)) {
+            zipStream.putNextEntry(new ZipEntry("Broken.json"));
+            zipStream.write("{ not a definition".getBytes(StandardCharsets.UTF_8));
+            zipStream.closeEntry();
+            zipStream.finish();
+            mockMvc.perform(post("/actuator/registeredServices/import")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(out.toByteArray()))
+                .andExpect(status().isUnprocessableContent())
+                .andExpect(jsonPath("$.imported").value(0))
+                .andExpect(jsonPath("$.skipped").value(1));
+        }
+    }
+
+    @Test
+    void verifyBulkImportRefusesOversizedDefinition() throws Throwable {
+        try (val out = new ByteArrayOutputStream(4096);
+             val zipStream = new ZipOutputStream(out)) {
+            zipStream.putNextEntry(new ZipEntry("Large.json"));
+            zipStream.write(new byte[1024 * 1024 + 1]);
+            zipStream.closeEntry();
+            zipStream.finish();
+            mockMvc.perform(post("/actuator/registeredServices/import")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(out.toByteArray()))
+                .andExpect(status().isContentTooLarge());
+        }
     }
 
     /*

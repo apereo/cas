@@ -97,7 +97,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 .build();
 
             surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
-            throw new AuthenticationException(map);
+            throw (AuthenticationException) new AuthenticationException(map).initCause(e);
         }
     }
 

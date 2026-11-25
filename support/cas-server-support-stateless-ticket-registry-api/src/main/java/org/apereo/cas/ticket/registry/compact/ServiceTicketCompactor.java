@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -28,9 +29,14 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
-    private static final int FROM_NEW_LOGIN_INDEX = 3;
+    /**
+     * Index of the service tenant, right after the service, in service, proxy and proxy-granting tickets.
+     */
+    static final int TENANT_INDEX = 3;
 
-    private static final int AUTHENTICATION_INDEX = 4;
+    private static final int FROM_NEW_LOGIN_INDEX = 4;
+
+    private static final int AUTHENTICATION_INDEX = 5;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -46,7 +52,7 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     @Override
     public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val serviceTicket = (ServiceTicket) ticket;
-        fields.add(StringUtils.defaultString(serviceTicket.getService().getShortenedId()));
+        compactService(fields, serviceTicket.getService());
         val fromNewLogin = ticket instanceof final RenewableServiceTicket rst && rst.isFromNewLogin();
         fields.add(BooleanUtils.toString(fromNewLogin, "1", "0"));
         CompactTicketAuthentication.compact(fields, ((AuthenticationAwareTicket) ticket).getAuthentication(), retainedAuthenticationAttributes);
@@ -60,13 +66,38 @@ public class ServiceTicketCompactor implements TicketCompactor<ServiceTicket> {
     @Override
     public Ticket expand(final String compactTicket) throws Throwable {
         val structure = parse(compactTicket, AUTHENTICATION_INDEX + CompactTicketAuthentication.FIELD_COUNT);
-        val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
+        val service = expandService(serviceFactory, structure);
         val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
         val fromNewLogin = BooleanUtils.toBoolean(structure.get(FROM_NEW_LOGIN_INDEX));
         val serviceTicket = newServiceTicket(ticketFactory.getObject(), service, authentication, fromNewLogin);
         serviceTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
         serviceTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         return serviceTicket;
+    }
+
+    /**
+     * Add the service and its tenant to the compact fields, so tickets expand in the tenant they were issued in.
+     *
+     * @param fields  the fields
+     * @param service the service
+     * @throws Exception the exception
+     */
+    static void compactService(final List<String> fields, final Service service) throws Exception {
+        fields.add(StringUtils.defaultString(service.getShortenedId()));
+        fields.add(StringUtils.defaultString(service.getTenant()));
+    }
+
+    /**
+     * Create the service of a compact ticket, with its tenant.
+     *
+     * @param serviceFactory the service factory
+     * @param structure      the compact ticket
+     * @return the service
+     */
+    static Service expandService(final ServiceFactory serviceFactory, final CompactTicket structure) {
+        val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
+        FunctionUtils.doIfNotBlank(structure.get(TENANT_INDEX), service::setTenant);
+        return service;
     }
 
     /**

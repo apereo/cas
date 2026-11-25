@@ -22,8 +22,12 @@ Support is enabled by adding the following module into the overlay:
 
 The MCP server uses the [Streamable HTTP](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports#streamable-http)
 transport and is available by default at `/cas/mcp`. The endpoint accepts JSON-RPC messages over HTTP `POST` and answers
-with either JSON or server-sent events, as the specification requires. The server name, version, instructions,
-transport protocol and endpoint path along with the capabilities advertised to clients can be adjusted via CAS settings.
+with either JSON or server-sent events, as the specification requires. CAS sends messages only in response to client
+requests, so it answers `GET` requests that open a stream of server-initiated messages with `405 Method Not Allowed`, as
+the specification allows; clients then rely on the responses to their requests alone. Messages the transport cannot
+accept, such as a request without a session, are refused with a JSON-RPC error response. The server name, version,
+instructions, transport protocol and endpoint path along with the capabilities advertised to clients can be adjusted via
+CAS settings.
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.ai.mcp.server" %}
 
@@ -111,8 +115,6 @@ MCP clients usually have no prior relationship with CAS. Besides applications re
 can identify themselves with [client ID metadata documents](../authentication/OIDC-Authentication-Client-ID-Metadata-Documents.html),
 which the MCP authorization specification recommends, or register through
 [dynamic client registration](../authentication/OIDC-Authentication-Dynamic-Registration.html).
-
-{% include_cached featuretoggles.html features="AI.mcp-oauth" %}
 
 ## Tools
 
@@ -274,8 +276,6 @@ Clients that support [argument completion](https://modelcontextprotocol.io/speci
 can complete the setting name of `cas://settings/{name}` from at least two typed characters, and the service id of
 `cas://services/{id}` from the first digits of the id or part of the service name. MCP completion applies to resource
 templates and prompts only, not to tool parameters. Completion is turned on by default and requires the `ROLE_MCP_ADMIN` role/authority.
-
-{% include_cached featuretoggles.html features="AI.mcp-settings" %}
 
 ## Client Configuration
 

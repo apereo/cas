@@ -44,9 +44,9 @@ async function initializeCasSpringWebflowOperations() {
             .append(document.createTextNode(` Drawing the ${flowId} flow...`));
 
         const selectedState = $("#webflowStateFilter").val();
-        let url = `${CasActuatorEndpoints.springWebflow()}?flowId=${flowId}`;
+        let url = `${CasActuatorEndpoints.springWebflow()}?flowId=${encodeURIComponent(flowId)}`;
         if (selectedState && selectedState !== "all") {
-            url += `&stateId=${selectedState}`;
+            url += `&stateId=${encodeURIComponent(selectedState)}`;
         }
         $.ajax({
             url: url,

@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://mdq-sp\\.example\\.org/signed.*$",
+  "name" : "MdqSigned",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "http://localhost:5614/entities/{0}",
+  "metadataSignatureLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/overlay/${#environmentVariables['SCENARIO']}/signer.crt",
+  "requireSignedRoot" : true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

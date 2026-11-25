@@ -63,6 +63,22 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     @Test
+    void verifyLoginWithoutReply() throws Throwable {
+        val registeredService = getWsFederationRegisteredService();
+        val result = performFederationRequest(
+            WSFederationConstants.WTREALM, registeredService.getRealm(),
+            WSFederationConstants.WCTX, UUID.randomUUID().toString(),
+            WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        assertNotNull(result.getModelAndView());
+        assertEquals(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, result.getModelAndView().getViewName());
+        val rootCause = assertInstanceOf(UnauthorizedAuthenticationException.class,
+            result.getModelAndView().getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION));
+        assertTrue(rootCause.getMessage().contains(WSFederationConstants.WREPLY.toUpperCase(Locale.ENGLISH)));
+        assertNull(result.getResponse().getRedirectedUrl());
+    }
+
+    @Test
     void verifyLogoutWithReply() throws Throwable {
         val registeredService = getWsFederationRegisteredService();
         val result = performFederationRequest(
@@ -72,7 +88,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
             WSFederationConstants.WHR, "whr",
             WSFederationConstants.WREQ, "wreq");
         assertEquals(HttpStatus.FOUND.value(), result.getResponse().getStatus());
-        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example5.org/wsfed-idp", result.getResponse().getHeader("Location"));
+        assertEquals("https://cas.example.org:8443/cas/logout?service=http://app.example55.org/wsfed-idp", result.getResponse().getHeader("Location"));
     }
 
     @Test
@@ -89,7 +105,7 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
 
     @Test
     void verifyUnauthzServicesWithMismatchedRealm() throws Throwable {
-        val registeredService = getWsFederationRegisteredService("custom-realm");
+        val registeredService = getWsFederationRegisteredService("custom-realm", "http://app.example6.org/wsfed-idp", 200);
         val result = performFederationRequest(
             WSFederationConstants.WTREALM, "custom-realm",
             WSFederationConstants.WREPLY, registeredService.getServiceId(),
@@ -212,11 +228,15 @@ class WSFederationValidateRequestControllerTests extends BaseCoreWsSecurityIdent
     }
 
     private WSFederationRegisteredService getWsFederationRegisteredService(final String realm) {
+        return getWsFederationRegisteredService(realm, "http://app.example55.org/wsfed-idp", 5500);
+    }
+
+    private WSFederationRegisteredService getWsFederationRegisteredService(final String realm, final String serviceId, final long id) {
         val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm(realm);
-        registeredService.setServiceId("http://app.example5.org/wsfed-idp");
+        registeredService.setServiceId(serviceId);
         registeredService.setName("WSFED App");
-        registeredService.setId(100);
+        registeredService.setId(id);
         registeredService.setAppliesTo("CAS");
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);

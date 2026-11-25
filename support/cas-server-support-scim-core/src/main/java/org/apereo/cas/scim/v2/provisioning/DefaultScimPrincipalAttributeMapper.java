@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProvisioningProperties.ScimUserSchema;
 import org.apereo.cas.util.CollectionUtils;
+import de.captaingoldfish.scim.sdk.common.constants.ResourceTypeNames;
 import de.captaingoldfish.scim.sdk.common.resources.EnterpriseUser;
 import de.captaingoldfish.scim.sdk.common.resources.Group;
 import de.captaingoldfish.scim.sdk.common.resources.User;
@@ -49,9 +50,14 @@ public class DefaultScimPrincipalAttributeMapper implements ScimPrincipalAttribu
     @Override
     public List<Group> forGroups(final Principal principal, final User... users) {
         val members = Arrays.stream(users)
-            .map(user -> Member.builder()
-                .ref(user.getId().orElseThrow())
-                .build())
+            .map(user -> {
+                val member = Member.builder()
+                    .value(user.getId().orElseThrow())
+                    .type(ResourceTypeNames.USER)
+                    .build();
+                user.getMeta().flatMap(Meta::getLocation).ifPresent(member::setRef);
+                return member;
+            })
             .toList();
         val listOfGroups = new ArrayList<Group>();
         mapAttributesToSchema(principal, ScimUserSchema.GROUPS, value -> listOfGroups.add(
