@@ -91,6 +91,19 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     }
 
     /**
+     * How many accounts the repository holds and how many users they belong to, without the accounts themselves.
+     *
+     * @return the number of accounts, as records, and of users
+     */
+    @GetMapping(params = "summary", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Count the accounts and the users they belong to")
+    public Map<String, Long> summary() {
+        val accounts = repository.getObject().load();
+        return Map.of("records", (long) accounts.size(),
+            "users", accounts.stream().map(OneTimeTokenAccount::getUsername).distinct().count());
+    }
+
+    /**
      * Delete.
      *
      * @param username the username
@@ -147,12 +160,42 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request", required = true, description = "The request"))
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.trace("Submitted account: [{}]", requestBody);
+        return importRecordQuietly(requestBody)
+            ? ResponseEntity.status(HttpStatus.CREATED).build()
+            : ResponseEntity.badRequest().build();
+    }
+
+    /**
+     * Import the accounts of an archive as {@link #exportAccounts()} writes it, one account per file.
+     *
+     * @param request the request
+     * @return the number of accounts imported
+     * @throws Exception the exception
+     */
+    @PostMapping(path = "/import", consumes = {ZIP_MEDIA_TYPE, ZIP_COMPRESSED_MEDIA_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE},
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Import the accounts of an archive as the export writes it")
+    public ResponseEntity<Map<String, Integer>> importAccounts(final HttpServletRequest request) throws Exception {
+        try (val input = request.getInputStream()) {
+            return importArchive(input, this::importRecordQuietly);
+        }
+    }
+
+    private boolean importRecord(final String json) {
+        LOGGER.trace("Submitted account: [{}]", json);
         val serializer = new GoogleAuthenticatorAccountSerializer(applicationContext);
-        val account = serializer.from(requestBody);
+        val account = serializer.from(json);
         LOGGER.trace("Storing account: [{}]", account);
-        repository.getObject().save(account);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return account != null && repository.getObject().save(account) != null;
+    }
+
+    private boolean importRecordQuietly(final String json) {
+        try {
+            return importRecord(json);
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to import a record: [{}]", e.getMessage());
+            return false;
+        }
     }
 
 }

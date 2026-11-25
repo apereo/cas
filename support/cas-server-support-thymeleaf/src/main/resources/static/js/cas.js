@@ -378,7 +378,9 @@ function captureAndStoreUsername() {
         $("#fm1 label[for='username']").removeClass("highlight-username");
         if (savedUsername) {
             $("#fm1 input[name='username']").val(savedUsername);
-            $("#fm1 input[name='password']").focus();
+            if (document.documentElement.dataset.casAutofocus !== "false") {
+                $("#fm1 input[name='password']").focus();
+            }
             $("#fm1 label[for='username']").addClass("highlight-username");
         }
     }
@@ -675,7 +677,9 @@ function resourceLoadedSuccessfully() {
         preserveAnchorTagOnForm();
         preventFormResubmission();
         $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
-        $("#fm1 input[name=\"username\"]").focus();
+        if (document.documentElement.dataset.casAutofocus !== "false") {
+            $("#fm1 input[name=\"username\"]").focus();
+        }
 
         if (rememberUsername && rememberUsername === "true") {
             captureAndStoreUsername();

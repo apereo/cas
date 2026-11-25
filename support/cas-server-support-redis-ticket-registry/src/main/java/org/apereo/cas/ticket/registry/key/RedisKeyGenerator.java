@@ -25,6 +25,11 @@ public interface RedisKeyGenerator {
      * The namespace for all CAS principals.
      */
     String REDIS_NAMESPACE_PRINCIPALS = "CAS_PRINCIPAL";
+    /**
+     * The namespace for the indexes of the tickets of each principal, such as OAuth tokens, apart from single sign-on
+     * sessions, which are kept under the principals namespace.
+     */
+    String REDIS_NAMESPACE_PRINCIPAL_TICKETS = "CAS_PRINCIPAL_TICKETS";
 
     /**
      * Redis message topic key used to sync memory cache across nodes.

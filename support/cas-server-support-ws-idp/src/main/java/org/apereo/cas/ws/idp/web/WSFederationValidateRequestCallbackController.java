@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
@@ -47,7 +46,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
 
         val parameters = new HashMap<String, Object>();
         parameters.put(WSFederationConstants.WA, WSFederationConstants.WSIGNIN10);
-        parameters.put(WSFederationConstants.WRESULT, StringEscapeUtils.unescapeHtml4(rpToken));
+        parameters.put(WSFederationConstants.WRESULT, rpToken);
         parameters.put(WSFederationConstants.WTREALM, fedRequest.wtrealm());
 
         if (StringUtils.isNotBlank(fedRequest.wctx())) {

@@ -12,11 +12,13 @@ import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import com.google.common.primitives.Longs;
-import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.core.Ordered;
 
 /**
@@ -48,6 +50,10 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
     public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
         if (properties.isRenewAuthnEnabled() && ssoRequest.isRequestingRenewAuthentication()) {
             LOGGER.debug("The authentication session is considered renewed.");
+            return false;
+        }
+        if (!isTicketAssignedToRequestTenant(ssoRequest)) {
+            LOGGER.debug("The authentication session belongs to another tenant and cannot participate in SSO");
             return false;
         }
 
@@ -113,6 +119,21 @@ public class DefaultSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
         }
 
         return properties.isSsoEnabled();
+    }
+
+    /**
+     * Whether the ticket-granting ticket of the request, if any, belongs to the tenant of the request.
+     * A session established in one tenant, or outside of any tenant, does not carry over to another.
+     *
+     * @param ssoRequest the sso request
+     * @return true if there is no ticket or both belong to the same tenant
+     */
+    private boolean isTicketAssignedToRequestTenant(final SingleSignOnParticipationRequest ssoRequest) {
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val requestTenant = clientInfo != null ? clientInfo.getTenant() : null;
+        return getTicketState(ssoRequest)
+            .map(ticket -> Strings.CI.equals(StringUtils.defaultString(ticket.getTenantId()), StringUtils.defaultString(requestTenant)))
+            .orElse(Boolean.TRUE);
     }
 
     @Override

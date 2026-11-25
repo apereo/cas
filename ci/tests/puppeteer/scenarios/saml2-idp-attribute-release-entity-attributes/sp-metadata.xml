@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntitiesDescriptor Name="urn:apereo:cas:puppeteer:entity-attributes" xmlns="urn:oasis:names:tc:SAML:2.0:metadata"
+                    xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+    <!-- Qualifies through its entity attribute; its entity id matches none of the patterns. -->
+    <EntityDescriptor entityID="https://localhost:9859/entity-attributes/category">
+        <Extensions>
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://apereo.org/category/puppeteer</saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
+        </Extensions>
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- No entity attributes; qualifies because its entity id matches the regular expression pattern. -->
+    <EntityDescriptor entityID="https://localhost:9859/entity-attributes/trusted/app">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- No entity attributes; qualifies because its entity id is listed literally. -->
+    <EntityDescriptor entityID="https://localhost:9859/entity-attributes/literal">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- Carries the entity attribute with another value and matches no pattern, so nothing is released. -->
+    <EntityDescriptor entityID="https://localhost:9859/entity-attributes/other">
+        <Extensions>
+            <mdattr:EntityAttributes>
+                <saml:Attribute Name="http://macedir.org/entity-category" NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                    <saml:AttributeValue>https://apereo.org/category/other</saml:AttributeValue>
+                </saml:Attribute>
+            </mdattr:EntityAttributes>
+        </Extensions>
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- No research and scholarship category; receives the REFEDS bundle because its entity id matches the pattern. -->
+    <EntityDescriptor entityID="https://localhost:9859/refeds-rs/trusted/app">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+    <!-- No research and scholarship category and no matching pattern, so the REFEDS bundle is withheld. -->
+    <EntityDescriptor entityID="https://localhost:9859/refeds-rs/other">
+        <SPSSODescriptor AuthnRequestsSigned="false" WantAssertionsSigned="false"
+                         protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+            <AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                                      Location="https://localhost:9859/post" index="0" isDefault="true"/>
+        </SPSSODescriptor>
+    </EntityDescriptor>
+</EntitiesDescriptor>

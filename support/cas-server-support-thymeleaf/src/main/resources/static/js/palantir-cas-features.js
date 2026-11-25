@@ -222,7 +222,7 @@ class CasFeatureToggles {
         const subject = CasFeatureToggles.subject(group, module);
         const value = enable ? "true" : "false";
         const result = await Swal.fire({
-            titleText: `${enable ? "Turn on" : "Turn off"} ${subject}?`,
+            titleText: `${enable ? "Turn On" : "Turn Off"} ${subject}?`,
             html: `
                 <p class="palantir-feature-toggle__note">${sources.length > 1 ? "Choose the configuration source to store" : "Palantir stores"}
                 ${properties.length === 1 ? "this feature flag" : "these feature flags"}${sources.length > 1 ? " in" : ` in <strong>${escapePalantirMarkup(sources[0])}</strong>`}:</p>
@@ -258,11 +258,199 @@ class CasFeatureToggles {
         if ($.fn.dataTable.isDataTable("#configurationTable") && typeof reloadConfigurationTable === "function") {
             $.get(CasActuatorEndpoints.env(), response => reloadConfigurationTable(response));
         }
-        Swal.fire({
-            icon: "success",
-            titleText: `${subject.charAt(0).toUpperCase()}${subject.slice(1)} is turned ${enable ? "on" : "off"} in ${source}`,
-            text: "Restart CAS for the change to take effect."
+        PalantirDialogs.done(`${subject.charAt(0).toUpperCase()}${subject.slice(1)} Is Turned ${enable ? "On" : "Off"} in ${source}`, "Restart CAS for the change to take effect.");
+    }
+
+    /**
+     * Whether the feature itself, apart from its modules, will run after a restart: its stored flag decides when there
+     * is one, and otherwise whether it runs now. A feature that only runs through its modules has nothing of its own
+     * that is off, so it counts as on.
+     *
+     * @param group the feature as the catalog groups it
+     * @returns {boolean} true when the feature itself is on
+     */
+    static featureOn(group) {
+        const value = CasFeatureToggles.flags.get(CasFeatureToggles.property(group.name))?.value ?? null;
+        if (value === "false" || value === "true") {
+            return value === "true";
+        }
+        return !group.core || CAS_FEATURES.includes(group.name);
+    }
+
+    /**
+     * Turn a feature and any of its modules on or off in one go: a switch for the feature itself and one for each
+     * module, each starting at what it will do after a restart. Switching the feature itself off turns off every module
+     * with it, since CAS reads the flag of each module on its own. Only the flags that change are stored.
+     *
+     * @param group the feature as the catalog groups it
+     * @returns {Promise<void>} resolved once the flags are stored or the operator closed the dialog
+     */
+    static async manage(group) {
+        const sources = PalantirDashboardConfiguration.mutablePropertySources();
+        const initial = {
+            feature: CasFeatureToggles.featureOn(group),
+            modules: new Map(group.modules.map(module => {
+                const state = CasFeatureToggles.state(`${group.name}.${module}`).state;
+                return [module, state === "on" || state === "turning-on"];
+            }))
+        };
+        const holder = [CasFeatureToggles.property(group.name), ...group.modules.map(module => CasFeatureToggles.property(group.name, module))]
+            .map(name => CasFeatureToggles.flags.get(name)?.source).find(Boolean) ?? sources[0];
+        const switchMarkup = (id, on, title, detail, extra = "") => `
+            <label class="palantir-feature-switch${extra}" for="${id}">
+                <input type="checkbox" role="switch" id="${id}" ${on ? "checked" : ""}>
+                <span class="palantir-feature-switch__track" aria-hidden="true"></span>
+                <span class="palantir-feature-switch__text">
+                    <strong>${escapePalantirMarkup(title)}</strong>
+                    <small>${escapePalantirMarkup(detail)}</small>
+                </span>
+            </label>`;
+        const moduleId = index => `casFeatureModuleSwitch${index}`;
+        const desired = () => {
+            const feature = $("#casFeatureItselfSwitch").prop("checked") === true;
+            return {
+                feature,
+                modules: new Map(group.modules.map((module, index) => [module, feature
+                    ? $(`#${moduleId(index)}`).prop("checked") === true
+                    : initial.feature ? false : initial.modules.get(module)]))
+            };
+        };
+        const changes = () => {
+            const wanted = desired();
+            const flags = [];
+            if (wanted.feature !== initial.feature) {
+                flags.push({name: CasFeatureToggles.property(group.name), value: String(wanted.feature)});
+            }
+            group.modules.forEach(module => {
+                if (wanted.modules.get(module) !== initial.modules.get(module)) {
+                    flags.push({name: CasFeatureToggles.property(group.name, module), value: String(wanted.modules.get(module))});
+                }
+            });
+            return {wanted, flags};
+        };
+        const holdModules = featureOn => group.modules.forEach((module, index) => {
+            const input = $(`#${moduleId(index)}`);
+            if (featureOn) {
+                input.prop("checked", input.data("choice") ?? initial.modules.get(module));
+            } else {
+                input.data("choice", input.prop("checked")).prop("checked", false);
+            }
         });
+        const list = names => names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+        const describe = () => {
+            const {wanted, flags} = changes();
+            const off = group.modules.filter(module => initial.modules.get(module) && !wanted.modules.get(module));
+            const on = group.modules.filter(module => !initial.modules.get(module) && wanted.modules.get(module));
+            const kept = group.modules.filter(module => initial.modules.get(module) && wanted.modules.get(module));
+            const parts = [];
+            if (initial.feature && !wanted.feature) {
+                parts.push(`<strong>${escapePalantirMarkup(group.title)}</strong> turns off, with every module`);
+            } else if (!initial.feature && wanted.feature) {
+                parts.push(`<strong>${escapePalantirMarkup(group.title)}</strong> turns on`);
+            }
+            if (wanted.feature) {
+                if (off.length > 0) {
+                    parts.push(`${list(off.map(name => `<strong>${escapePalantirMarkup(name)}</strong>`))} turn${off.length === 1 ? "s" : ""} off`);
+                }
+                if (on.length > 0) {
+                    parts.push(`${list(on.map(name => `<strong>${escapePalantirMarkup(name)}</strong>`))} turn${on.length === 1 ? "s" : ""} on`);
+                }
+                if (kept.length > 0 && (off.length > 0 || on.length > 0)) {
+                    parts.push(`${list(kept.map(escapePalantirMarkup))} keep${kept.length === 1 ? "s" : ""} running`);
+                }
+            }
+            $("#casFeatureManageSummary").html(flags.length === 0
+                ? "Nothing changes yet: switch the feature or its modules to choose what runs after a restart."
+                : `After a restart: ${parts.join("; ")}.`).toggleClass("has-changes", flags.length > 0);
+            $("#casFeatureManageFlagCount").text(`${flags.length} feature flag${flags.length === 1 ? "" : "s"}`);
+            $("#casFeatureManageFlags").text(flags.map(flag => `${flag.name}=${flag.value}`).join("\n"));
+            $("#casFeatureManageFlagsPanel").prop("hidden", flags.length === 0);
+            group.modules.forEach((module, index) => {
+                const input = $(`#${moduleId(index)}`);
+                input.prop("disabled", !wanted.feature);
+                const now = wanted.modules.get(module);
+                input.closest(".palantir-feature-switch")
+                    .toggleClass("is-off", !input.prop("checked"))
+                    .toggleClass("is-changed", now !== initial.modules.get(module))
+                    .find("small")
+                    .text(!wanted.feature ? (initial.feature ? "off with the feature" : "left as it is") : now === initial.modules.get(module)
+                        ? (now ? "keeps running" : "stays off")
+                        : (now ? "turns on after a restart" : "turns off after a restart"));
+            });
+            $("#casFeatureItselfSwitch").closest(".palantir-feature-switch")
+                .toggleClass("is-off", !wanted.feature)
+                .toggleClass("is-changed", wanted.feature !== initial.feature)
+                .find("small")
+                .text(wanted.feature
+                    ? `Switch off to turn off ${group.title} and all of its modules`
+                    : `${group.title} and all of its modules are off after a restart; switch on to choose its modules again`);
+            const confirm = Swal.getConfirmButton();
+            if (confirm) {
+                confirm.disabled = flags.length === 0;
+            }
+        };
+        const result = await Swal.fire({
+            titleText: group.title,
+            width: Math.min(640, $(window).width() - 32),
+            html: `
+                <div class="palantir-feature-manage">
+                    ${switchMarkup("casFeatureItselfSwitch", initial.feature, "The feature itself",
+        `Switch off to turn off ${group.title} and all of its modules`, " is-feature")}
+                    <div class="palantir-feature-manage__modules" role="group" aria-label="Modules of ${escapePalantirMarkup(group.title)}">
+                        ${group.modules.map((module, index) => switchMarkup(moduleId(index), initial.modules.get(module), module, "")).join("")}
+                    </div>
+                    <p class="palantir-feature-manage__summary" id="casFeatureManageSummary" aria-live="polite"></p>
+                    ${sources.length > 1 ? `
+                        <label class="palantir-feature-manage__source" for="casFeatureManageSource">Store the flags in
+                            <select id="casFeatureManageSource">${sources.map(source => `<option value="${escapePalantirMarkup(source)}" ${source === holder ? "selected" : ""}>${escapePalantirMarkup(source)}</option>`).join("")}</select>
+                        </label>` : ""}
+                    <details class="palantir-feature-manage__flags" id="casFeatureManageFlagsPanel" hidden>
+                        <summary><span id="casFeatureManageFlagCount"></span>${sources.length > 1 ? "" : `, stored in ${escapePalantirMarkup(sources[0])}`}</summary>
+                        <pre class="palantir-feature-toggle__flags"><code id="casFeatureManageFlags"></code></pre>
+                    </details>
+                    <p class="palantir-feature-toggle__note">CAS decides which features run when it starts, so the change takes effect once CAS restarts.</p>
+                </div>`,
+            showCancelButton: true,
+            confirmButtonText: "Save Changes",
+            cancelButtonText: "Cancel",
+            focusConfirm: false,
+            didOpen: popup => {
+                if (!initial.feature) {
+                    holdModules(false);
+                }
+                $(popup).on("change", ".palantir-feature-manage input[role=switch]", event => {
+                    if (event.currentTarget.id === "casFeatureItselfSwitch") {
+                        holdModules(event.currentTarget.checked);
+                    }
+                    describe();
+                });
+                describe();
+            },
+            preConfirm: () => ({flags: changes().flags, source: sources.length > 1 ? String($("#casFeatureManageSource").val()) : sources[0]})
+        });
+        if (!result.isConfirmed || result.value.flags.length === 0) {
+            return;
+        }
+        const {flags, source} = result.value;
+        try {
+            await $.ajax({
+                url: `${CasActuatorEndpoints.casConfig()}/update`,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(flags.map(flag => ({name: flag.name, value: flag.value, propertySource: source})))
+            });
+        } catch (xhr) {
+            if (xhr?.statusText !== PALANTIR_READ_ONLY) {
+                displayBanner(xhr);
+            }
+            return;
+        }
+        await CasFeatureToggles.load();
+        renderCasFeatureCatalog(CAS_FEATURES);
+        if ($.fn.dataTable.isDataTable("#configurationTable") && typeof reloadConfigurationTable === "function") {
+            $.get(CasActuatorEndpoints.env(), response => reloadConfigurationTable(response));
+        }
+        PalantirDialogs.done(`${group.title} Is Updated in ${source}`, "Restart CAS for the change to take effect.");
     }
 
     /**
@@ -281,6 +469,15 @@ class CasFeatureToggles {
                 return group ? {group, module: module === null ? null : String(module)} : false;
             },
             items: context => {
+                if (!context.module && context.group.modules.length > 0) {
+                    return {
+                        manage: {
+                            name: `Manage ${context.group.title}…`,
+                            icon: contextMenuIcon("mdi-tune-variant"),
+                            write: "casConfig"
+                        }
+                    };
+                }
                 const entries = context.module
                     ? [`${context.group.name}.${context.module}`]
                     : CasFeatureToggles.properties(context.group, null).map(name => name.replace(/^CasFeatureModule\./, "").replace(/\.enabled$/, ""));
@@ -301,7 +498,9 @@ class CasFeatureToggles {
                     }
                 };
             },
-            callback: (key, options) => CasFeatureToggles.change(options.context.group, options.context.module, key === "enable")
+            callback: (key, options) => key === "manage"
+                ? CasFeatureToggles.manage(options.context.group)
+                : CasFeatureToggles.change(options.context.group, options.context.module, key === "enable")
         });
     }
 }
@@ -345,9 +544,7 @@ function humanizeCasFeature(name) {
  * @returns {string} safe markup
  */
 function markCasFeatureMatch(text, query) {
-    const escape = value => String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    }[character]));
+    const escape = escapePalantirMarkup;
     const index = query ? text.toLowerCase().indexOf(query) : -1;
     if (index < 0) {
         return escape(text);

@@ -382,6 +382,27 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @RepeatedTest(2)
+    @Transactional(transactionManager = TicketRegistry.TICKET_TRANSACTION_MANAGER, readOnly = false)
+    void verifyQueryTicketsOfPrincipal() throws Throwable {
+        assumeTrue(canTicketRegistryIterate(), "Ticket registry %s does not support iteration".formatted(getClass().getName()));
+        val first = UUID.randomUUID().toString();
+        val second = UUID.randomUUID().toString();
+        for (val principal : List.of(first, first, first, second, second)) {
+            ticketRegistry.addTicket(new TicketGrantingTicketImpl(TICKET_GRANTING_TICKET_ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+                CoreAuthenticationTestUtils.getAuthentication(principal), NeverExpiresExpirationPolicy.INSTANCE));
+        }
+        for (val expected : Map.of(first, 3, second, 2).entrySet()) {
+            val results = ticketRegistry.query(new TicketRegistryQueryCriteria()
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(expected.getKey())
+                .setDecode(true));
+            assertEquals(expected.getValue(), results.size());
+            assertTrue(results.stream().allMatch(ticket -> ticket instanceof final TicketGrantingTicket tgt
+                && expected.getKey().equals(tgt.getAuthentication().getPrincipal().getId())));
+        }
+    }
+
+    @RepeatedTest(2)
     void verifyGetExistingTicketWithImproperClass() throws Throwable {
         val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
         FunctionUtils.doAndRetry(new Retryable<>() {
@@ -419,6 +440,24 @@ public abstract class BaseTicketRegistryTests {
         assertNotNull(ticket, () -> "Ticket is null. useEncryption[" + useEncryption + ']');
         assertEquals(added.isStateless() ? added.getId() : ticketGrantingTicketId, ticket.getId(),
             () -> "Ticket IDs don't match. useEncryption[" + useEncryption + ']');
+    }
+
+    @RepeatedTest(2)
+    void verifyTicketsKeepTheirTenant() throws Throwable {
+        val tenant = UUID.randomUUID().toString();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+            CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
+        ticketGrantingTicket.setTenantId(tenant);
+        val service = RegisteredServiceTestUtils.getService("https://tenant.example.org/" + UUID.randomUUID());
+        service.setTenant(tenant);
+        val serviceTicket = ticketGrantingTicket.grantServiceTicket(TestTicketIdentifiers.generate().serviceTicketId(),
+            service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val addedTicketGrantingTicket = ticketRegistry.addTicket(ticketGrantingTicket);
+        val addedServiceTicket = ticketRegistry.addTicket(serviceTicket);
+        assertEquals(tenant, ticketRegistry.getTicket(addedTicketGrantingTicket.getId()).getTenantId(),
+            () -> "Ticket-granting ticket lost its tenant. useEncryption[" + useEncryption + ']');
+        assertEquals(tenant, ticketRegistry.getTicket(addedServiceTicket.getId()).getTenantId(),
+            () -> "Service ticket lost its tenant. useEncryption[" + useEncryption + ']');
     }
 
     /**

@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlIdPInvalidNameIdPolicyException;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.RandomUtils;
@@ -49,8 +50,28 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     @Override
+    protected Response buildSamlResponse(final SamlProfileBuilderContext context) throws Exception {
+        try {
+            return super.buildSamlResponse(context);
+        } catch (final SamlIdPInvalidNameIdPolicyException e) {
+            val statusCode = newSamlObject(StatusCode.class);
+            statusCode.setValue(StatusCode.INVALID_NAMEID_POLICY);
+            val status = newStatus(StatusCode.REQUESTER, e.getMessage());
+            Objects.requireNonNull(status.getStatusCode()).setStatusCode(statusCode);
+            return buildResponse(Optional.empty(), context, status);
+        }
+    }
+
+    @Override
     public Response buildResponse(final Optional<Assertion> assertion,
                                   final SamlProfileBuilderContext context)
+            throws Exception {
+        return buildResponse(assertion, context, determineResponseStatus(context));
+    }
+
+    protected Response buildResponse(final Optional<Assertion> assertion,
+                                     final SamlProfileBuilderContext context,
+                                     final Status status)
             throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
@@ -94,7 +115,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             }
         }
 
-        samlResponse.setStatus(determineResponseStatus(context));
+        samlResponse.setStatus(status);
 
         val customizers = configurationContext.getApplicationContext()
             .getBeansOfType(SamlIdPResponseCustomizer.class).values();

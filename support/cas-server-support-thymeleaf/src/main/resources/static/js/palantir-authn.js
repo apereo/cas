@@ -121,6 +121,68 @@ function toggleAuthnHandlerEditorVisibility() {
     }
 }
 
+/**
+ * Show the accounts a user may impersonate as cards, with a line that says how many there are, or that the user may
+ * impersonate any account or none. When attribute resolution is available, each card can fetch the attributes of its
+ * account.
+ *
+ * @param username the user who impersonates
+ * @param accounts the accounts the impersonation endpoint answered with
+ */
+function renderSurrogateAccounts(username, accounts) {
+    const anyAccount = accounts.length === 1 && accounts[0] === "*";
+    const listed = anyAccount ? [] : accounts.map(String);
+    $("#surrogateAccountsSummary").text(anyAccount
+        ? `${username} may impersonate any account.`
+        : listed.length === 0
+            ? `${username} may not impersonate any account.`
+            : `${username} may impersonate ${listed.length} account${listed.length === 1 ? "" : "s"}.`);
+    const resolvable = Boolean(CasActuatorEndpoints.personDirectory());
+    const cards = $("#surrogateAccountsCards").empty();
+    listed.forEach(account => {
+        const card = $("<article>", {class: "palantir-application-card palantir-surrogate-account", "data-surrogate-account": account})
+            .append($("<header>", {class: "palantir-application-card-header"})
+                .append($("<span>", {class: "palantir-surrogate-account__avatar", "aria-hidden": "true", text: account.charAt(0).toUpperCase()}))
+                .append($("<div>", {class: "palantir-application-card-title"})
+                    .append($("<h4>", {text: account, title: account}))
+                    .append($("<p>", {text: `May be impersonated by ${username}`}))));
+        if (resolvable) {
+            card.append($("<footer>", {class: "palantir-application-card-actions"})
+                .append($("<button>", {
+                    type: "button",
+                    class: "palantir-button is-primary",
+                    "data-surrogate-attributes": account,
+                    title: `Open attribute resolution and fetch the attributes of ${account}`
+                })
+                    .append($("<i>", {class: "mdi mdi-account-search", "aria-hidden": "true"}))
+                    .append(document.createTextNode("Fetch Attributes"))));
+        }
+        cards.append(card);
+    });
+    showElements($("#surrogateAccountsContainer"));
+}
+
+/**
+ * Open attribute resolution on the person directory page and fetch the attributes of an account.
+ *
+ * @param account the username of the account
+ * @returns {Promise<void>} resolved once the lookup is asked for
+ */
+async function resolveSurrogateAccountAttributes(account) {
+    PalantirPages.open(Tabs.PERSON_DIRECTORY);
+    await initializeDashboardTab(Tabs.PERSON_DIRECTORY);
+    const tabs = $("#attributes-tab");
+    if (tabs.data("ui-tabs")) {
+        tabs.tabs("option", "active", tabs.find("> ul > li").index($("#attributeResolutionTab").parent()));
+    }
+    const field = $("#personUsername").val(account).trigger("input").trigger("change");
+    const textField = field.closest(".mdc-text-field");
+    textField.addClass("mdc-text-field--label-floating");
+    textField.find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+    textField.find(".mdc-notched-outline").addClass("mdc-notched-outline--notched");
+    $("#personDirectoryButton").trigger("click");
+}
+
 function toggleAuthnHandlerAdvancedOptions() {
     const showAdvanced = $("#showAuthnHandlerAdvancedOptions").val();
     localStorage.setItem("showAuthnHandlerAdvancedOptionsPreference", showAdvanced);
@@ -841,7 +903,7 @@ function openNewAuthenticationHandlerDialog() {
                         success: response => {
                             $dialog.dialog("close");
                             $.get(CasActuatorEndpoints.env(), async res => {
-                                reloadConfigurationTable(res);
+                                reloadPalantirConfigurationTable(res);
                                 refreshCasServerConfiguration(`New Authentication Handler Created`);
                             })
                                 .fail((xhr) => {
@@ -859,7 +921,7 @@ function openNewAuthenticationHandlerDialog() {
                     submitAuthenticationHandler(PalantirDashboardConfiguration.mutablePropertySources()[0]);
                 } else {
                     Swal.fire({
-                        title: "Which property source should receive the configuration?",
+                        title: "Which Property Source Should Receive the Configuration?",
                         input: "select",
                         icon: "question",
                         inputOptions: PalantirDashboardConfiguration.mutablePropertySources(),
@@ -971,17 +1033,101 @@ function reloadAuthenticationHandlersTable() {
         $.get(CasActuatorEndpoints.authenticationHandlers(), response => {
             for (const handler of response) {
                 authenticationHandlersTable.row.add({
-                    0: `${handler.name}`,
-                    1: `${palantirCode(handler.type)}`,
-                    2: `${palantirCode(handler.state)}`,
-                    3: `${palantirCode(handler.order)}`
+                    0: escapePalantirMarkup(handler.name),
+                    1: escapePalantirMarkup(handler.type),
+                    2: escapePalantirMarkup(handler.state),
+                    3: escapePalantirMarkup(handler.order),
+                    handler
                 });
             }
+            $("#authenticationHandlersCards").data("loaded", true);
             authenticationHandlersTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            $("#authenticationHandlersCards").html("<p class=\"palantir-empty-state\">Authentication handlers could not be read just now.</p>");
             displayBanner(xhr);
         });
+    }
+}
+
+/**
+ * The icon that stands for an authentication handler, by the kind of store or protocol its type names.
+ *
+ * @param {string} type the handler's class name
+ * @returns {string} the icon class
+ */
+function authenticationHandlerIcon(type) {
+    const name = getLastWord(String(type ?? "")).toLowerCase();
+    const icons = [
+        [/ldap/, "mdi-folder-account-outline"],
+        [/jdbc|jpa|database|mongo|couchdb|dynamo|redis|cassandra|sql/, "mdi-database-outline"],
+        [/rest|http|api/, "mdi-api"],
+        [/x509|certificate/, "mdi-certificate-outline"],
+        [/radius|duo|totp|google|authenticator|webauthn|yubikey|token|mfa|multifactor/, "mdi-shield-key-outline"],
+        [/spnego|kerberos|ntlm/, "mdi-microsoft-windows"],
+        [/delegat|pac4j|client|saml|oidc|oauth|wsfed/, "mdi-transit-connection-variant"],
+        [/surrogate|trust|passwordless|groovy|script/, "mdi-script-text-outline"]
+    ];
+    return icons.find(([pattern]) => pattern.test(name))?.[1] ?? "mdi-account-key-outline";
+}
+
+/**
+ * One authentication handler as a card: its name and type, whether it is active, and its order.
+ *
+ * @param {object} handler the authentication handler, as the authentication handlers endpoint reports it
+ * @returns {string} the card markup
+ */
+function authenticationHandlerCard(handler) {
+    const escape = escapePalantirMarkup;
+    const type = String(handler.type ?? "");
+    const state = String(handler.state ?? "");
+    const active = state.toUpperCase() === "ACTIVE";
+    return `
+        <article class="palantir-record-card is-authn-handler" data-authn-handler="${escape(handler.name)}" aria-label="${escape(handler.name)}">
+            <header class="palantir-record-card__head">
+                <span class="palantir-protocol-badge is-authn-handler" title="${escape(type)}">
+                    <i class="mdi ${authenticationHandlerIcon(type)}" aria-hidden="true"></i>
+                </span>
+                <div class="palantir-record-card__title">
+                    <h4 title="${escape(handler.name)}">${escape(handler.name)}</h4>
+                    <p title="${escape(type)}">${escape(getLastWord(type) || type)}</p>
+                </div>
+            </header>
+            <ul class="palantir-record-card__flags">
+                <li class="${active ? "is-on" : ""}">
+                    <i class="mdi ${active ? "mdi-check-circle" : "mdi-pause-circle-outline"}" aria-hidden="true"></i>${escape(camelcaseToTitleCase(state.toLowerCase()) || "Unknown")}
+                </li>
+                <li class="is-on"><i class="mdi mdi-sort-numeric-ascending" aria-hidden="true"></i>Order ${escape(handler.order ?? "")}</li>
+            </ul>
+            <dl class="palantir-record-card__details">
+                <div><dt>Type</dt><dd class="is-wrap" title="${escape(type)}">${escape(type)}</dd></div>
+            </dl>
+        </article>`;
+}
+
+/**
+ * Draw one card per authentication handler on the current page of the table.
+ *
+ * @param {object} table the authentication handlers table
+ */
+function renderAuthenticationHandlerCards(table) {
+    const container = $("#authenticationHandlersCards");
+    if (container.length === 0) {
+        return;
+    }
+    if (container.data("loaded") !== true) {
+        container.html("<p class=\"palantir-empty-state\">Loading authentication handlers…</p>");
+        return;
+    }
+    const cards = table.rows({page: "current", search: "applied"}).data().toArray()
+        .filter(row => row.handler)
+        .map(row => authenticationHandlerCard(row.handler));
+    if (cards.length > 0) {
+        container.html(cards.join(""));
+    } else {
+        container.html(`<p class="palantir-empty-state">${table.search() === ""
+            ? "No authentication handlers are registered."
+            : "No authentication handler matches that search."}</p>`);
     }
 }
 
@@ -1176,28 +1322,17 @@ async function initializeAuthenticationOperations() {
         layout: {
             topStart: authnHandlersToolbar
         },
-        columnDefs: [
-            {visible: false, targets: 0},
-        ],
-        order: [0, "asc"],
-        drawCallback: settings => {
+        order: [],
+        drawCallback: function () {
             $("#authenticationHandlersTable tr").addClass("mdc-data-table__row");
             $("#authenticationHandlersTable td").addClass("mdc-data-table__cell");
-
-            const api = settings.api;
-            const rows = api.rows({page: "current"}).nodes();
-            let last = null;
-            api.column(0, {page: "current"})
-                .data()
-                .each((group, i) => {
-                    if (last !== group) {
-                        $(rows).eq(i).before(
-                            palantirTableGroupRow(group, 3));
-                        last = group;
-                    }
-                });
+            renderAuthenticationHandlerCards(this.api());
         }
     });
+    const authenticationHandlersTableRow = $("#authenticationHandlersTable").closest(".dt-layout-row");
+    if (authenticationHandlersTableRow.length > 0) {
+        $("#authenticationHandlersCards").insertAfter(authenticationHandlersTableRow);
+    }
 
     reloadAuthenticationHandlersTable();
 
@@ -1324,7 +1459,7 @@ async function initializeAuthenticationOperations() {
         identity.append($("<i>", {class: "mdi mdi-shield-account", "aria-hidden": "true"}));
         const titleGroup = $("<div>", {class: "ticket-item-title-group"});
         titleGroup.append($("<code>", {class: "ticket-item-title"}).text(policyName));
-        titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("Authentication policy"));
+        titleGroup.append($("<p>", {class: "ticket-item-subtitle"}).text("Authentication Policy"));
         identity.append(titleGroup);
         header.append(identity);
         header.append($("<span>", {class: "ticket-item-badge ticket-item-badge-catalog"})
@@ -1478,6 +1613,9 @@ async function initializeAuthenticationOperations() {
 
     if (CasActuatorEndpoints.impersonation()) {
         showElements($("#surrogacy").parent());
+        $("#surrogateAccountsCards").off("click").on("click", "[data-surrogate-attributes]", event => {
+            resolveSurrogateAccountAttributes(String($(event.currentTarget).attr("data-surrogate-attributes")));
+        });
 
         $("#fetchSurrogateAccountsButton").on("click", () => {
             const form = document.getElementById("fmSurrogateAccounts");
@@ -1489,22 +1627,10 @@ async function initializeAuthenticationOperations() {
                 url: `${CasActuatorEndpoints.impersonation()}/${encodeURIComponent(username)}`,
                 method: "GET",
                 contentType: "application/json",
-                success: accounts => {
-                    const $dropdown = $("#surrogateAccountsDropdown");
-                    $dropdown.empty();
-                    if (accounts.length > 0) {
-                        for (const account of accounts) {
-                            $dropdown.append($("<option>", {value: account, text: account}));
-                        }
-                        $dropdown.prop("selectedIndex", 0);
-                        $dropdown.selectmenu("refresh");
-                        showElements($("#surrogateAccountsContainer"));
-                    } else {
-                        hideElements($("#surrogateAccountsContainer"));
-                    }
-                },
+                success: accounts => renderSurrogateAccounts(username, Array.isArray(accounts) ? accounts : []),
                 error: (xhr) => {
                     console.error("Error fetching surrogate accounts:", xhr.responseText);
+                    hideElements($("#surrogateAccountsContainer"));
                     displayBanner(xhr);
                 }
             });
@@ -1529,9 +1655,7 @@ async function initializeAuthenticationOperations() {
                 },
                 {
                     targets: [0, 1],
-                    render: (data, type) => type === "display"
-                        ? $("<div>").text(data ?? "").html()
-                        : data
+                    render: palantirTextColumn
                 }
             ],
             drawCallback: () => {

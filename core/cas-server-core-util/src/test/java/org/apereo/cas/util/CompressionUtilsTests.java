@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import module java.base;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +40,75 @@ class CompressionUtilsTests {
             assertArrayEquals(content, CompressionUtils.inflate(prefixed, 3, raw));
             assertThrows(DataFormatException.class,
                 () -> CompressionUtils.inflate(Arrays.copyOf(deflated, deflated.length / 2), 0, raw));
+        }
+    }
+
+    @Test
+    void verifyZipEntriesReadBack() throws Throwable {
+        val records = List.of("{\"name\":\"first\"}", "{\"name\":\"second\"}");
+        val resource = CompressionUtils.toZipFile(records.stream(), Unchecked.function(entry -> {
+            val file = Files.createTempFile("record", ".json").toFile();
+            Files.writeString(file.toPath(), entry.toString());
+            return file;
+        }), "records");
+        final byte[] archive;
+        try (val input = resource.getInputStream()) {
+            archive = input.readAllBytes();
+        }
+        assertFalse(resource.exists());
+        assertEquals(Set.copyOf(records), Set.copyOf(CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024)));
+        assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 4));
+        val total = records.stream().mapToLong(record -> record.getBytes(StandardCharsets.UTF_8).length).sum();
+        assertThrows(IllegalArgumentException.class, () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, total - 1));
+        assertEquals(records.size(), CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, total).size());
+    }
+
+    @Test
+    void verifySkippedZipEntriesCountTowardTotal() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            zip.putNextEntry(new ZipEntry("kept.json"));
+            zip.write("{}".getBytes(StandardCharsets.UTF_8));
+            zip.closeEntry();
+            zip.putNextEntry(new ZipEntry("skipped.bin"));
+            zip.write(new byte[64 * 1024]);
+            zip.closeEntry();
+            zip.finish();
+            val archive = out.toByteArray();
+            val accepted = (Predicate<String>) name -> name.endsWith(".json");
+            assertEquals(List.of("{}"), CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 128 * 1024, accepted));
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 32 * 1024, accepted));
+        }
+    }
+
+    @Test
+    void verifyZipFolderDataCountsTowardTotal() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            zip.putNextEntry(new ZipEntry("folder/"));
+            zip.write(new byte[64 * 1024]);
+            zip.closeEntry();
+            zip.finish();
+            val archive = out.toByteArray();
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 32 * 1024, name -> true));
+            assertTrue(CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 128 * 1024, name -> true).isEmpty());
+        }
+    }
+
+    @Test
+    void verifyTooManyZipEntries() throws Throwable {
+        try (val out = new ByteArrayOutputStream();
+             val zip = new ZipOutputStream(out)) {
+            for (var index = 0; index <= CompressionUtils.MAXIMUM_ZIP_ENTRIES; index++) {
+                zip.putNextEntry(new ZipEntry("folder-" + index + '/'));
+                zip.closeEntry();
+            }
+            zip.finish();
+            val archive = out.toByteArray();
+            assertThrows(IllegalArgumentException.class,
+                () -> CompressionUtils.readZipEntries(new ByteArrayInputStream(archive), 1024, 1024, name -> true));
         }
     }
 

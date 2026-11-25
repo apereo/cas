@@ -55,7 +55,7 @@ runContainer "firestore"
 runContainer "pubsub"
 
 printgreen "Running GCP storage server..."
-docker run --quiet  -d --name gcp-storage-server -p 4553:4443 -p 8100:8000 \
+docker run --rm --quiet -d --name gcp-storage-server -p 4553:4443 -p 8100:8000 \
   fsouza/fake-gcs-server -scheme both
 sleep 5
 docker ps | grep "gcp-storage-server"

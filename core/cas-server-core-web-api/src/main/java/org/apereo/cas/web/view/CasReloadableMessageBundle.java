@@ -4,7 +4,10 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.multitenancy.TenantDefinition;
 import org.apereo.cas.multitenancy.TenantExtractor;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,11 +29,17 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * only then a {@code null} value will be returned, which subsequently causes an instance
  * of {@link org.springframework.context.NoSuchMessageException} to be thrown.
  *
+ * <p>A tenant that defines its own message bundle settings gets its own message source, built once per
+ * tenant definition and built again only when the definition is replaced, such as when tenants are
+ * reloaded or saved.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
     private final TenantExtractor tenantExtractor;
+
+    private final Cache<TenantDefinition, Optional<MessageSource>> tenantMessageSources = Caffeine.newBuilder().weakKeys().build();
 
     public CasReloadableMessageBundle(final TenantExtractor tenantExtractor,
                                       final CasConfigurationProperties casProperties,
@@ -44,16 +53,26 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     protected String getMessageInternal(final String code, final Object @NonNull [] args, final Locale locale) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null && StringUtils.isNotBlank(clientInfo.getTenant())) {
-            val tenantDefinition = tenantExtractor.getTenantsManager().findTenant(clientInfo.getTenant()).orElseThrow();
-            val bindingContext = tenantDefinition.bindProperties();
-            if (bindingContext.isBound() && bindingContext.containsBindingFor(MessageBundleProperties.class)) {
-                val properties = bindingContext.value();
-                properties.getMessageBundle().getBaseNames().addAll(getBasenameSet());
-                val bean = configure(new ReloadableResourceBundleMessageSource(), properties);
-                return bean.getMessage(code, args, locale);
+            val tenantMessageSource = tenantExtractor.getTenantsManager()
+                .findTenant(clientInfo.getTenant())
+                .flatMap(definition -> tenantMessageSources.get(definition, this::buildTenantMessageSource));
+            if (tenantMessageSource.isPresent()) {
+                return tenantMessageSource.get().getMessage(code, args, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
+    }
+
+    private Optional<MessageSource> buildTenantMessageSource(final TenantDefinition tenantDefinition) {
+        val bindingContext = tenantDefinition.bindProperties();
+        if (bindingContext.isBound() && bindingContext.containsBindingFor(MessageBundleProperties.class)) {
+            val properties = bindingContext.value();
+            val baseNames = new LinkedHashSet<>(properties.getMessageBundle().getBaseNames());
+            baseNames.addAll(getBasenameSet());
+            properties.getMessageBundle().setBaseNames(new ArrayList<>(baseNames));
+            return Optional.of(configure(new ReloadableResourceBundleMessageSource(), properties));
+        }
+        return Optional.empty();
     }
 
     /**

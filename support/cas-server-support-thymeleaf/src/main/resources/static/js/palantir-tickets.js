@@ -14,7 +14,7 @@ async function initializeTicketsOperations() {
             const decode = new mdc.switchControl.MDCSwitch(document.getElementById("decodeTicketButton")).selected;
             ticketEditor.setValue("");
             if (CasActuatorEndpoints.ticketRegistry()) {
-                $.get(`${CasActuatorEndpoints.ticketRegistry()}/query?type=${type}&id=${ticketId}&decode=${decode}`,
+                $.get(`${CasActuatorEndpoints.ticketRegistry()}/query?type=${encodeURIComponent(type)}&id=${encodeURIComponent(ticketId)}&decode=${encodeURIComponent(decode)}`,
                     response => {
                         ticketEditor.setValue(JSON.stringify(response, null, 2));
                         ticketEditor.gotoLine(1);
@@ -88,7 +88,7 @@ async function initializeTicketsOperations() {
             .append(document.createTextNode(`${entries.length} ${entries.length === 1 ? "field" : "fields"}`)));
 
         if (entries.length === 0) {
-            fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No additional fields"));
+            fields.append($("<p>", {class: "ticket-card-no-fields"}).text("No Additional Fields"));
             return fields;
         }
 

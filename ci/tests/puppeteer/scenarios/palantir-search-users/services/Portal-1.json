@@ -1,0 +1,7 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://portal.example.org/one.*",
+  "name": "Portal",
+  "id": 1,
+  "description": "First of two applications that share a name"
+}

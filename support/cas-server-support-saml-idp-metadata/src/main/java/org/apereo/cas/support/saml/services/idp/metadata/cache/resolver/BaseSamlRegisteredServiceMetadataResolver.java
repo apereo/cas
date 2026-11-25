@@ -305,8 +305,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                         final List<MetadataFilter> metadataFilterList)
             throws Exception {
         buildRequiredValidUntilFilterIfNeeded(service, metadataFilterList);
-        buildEntityDescriptorCertificatesExpirationFilterIfNeeded(service, metadataFilterList);
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
+        buildEntityDescriptorCertificatesExpirationFilterIfNeeded(service, metadataFilterList);
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);
         addMetadataFiltersFromApplicationContext(metadataFilterList);
