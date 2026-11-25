@@ -75,8 +75,7 @@ function protocolConfigurationPropertiesMutable() {
  * @returns {Promise<void>} resolved once the configuration tab is ready
  */
 async function switchToConfigurationDynamicSourcesTabFromProtocol() {
-    activateDashboardTab(Tabs.CONFIGURATION.index);
-    selectSidebarMenuTab(Tabs.CONFIGURATION.index);
+    PalantirPages.open(Tabs.CONFIGURATION);
     await initializeDashboardTab(Tabs.CONFIGURATION);
 }
 
@@ -90,8 +89,7 @@ let pendingSamlMetadataManager = null;
  */
 async function showSamlMetadataManager(sourceId) {
     pendingSamlMetadataManager = sourceId;
-    activateDashboardTab(Tabs.PROTOCOLS.index);
-    selectSidebarMenuTab(Tabs.PROTOCOLS.index);
+    PalantirPages.open(Tabs.PROTOCOLS);
     await initializeDashboardTab(Tabs.PROTOCOLS);
     const outer = $("#protocols-tabs");
     const protocol = outer.find("> ul > li").index($("#saml2protocol").closest("li"));
@@ -105,6 +103,314 @@ async function showSamlMetadataManager(sourceId) {
     }
     $("#saml2metadatamgmt-tab")[0]?.scrollIntoView({block: "start", behavior: "smooth"});
     selectPendingSamlMetadataManager();
+}
+
+/**
+ * How SAML2 metadata names what it describes, shared by the metadata upload here and the wizard's metadata import, so
+ * an uploaded document is named without fetching the wizard.
+ */
+class PalantirSamlMetadataNames {
+    static NAMESPACES = {
+        md: "urn:oasis:names:tc:SAML:2.0:metadata",
+        mdui: "urn:oasis:names:tc:SAML:metadata:ui",
+        mdattr: "urn:oasis:names:tc:SAML:metadata:attribute",
+        saml: "urn:oasis:names:tc:SAML:2.0:assertion",
+        xml: "http://www.w3.org/XML/1998/namespace"
+    };
+
+    /**
+     * Parse metadata XML.
+     *
+     * @param text the XML
+     * @returns {Document} the document
+     */
+    static parse(text) {
+        const document = new DOMParser().parseFromString(text, "application/xml");
+        if (document.getElementsByTagName("parsererror").length > 0) {
+            throw new Error("This is not well-formed XML.");
+        }
+        return document;
+    }
+
+    /**
+     * The entities of a metadata document that are SAML2 service providers.
+     *
+     * @param document the metadata document
+     * @returns {Element[]} their EntityDescriptor elements
+     */
+    static serviceProviders(document) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        return Array.from(document.getElementsByTagNameNS(ns.md, "EntityDescriptor"))
+            .filter(entity => entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor").length > 0);
+    }
+
+    /**
+     * The name a service provider gives itself in its metadata: its display name, else the display name or the name of
+     * its organization, else a readable form of its entity id.
+     *
+     * @param entity the provider's EntityDescriptor
+     * @returns {string} the name, or an empty string
+     */
+    static nameOf(entity) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        const children = (parent, namespace, name) => Array.from(parent?.children ?? [])
+            .filter(child => child.namespaceURI === namespace && child.localName === name);
+        const provider = entity.getElementsByTagNameNS(ns.md, "SPSSODescriptor")[0];
+        const uiInfo = provider?.getElementsByTagNameNS(ns.mdui, "UIInfo")[0];
+        const displayNames = uiInfo ? Array.from(uiInfo.getElementsByTagNameNS(ns.mdui, "DisplayName")) : [];
+        const organization = children(entity, ns.md, "Organization")[0];
+        return PalantirSamlMetadataNames.localized(displayNames)
+            || PalantirSamlMetadataNames.localized(children(organization, ns.md, "OrganizationDisplayName"))
+            || PalantirSamlMetadataNames.localized(children(organization, ns.md, "OrganizationName"))
+            || PalantirSamlMetadataNames.readableEntityId(entity.getAttribute("entityID"));
+    }
+
+    /**
+     * The text of the element in the operator's language, else in English, else the first one.
+     *
+     * @param elements the elements, one per language
+     * @returns {string} the text, or an empty string
+     */
+    static localized(elements) {
+        const ns = PalantirSamlMetadataNames.NAMESPACES;
+        const languages = [String(navigator.language ?? "en").toLowerCase().split("-")[0], "en"];
+        const language = element => String(element.getAttributeNS(ns.xml, "lang") || element.getAttribute("xml:lang") || "").toLowerCase();
+        const chosen = languages.map(code => elements.find(element => language(element).split("-")[0] === code)).find(Boolean)
+            ?? elements[0];
+        return String(chosen?.textContent ?? "").trim();
+    }
+
+    /**
+     * A readable form of an entity id: the host of a URL, without www, or the last part of a URN.
+     *
+     * @param entityId the entity id
+     * @returns {string} the readable form, or the entity id as it is
+     */
+    static readableEntityId(entityId) {
+        const value = String(entityId ?? "").trim();
+        if (/^urn:/i.test(value)) {
+            return value.split(":").filter(Boolean).pop() ?? value;
+        }
+        try {
+            return new URL(value).hostname.replace(/^www\./i, "") || value;
+        } catch (error) {
+            return value;
+        }
+    }
+
+    /**
+     * The name to keep uploaded metadata under: the name of its one service provider, else the name the aggregate
+     * gives itself, else the name of its first service provider.
+     *
+     * @param text the metadata XML
+     * @returns {string} the name, or an empty string when the metadata names no service provider
+     */
+    static documentName(text) {
+        try {
+            const document = PalantirSamlMetadataNames.parse(String(text ?? ""));
+            const providers = PalantirSamlMetadataNames.serviceProviders(document);
+            const root = document.documentElement;
+            const aggregate = root?.localName === "EntitiesDescriptor" ? String(root.getAttribute("Name") ?? "").trim() : "";
+            if (providers.length === 1) {
+                return PalantirSamlMetadataNames.nameOf(providers[0]);
+            }
+            return aggregate || (providers.length > 0 ? PalantirSamlMetadataNames.nameOf(providers[0]) : "");
+        } catch (error) {
+            return "";
+        }
+    }
+}
+
+/**
+ * Upload SAML2 service provider metadata to a metadata manager: a name, the metadata XML file and, optionally, its
+ * signature, shown side by side once chosen. The same dialog serves the metadata management section under Protocols
+ * and the application wizard; when there are several managers to choose from, it asks which one.
+ */
+class PalantirSamlMetadataUpload {
+    static managers = null;
+
+    /**
+     * Whether metadata can be uploaded from this page: the metadata endpoint is exposed and can be written to, and its
+     * upload dialog is on the page.
+     *
+     * @returns {boolean} true when uploading is possible
+     */
+    static available() {
+        return Boolean(CasActuatorEndpoints.samlIdpRegisteredServiceMetadata())
+            && $("#saml2MetadataUploadDialog").length > 0
+            && CasActuatorEndpoints.writable("samlIdPRegisteredServiceMetadata");
+    }
+
+    /**
+     * The metadata managers registered with CAS, read once.
+     *
+     * @returns {Promise<{name: string, sourceId: string}[]>} the managers, or none when they cannot be read
+     */
+    static async loadManagers() {
+        if (PalantirSamlMetadataUpload.managers === null) {
+            try {
+                const managers = await $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers`);
+                PalantirSamlMetadataUpload.managers = Array.isArray(managers) ? managers : [];
+            } catch (error) {
+                console.debug("The SAML2 metadata managers could not be read", error);
+                return [];
+            }
+        }
+        return PalantirSamlMetadataUpload.managers;
+    }
+
+    /**
+     * Open the upload dialog.
+     *
+     * @param managers the metadata managers to upload to; the first is chosen, and a choice is offered when there are several
+     * @param name the name to start with; while it is empty or still the one suggested, choosing the metadata file
+     *        suggests the name of the service provider it describes
+     * @param onUploaded called with the manager and the uploaded document once the metadata is stored
+     */
+    static open({managers, name = "", onUploaded = () => {}}) {
+        hideBanner();
+        const dialog = $("#saml2MetadataUploadDialog");
+        const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml", {useWorker: false});
+        metadataXmlEditor.setReadOnly(true);
+        const signatureEditor = initializeAceEditor("saml2MetadataUploadSignatureEditor", "text");
+        signatureEditor.setReadOnly(true);
+
+        const managerSelect = $("#saml2MetadataUploadManager").empty();
+        managers.forEach((manager, index) => managerSelect.append($("<option>", {value: index, text: manager.name})));
+        $("#saml2MetadataUploadManagerRow").toggleClass("d-none", managers.length < 2);
+
+        const adjustUploadEditorLayout = () => {
+            const xmlVisible = !$("#saml2MetadataUploadXmlEditorContainer").hasClass("d-none");
+            const sigVisible = !$("#saml2MetadataUploadSignatureEditorContainer").hasClass("d-none");
+            if (xmlVisible && sigVisible) {
+                $("#saml2MetadataUploadXmlEditorContainer").css("width", "50%");
+                $("#saml2MetadataUploadSignatureEditorContainer").css("width", "50%");
+            } else if (xmlVisible) {
+                $("#saml2MetadataUploadXmlEditorContainer").css("width", "100%");
+            } else if (sigVisible) {
+                $("#saml2MetadataUploadSignatureEditorContainer").css("width", "100%");
+            }
+            metadataXmlEditor.resize();
+            signatureEditor.resize();
+        };
+        const reading = {count: 0, latest: new Map(), closed: false};
+        let suggested = "";
+        const suggestName = content => {
+            const field = $("#saml2MetadataUploadName");
+            const typed = String(field.val() ?? "").trim();
+            const found = PalantirSamlMetadataNames.documentName(content);
+            if (found !== "" && (typed === "" || typed === suggested)) {
+                suggested = found;
+                field.val(found).trigger("input");
+                field.closest(".mdc-text-field").find(".mdc-floating-label").addClass("mdc-floating-label--float-above");
+            }
+        };
+        const current = (editor, read) => !reading.closed && reading.latest.get(editor) === read;
+        const uploadButton = () => dialog.closest(".ui-dialog").find(".ui-dialog-buttonpane button").first();
+        const readInto = (editor, container, onRead = () => {}) => function () {
+            if (this.files.length === 0) {
+                return;
+            }
+            const read = Symbol("read");
+            reading.latest.set(editor, read);
+            reading.count++;
+            editor.setValue("");
+            uploadButton().prop("disabled", true);
+            this.files[0].text()
+                .then(content => {
+                    if (current(editor, read)) {
+                        editor.setValue(content);
+                        editor.gotoLine(1);
+                        onRead(content);
+                        showElements($(container));
+                        adjustUploadEditorLayout();
+                    }
+                })
+                .catch(error => {
+                    if (current(editor, read)) {
+                        PalantirDialogs.error("The File Could Not Be Read", String(error?.message ?? error));
+                    }
+                })
+                .finally(() => {
+                    reading.count--;
+                    if (!reading.closed) {
+                        uploadButton().prop("disabled", reading.count > 0);
+                    }
+                });
+        };
+        $("#saml2MetadataUploadXmlFileButton").off().on("click", () => $("#saml2MetadataUploadXmlFile").click());
+        $("#saml2MetadataUploadXmlFile").off().on("change", readInto(metadataXmlEditor, "#saml2MetadataUploadXmlEditorContainer", suggestName));
+        $("#saml2MetadataUploadSignatureFileButton").off().on("click", () => $("#saml2MetadataUploadSignatureFile").click());
+        $("#saml2MetadataUploadSignatureFile").off().on("change", readInto(signatureEditor, "#saml2MetadataUploadSignatureEditorContainer"));
+
+        dialog.dialog({
+            autoOpen: false,
+            modal: true,
+            width: Math.min(1150, $(window).width() - 32),
+            height: Math.min(880, $(window).height() - 32),
+            position: {my: "center", at: "center", of: window},
+            buttons: {
+                Upload: function () {
+                    if (reading.count > 0 || !$("#saml2MetadataUploadForm")[0].reportValidity()) {
+                        return;
+                    }
+                    const xmlText = metadataXmlEditor.getValue().trim();
+                    if (!xmlText) {
+                        Swal.fire({
+                            title: "Missing File",
+                            text: "Please select a metadata XML file to upload.",
+                            icon: "warning"
+                        });
+                        return;
+                    }
+                    const manager = managers[Number(managerSelect.val())] ?? managers[0];
+                    const payload = {
+                        name: $("#saml2MetadataUploadName").val(),
+                        value: xmlText,
+                        signature: signatureEditor.getValue().trim()
+                    };
+                    $.ajax({
+                        url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(manager.name)}`,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(payload),
+                        success: response => {
+                            dialog.dialog("close");
+                            Swal.fire({
+                                title: "Done!",
+                                text: "Metadata has been uploaded successfully.",
+                                icon: "success",
+                                timer: 2000
+                            });
+                            onUploaded(manager, response ?? payload);
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error uploading metadata:", error);
+                            displayBanner(xhr);
+                        }
+                    });
+                },
+                Cancel: function () {
+                    $(this).dialog("close");
+                }
+            },
+            open: function () {
+                $("#saml2MetadataUploadName").val(name);
+                $("#saml2MetadataUploadXmlFile").val("");
+                $("#saml2MetadataUploadSignatureFile").val("");
+                metadataXmlEditor.setValue("");
+                signatureEditor.setValue("");
+                hideElements("#saml2MetadataUploadXmlEditorContainer");
+                hideElements("#saml2MetadataUploadSignatureEditorContainer");
+                $("#saml2MetadataUploadName").focus();
+            },
+            close: function () {
+                reading.closed = true;
+                $(this).dialog("destroy");
+            }
+        });
+        dialog.dialog("open");
+    }
 }
 
 /**
@@ -227,23 +533,10 @@ function showOidcJwks() {
 }
 
 function buildOidcClientSecretRotationEndpoint() {
-    const clientId = $("#oidcClientSecretRotationClientId").val()?.trim();
-    const expireIn = $("#oidcClientSecretRotationExpireIn").val()?.trim();
-    const expiredOnly = $("#oidcClientSecretRotationExpiredOnly").val() === "true";
-    const encodedClientId = encodeURIComponent(clientId);
-    let endpoint = CasActuatorEndpoints.oauthClientSecrets();
-    if (/\{clientId\}|%7BclientId%7D/i.test(endpoint)) {
-        endpoint = endpoint.replace(/\{clientId\}|%7BclientId%7D/ig, encodedClientId);
-    } else {
-        endpoint = `${endpoint}/${encodedClientId}`;
-    }
-    const query = new URLSearchParams();
-    query.append("expiredOnly", expiredOnly);
-    if (expireIn) {
-        query.append("expireIn", expireIn);
-    }
-    const queryString = query.toString();
-    return `${endpoint}${queryString ? `?${queryString}` : ""}`;
+    return PalantirAvailability.clientSecretsUrl($("#oidcClientSecretRotationClientId").val()?.trim(), {
+        expiredOnly: $("#oidcClientSecretRotationExpiredOnly").val() === "true",
+        expireIn: $("#oidcClientSecretRotationExpireIn").val()?.trim()
+    });
 }
 
 function renderOidcClientSecretRotationResult(response) {
@@ -288,12 +581,9 @@ function initializeOidcClientSecretRotationOperations() {
                 return false;
             }
 
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to rotate client secrets?",
-                text: "Once rotated, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once rotated, the change will take effect immediately."
             }).then((result) => {
                 if (result.isConfirmed) {
                     $("#oidcClientSecretRotationButton").prop("disabled", true);
@@ -352,17 +642,14 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRotationButton]").off().on("click", () => {
             hideBanner();
-            Swal.fire({
-                title: "Are you sure you want to rotate keys?",
-                text: "Once rotated, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+            PalantirDialogs.confirm({
+                title: "Are You Sure You Want to Rotate Keys?",
+                text: "Once rotated, the change will take effect immediately."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
                         $("#oidcKeyRotationButton").prop("disabled", true);
-                        $.get(`${CasActuatorEndpoints.oidcJwks()}/rotate`, response => {
+                        $.post(`${CasActuatorEndpoints.oidcJwks()}/rotate`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully rotated.",
@@ -381,17 +668,14 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
             hideBanner();
-            Swal.fire({
-                title: "Are you sure you want to revoke keys?",
-                text: "Once revoked, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+            PalantirDialogs.confirm({
+                title: "Are You Sure You Want to Revoke Keys?",
+                text: "Once revoked, the change will take effect immediately."
             })
-                .then((willDo) => {
-                    if (willDo) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $("#oidcKeyRevocationButton").prop("disabled", true);
-                        $.get(`${CasActuatorEndpoints.oidcJwks()}/revoke`, response => {
+                        $.post(`${CasActuatorEndpoints.oidcJwks()}/revoke`, response => {
                             Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully revoked.",
@@ -439,7 +723,7 @@ async function initializeOidcProtocolOperations() {
                 const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
 
                 $.ajax({
-                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
+                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${encodeURIComponent(scopes)}`,
                     type: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -493,7 +777,7 @@ async function initializeOidcProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const oidcConfigurationPropsTable = $("#oidcConfigurationPropsTable").DataTable({
-        deferRender: true,
+                deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {
@@ -544,17 +828,14 @@ async function initializeOidcProtocolOperations() {
             });
 
             function deleteOidcClientJwksEntry(context) {
-                const jkt = context.rowData.jkt;
-                Swal.fire({
+                const {jkt, clientId} = context.rowData;
+                PalantirDialogs.confirm({
                     title: "Are you sure you want to delete this client JWKS entry?",
-                    text: "Once deleted, the change will take effect immediately.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
+                    text: "Once deleted, the change will take effect immediately."
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.oidcJwks()}/clients/${jkt}`,
+                            url: `${CasActuatorEndpoints.oidcJwks()}/clients/${encodeURIComponent(clientId)}/${encodeURIComponent(jkt)}`,
                             type: "DELETE",
                             success: (response, textStatus, jqXHR) => {
                                 Swal.fire({
@@ -592,10 +873,12 @@ async function initializeOidcProtocolOperations() {
                 oidcClientJwksTable.clear();
                 for (const entry of response) {
                     oidcClientJwksTable.row.add({
-                        0: `${palantirCode(entry.jkt)}`,
-                        1: `${palantirCode(entry.createdAt)}`,
-                        2: `${palantirCode(entry.jwk)}`,
-                        jkt: entry.jkt
+                        0: `${palantirCode(entry.clientId)}`,
+                        1: `${palantirCode(entry.jkt)}`,
+                        2: `${palantirCode(entry.createdAt)}`,
+                        3: `${palantirCode(entry.jwk)}`,
+                        jkt: entry.jkt,
+                        clientId: entry.clientId
                     });
                 }
                 oidcClientJwksTable.draw();
@@ -688,12 +971,9 @@ async function initializeSAML2ProtocolOperations() {
             hideBanner();
             hideElements("#saml2MetadataCacheEditorContainer");
 
-            Swal.fire({
+            PalantirDialogs.confirm({
                 title: "Are you sure you want to invalidate the cache entry?",
-                text: "Once deleted, the change will take effect immediately.",
-                icon: "question",
-                showConfirmButton: true,
-                showDenyButton: true
+                text: "Once deleted, the change will take effect immediately."
             })
                 .then((result) => {
                     if (result.isConfirmed) {
@@ -780,7 +1060,7 @@ async function initializeSAML2ProtocolOperations() {
             }
 
             function viewSaml2MetadataManagerEntry(entryId, managerName) {
-                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`, entry => {
+                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}/${encodeURIComponent(entryId)}`, entry => {
                     saml2MetadataManagerEntryEditor.setValue(entry.value);
                     saml2MetadataManagerEntryEditor.gotoLine(1);
                     const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataManagerEntryDialog"));
@@ -815,25 +1095,21 @@ async function initializeSAML2ProtocolOperations() {
                         "serviceId": entityIdValue,
                         "metadataLocation": "mongodb://"
                     };
-                    activateDashboardTab(Tabs.APPLICATIONS.index);
-                    selectSidebarMenuTab(Tabs.APPLICATIONS.index);
-                    setTimeout(() => openRegisteredServiceWizardDialog(partialService), 150);
+                    PalantirPages.open(Tabs.APPLICATIONS);
+                    setTimeout(() => openPalantirWizard(partialService), 150);
                 } else {
                     displayBanner("CAS is unable to register this entry as a SAML2 Service Provider");
                 }
             }
 
             function deleteSaml2MetadataManagerEntry(entryId, managerName) {
-                Swal.fire({
+                PalantirDialogs.confirm({
                     title: "Are you sure you want to delete this metadata entry?",
-                    text: "Once deleted, the change will take effect immediately.",
-                    icon: "question",
-                    showConfirmButton: true,
-                    showDenyButton: true
+                    text: "Once deleted, the change will take effect immediately."
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}/${entryId}`,
+                            url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}/${encodeURIComponent(entryId)}`,
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, textStatus, jqXHR) => {
@@ -880,7 +1156,7 @@ async function initializeSAML2ProtocolOperations() {
 
             function fetchMetadataManagerEntries(managerName) {
                 saml2MetadataManagerEntriesTable.clear().draw();
-                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${managerName}`, response => {
+                $.get(`${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${encodeURIComponent(managerName)}`, response => {
                     for (const entry of response) {
                         const entityId = parseEntityIdFromMetadata(entry.value);
                         saml2MetadataManagerEntriesTable.row.add({
@@ -901,123 +1177,11 @@ async function initializeSAML2ProtocolOperations() {
             }
 
             $("button[name=saml2MetadataUploadButton]").off().on("click", () => {
-                hideBanner();
-                const selectedManagerName = $("#saml2MetadataManagersSelect option:selected").text();
-
-                const metadataXmlEditor = initializeAceEditor("saml2MetadataUploadXmlEditor", "xml", {useWorker: false});
-                metadataXmlEditor.setReadOnly(true);
-                const signatureEditor = initializeAceEditor("saml2MetadataUploadSignatureEditor", "text");
-                signatureEditor.setReadOnly(true);
-
-                function adjustUploadEditorLayout() {
-                    const xmlVisible = !$("#saml2MetadataUploadXmlEditorContainer").hasClass("d-none");
-                    const sigVisible = !$("#saml2MetadataUploadSignatureEditorContainer").hasClass("d-none");
-                    if (xmlVisible && sigVisible) {
-                        $("#saml2MetadataUploadXmlEditorContainer").css("width", "50%");
-                        $("#saml2MetadataUploadSignatureEditorContainer").css("width", "50%");
-                    } else if (xmlVisible) {
-                        $("#saml2MetadataUploadXmlEditorContainer").css("width", "100%");
-                    } else if (sigVisible) {
-                        $("#saml2MetadataUploadSignatureEditorContainer").css("width", "100%");
-                    }
-                    metadataXmlEditor.resize();
-                    signatureEditor.resize();
-                }
-
-                $("#saml2MetadataUploadXmlFileButton").off().on("click", () => {
-                    $("#saml2MetadataUploadXmlFile").click();
+                const selected = $("#saml2MetadataManagersSelect option:selected");
+                PalantirSamlMetadataUpload.open({
+                    managers: [{name: selected.text(), sourceId: selected.val()}],
+                    onUploaded: manager => fetchMetadataManagerEntries(manager.name)
                 });
-                $("#saml2MetadataUploadXmlFile").off().on("change", function () {
-                    if (this.files.length > 0) {
-                        this.files[0].text().then(content => {
-                            metadataXmlEditor.setValue(content);
-                            metadataXmlEditor.gotoLine(1);
-                            showElements($("#saml2MetadataUploadXmlEditorContainer"));
-                            adjustUploadEditorLayout();
-                        });
-                    }
-                });
-                $("#saml2MetadataUploadSignatureFileButton").off().on("click", () => {
-                    $("#saml2MetadataUploadSignatureFile").click();
-                });
-                $("#saml2MetadataUploadSignatureFile").off().on("change", function () {
-                    if (this.files.length > 0) {
-                        this.files[0].text().then(content => {
-                            signatureEditor.setValue(content);
-                            signatureEditor.gotoLine(1);
-                            showElements($("#saml2MetadataUploadSignatureEditorContainer"));
-                            adjustUploadEditorLayout();
-                        });
-                    }
-                });
-
-                $("#saml2MetadataUploadDialog").dialog({
-                    autoOpen: false,
-                    modal: true,
-                    width: 1150,
-                    height: 880,
-                    position: {
-                        my: "center top",
-                        at: "center top+200",
-                        of: window
-                    },
-                    buttons: {
-                        Upload: async function () {
-                            if (!$("#saml2MetadataUploadForm")[0].reportValidity()) {
-                                return;
-                            }
-                            const name = $("#saml2MetadataUploadName").val();
-                            const xmlText = metadataXmlEditor.getValue().trim();
-                            if (!xmlText) {
-                                Swal.fire({
-                                    title: "Missing File",
-                                    text: "Please select a metadata XML file to upload.",
-                                    icon: "warning"
-                                });
-                                return;
-                            }
-                            const sigText = signatureEditor.getValue().trim();
-                            const payload = {name: name, value: xmlText, signature: sigText};
-                            $.ajax({
-                                url: `${CasActuatorEndpoints.samlIdpRegisteredServiceMetadata()}/managers/${selectedManagerName}`,
-                                type: "POST",
-                                contentType: "application/json",
-                                data: JSON.stringify(payload),
-                                success: (response) => {
-                                    $("#saml2MetadataUploadDialog").dialog("close");
-                                    Swal.fire({
-                                        title: "Done!",
-                                        text: "Metadata has been uploaded successfully.",
-                                        icon: "success",
-                                        timer: 2000
-                                    });
-                                    fetchMetadataManagerEntries(selectedManagerName);
-                                },
-                                error: (xhr, status, error) => {
-                                    console.error("Error uploading metadata:", error);
-                                    displayBanner(xhr);
-                                }
-                            });
-                        },
-                        Cancel: function () {
-                            $(this).dialog("close");
-                        }
-                    },
-                    open: function () {
-                        $("#saml2MetadataUploadName").val("");
-                        $("#saml2MetadataUploadXmlFile").val("");
-                        $("#saml2MetadataUploadSignatureFile").val("");
-                        metadataXmlEditor.setValue("");
-                        signatureEditor.setValue("");
-                        hideElements("#saml2MetadataUploadXmlEditorContainer");
-                        hideElements("#saml2MetadataUploadSignatureEditorContainer");
-                        $("#saml2MetadataUploadName").focus();
-                    },
-                    close: function () {
-                        $(this).dialog("destroy");
-                    }
-                });
-                $("#saml2MetadataUploadDialog").dialog("open");
             });
 
             $("#saml2MetadataManagersSelect").empty().selectmenu({
@@ -1053,7 +1217,7 @@ async function initializeSAML2ProtocolOperations() {
 
         if (CasActuatorEndpoints.env()) {
             const saml2ConfigurationPropsTable = $("#saml2ConfigurationPropsTable").DataTable({
-        deferRender: true,
+                deferRender: true,
                 lengthChange: false,
                 columnDefs: [
                     {

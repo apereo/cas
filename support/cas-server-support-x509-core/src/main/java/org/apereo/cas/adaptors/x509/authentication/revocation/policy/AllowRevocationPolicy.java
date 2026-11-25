@@ -4,15 +4,15 @@ import module java.base;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Implements an unqualified allow policy.
+ * Implements an unqualified allow policy, applicable to unavailable and expired CRL data alike.
  *
  * @author Marvin S. Addison
  * @since 3.4.6
  */
 @Slf4j
-public class AllowRevocationPolicy implements RevocationPolicy<Void> {
+public class AllowRevocationPolicy implements RevocationPolicy<Object> {
     @Override
-    public void apply(final Void data) {
+    public void apply(final Object data) {
         LOGGER.debug("Continuing since [{}] is in effect.", getClass().getSimpleName());
     }
 }

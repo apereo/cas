@@ -31,33 +31,15 @@ thirdPartyStartsWith="spring.cloud.vault.token"
 thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
 
-## AppID Authentication
+## AppRole Authentication
 
-Vault supports AppId authentication that consists of two hard to guess
-tokens. The AppId defaults to the application name that is statically
-configured. The second token is the UserId which is a part determined by the
-application, usually related to the runtime environment. Spring Cloud Vault
-Config supports IP address, Mac address and static
-UserId’s (e.g. supplied via System properties). The IP and Mac address are
-represented as Hex-encoded SHA256 hash.
-
-Using IP addresses:
-
-```bash
-export IP_ADDRESS=`echo -n 192.168.99.1 | sha256sum`
-```
-
-Using MAC address:
-
-```bash
-export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
-```
+AppRole authentication lets CAS log into Vault with a role id and a secret id, which suits machines and services.
+The role id identifies the role, and the secret id can be pulled from Vault or provided to CAS when it starts.
 
 {% include_cached casproperties.html
-thirdPartyStartsWith="spring.cloud.vault.app-id"
-thirdPartyExactMatch="spring.cloud.vault.authentication,spring.application.name"
+thirdPartyStartsWith="spring.cloud.vault.app-role"
+thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
-
 
 ## Kubernetes Authentication
 
@@ -70,11 +52,10 @@ thirdPartyStartsWith="spring.cloud.vault.kubernetes"
 thirdPartyExactMatch="spring.cloud.vault.authentication"
 %}
 
-## Generic Backend v1
+## Key-Value Backend
 
-{% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.vault.generic" %}
-
-## KV Backend v2
+Settings are read from the key-value secrets engine, in either of its versions; the generic backend of earlier
+versions is no longer offered.
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.cloud.vault.kv" %}
 

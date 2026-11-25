@@ -12,7 +12,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 
 /**
@@ -23,7 +22,7 @@ import org.springframework.beans.factory.ObjectProvider;
  */
 @RequiredArgsConstructor
 public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
-    private static final int AUTHENTICATION_INDEX = 3;
+    private static final int AUTHENTICATION_INDEX = 4;
 
     private final ObjectProvider<TicketFactory> ticketFactory;
 
@@ -39,7 +38,7 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
     @Override
     public void compactFields(final List<String> fields, final Ticket ticket) throws Exception {
         val proxyTicket = (ProxyTicket) ticket;
-        fields.add(StringUtils.defaultString(proxyTicket.getService().getShortenedId()));
+        ServiceTicketCompactor.compactService(fields, proxyTicket.getService());
         CompactTicketAuthentication.compact(fields, proxyTicket.getAuthentication(), retainedAuthenticationAttributes);
     }
 
@@ -51,7 +50,7 @@ public class ProxyTicketCompactor implements TicketCompactor<ProxyTicket> {
     @Override
     public Ticket expand(final String compactTicket) throws Throwable {
         val structure = parse(compactTicket, AUTHENTICATION_INDEX + CompactTicketAuthentication.FIELD_COUNT);
-        val service = Objects.requireNonNull(serviceFactory.createService(structure.get(CompactTicketIndexes.SERVICE)));
+        val service = ServiceTicketCompactor.expandService(serviceFactory, structure);
         val authentication = CompactTicketAuthentication.expand(principalFactory, structure.ticketElements(), AUTHENTICATION_INDEX);
         val creationTime = DateTimeUtils.zonedDateTimeOf(structure.creationTime());
         val factory = ticketFactory.getObject();

@@ -4,7 +4,6 @@ import module java.base;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.cipher.DefaultCipherExecutorResolver;
@@ -59,7 +58,7 @@ public class CasCoreCookieAutoConfiguration {
             final CipherExecutor cookieCipherExecutor) {
             if (casProperties.getTgc().getCrypto().isEnabled()) {
                 val cipherExecutorResolver = new DefaultCipherExecutorResolver(cookieCipherExecutor, tenantExtractor,
-                    TicketGrantingCookieProperties.class, bindingContext -> {
+                    "cas.tgc.crypto", bindingContext -> {
                     val properties = bindingContext.value();
                     return CipherExecutorUtils.newStringCipherExecutor(properties.getTgc().getCrypto(), TicketGrantingCookieCipherExecutor.class);
                 });

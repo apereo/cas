@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -126,15 +127,27 @@ public class TicketRegistrySessionRepository extends MapSessionRepository implem
         });
     }
 
+    /**
+     * Find the sessions with the given index value, such as the sessions of a principal. Only transient session tickets
+     * are read from the registry, rather than every ticket it holds, and those with the index value are kept.
+     *
+     * @param indexName  the index name
+     * @param indexValue the index value
+     * @return the sessions by id
+     */
     @Override
     public Map findByIndexNameAndIndexValue(final String indexName, final String indexValue) {
-        try (val tickets = ticketRegistry.getObject().getTickets(ticket -> ticket instanceof final TransientSessionTicket tst
-            && indexValue.equals(tst.getProperty(indexName, String.class)))) {
-            return tickets
-                .map(TransientSessionTicket.class::cast)
-                .map(TicketRegistrySessionRepository::convertTicketToSession)
-                .collect(Collectors.toMap(MapSession::getId, Function.identity()));
-        }
+        val criteria = TicketRegistryQueryCriteria.builder()
+            .type(TransientSessionTicket.PREFIX)
+            .decode(true)
+            .build();
+        return ticketRegistry.getObject().query(criteria)
+            .stream()
+            .filter(TransientSessionTicket.class::isInstance)
+            .map(TransientSessionTicket.class::cast)
+            .filter(ticket -> indexValue.equals(ticket.getProperty(indexName, String.class)))
+            .map(TicketRegistrySessionRepository::convertTicketToSession)
+            .collect(Collectors.toMap(MapSession::getId, Function.identity()));
     }
 
     private Map<String, Object> convertSessionAttributes(final MapSession session) {

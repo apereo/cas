@@ -272,6 +272,18 @@ html[data-palantir-pointer-focus] :focus-visible:not(input, textarea, select, [c
     outline: none !important;
 }
 
+/* Text fields never draw the focus ring, which shows as a box inside a rounded search field. A field inside a
+   rounded search field shows focus on that field through :focus-within; a field with a border of its own shows it in
+   the border's color. Checkboxes, radios, switches and buttons keep the ring. */
+#dashboard :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus-visible,
+.ui-dialog.palantir-dialog :is(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus-visible {
+    outline: none;
+}
+
+:where(#dashboard, .ui-dialog.palantir-dialog) :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="button"], [type="submit"], [type="reset"], [type="color"], [type="image"]), textarea, select):focus {
+    border-color: var(--palantir-focus);
+}
+
 /* ==========================================================================
    Navigation bar
    ========================================================================== */
@@ -1330,6 +1342,33 @@ html[data-palantir-pointer-focus] :focus-visible:not(input, textarea, select, [c
     flex: 1;
 }
 
+.palantir-surrogate-accounts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.palantir-surrogate-accounts__summary {
+    margin: 0;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-surrogate-account__avatar {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-size: 16px;
+    font-weight: 600;
+}
+
 .palantir-applications-hint {
     display: flex;
     align-items: center;
@@ -1642,6 +1681,16 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
 
 .palantir-conflict__message {
     margin: 0 0 12px;
+}
+
+.palantir-dialog--saving {
+    cursor: progress;
+}
+
+.palantir-dialog--saving .ui-dialog-content,
+.palantir-dialog--saving .ui-dialog-buttonpane {
+    opacity: 0.72;
+    transition: opacity 0.15s ease;
 }
 
 .palantir-conflict__diff {
@@ -2005,6 +2054,11 @@ html.palantir-page table.dataTable > tbody > tr.selected > :first-child {
     border-radius: 999px;
     background: var(--palantir-surface);
     color: var(--palantir-text-muted);
+}
+
+.registered-service-sections__search:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
 }
 
 .registered-service-sections__search input {
@@ -2378,12 +2432,13 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup {
 
 .palantir-type-picker {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(330px, 100%), 1fr));
     gap: 12px;
     text-align: start;
 }
 
 .palantir-type-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -2408,10 +2463,28 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup {
     box-shadow: 0 0 0 4px var(--palantir-accent-ring);
 }
 
+.palantir-type-card-key {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    min-width: 22px;
+    padding: 1px 6px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font-family: var(--mdc-typography-font-family);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+}
+
 .palantir-type-card-head {
     display: flex;
     align-items: center;
     gap: 12px;
+    padding-inline-end: 24px;
 }
 
 .palantir-type-card-head .palantir-protocol-badge {
@@ -2522,15 +2595,21 @@ html.palantir-page .swal2-popup.palantir-type-picker-popup .swal2-title {
 }
 
 .palantir-type-card-name code {
-    overflow-wrap: anywhere;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .ui-dialog .registered-service-sections__search input {
     font-size: 14px;
 }
 
+/* Switches beside the buttons of a dialog, such as Show Configuration and Show Advanced Options when adding an
+   authentication handler, share one size. */
 .registered-service-wizard__options label,
-.registered-service-wizard__options .mdc-switch + label {
+.registered-service-wizard__options .mdc-switch + label,
+[id^="show"][id$="EditorSwitchButtonPanel"] label,
+.ui-dialog-buttonpane [id$="SwitchButtonPanel"] label {
     font-size: 14px;
 }
 
@@ -2692,10 +2771,6 @@ html.palantir-page[data-theme="dark"] :is(.mdc-menu-surface, .mdc-select__menu) 
 html.palantir-page[data-theme="dark"] .mdc-chip {
     background-color: var(--palantir-tint-2);
     color: var(--palantir-text);
-}
-
-html.palantir-page[data-theme="dark"] .mdc-switch:enabled .mdc-switch__track::before {
-    background: var(--palantir-switch-off);
 }
 
 html.palantir-page[data-theme="dark"] .mdc-data-table,
@@ -3666,13 +3741,20 @@ html.palantir-page .ui-dialog.palantir-command-palette-dialog {
     outline: none;
 }
 
+/* The palette has a fixed height so it stays centered while its results change; the results fill what the search
+   field and the hint leave, and the menu scrolls itself, as jQuery UI expects when it brings the active entry into view. */
 .palantir-command-palette__results {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     min-height: 0;
 }
 
 .palantir-command-palette__results .ui-autocomplete.palantir-command-palette__menu {
     position: static !important;
-    max-height: min(420px, 60vh);
+    flex: 1;
+    min-height: 0;
+    max-height: none;
     margin: 0;
     padding: 0;
     overflow-y: auto;
@@ -4922,6 +5004,151 @@ body.palantir-has-selection-bar #attribute-tab-0 {
     text-align: start;
 }
 
+/* Managing a feature: a switch for the feature itself and one per module, each saying what happens after a restart */
+.palantir-feature-manage {
+    display: grid;
+    gap: 10px;
+    text-align: start;
+}
+
+.palantir-feature-manage__modules {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+}
+
+.palantir-feature-switch {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 10px;
+    background: var(--palantir-surface);
+    cursor: pointer;
+}
+
+.palantir-feature-switch.is-feature {
+    padding: 12px 14px;
+    background: var(--palantir-hover);
+}
+
+.palantir-feature-switch.is-changed.is-off {
+    border-color: var(--palantir-danger-line);
+    background: var(--palantir-danger-bg);
+}
+
+.palantir-feature-switch.is-changed:not(.is-off) {
+    border-color: var(--palantir-success-line);
+    background: var(--palantir-success-bg);
+}
+
+.palantir-feature-switch:has(input:disabled) {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.palantir-feature-switch input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.palantir-feature-switch__track {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--palantir-toggle-off);
+    transition: background-color .15s ease;
+}
+
+.palantir-feature-switch__track::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+    transition: left .15s ease;
+}
+
+.palantir-feature-switch input:checked + .palantir-feature-switch__track {
+    background: var(--palantir-toggle-on);
+}
+
+.palantir-feature-switch input:checked + .palantir-feature-switch__track::after {
+    left: 19px;
+}
+
+.palantir-feature-switch input:focus-visible + .palantir-feature-switch__track {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-feature-switch__text {
+    display: grid;
+    min-width: 0;
+}
+
+.palantir-feature-switch__text strong {
+    overflow-wrap: anywhere;
+    color: var(--palantir-text);
+    font-weight: 600;
+}
+
+.palantir-feature-switch__text small {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-feature-manage__summary {
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 8px;
+    color: var(--palantir-text-2);
+    font-size: 14px;
+}
+
+.palantir-feature-manage__summary.has-changes {
+    border-color: var(--palantir-warn);
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-feature-manage__source {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.palantir-feature-manage__flags summary {
+    color: var(--palantir-brand);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.palantir-feature-manage__flags .palantir-feature-toggle__flags {
+    margin-top: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-feature-switch__track,
+    .palantir-feature-switch__track::after {
+        transition: none;
+    }
+}
+
 /* A dialog never grows taller than the window, on screens with little height: its content scrolls instead, while
    the title bar and buttons stay in view. */
 .ui-dialog.palantir-dialog {
@@ -5717,6 +5944,40 @@ html.palantir-page[data-theme="dark"] .palantir-magnifier__stage.is-diagram {
     text-align: right;
 }
 
+#dashboard .palantir-metrics__bar.is-unavailable {
+    cursor: default;
+}
+
+#dashboard .palantir-metrics__bar.is-unavailable:hover {
+    background: transparent;
+}
+
+.palantir-metrics__bar-unavailable {
+    color: var(--palantir-text-muted);
+    font-style: italic;
+}
+
+#dashboard .palantir-metrics__bar-retry {
+    justify-self: end;
+    padding: 2px 8px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--palantir-brand);
+    font: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+}
+
+#dashboard .palantir-metrics__bar-retry:hover {
+    background: var(--palantir-hover);
+}
+
+#dashboard .palantir-metrics__bar-retry:disabled {
+    opacity: .6;
+    cursor: progress;
+}
+
 @media (max-width: 960px) {
     .palantir-metrics__panels {
         grid-template-columns: minmax(0, 1fr);
@@ -5853,7 +6114,8 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
         align-items: flex-start;
     }
 
-    .palantir-home__customize {
+    .palantir-home__customize,
+    .palantir-home__refresh {
         margin-top: -56px;
     }
 }
@@ -5861,6 +6123,31 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
 .palantir-home__customize {
     position: relative;
     margin-left: auto;
+}
+
+.palantir-home__refresh {
+    margin-left: auto;
+}
+
+.palantir-home__refresh + .palantir-home__customize {
+    margin-left: 0;
+}
+
+#dashboard .palantir-home__refresh.is-refreshing .mdi-refresh,
+#dashboard .palantir-home__action.is-refreshing .mdi-refresh {
+    display: inline-block;
+    animation: palantir-home-refresh 0.9s linear infinite;
+}
+
+/* A card being refreshed keeps its refresh button in view, so the turning icon shows without hovering. */
+#dashboard .palantir-home__action.is-refreshing {
+    opacity: 1;
+}
+
+@keyframes palantir-home-refresh {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .palantir-home__customize-menu {
@@ -5992,6 +6279,23 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
     margin: 0;
 }
 
+/* Application Startup: the progress of reading and drawing the steps, and rows out of view left unlaid. */
+.startup-progress {
+    display: grid;
+    gap: 6px;
+    max-width: 480px;
+    margin: 4px 0 14px;
+}
+
+.startup-progress[hidden] {
+    display: none;
+}
+
+#startupTimelineList .startup-step-row.is-leaf {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 46px;
+}
+
 .palantir-home__loading .palantir-progress__track {
     width: min(360px, 100%);
 }
@@ -6020,6 +6324,61 @@ html.palantir-page[data-palantir-zen] #dashboard:not(.is-nav-open) #palantirNavi
 .palantir-home__widget--span-1 { grid-column: span 1; }
 .palantir-home__widget--span-2 { grid-column: span 2; }
 .palantir-home__widget--span-4 { grid-column: 1 / -1; }
+
+/* A card in the spotlight fills the page and is magnified, text, fields and figures alike; the other cards are put away
+   until it leaves the spotlight, which brings back the usual size. The health chart is drawn on a canvas, so it is
+   not magnified but given more room instead. */
+html.palantir-page {
+    --palantir-spotlight-zoom: 2;
+}
+
+@media (max-width: 1100px) {
+    html.palantir-page {
+        --palantir-spotlight-zoom: 1.5;
+    }
+}
+
+@media (max-width: 640px) {
+    html.palantir-page {
+        --palantir-spotlight-zoom: 1;
+    }
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight > * {
+    zoom: var(--palantir-spotlight-zoom);
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight .palantir-home__health {
+    zoom: calc(1 / var(--palantir-spotlight-zoom));
+}
+
+.palantir-home__grid.is-spotlight > :not(.is-spotlight) {
+    display: none;
+}
+
+.palantir-home__grid.is-spotlight > .palantir-home__widget.is-spotlight {
+    grid-column: 1 / -1;
+    min-height: max(420px, calc(100vh - 240px));
+    padding: 20px 24px;
+    gap: 16px;
+}
+
+.palantir-home__widget.is-spotlight :is([data-home-action="earlier"], [data-home-action="later"]),
+.palantir-home__widget.is-spotlight .palantir-home__grip {
+    display: none;
+}
+
+#dashboard .palantir-home__widget.is-spotlight .palantir-home__action {
+    opacity: 1;
+}
+
+#dashboard .palantir-home__widget.is-spotlight [data-home-action="spotlight"] {
+    color: var(--palantir-brand);
+}
+
+.palantir-home__widget.is-spotlight .palantir-home__health {
+    height: min(60vh, 560px) !important;
+}
 
 .palantir-home__widget.is-dragging {
     opacity: .5;
@@ -6414,6 +6773,11 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
     #dashboard .palantir-home__action {
         transition: none;
     }
+
+    #dashboard .palantir-home__refresh.is-refreshing .mdi-refresh,
+    #dashboard .palantir-home__action.is-refreshing .mdi-refresh {
+        animation: none;
+    }
 }
 
 .palantir-home__health {
@@ -6663,12 +7027,12 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
 }
 
 /* ==========================================================================
-   Record cards: attribute definitions, single sign-on sessions, Spring sessions and multifactor devices show one
-   card per record.
+   Record cards: attribute definitions, authentication handlers, single sign-on sessions, Spring sessions and
+   multifactor devices show one card per record.
    The table of each stays hidden underneath and keeps the search, length and paging controls, which the cards
    follow. Only the panel's own table is hidden, not the tables of the dialogs inside the panel.
    ========================================================================== */
-:is(#attributedefinitions-tab, #ssosessions-tab, #springsession-tab, #mfadevices-tab) > .dt-container > .dt-layout-row.dt-layout-table {
+:is(#attributedefinitions-tab, #ssosessions-tab, #springsession-tab, #mfadevices-tab, #authenticationhandlers-tab) > .dt-container > .dt-layout-row.dt-layout-table {
     display: none !important;
 }
 
@@ -6721,6 +7085,10 @@ html.palantir-page #homeGrid .palantir-home__status .palantir-home__status-where
 
 .palantir-record-card.is-spring::before {
     background: var(--palantir-success-fill);
+}
+
+.palantir-record-card.is-authn-handler::before {
+    background: var(--palantir-proto-cas);
 }
 
 .palantir-record-card:hover {
@@ -6902,6 +7270,11 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
 .palantir-protocol-badge.is-spring {
     background: var(--palantir-success-bg);
     color: var(--palantir-success);
+}
+
+.palantir-protocol-badge.is-authn-handler {
+    background: var(--palantir-proto-cas-bg);
+    color: var(--palantir-proto-cas);
 }
 
 .palantir-record-card__apps {
@@ -7611,4 +7984,2257 @@ html.palantir-page[data-theme="dark"] .palantir-record-card:hover {
     color: var(--palantir-text-muted);
     font-size: 12px;
     text-align: center;
+}
+
+/* ==========================================================================
+   Application wizard: a field with an action beside it, such as uploading SAML2 metadata next to its location
+   ========================================================================== */
+#editServiceWizardDialog .palantir-wizard-field--with-action {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+#editServiceWizardDialog .palantir-wizard-field--with-action > label {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#dashboard .palantir-wizard-field__action,
+#editServiceWizardDialog .palantir-wizard-field__action {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    gap: 6px;
+    height: var(--cas-ui-field-height, 52px);
+    margin-bottom: 0.5rem;
+    border-radius: var(--cas-ui-radius, 8px);
+    white-space: nowrap;
+}
+
+#editServiceWizardDialog .palantir-wizard-field__action[hidden] {
+    display: none;
+}
+
+/* ==========================================================================
+   Users: the attribute release preview and the token card's bulk action
+   ========================================================================== */
+.palantir-user-release {
+    display: grid;
+    gap: 10px;
+}
+
+.palantir-user-release__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.palantir-user-release__row .palantir-access__field {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.palantir-user-release__table {
+    width: 100%;
+}
+
+.palantir-user-release.is-dialog {
+    text-align: start;
+}
+
+.palantir-user-card__bulk {
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   Users: SSO sessions and OAuth and OIDC tokens, each drawn as a small card of its own with labelled facts, so an
+   operator reads what a session or token is, where it is used and when it ends at a glance.
+   ========================================================================== */
+.palantir-identity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.palantir-identity-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--palantir-border);
+    border-left: 3px solid var(--palantir-accent);
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-token.is-refresh {
+    border-left-color: var(--palantir-chart-3);
+}
+
+.palantir-identity-item__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.palantir-identity-item__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-size: 20px;
+}
+
+.palantir-token.is-refresh .palantir-identity-item__icon {
+    background: color-mix(in srgb, var(--palantir-chart-3) 18%, transparent);
+    color: var(--palantir-chart-3);
+}
+
+.palantir-identity-item__title {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.palantir-identity-item__name {
+    color: var(--palantir-text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.palantir-identity-item__when {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-identity-item__badges {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.palantir-identity-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.palantir-identity-badge.is-success {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success-text);
+}
+
+.palantir-identity-badge.is-success::before {
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: var(--palantir-success);
+    content: "";
+}
+
+.palantir-identity-badge.is-accent {
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+}
+
+.palantir-identity-badge.is-warn {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-identity-item__action {
+    flex: none;
+}
+
+.palantir-identity-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px 16px;
+    margin: 0;
+}
+
+.palantir-identity-facts__fact {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.palantir-identity-facts dt {
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.palantir-identity-facts dd {
+    margin: 0;
+    overflow: hidden;
+    color: var(--palantir-text);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-facts dd.is-mono,
+.palantir-identity-item__code {
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.palantir-identity-item__section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.palantir-identity-item__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.palantir-identity-item__count {
+    padding: 0 7px;
+    border-radius: 999px;
+    background: var(--palantir-tint-2);
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.palantir-identity-item__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.palantir-identity-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    max-width: 100%;
+    padding: 3px 10px;
+    overflow: hidden;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-chip.is-scope {
+    border-color: var(--palantir-accent-line);
+    background: var(--palantir-accent-soft);
+    color: var(--palantir-accent-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.palantir-identity-item__none {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-style: italic;
+}
+
+.palantir-identity-item__foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--palantir-divider);
+    min-width: 0;
+}
+
+.palantir-identity-item__code {
+    overflow: hidden;
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-identity-item__copy {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--palantir-text-muted);
+    cursor: pointer;
+}
+
+.palantir-identity-item__copy:hover,
+.palantir-identity-item__copy:focus-visible {
+    background: var(--palantir-hover);
+    color: var(--palantir-text);
+}
+
+.palantir-identity-item__copy.is-copied {
+    color: var(--palantir-success);
+}
+
+.palantir-device.is-webauthn,
+.palantir-device.is-yubikey {
+    --palantir-device-accent: var(--palantir-chart-3);
+}
+
+.palantir-device.is-duo {
+    --palantir-device-accent: var(--palantir-proto-oauth);
+}
+
+.palantir-device.is-message {
+    --palantir-device-accent: var(--palantir-warn);
+}
+
+.palantir-device.is-webauthn,
+.palantir-device.is-yubikey,
+.palantir-device.is-duo,
+.palantir-device.is-message {
+    border-left-color: var(--palantir-device-accent);
+}
+
+.palantir-device.is-webauthn .palantir-identity-item__icon,
+.palantir-device.is-yubikey .palantir-identity-item__icon,
+.palantir-device.is-duo .palantir-identity-item__icon,
+.palantir-device.is-message .palantir-identity-item__icon {
+    background: color-mix(in srgb, var(--palantir-device-accent) 18%, transparent);
+    color: var(--palantir-device-accent);
+}
+
+.palantir-account__avatar {
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.palantir-account__contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+}
+
+.palantir-account__contact {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--palantir-text);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-account__contact .mdi {
+    color: var(--palantir-text-muted);
+    font-size: 16px;
+}
+
+.palantir-token-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: var(--palantir-text-2);
+    font-size: 13px;
+}
+
+.palantir-token-summary .palantir-user-card__bulk {
+    margin-top: 0;
+}
+
+.palantir-token-client + .palantir-token-client {
+    margin-top: 16px;
+}
+
+.palantir-token-client__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: var(--palantir-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.palantir-token-client__head .mdi {
+    color: var(--palantir-text-muted);
+    font-size: 18px;
+}
+
+@media (max-width: 640px) {
+    .palantir-identity-item__head {
+        flex-wrap: wrap;
+    }
+
+    .palantir-identity-item__action {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ==========================================================================
+   Switches and checkboxes: every one in Palantir looks like the feature catalog's switches, a pill track that is grey
+   when off and green when on, with a white knob. MDC switches keep their markup, so the scripts that read and set
+   them are unchanged; only how they are drawn changes.
+   ========================================================================== */
+html.palantir-page {
+    --palantir-toggle-off: var(--palantir-text-muted);
+    --palantir-toggle-on: var(--palantir-success-fill);
+}
+
+html.palantir-page[data-theme="dark"] {
+    --palantir-toggle-off: var(--palantir-switch-off);
+}
+
+html.palantir-page .mdc-switch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    min-width: 38px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__track {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--palantir-toggle-off);
+    transition: background-color .15s ease;
+}
+
+html.palantir-page .mdc-switch.mdc-switch--selected .mdc-switch__track {
+    background: var(--palantir-toggle-on);
+}
+
+html.palantir-page .mdc-switch .mdc-switch__track::before,
+html.palantir-page .mdc-switch .mdc-switch__track::after,
+html.palantir-page .mdc-switch .mdc-switch__handle::before,
+html.palantir-page .mdc-switch .mdc-switch__handle::after,
+html.palantir-page .mdc-switch :is(.mdc-switch__shadow, .mdc-switch__ripple, .mdc-switch__icons, .mdc-switch__focus-ring-wrapper) {
+    display: none !important;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__handle-track {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+    pointer-events: none;
+}
+
+html.palantir-page .mdc-switch .mdc-switch__handle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .25);
+    transform: none !important;
+    transition: left .15s ease;
+}
+
+html.palantir-page .mdc-switch.mdc-switch--selected .mdc-switch__handle {
+    left: 19px;
+}
+
+html.palantir-page .mdc-switch:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+html.palantir-page .mdc-switch:disabled :is(.mdc-switch__track, .mdc-switch__handle) {
+    opacity: 1 !important;
+}
+
+html.palantir-page .mdc-switch:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]) {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 22px;
+    margin: 0 8px 0 0;
+    border: 0;
+    border-radius: 999px;
+    background: radial-gradient(circle at 11px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-off);
+    box-shadow: none;
+    cursor: pointer;
+    vertical-align: middle;
+    appearance: none;
+    transition: background-color .15s ease;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):checked {
+    background: radial-gradient(circle at 27px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-on);
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):indeterminate {
+    background: radial-gradient(circle at 19px 50%, #fff 0 7.5px, transparent 8px), var(--palantir-toggle-on);
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+html.palantir-page input[type="checkbox"]:not(.palantir-sr-only, [role="switch"]):focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.palantir-page .mdc-switch :is(.mdc-switch__track, .mdc-switch__handle),
+    html.palantir-page input[type="checkbox"] {
+        transition: none;
+    }
+}
+
+/* ==========================================================================
+   Application wizard: suggested values for fields with standard values
+   ========================================================================== */
+/* Field suggestions share the look of the application suggestions of the access check. */
+html.palantir-page .ui-autocomplete:has(.palantir-suggestion) {
+    z-index: 1000;
+    max-width: min(640px, calc(100vw - 32px));
+    max-height: 360px;
+    padding: 6px;
+    overflow-y: auto;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-raised, var(--palantir-surface)) !important;
+    box-shadow: 0 18px 40px -16px rgba(15, 23, 42, .35), var(--palantir-shadow-soft);
+    color: var(--palantir-text);
+    font-size: 13px !important;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--palantir-text);
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion code {
+    color: var(--palantir-text);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12.5px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion span {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper.ui-state-active,
+html.palantir-page .ui-autocomplete .palantir-suggestion .ui-menu-item-wrapper:hover {
+    margin: 0;
+    border: 0;
+    background: var(--palantir-selected, var(--palantir-surface-2));
+    color: var(--palantir-text);
+}
+
+/* ==========================================================================
+   MFA providers: the providers listed beside the selected one's settings
+   ========================================================================== */
+.palantir-mfa-providers {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    margin-top: 12px;
+}
+
+.palantir-mfa-providers__list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: sticky;
+    top: 12px;
+}
+
+.palantir-mfa-providers__filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-providers__filter input {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 0;
+    border: none;
+    background: transparent;
+    color: var(--palantir-text);
+    font-size: 13px;
+    outline: none;
+}
+
+.palantir-mfa-providers__filter:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+#mfaProvidersList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.palantir-mfa-providers__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.palantir-mfa-providers__item:hover {
+    border-color: var(--palantir-border-strong);
+}
+
+.palantir-mfa-providers__item.is-selected {
+    border-color: var(--palantir-brand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-brand) 16%, transparent);
+}
+
+.palantir-mfa-providers__item:focus-visible {
+    outline: 2px solid var(--palantir-brand);
+    outline-offset: 2px;
+}
+
+.palantir-mfa-providers__badge {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.palantir-mfa-providers__badge.is-large {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    font-size: 15px;
+}
+
+.palantir-mfa-providers__name {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.palantir-mfa-providers__name strong {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.palantir-mfa-providers__name .palantir-mfa-providers__chip {
+    align-self: flex-start;
+    margin-top: 4px;
+}
+
+.palantir-mfa-providers__name small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-mfa-providers__chip {
+    flex: none;
+    padding: 2px 9px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__chip.is-ok {
+    border-color: transparent;
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-mfa-providers__chip.is-warn {
+    border-color: transparent;
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-mfa-providers__chip.is-alert {
+    border-color: transparent;
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-mfa-providers__detail {
+    min-width: 0;
+    padding: 18px 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+.palantir-mfa-providers__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.palantir-mfa-providers__title {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    min-width: 200px;
+}
+
+.palantir-mfa-providers__title h3 {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 18px;
+}
+
+.palantir-mfa-providers__title code {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-providers__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.palantir-mfa-providers__facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 16px 0 8px;
+}
+
+.palantir-mfa-providers__fact {
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-mfa-providers__fact small {
+    display: block;
+    color: var(--palantir-text-muted);
+    font-size: 11.5px;
+}
+
+.palantir-mfa-providers__fact strong {
+    display: block;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__group {
+    margin-top: 14px;
+}
+
+.palantir-mfa-providers__group h4 {
+    margin: 0 0 4px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.palantir-mfa-duo {
+    padding: 12px 14px 14px;
+    border: 1px solid var(--palantir-divider);
+    border-radius: 12px;
+}
+
+.palantir-mfa-duo__lookup {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 4px;
+}
+
+.palantir-mfa-duo__lookup .palantir-mfa-providers__filter {
+    flex: 1 1 220px;
+}
+
+.palantir-mfa-duo__status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+.palantir-mfa-duo__note {
+    margin: 10px 0 0;
+    color: var(--palantir-text-muted);
+    font-size: 12.5px;
+}
+
+.palantir-mfa-duo__note.is-alert {
+    color: var(--palantir-danger, #b3261e);
+}
+
+.palantir-mfa-duo__devices {
+    display: grid;
+    gap: 6px;
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-mfa-duo__devices li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 13px;
+}
+
+.palantir-mfa-duo__devices small {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-mfa-duo__groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.palantir-mfa-duo__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.palantir-mfa-duo__edit {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.palantir-mfa-duo__edit label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit :is(input, select) {
+    box-sizing: border-box;
+    width: 100%;
+    height: 38px;
+    margin: 0;
+    padding: 0 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 8px;
+    background-color: var(--palantir-surface);
+    box-shadow: none;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 13px;
+    line-height: normal;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit select {
+    padding-right: 32px;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--palantir-text-muted) 50%),
+        linear-gradient(135deg, var(--palantir-text-muted) 50%, transparent 50%);
+    background-position: calc(100% - 17px) 50%, calc(100% - 12px) 50%;
+    background-repeat: no-repeat;
+    background-size: 5px 5px, 5px 5px;
+    cursor: pointer;
+}
+
+#mfaProviderDetail .palantir-mfa-duo__edit :is(input, select):focus {
+    border-color: var(--palantir-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+.palantir-mfa-duo__edit .palantir-mfa-duo__note,
+.palantir-mfa-duo__edit .palantir-mfa-duo__actions {
+    grid-column: 1 / -1;
+    margin-top: 0;
+}
+
+.palantir-mfa-duo__codes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-mfa-duo__codes code {
+    font-size: 15px;
+    letter-spacing: .04em;
+}
+
+#mfaProviderSettingsTable code {
+    overflow-wrap: anywhere;
+}
+
+.palantir-mfa-providers__description {
+    display: block;
+    margin-top: 2px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-mfa-providers__value {
+    overflow-wrap: anywhere;
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12.5px;
+}
+
+#mfaProviderSettingsTable tr.is-changed .palantir-mfa-providers__value {
+    color: var(--palantir-brand);
+    font-weight: 600;
+}
+
+#mfaProviderSettingsTable tr.is-unset .palantir-mfa-providers__value,
+.palantir-mfa-providers__value small {
+    color: var(--palantir-text-muted);
+    font-weight: 400;
+}
+
+#mfaProviderSettingsTable .palantir-mfa-providers__source {
+    max-width: 220px;
+}
+
+#mfaProviderSettingsTable td.palantir-mfa-providers__actions {
+    width: 72px;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    min-width: 0;
+}
+
+
+.palantir-mfa-providers__icon {
+    flex: none;
+    width: 28px;
+    height: 28px;
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon {
+    background: transparent;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon:hover,
+.palantir-icon-button.palantir-mfa-providers__icon:focus-visible {
+    background: var(--palantir-hover);
+    color: var(--palantir-brand);
+}
+
+.palantir-icon-button.palantir-mfa-providers__icon:disabled,
+.palantir-icon-button.palantir-mfa-providers__icon[aria-disabled="true"] {
+    background: transparent;
+    color: var(--palantir-text-muted);
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.palantir-mfa-providers__icon .mdi::before {
+    font-size: 17px;
+}
+
+.palantir-mfa-providers__source {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 0 6px;
+    border: 1px dashed var(--palantir-border);
+    border-radius: 6px;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.palantir-mfa-providers__link {
+    margin-left: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--palantir-brand);
+    font-size: 12.5px;
+    cursor: pointer;
+}
+
+.palantir-mfa-providers__link:hover {
+    text-decoration: underline;
+}
+
+.palantir-mfa-providers__link:disabled,
+.palantir-mfa-providers__link[aria-disabled="true"] {
+    color: var(--palantir-text-muted);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.palantir-mfa-providers__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 14px;
+}
+
+.palantir-mfa-providers__footer .palantir-mfa-providers__link {
+    margin-left: 0;
+}
+
+@media (max-width: 900px) {
+    .palantir-mfa-providers {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-mfa-providers__list {
+        position: static;
+    }
+
+}
+
+/* ==========================================================================
+   Access check: the verdict, the steps as gates and the reasons behind them
+   ========================================================================== */
+#accessstrategy-tab [hidden] {
+    display: none !important;
+}
+
+.palantir-access {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.palantir-access__side,
+.palantir-access__main {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+}
+
+.palantir-access__side > *,
+.palantir-access__main > * {
+    min-width: 0;
+}
+
+.palantir-access__card {
+    padding: 18px 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+    box-shadow: var(--palantir-shadow-soft);
+}
+
+.palantir-access__label {
+    margin: 0 0 8px;
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.palantir-access__form {
+    display: grid;
+    gap: 10px;
+}
+
+.palantir-access__form .palantir-access__label:not(:first-child) {
+    margin-top: 8px;
+}
+
+.palantir-access__field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    margin: 0;
+    padding: 0 14px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 12px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__field:focus-within {
+    border-color: var(--palantir-focus);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+}
+
+.palantir-access__field .mdi::before {
+    font-size: 19px;
+}
+
+:is(#accessstrategy-tab, #userLookupResults) .palantir-access__field input {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--palantir-text);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+}
+
+.palantir-access__target-clear {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--palantir-text-muted);
+    cursor: pointer;
+}
+
+.palantir-access__target-clear[hidden] {
+    display: none;
+}
+
+.palantir-access__target-clear:hover {
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text);
+}
+
+.palantir-access__target-clear .mdi::before {
+    font-size: 17px;
+}
+
+.palantir-access__hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 22px;
+    margin: -2px 2px 0;
+    color: var(--palantir-text-muted);
+    font-size: 12.5px;
+    line-height: 1.4;
+}
+
+.palantir-access__hint > .mdi::before {
+    font-size: 16px;
+}
+
+.palantir-access__hint.is-resolved {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+}
+
+.palantir-access__hint.is-shadowed {
+    background: var(--palantir-warn-bg);
+}
+
+.palantir-access__hint.is-shadowed small {
+    color: var(--palantir-warn);
+}
+
+.palantir-access__hint.is-pending {
+    align-items: flex-start;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+}
+
+.palantir-access__hint.is-pending > .mdi {
+    margin-top: 1px;
+}
+
+.palantir-access__hint .palantir-protocol-badge {
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.palantir-access__hint-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+}
+
+.palantir-access__hint-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.palantir-access__hint-choices .palantir-button {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__hint-text :is(strong, small) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__hint-text strong {
+    color: var(--palantir-text);
+    font-size: 13px;
+}
+
+.palantir-access__hint-text code {
+    overflow-wrap: anywhere;
+    font-size: 12px;
+}
+
+.palantir-access__chip {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.palantir-access__chip.is-passed {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-access__chip.is-failed {
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-access__chip.is-warn {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-access__chip.is-skipped {
+    border: 1px solid var(--palantir-border);
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__chip.is-info {
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+}
+
+.palantir-access__switch {
+    margin-top: 4px;
+}
+
+.palantir-access__switch .palantir-feature-switch__text strong {
+    font-size: 14px;
+}
+
+.palantir-access__switch .palantir-feature-switch__text small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+.palantir-access__problem {
+    margin: 0;
+    color: var(--palantir-danger);
+    font-size: 13px;
+}
+
+.palantir-access__submit {
+    display: flex;
+    margin-top: 6px;
+}
+
+.palantir-access__recent {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__recent > li {
+    min-width: 0;
+    margin: 0;
+}
+
+.palantir-access__recent > li + li {
+    border-top: 1px solid var(--palantir-divider);
+}
+
+#accessstrategy-tab .palantir-access__recent-item {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 9px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 13.5px;
+    text-align: left;
+    cursor: pointer;
+}
+
+#accessstrategy-tab .palantir-access__recent-item:hover {
+    background: var(--palantir-hover);
+}
+
+#accessstrategy-tab .palantir-access__recent-item > span:first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__empty {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__empty .mdi::before {
+    color: var(--palantir-brand);
+    font-size: 40px;
+}
+
+.palantir-access__empty p {
+    margin: 0;
+}
+
+.palantir-access__verdict {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 16px;
+    background: var(--palantir-surface);
+}
+
+.palantir-access__verdict.is-allowed {
+    border-color: var(--palantir-success-line);
+    background: linear-gradient(135deg, var(--palantir-success-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-denied {
+    border-color: var(--palantir-danger-line);
+    background: linear-gradient(135deg, var(--palantir-danger-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-unauthenticated {
+    border-color: color-mix(in srgb, var(--palantir-warn) 40%, transparent);
+    background: linear-gradient(135deg, var(--palantir-warn-bg), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict.is-unavailable {
+    border-color: var(--palantir-border-strong);
+    background: linear-gradient(135deg, var(--palantir-surface-2), var(--palantir-surface) 70%);
+}
+
+.palantir-access__verdict-icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--palantir-brand-fill);
+    color: var(--palantir-on-brand);
+}
+
+.palantir-access__verdict-icon .mdi::before {
+    font-size: 30px;
+}
+
+.is-allowed .palantir-access__verdict-icon {
+    background: var(--palantir-success-fill);
+}
+
+.is-denied .palantir-access__verdict-icon {
+    background: var(--palantir-danger-line);
+}
+
+.is-unauthenticated .palantir-access__verdict-icon {
+    background: #b07b00;
+}
+
+.is-unavailable .palantir-access__verdict-icon {
+    background: var(--palantir-text-muted);
+}
+
+.palantir-access__verdict-text {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+.palantir-access__verdict-text h3 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.is-allowed .palantir-access__verdict-text h3 {
+    color: var(--palantir-success-text);
+}
+
+.is-denied .palantir-access__verdict-text h3 {
+    color: var(--palantir-danger);
+}
+
+.palantir-access__verdict-text p {
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+    color: var(--palantir-text-2);
+}
+
+.palantir-access__verdict-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.palantir-access__flow {
+    display: flex;
+    gap: 22px;
+    margin: 0 -4px;
+    padding: 4px 4px 8px;
+    overflow-x: auto;
+    list-style: none;
+}
+
+.palantir-access__gate {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 88px;
+    padding: 12px 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-2);
+    text-align: center;
+}
+
+.palantir-access__gate:not(:last-child)::after {
+    content: "\F0142";
+    position: absolute;
+    top: 50%;
+    right: -19px;
+    color: var(--palantir-text-muted);
+    font-family: "Material Design Icons";
+    font-size: 18px;
+    transform: translateY(-50%);
+}
+
+.palantir-access__gate > .mdi::before {
+    font-size: 26px;
+}
+
+.palantir-access__gate-title {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.palantir-access__gate-outcome {
+    color: var(--palantir-text-muted);
+    font-size: 11.5px;
+}
+
+.palantir-access__gate.is-passed {
+    border-color: color-mix(in srgb, var(--palantir-success-line) 45%, transparent);
+    background: color-mix(in srgb, var(--palantir-success-bg) 60%, var(--palantir-surface));
+}
+
+.palantir-access__gate.is-passed .mdi,
+.palantir-access__reason.is-passed > .mdi,
+.palantir-access__rule.is-passed > .mdi {
+    color: var(--palantir-success-text);
+}
+
+.palantir-access__gate.is-failed {
+    border-color: var(--palantir-danger-line);
+    background: color-mix(in srgb, var(--palantir-danger-bg) 65%, var(--palantir-surface));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--palantir-danger-line) 14%, transparent);
+}
+
+.palantir-access__gate.is-failed .mdi,
+.palantir-access__reason.is-failed > .mdi,
+.palantir-access__rule.is-failed > .mdi {
+    color: var(--palantir-danger-line);
+}
+
+.palantir-access__gate.is-skipped {
+    opacity: .65;
+}
+
+.palantir-access__gate.is-skipped .mdi,
+.palantir-access__reason.is-skipped > .mdi {
+    color: var(--palantir-text-muted);
+}
+
+.palantir-access__gate.is-info .mdi,
+.palantir-access__reason.is-info > .mdi {
+    color: var(--palantir-focus);
+}
+
+.palantir-access__reasons {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__reasons.is-inner {
+    margin-top: 8px;
+    padding-left: 4px;
+    border-left: 2px solid var(--palantir-divider);
+}
+
+.palantir-access__reason {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: start;
+    padding: 12px 0;
+    border-top: 1px solid var(--palantir-divider);
+}
+
+.palantir-access__reason:first-child {
+    border-top: 0;
+}
+
+.palantir-access__reason > .mdi::before {
+    font-size: 22px;
+}
+
+.palantir-access__reason strong {
+    display: block;
+}
+
+.palantir-access__reason > div > span {
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-access__rules {
+    display: grid;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.palantir-access__rule {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 6px;
+    font-size: 13px;
+}
+
+.palantir-access__value {
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 6px;
+    background: var(--palantir-surface-2);
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12px;
+}
+
+.palantir-access__value.is-hit {
+    border-color: color-mix(in srgb, var(--palantir-success-line) 45%, transparent);
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success);
+}
+
+.palantir-access__value.is-miss {
+    border-color: color-mix(in srgb, var(--palantir-danger-line) 40%, transparent);
+    background: var(--palantir-danger-bg);
+    color: var(--palantir-danger);
+}
+
+.palantir-access__none {
+    color: var(--palantir-text-muted);
+    font-style: italic;
+}
+
+.palantir-access__attributes,
+.palantir-access__definition {
+    margin-top: 18px;
+}
+
+.palantir-access__definition summary {
+    color: var(--palantir-brand);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+html.palantir-page .ui-autocomplete.palantir-access__suggestions {
+    z-index: 1000;
+    max-height: 360px;
+    padding: 6px;
+    overflow-y: auto;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-raised, var(--palantir-surface)) !important;
+    color: var(--palantir-text);
+    font-size: 13px !important;
+    box-shadow: 0 18px 40px -16px rgba(15, 23, 42, .35), var(--palantir-shadow-soft);
+}
+
+.palantir-access__suggestions .palantir-access__suggestions-header {
+    margin: 2px 8px 6px;
+    padding: 0;
+    color: var(--palantir-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    opacity: 1;
+    cursor: default;
+}
+
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper {
+    margin: 0;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 10px;
+    color: var(--palantir-text);
+}
+
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper.ui-state-active,
+html.palantir-page .palantir-access__suggestions .ui-menu-item-wrapper:hover {
+    margin: 0;
+    border: 0;
+    background: var(--palantir-selected, var(--palantir-surface-2));
+    color: var(--palantir-text);
+}
+
+html.palantir-page .palantir-access__suggestions .palantir-access__suggestions-header .ui-menu-item-wrapper {
+    padding: 0;
+    background: transparent;
+}
+
+.palantir-access__suggestion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.palantir-access__suggestion .palantir-protocol-badge {
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.palantir-access__suggestion-text {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+}
+
+.palantir-access__suggestion-text :is(strong, code) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palantir-access__suggestion-text strong {
+    font-size: 13.5px;
+    font-weight: 600;
+}
+
+.palantir-access__suggestion-text code {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+}
+
+.palantir-access__suggestion mark {
+    padding: 0;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--palantir-focus) 22%, transparent);
+    color: inherit;
+}
+
+.palantir-access__suggestion-meta {
+    display: grid;
+    flex: none;
+    justify-items: end;
+    color: var(--palantir-text-2);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .03em;
+}
+
+.palantir-access__suggestion-meta small {
+    color: var(--palantir-text-muted);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+@media (max-width: 900px) {
+    .palantir-access {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .palantir-access__flow {
+        flex-direction: column;
+        gap: 18px;
+        overflow-x: visible;
+    }
+
+    .palantir-access__gate {
+        flex: none;
+        flex-direction: row;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .palantir-access__gate-outcome {
+        margin-left: auto;
+    }
+
+    .palantir-access__gate:not(:last-child)::after {
+        content: "\F0140";
+        top: auto;
+        right: auto;
+        bottom: -21px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* ==========================================================================
+   Application wizard: chained policies
+   ========================================================================== */
+#editServiceWizardForm .palantir-chain {
+    display: grid;
+    gap: 10px;
+    margin: 12px 0 6px;
+}
+
+#editServiceWizardForm .palantir-chain.is-on {
+    padding: 12px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 14px;
+    background: var(--palantir-surface-2);
+}
+
+#editServiceWizardForm .palantir-chain.is-on + [id$='SelectContainer'] {
+    margin-top: 4px;
+}
+
+#editServiceWizardForm .palantir-chain__switch .palantir-feature-switch__text strong {
+    font-size: 13.5px;
+}
+
+#editServiceWizardForm .palantir-chain__switch .palantir-feature-switch__text small {
+    color: var(--palantir-text-muted);
+    font-size: 12px;
+    line-height: 1.35;
+}
+
+#editServiceWizardForm .palantir-chain__combine {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-self: start;
+    padding: 3px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 10px;
+    background: var(--palantir-surface);
+}
+
+#editServiceWizardForm .palantir-chain__choice {
+    height: auto;
+    margin: 0;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#editServiceWizardForm .palantir-chain__choice:hover {
+    background: var(--palantir-hover);
+}
+
+#editServiceWizardForm .palantir-chain__choice.is-active {
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-weight: 600;
+}
+
+#editServiceWizardForm .palantir-chain__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+#editServiceWizardForm .palantir-chain__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 6px 12px 6px 6px;
+    border: 1px solid var(--palantir-border);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text-2);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#editServiceWizardForm .palantir-chain__tab:hover {
+    border-color: var(--palantir-border-strong);
+}
+
+#editServiceWizardForm .palantir-chain__tab.is-active {
+    border-color: var(--palantir-brand);
+    background: var(--palantir-selected);
+    color: var(--palantir-brand);
+    font-weight: 600;
+}
+
+#editServiceWizardForm .palantir-chain__tab.is-json {
+    border-style: dashed;
+}
+
+#editServiceWizardForm .palantir-chain__number {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-2);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+#editServiceWizardForm .palantir-chain__tab.is-active .palantir-chain__number {
+    background: var(--palantir-brand);
+    color: var(--palantir-on-brand, #fff);
+}
+
+#editServiceWizardForm .palantir-chain__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#editServiceWizardForm .palantir-chain__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0;
+    border: 1px dashed var(--palantir-border-strong);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--palantir-text-2);
+    cursor: pointer;
+}
+
+#editServiceWizardForm .palantir-chain__add:hover {
+    border-color: var(--palantir-brand);
+    color: var(--palantir-brand);
+}
+
+#editServiceWizardForm .palantir-chain__member {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0;
+    padding-top: 10px;
+    border-top: 1px solid var(--palantir-divider);
+    color: var(--palantir-text-2);
+    font-size: 13px;
+}
+
+#editServiceWizardForm .palantir-chain__member.is-json {
+    color: var(--palantir-text-muted);
+}
+
+#editServiceWizardForm .palantir-chain__member-actions {
+    display: inline-flex;
+    gap: 2px;
+}
+
+#editServiceWizardForm .palantir-chain__member-actions .palantir-icon-button {
+    width: 30px;
+    height: 30px;
+    background: transparent;
+}
+
+#editServiceWizardForm .palantir-chain__member-actions .palantir-icon-button:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.swal2-textarea.palantir-chain__json {
+    min-height: 260px;
+    font-family: var(--palantir-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+    font-size: 12.5px;
+}
+
+.palantir-chain__json-note {
+    margin: 0;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-access__gate-members {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    justify-content: center;
+}
+
+.palantir-access__gate-member {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--palantir-text-muted);
+}
+
+.palantir-access__gate-member.is-passed {
+    background: var(--palantir-success-fill);
+}
+
+.palantir-access__gate-member.is-failed {
+    background: var(--palantir-danger-line);
+}
+
+.palantir-access__gate-member.is-skipped {
+    background: var(--palantir-border-strong);
+}
+
+/* Rotating the client secrets of an application: the choices, then the new secrets, one per row with a copy button. */
+.palantir-client-secret-rotation {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.palantir-client-secret-rotation > label:not(.palantir-feature-switch) {
+    margin-top: 8px;
+    color: var(--palantir-text);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.palantir-client-secret-rotation .swal2-input {
+    width: 100%;
+    margin: 0;
+}
+
+.palantir-client-secret-rotation__hint {
+    margin: 0;
+    color: var(--palantir-text-muted, var(--palantir-text));
+    font-size: 12px;
+}
+
+.palantir-client-secret-rotation__secrets {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+}
+
+.palantir-client-secret-rotation__secret {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 8px;
+}
+
+.palantir-client-secret-rotation__secret code {
+    overflow-wrap: anywhere;
+}
+
+.palantir-client-secret-rotation__secret small {
+    grid-column: 1 / -1;
+    color: var(--palantir-text-muted, var(--palantir-text));
+}
+
+/* A lookup on its way inside the panel it fills: a line with a moving bar, what is looked up and Cancel; the tables
+   and cards already shown are dimmed until the answer replaces them. A failed lookup leaves its reason on the line. */
+.palantir-busy {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    margin: 8px 0 12px;
+    color: var(--palantir-text-muted);
+    font-size: 13px;
+}
+
+.palantir-busy[hidden] {
+    display: none;
+}
+
+.palantir-busy .palantir-busy__track {
+    flex: 1 0 100%;
+    height: 3px;
+}
+
+.palantir-busy__text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.palantir-busy__cancel {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--palantir-brand);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.palantir-busy__cancel:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-busy.is-error {
+    color: var(--palantir-danger-line);
+}
+
+.palantir-busy.is-error .mdi {
+    font-size: 16px;
+}
+
+.palantir-busy-region.is-loading :is(.dt-container, .palantir-record-cards),
+#delegatedClientsCards.is-loading,
+#editServiceWizardForm.is-loading {
+    opacity: .55;
+    transition: opacity .2s ease;
+}
+
+.mdc-button.is-busy {
+    cursor: progress;
+}
+
+/* How a panel that reads itself again is going: a pill with when it last read, or why it waits, and Pause. */
+.palantir-poll-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 13px;
+}
+
+[data-palantir-poll-status] > .palantir-poll-status {
+    display: inline-flex;
+    margin: 0;
+}
+
+.palantir-poll-status__state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: var(--palantir-surface-2);
+    color: var(--palantir-text-muted);
+}
+
+.palantir-poll-status[data-state="live"] .palantir-poll-status__state {
+    background: var(--palantir-success-bg);
+    color: var(--palantir-success-text);
+}
+
+.palantir-poll-status[data-state="failed"] .palantir-poll-status__state {
+    background: var(--palantir-warn-bg);
+    color: var(--palantir-warn);
+}
+
+.palantir-poll-status__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 12px;
+    border: 1px solid var(--palantir-border-strong);
+    border-radius: 999px;
+    background: var(--palantir-surface);
+    color: var(--palantir-text);
+    font: inherit;
+    cursor: pointer;
+}
+
+.palantir-poll-status__toggle:hover {
+    background: var(--palantir-hover);
+}
+
+.palantir-poll-status__toggle:focus-visible {
+    outline: 2px solid var(--palantir-focus);
+    outline-offset: 2px;
+}
+
+.palantir-poll-status__toggle[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .palantir-poll-status__icon.mdi-spin {
+        animation: none;
+    }
 }

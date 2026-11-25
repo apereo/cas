@@ -16,4 +16,4 @@ This feature is enabled via the following module:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-session-redis" %}
 
 {% include_cached casproperties.html 
-thirdPartyStartsWith="spring.session.redis,spring.redis" %}
+thirdPartyStartsWith="spring.data.redis" %}

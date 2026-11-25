@@ -128,7 +128,6 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.webflow.execution.Action;
 import jakarta.servlet.http.HttpServletRequest;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

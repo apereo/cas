@@ -12,7 +12,7 @@ apacheFediz = "1.7.2"
 apacheIgnite = "3.1.0"
 apacheVelocityEngine = "2.4.1"
 apiGuardian = "1.1.2"
-arrow = "19.0.0"
+arrow = "20.0.0"
 aspectj = "1.9.27"
 authlete = "1.11"
 authleteCbor = "1.21"
@@ -120,7 +120,7 @@ jansi = "2.4.3"
 jasypt = "1.9.3"
 javaMelody = "2.9.0"
 javaParser = "3.28.2"
-javers = "7.11.10"
+javers = "7.13.0"
 jaxbApi = "4.0.5"
 jaxbImpl = "4.0.9"
 jcifs = "1.3.17"
@@ -174,7 +174,7 @@ micrometer = "1.18.0"
 micrometerTracing = "1.8.0"
 mockito = "5.24.0"
 mockitoInline = "5.2.0"
-mongoDriver = "5.14.0"
+mongoDriver = "5.15.0"
 mongoSpringSession = "4.0.0"
 mssqlServer = "13.6.2.jre11"
 mustache = "1.16"
@@ -207,9 +207,9 @@ retrofit = "3.0.0"
 saajImpl = "3.0.6"
 scimSdkClient = "1.35.0"
 sendGrid = "4.10.3"
-sentry = "8.65.0"
+sentry = "8.65.1"
 shibbolethUtilJavaSupport = "9.2.3"
-slackClient = "1.55.0"
+slackClient = "1.56.0"
 slf4j = "2.0.20"
 snakeYaml = "2.7"
 socketJsClient = "1.5.1"
@@ -218,7 +218,7 @@ spring = "7.1.0"
 springBoot = "4.2.0"
 springAi = "2.1.0"
 springBootAdmin = "4.1.5"
-springCloudAzure = "7.4.0"
+springCloudAzure = "7.5.0"
 springCloudBus = "5.1.0"
 springCloudCommons = "5.1.0"
 springCloudConfig = "5.1.0"
@@ -243,7 +243,7 @@ springWebflow = "4.0.2"
 springWs = "5.1.0"
 spymemcached = "2.12.3"
 stompWebSocket = "2.3.4"
-swagger = "2.2.56"
+swagger = "3.0.0"
 sweetAlert = "11.26.25"
 trumbowyg = "2.31.0"
 textEncoding = "0.7.0"
@@ -678,6 +678,7 @@ spring-boot-starter-validation = { module = "org.springframework.boot:spring-boo
 spring-boot-starter-web-sdk = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 spring-boot-starter-web-services = { module = "org.springframework.boot:spring-boot-starter-web-services", version.ref = "springBoot" }
 spring-boot-starter-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "springBoot" }
+spring-boot-starter-zipkin = { module = "org.springframework.boot:spring-boot-starter-zipkin", version.ref = "springBoot" }
 spring-cloud-azure-starter-actuator = { module = "com.azure.spring:spring-cloud-azure-starter-actuator", version.ref = "springCloudAzure" }
 spring-cloud-azure-starter-keyvault-sdk = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault", version.ref = "springCloudAzure" }
 spring-cloud-azure-starter-keyvault-secrets = { module = "com.azure.spring:spring-cloud-azure-starter-keyvault-secrets", version.ref = "springCloudAzure" }
@@ -752,8 +753,8 @@ ssm = { module = "software.amazon.awssdk:ssm", version.ref = "amazonSdk" }
 stomp-websocket = { module = "org.webjars:stomp-websocket", version.ref = "stompWebSocket" }
 sts = { module = "software.amazon.awssdk:sts", version.ref = "amazonSdk" }
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version.ref = "swagger" }
-swagger-core-jakarta = { module = "io.swagger.core.v3:swagger-core-jakarta", version.ref = "swagger" }
-swagger-jaxrs2-jakarta = { module = "io.swagger.core.v3:swagger-jaxrs2-jakarta", version.ref = "swagger" }
+swagger-core = { module = "io.swagger.core.v3:swagger-core", version.ref = "swagger" }
+swagger-rest = { module = "io.swagger.core.v3:swagger-rest", version.ref = "swagger" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger" }
 sweetalert2 = { module = "org.webjars.npm:sweetalert2", version.ref = "sweetAlert" }
 trumbowyg = { module = "org.webjars.npm:trumbowyg", version.ref = "trumbowyg" }

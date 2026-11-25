@@ -59,6 +59,10 @@ public class WsFederationResponseValidator {
         }
         LOGGER.debug("Attempting to create an assertion from the token parameter");
         val rsToken = wsFederationHelper.getRequestSecurityTokenFromResult(wResult);
+        if (rsToken == null) {
+            LOGGER.error("Could not parse a requested security token from [{}]", WRESULT);
+            throw new IllegalArgumentException("Could not parse the provided token");
+        }
         val assertion = wsFederationHelper.buildAndVerifyAssertion(rsToken, configurations, service);
         if (assertion == null) {
             LOGGER.error("Could not validate assertion via parsing the token from [{}]", WRESULT);

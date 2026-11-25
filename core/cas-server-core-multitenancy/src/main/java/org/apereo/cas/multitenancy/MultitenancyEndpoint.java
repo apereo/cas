@@ -2,11 +2,13 @@ package org.apereo.cas.multitenancy;
 
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -27,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Endpoint(id = "multitenancy", defaultAccess = Access.NONE)
 public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
+    private static final Pattern SECRET_PROPERTY = Pattern.compile(
+        "(?i)(?:.*(?:password|secret|credentials?|key|token|passphrase)(?:\\[\\d+])?|cas\\.authn\\.accept\\.users)");
+
     private final ObjectProvider<TenantExtractor> tenantExtractor;
 
     public MultitenancyEndpoint(final CasConfigurationProperties casProperties,
@@ -52,7 +57,10 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
         })
     @Operation(summary = "Report registered tenant definitions")
     public List<TenantDefinition> allTenantDefinitions() {
-        return tenantExtractor.getObject().getTenantsManager().findTenants();
+        return tenantExtractor.getObject().getTenantsManager().findTenants()
+            .stream()
+            .map(MultitenancyEndpoint::redact)
+            .toList();
     }
 
     /**
@@ -72,14 +80,15 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Report registered tenant definition by its id",
         parameters = @Parameter(name = "tenantId", required = true, description = "The tenant definition id", in = ParameterIn.PATH))
     public ResponseEntity<TenantDefinition> tenantDefinition(@PathVariable final String tenantId) {
-        return ResponseEntity.of(tenantExtractor.getObject().getTenantsManager().findTenant(tenantId));
+        return ResponseEntity.of(tenantExtractor.getObject().getTenantsManager().findTenant(tenantId).map(MultitenancyEndpoint::redact));
     }
 
     /**
      * Register a tenant definition.
      *
      * @param requestBody the tenant definition to register
-     * @return the registered tenant definition
+     * @return the registered tenant definition, or a bad request when the tenant id is missing or contains
+     * characters other than letters, digits, dots, dashes and underscores
      */
     @PostMapping(
         path = "/tenants",
@@ -94,8 +103,12 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = @Parameter(name = "tenantDefinition", required = true, description = "The tenant definition to register"))
     public ResponseEntity<TenantDefinition> registerTenantDefinition(@RequestBody final String requestBody) {
         val tenantDefinition = MAPPER.readValue(requestBody, TenantDefinition.class);
+        if (StringUtils.isBlank(tenantDefinition.getId())
+            || !TenantsManager.TENANT_ID_PATTERN.matcher(tenantDefinition.getId()).matches()) {
+            return ResponseEntity.badRequest().build();
+        }
         val saved = tenantExtractor.getObject().getTenantsManager().save(tenantDefinition);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.ok(redact(saved));
     }
 
 
@@ -111,5 +124,20 @@ public class MultitenancyEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseEntity<Void> deleteTenantDefinition(@PathVariable final String tenantId) {
         val removed = tenantExtractor.getObject().getTenantsManager().delete(tenantId);
         return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    /**
+     * A copy of the tenant definition whose secret-looking property values, such as passwords and keys, and the
+     * static list of users and passwords are replaced with {@link TenantsManager#REDACTED_PROPERTY_VALUE}.
+     *
+     * @param definition the tenant definition
+     * @return the redacted copy
+     */
+    private static TenantDefinition redact(final TenantDefinition definition) {
+        val copy = MAPPER.readValue(MAPPER.writeValueAsString(definition), TenantDefinition.class);
+        val properties = new LinkedHashMap<String, Object>();
+        FunctionUtils.doIfNotNull(copy.getProperties(), values -> values.forEach((name, value) ->
+            properties.put(name, SECRET_PROPERTY.matcher(name).matches() ? TenantsManager.REDACTED_PROPERTY_VALUE : value)));
+        return copy.setProperties(properties);
     }
 }

@@ -54,3 +54,16 @@ secret rotation support, and operational safeguards to prevent one tenant from e
 resources or overwhelming downstream services.
 
 We might consider improving this design in future iterations based on community demand and deployment experience.
+
+## What CAS Keeps Per Tenant
+
+Some tenant resources are cheap to keep and costly to rebuild, so CAS builds them once for each tenant definition and
+keeps them until that definition is replaced, such as when the tenant definitions are reloaded or a tenant is changed:
+
+- The host name that routes requests to a tenant.
+- The message bundles of a tenant that defines its own.
+- The keys a tenant uses to encrypt and sign cookies and other browser state, when the tenant defines its own.
+  A tenant that does not gets the keys CAS uses outside of any tenant, so its cookies remain readable from one request to the next.
+
+Authentication handlers built for a tenant, along with the connections they open, are closed once the request that built
+them completes, so requests that only look them up, such as service ticket validation, do not leave connections behind.

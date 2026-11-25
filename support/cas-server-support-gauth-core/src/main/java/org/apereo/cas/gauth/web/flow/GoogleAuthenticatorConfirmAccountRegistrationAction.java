@@ -91,7 +91,7 @@ public class GoogleAuthenticatorConfirmAccountRegistrationAction extends BaseCas
      */
     private OneTimeTokenAccount findAccount(@Nullable final Authentication authentication, final long accountId) throws FailedLoginException {
         return Optional.ofNullable(authentication)
-            .map(auth -> repository.get(auth.getPrincipal().getId(), accountId))
+            .map(auth -> repository.getForCurrentTenant(auth.getPrincipal().getId(), accountId))
             .orElseThrow(() -> new FailedLoginException("Unauthorized account registration attempt for id " + accountId));
     }
 

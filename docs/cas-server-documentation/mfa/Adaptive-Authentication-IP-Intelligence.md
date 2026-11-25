@@ -80,4 +80,15 @@ than 500 queries per day & 15 queries per minute. See [FAQ](https://getipintel.n
 
 {% endtab %}
 
+{% tab ipintelops VPNDetection %}
+
+The client IP address is looked up with [VPNDetection](https://vpndetection.io/), which needs no API key. 
+VPN and Tor exit IP addresses are banned. Relays such as iCloud Private Relay are allowed unless configured otherwise, 
+since regular users of a browser or device often connect through one. See the service's [terms](https://vpndetection.io/terms) 
+and [privacy policy](https://vpndetection.io/privacy) for how lookups are handled.
+
+{% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.vpn-detection" %}
+
+{% endtab %}
+
 {% endtabs %}

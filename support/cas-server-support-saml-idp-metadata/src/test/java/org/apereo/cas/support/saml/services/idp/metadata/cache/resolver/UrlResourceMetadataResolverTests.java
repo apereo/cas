@@ -115,6 +115,29 @@ class UrlResourceMetadataResolverTests {
         }
 
         @Test
+        void verifyRefusedDownloadDoesNotReplaceBackup() throws Throwable {
+            val service = new SamlRegisteredService();
+            service.setName(RandomUtils.randomAlphabetic(12));
+            service.setId(RandomUtils.nextInt());
+
+            val resolver = getMetadataResolver();
+            try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {
+                webServer.start();
+                service.setMetadataLocation("http://localhost:%s".formatted(webServer.getPort()));
+                assertFalse(resolver.resolve(service).isEmpty());
+                val backupFile = resolver.getMetadataBackupFile(service, new CriteriaSet());
+                val lastKnownGood = Files.readAllBytes(backupFile.toPath());
+
+                webServer.responseBody("Service Unavailable");
+                assertFalse(resolver.resolve(service).isEmpty(),
+                    "A download that cannot be loaded must fall back onto the last known good metadata");
+                assertArrayEquals(lastKnownGood, Files.readAllBytes(backupFile.toPath()),
+                    "A download that cannot be loaded must not replace the metadata backup file");
+                assertEquals(2, webServer.getRequestCount());
+            }
+        }
+
+        @Test
         void verifyResolverResolves() throws Throwable {
             val resolver = getMetadataResolver();
             try (val webServer = new MockWebServer(new ClassPathResource("sample-metadata.xml"))) {

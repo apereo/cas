@@ -101,6 +101,11 @@ public class DynamoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegis
     }
 
     @Override
+    public String getName() {
+        return "Amazon DynamoDB";
+    }
+
+    @Override
     public SamlMetadataDocument store(final SamlMetadataDocument document) {
         val dynamoDb = samlIdPProperties.getMetadata().getDynamoDb();
         val metadataDocument = prepareMetadataDocument(document);

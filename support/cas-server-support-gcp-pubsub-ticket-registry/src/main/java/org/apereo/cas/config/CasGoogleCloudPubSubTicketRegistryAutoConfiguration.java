@@ -115,10 +115,19 @@ public class CasGoogleCloudPubSubTicketRegistryAutoConfiguration {
         return "%sSubscription-%s".formatted(GoogleCloudTicketRegistryQueuePublisher.QUEUE_TOPIC, identifier.getId());
     }
 
-    private static Optional<Topic> findTopicByName(final List<Topic> allTopics, final String topicName) {
+    /**
+     * Find a topic by its name, which Pub/Sub reports in full as {@code projects/<project>/topics/<name>}. The name is
+     * matched exactly: the dead-letter topic is named after the ticket registry topic, so a partial match could hand
+     * back the dead-letter topic in place of the topic the nodes publish to.
+     *
+     * @param allTopics the topics
+     * @param topicName the topic name
+     * @return the topic, if found
+     */
+    public static Optional<Topic> findTopicByName(final List<Topic> allTopics, final String topicName) {
         return allTopics
             .stream()
-            .filter(topic -> topic.getName().contains(topicName))
+            .filter(topic -> topic.getName().equals(topicName) || topic.getName().endsWith("/topics/" + topicName))
             .findFirst();
     }
 

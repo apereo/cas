@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 
 const ENTITY_ID = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
 const MANAGERS_URL = "https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadata/managers";
-const MANAGER_URL = `${MANAGERS_URL}/RestfulSamlRegisteredServiceMetadataResolver`;
+const MANAGER_URL = `${MANAGERS_URL}/REST%20API`;
 const JSON_HEADERS = {"Accept": "application/json", "Content-Type": "application/json"};
 
 (async () => {
@@ -60,7 +60,7 @@ const JSON_HEADERS = {"Accept": "application/json", "Content-Type": "application
 
         await cas.logg("The REST metadata manager is listed and lists the documents the backend holds");
         const managers = JSON.parse(await cas.doRequest(MANAGERS_URL, "GET", {"Accept": "application/json"}));
-        const manager = managers.find((entry) => entry.name === "RestfulSamlRegisteredServiceMetadataResolver");
+        const manager = managers.find((entry) => entry.name === "REST API");
         assert(manager !== undefined && manager.sourceId === "rest://");
         const listed = JSON.parse(await cas.doRequest(MANAGER_URL, "GET", {"Accept": "application/json"}));
         assert(listed.length === 1 && listed[0].name === "SimpleSAMLphp");

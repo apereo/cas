@@ -213,10 +213,15 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
 
     /**
      * Build signature signing parameters signature signing parameters.
+     * This is only called when the object must be signed. The outbound signing handler silently skips
+     * signing when no parameters are present, so parameters that cannot be resolved (for example, every
+     * allowed signature algorithm or reference digest method is blocked, or none fits the signing credential)
+     * are refused here rather than letting the object go out unsigned.
      *
      * @param descriptor the descriptor
      * @param service    the service
      * @return the signature signing parameters
+     * @throws SamlException if no usable signature signing parameters can be resolved
      */
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) {
@@ -229,21 +234,24 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
             val resolver = new SAMLMetadataSignatureSigningParametersResolver();
             LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
             val params = resolver.resolveSingle(criteria);
-            if (params != null) {
-                LOGGER.trace("""
-                        Created signature signing parameters.
-                        Signature algorithm: [{}]
-                        Signature canonicalization algorithm: [{}]
-                        Signature reference digest methods: [{}]
-                        Signature reference canonicalization algorithm: [{}]""",
-                    params.getSignatureAlgorithm(),
-                    params.getSignatureCanonicalizationAlgorithm(),
-                    params.getSignatureReferenceDigestMethod(),
-                    params.getSignatureReferenceCanonicalizationAlgorithm());
-            } else {
-                LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
+            if (params == null) {
+                LOGGER.error("Signing is required for service [{}], but no signature signing parameters can be resolved from "
+                        + "signature algorithms [{}], reference digest methods [{}], included algorithms [{}] and excluded algorithms [{}]",
+                    service.getName(), signatureSigningConfiguration.getSignatureAlgorithms(),
+                    signatureSigningConfiguration.getSignatureReferenceDigestMethods(),
+                    signatureSigningConfiguration.getIncludedAlgorithms(), signatureSigningConfiguration.getExcludedAlgorithms());
+                throw new SamlException("Unable to resolve signature signing parameters for service " + service.getName());
             }
+            LOGGER.trace("""
+                    Created signature signing parameters.
+                    Signature algorithm: [{}]
+                    Signature canonicalization algorithm: [{}]
+                    Signature reference digest methods: [{}]
+                    Signature reference canonicalization algorithm: [{}]""",
+                params.getSignatureAlgorithm(),
+                params.getSignatureCanonicalizationAlgorithm(),
+                params.getSignatureReferenceDigestMethod(),
+                params.getSignatureReferenceCanonicalizationAlgorithm());
             return params;
         });
     }

@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://never-loaded\\.sp\\.example\\.org$",
+  "name" : "NeverLoaded",
+  "id" : 4,
+  "evaluationOrder" : 4,
+  "metadataLocation" : "http://localhost:5615/metadata/never-loaded.xml",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
