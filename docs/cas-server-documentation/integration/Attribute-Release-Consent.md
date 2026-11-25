@@ -80,6 +80,41 @@ A sample definition follows:
 }
 ```
 
+### Chaining Policies
+
+Consent policies can be chained together. The attributes and services each policy excludes or includes are combined;
+consent is activated when any policy of the chain activates it, deactivated when every one of them deactivates it,
+and otherwise left to the [activation rules](Attribute-Release-Consent-Activation.html).
+
+```json
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "consentPolicy": {
+      "@class": "org.apereo.cas.services.consent.ChainingRegisteredServiceConsentPolicy",
+      "policies": [ "java.util.ArrayList", [
+        {
+          "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+          "excludedAttributes": ["java.util.LinkedHashSet", ["mail"]]
+        },
+        {
+          "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+          "excludedServices": ["java.util.LinkedHashSet", ["https://internal.example.org/.*"]],
+          "status": "TRUE"
+        }
+      ]]
+    }
+  }
+}
+```
+
+When attribute release policies are [chained](Attribute-Release-Policies-Chain.html), the consent policies of the
+policies in the chain are combined the same way.
+
 ## Activation
 
 See [this guide](Attribute-Release-Consent-Activation.html) for more details.

@@ -22,6 +22,7 @@ import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -45,6 +46,7 @@ import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.convert.RedisData;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -60,6 +62,15 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Monitorable
 @Getter
 public class RedisTicketRegistry extends AbstractTicketRegistry implements Cleanable {
+    private static final RedisScript<Long> TRACK_TICKET_OF_PRINCIPAL = RedisScript.of("""
+        redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[4])
+        redis.call('ZADD', KEYS[1], ARGV[1], ARGV[2])
+        local remaining = redis.call('TTL', KEYS[1])
+        if remaining < tonumber(ARGV[3]) then
+            redis.call('EXPIRE', KEYS[1], ARGV[3])
+        end
+        return remaining
+        """, Long.class);
 
     private static final String SEARCH_INDEX_NAME = RedisTicketDocument.class.getSimpleName() + "Index";
 
@@ -101,15 +112,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     @Override
     public long deleteAll() {
-        final Function<RedisKeyGenerator, Long> supplier = redisKeyGenerator -> {
+        final BiFunction<String, Boolean, Long> deleteKeys = (keyPattern, counted) -> {
             val size = new AtomicLong();
-            val keyPattern = redisKeyGenerator.forEverything();
             val options = ScanOptions.scanOptions().match(keyPattern).build();
             try (val result = casRedisTemplates.getTicketsRedisTemplate().scan(options)) {
                 casRedisTemplates.getTicketsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
                     StreamSupport.stream(result.spliterator(), false).forEach(id -> {
                         connection.keyCommands().del(id.getBytes(StandardCharsets.UTF_8));
-                        if (redisKeyGenerator.isTicketKeyGenerator()) {
+                        if (counted) {
                             size.getAndIncrement();
                         }
                     });
@@ -119,8 +129,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             return size.get();
         };
 
+        final Function<RedisKeyGenerator, Long> supplier = redisKeyGenerator ->
+            deleteKeys.apply(redisKeyGenerator.forEverything(), redisKeyGenerator.isTicketKeyGenerator());
         val count = supplier.apply(redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow())
-            + supplier.apply(redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow());
+            + supplier.apply(redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow())
+            + deleteKeys.apply(RedisKeyGenerator.REDIS_NAMESPACE_PRINCIPAL_TICKETS + ":*", false);
         clean();
         return count;
     }
@@ -131,6 +144,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         val redisTicketsKey = redisKeyGenerator.forPrefixAndId(ticket.getPrefix(), digestIdentifier(ticket.getId()));
         val count = deleteTicketKey(redisTicketsKey);
 
+        untrackTicketOfPrincipal(ticket);
         if (ticket instanceof TicketGrantingTicket) {
             redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())
                 .ifPresent(principalGenerator -> {
@@ -320,6 +334,27 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return deleted;
     }
 
+    /**
+     * Take the tickets that were deleted out of their principal's indexes, entry by entry, so that a ticket issued for
+     * the principal while its tickets were being deleted stays in the index.
+     *
+     * @param target  the digested principal id
+     * @param deleted the tickets deleted
+     */
+    private void untrackDeletedTicketsOfPrincipal(final String target, final List<RedisTicketToDelete> deleted) {
+        deleted
+            .stream()
+            .map(entry -> RedisKeyGenerator.parse(entry.redisKey()))
+            .filter(key -> {
+                val definition = ticketCatalog.find(key.getPrefix());
+                return definition != null && isTrackedByPrincipal(definition.getImplementationClass());
+            })
+            .collect(Collectors.groupingBy(RedisKeyGenerator.RedisCompositeKey::getPrefix,
+                Collectors.mapping(RedisKeyGenerator.RedisCompositeKey::getId, Collectors.toList())))
+            .forEach((prefix, ids) -> casRedisTemplates.getSessionsRedisTemplate()
+                .boundZSetOps(tokenIndexKey(prefix, target)).remove(ids.toArray()));
+    }
+
     private long deleteTicketsForPrincipal(final String target,
                                            final RedisSerializer principalFieldSerializer,
                                            final List<String> windowKeys,
@@ -368,6 +403,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 messagePublisher.ifAvailable(publisher -> publisher.deleteByKey(ticketToDelete.redisKey()));
             });
         }
+        untrackDeletedTicketsOfPrincipal(target, toDelete);
         return deleted;
     }
 
@@ -490,13 +526,28 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
+        val definition = StringUtils.isBlank(queryCriteria.getType()) ? null : ticketCatalog.find(queryCriteria.getType());
+        if (queryCriteria.isDecode() && StringUtils.isNotBlank(queryCriteria.getPrincipal()) && StringUtils.isBlank(queryCriteria.getId())
+            && definition != null && isTrackedByPrincipal(definition.getImplementationClass())) {
+            try (val tickets = ticketsOfPrincipal(definition.getPrefix(), queryCriteria.getPrincipal())) {
+                return tickets
+                    .filter(ticket -> ticket instanceof final AuthenticationAwareTicket aat
+                        && Strings.CI.equals(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId()))
+                    .limit(queryCriteria.getCount() > 0 ? queryCriteria.getCount() : Long.MAX_VALUE)
+                    .collect(Collectors.toList());
+            }
+        }
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(queryCriteria.getType()).orElseThrow();
         val redisTicketsKey = StringUtils.isNotBlank(queryCriteria.getId())
             ? redisKeyGenerator.forPrefixAndId(queryCriteria.getType(), digestIdentifier(queryCriteria.getId()))
             : redisKeyGenerator.forPrefixAndId(queryCriteria.getType(), "*");
 
         if (queryCriteria.isDecode()) {
-            try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(redisTicketsKey, queryCriteria.getCount())) {
+            val ofPrincipal = StringUtils.isNotBlank(queryCriteria.getPrincipal()) && StringUtils.isBlank(queryCriteria.getId());
+            try (val scannedKeys = ofPrincipal
+                ? casRedisTemplates.getTicketsRedisTemplate().scanAll(redisTicketsKey)
+                : fetchKeysForTickets(redisTicketsKey)) {
+                val scanResults = ofPrincipal ? keysOfPrincipal(scannedKeys, queryCriteria.getPrincipal()) : scannedKeys;
                 return scanResults
                     .parallel()
                     .map(key -> {
@@ -522,6 +573,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                         || (ticket instanceof final AuthenticationAwareTicket aat
                         && Strings.CI.equals(queryCriteria.getPrincipal(), aat.getAuthentication().getPrincipal().getId())))
                     .filter(ticket -> !ticket.isExpired())
+                    .limit(queryCriteria.getCount() > 0 ? queryCriteria.getCount() : Long.MAX_VALUE)
                     .collect(Collectors.toList());
             }
         }
@@ -536,15 +588,68 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         messagePublisher.ifAvailable(RedisTicketRegistryMessagePublisher::deleteAll);
     }
 
+    /**
+     * The keys of the tickets that belong to a principal, found by reading only the principal each ticket document
+     * records, a window of keys per round trip, so that the documents of other principals are never read or decoded.
+     * The keys are taken from the scan a window at a time, so only one window and the matching keys are held at once,
+     * however many tickets Redis holds; a key the scan returns more than once is kept once.
+     *
+     * @param keys        the keys to look through
+     * @param principalId the principal id
+     * @return the keys of that principal's tickets
+     */
+    private Stream<String> keysOfPrincipal(final Stream<String> keys, final String principalId) {
+        val window = 1000;
+        val target = digestIdentifier(principalId);
+        val iterator = keys.iterator();
+        val matching = new LinkedHashSet<String>();
+        val windowKeys = new ArrayList<String>(window);
+        while (iterator.hasNext()) {
+            windowKeys.add(iterator.next());
+            if (windowKeys.size() >= window || !iterator.hasNext()) {
+                matching.addAll(keysOfPrincipalInWindow(windowKeys, target));
+                windowKeys.clear();
+            }
+        }
+        return matching.stream();
+    }
+
+    private List<String> keysOfPrincipalInWindow(final List<String> windowKeys, final String target) {
+        val principals = casRedisTemplates.getTicketsRedisTemplate()
+            .executePipelined((RedisCallback<Object>) conn -> {
+                for (val key : windowKeys) {
+                    conn.hashCommands().hGet(key.getBytes(StandardCharsets.UTF_8),
+                        RedisTicketDocument.FIELD_NAME_PRINCIPAL.getBytes(StandardCharsets.UTF_8));
+                }
+                return null;
+            }, new StringRedisSerializer());
+        val matching = new ArrayList<String>();
+        for (var index = 0; index < windowKeys.size(); index++) {
+            val givenPrincipal = principals.get(index);
+            if (givenPrincipal != null && Strings.CI.equals(target, givenPrincipal.toString())) {
+                matching.add(windowKeys.get(index));
+            }
+        }
+        return matching;
+    }
+
     private Stream<String> fetchKeysForTickets() {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
         val redisKey = redisKeyGenerator.forEverything();
         return fetchKeysForTickets(redisKey);
     }
 
+    /**
+     * The keys that match the pattern, asked for from Redis in large batches: the whole keyspace is walked to find
+     * them, and with the default batch of ten keys, a keyspace of many sessions and tickets takes a round trip for
+     * every ten keys, whatever few of them match.
+     *
+     * @param keyPattern the key pattern
+     * @return the keys, to be closed once read
+     */
     private Stream<String> fetchKeysForTickets(final String keyPattern) {
         LOGGER.debug("Loading keys for pattern [{}]", keyPattern);
-        return casRedisTemplates.getTicketsRedisTemplate().scan(keyPattern);
+        return casRedisTemplates.getTicketsRedisTemplate().scanAll(keyPattern).distinct();
     }
 
     protected RedisTicketDocument buildTicketAsDocument(final Ticket ticket) {
@@ -711,6 +816,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     protected void trackAuthenticationPrincipal(final Ticket ticket) {
         val userId = digestIdentifier(getPrincipalIdFrom(ticket));
+        if (StringUtils.isNotBlank(userId) && isTrackedByPrincipal(ticket.getClass())) {
+            trackTicketOfPrincipal(ticket, userId);
+        }
         if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
             val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow();
             val redisPrincipalPattern = generator.forId(userId);
@@ -730,6 +838,86 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 ops.expire(Expiration.from(timeout, TimeUnit.SECONDS));
             }
         }
+    }
+
+    /**
+     * Whether the tickets of a type are kept in a per-principal index, so that the tickets of one principal are found
+     * without walking the keyspace: tickets that belong to a principal, such as OAuth tokens and codes, other than
+     * single sign-on sessions, which have an index of their own, and service and proxy tickets, which are issued too
+     * often and live too briefly to be worth one.
+     *
+     * @param ticketType the ticket type
+     * @return true when the tickets of that type are indexed by principal
+     */
+    protected static boolean isTrackedByPrincipal(final Class<?> ticketType) {
+        return AuthenticationAwareTicket.class.isAssignableFrom(ticketType)
+            && !TicketGrantingTicket.class.isAssignableFrom(ticketType)
+            && !ServiceTicket.class.isAssignableFrom(ticketType);
+    }
+
+    /**
+     * Record a ticket in the index of its principal's tickets of its type, scored by when it expires. The index lives as
+     * long as the longest-lived ticket in it: adding the entry and extending the index's expiry happen in one script, so
+     * tickets issued at the same time for the same principal cannot shorten it; the same script drops the entries that
+     * have expired, so a principal issued tickets all the time does not keep a growing index of expired ones. The score and the expiry go to the script
+     * as decimal text, which Redis requires; the entry is encoded as the template encodes every entry of the index, so
+     * reading and removing it works as for entries added by the template itself. Expired entries are dropped when the
+     * index is read, and an entry is removed with its ticket.
+     *
+     * @param ticket the ticket
+     * @param userId the digested principal id
+     */
+    protected void trackTicketOfPrincipal(final Ticket ticket, final String userId) {
+        val timeout = RedisKeyGenerator.getTicketExpirationInSeconds(ticket);
+        val now = Instant.now(Clock.systemUTC()).getEpochSecond();
+        val template = casRedisTemplates.getSessionsRedisTemplate();
+        val valueSerializer = (RedisSerializer) template.getValueSerializer();
+        val member = valueSerializer.serialize(digestIdentifier(ticket.getId()));
+        template.execute(TRACK_TICKET_OF_PRINCIPAL, RedisSerializer.byteArray(), valueSerializer,
+            List.of(tokenIndexKey(ticket.getPrefix(), userId)),
+            String.valueOf(now + timeout).getBytes(StandardCharsets.UTF_8), member,
+            String.valueOf(timeout).getBytes(StandardCharsets.UTF_8), String.valueOf(now).getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void untrackTicketOfPrincipal(final Ticket ticket) {
+        val userId = digestIdentifier(getPrincipalIdFrom(ticket));
+        if (StringUtils.isNotBlank(userId) && isTrackedByPrincipal(ticket.getClass())) {
+            casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(tokenIndexKey(ticket.getPrefix(), userId))
+                .remove(digestIdentifier(ticket.getId()));
+        }
+    }
+
+    /**
+     * The key of a principal's index of tickets of one type, in a namespace of its own, so it can never be the key of a
+     * principal's sessions. The principal is hashed after it is lowercased, so a principal looked up with other capitals
+     * finds the same index, as the principal itself is matched without regard to case.
+     *
+     * @param prefix the ticket type
+     * @param userId the digested principal id
+     * @return the key
+     */
+    private static String tokenIndexKey(final String prefix, final String userId) {
+        return RedisKeyGenerator.RedisCompositeKey.builder()
+            .namespace(RedisKeyGenerator.REDIS_NAMESPACE_PRINCIPAL_TICKETS)
+            .prefix(prefix)
+            .id(DigestUtils.sha256(userId.toLowerCase(Locale.ROOT)))
+            .build()
+            .toString();
+    }
+
+    private Stream<Ticket> ticketsOfPrincipal(final String prefix, final String principalId) {
+        val ops = casRedisTemplates.getSessionsRedisTemplate()
+            .boundZSetOps(tokenIndexKey(prefix, digestIdentifier(principalId)));
+        ops.removeRangeByScore(0, Long.valueOf(Instant.now(Clock.systemUTC()).getEpochSecond()).doubleValue());
+        val ticketIds = Objects.requireNonNullElseGet(ops.range(0, -1), Set::<String>of);
+        val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(prefix).orElseThrow();
+        return ticketIds
+            .stream()
+            .map(ticketId -> getTicketFromRedis(ticket -> !ticket.isExpired(),
+                redisKeyGenerator.forPrefixAndId(prefix, ticketId), redisKeyGenerator))
+            .filter(Objects::nonNull)
+            .map(this::decodeTicket)
+            .filter(Objects::nonNull);
     }
 
     protected void configureTicketExpirationInstant(final Ticket ticket, final String redisKeyPattern) {

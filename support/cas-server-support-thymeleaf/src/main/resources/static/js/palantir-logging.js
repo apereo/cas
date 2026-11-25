@@ -53,7 +53,7 @@ async function initializeLoggingOperations() {
                     "configuredLevel": level
                 };
                 $.ajax({
-                    url: `${CasActuatorEndpoints.loggers()}/${logger}`,
+                    url: `${CasActuatorEndpoints.loggers()}/${encodeURIComponent(logger)}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(loggerData),
@@ -84,7 +84,7 @@ async function initializeLoggingOperations() {
             function addLoggerToTable(logger) {
                 const background = determineLoggerColor(logger.level);
                 const loggerLevel = `
-                    <select data-logger='${logger.name}' data-palantir-write="loggers" name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
+                    <select data-logger='${escapePalantirMarkup(logger.name)}' data-palantir-write="loggers" name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
                         <option ${logger.level === "TRACE" ? "selected" : ""} value="TRACE">TRACE</option>
                         <option ${logger.level === "DEBUG" ? "selected" : ""} value="DEBUG">DEBUG</option>
                         <option ${logger.level === "INFO" ? "selected" : ""} value="INFO">INFO</option>
@@ -107,17 +107,14 @@ async function initializeLoggingOperations() {
             loggersTable.draw();
 
             $("#newLoggerButton").off().on("click", () =>
-                Swal.fire({
+                PalantirDialogs.confirm({
                     input: "text",
                     inputAttributes: {
                         autocapitalize: "off"
                     },
-                    showConfirmButton: true,
-                    showDenyButton: true,
-                    icon: "question",
                     confirmButtonText: "Create Logger",
                     denyButtonText: "Cancel",
-                    title: "What's the name of the new logger?",
+                    title: "What's the Name of the New Logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
                     .then((result) => {
@@ -150,29 +147,63 @@ async function initializeLoggingOperations() {
             $("#logDataStream").parent().addClass("w-100");
         }
 
-        async function fetchLogsFrom(endpoint) {
-            if (endpoint && isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
-                const logDataStream = $("#logDataStream");
-                const level = $("#logLevelFilter").val();
-                const count = $("#logCountFilter").val();
+        const logSources = [
+            {label: "CloudWatch", endpoint: CasActuatorEndpoints.cloudWatchLogs()},
+            {label: "Google Cloud", endpoint: CasActuatorEndpoints.gcpLogs()},
+            {label: "CAS", endpoint: CasActuatorEndpoints.loggingConfig()}
+        ].filter(source => source.endpoint);
 
-                $.ajax({
-                    url: `${endpoint}/stream?level=${level}&count=${count}`,
-                    type: "GET",
-                    dataType: "json",
-                    success: logEvents => {
-                        logDataStream.empty();
-                        logEvents.forEach(log => {
-                            let className = `log-${log.level.toLowerCase()}`;
-                            const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
-                            logDataStream.append($(logEntry));
-                        });
-                        if (scrollSwitch.selected) {
-                            logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
-                        }
-                    },
-                    error: (xhr, status, error) => console.error("Streaming logs failed:", error)
-                });
+        /**
+         * Read the latest entries of one log source, each marked with the source.
+         *
+         * @param source the log source, with its label and endpoint
+         * @param level the lowest level to read
+         * @param count how many of the latest entries to read
+         * @returns {Promise<object[]|null>} the entries, or null when the source could not be read
+         */
+        function fetchLogsFrom(source, level, count) {
+            return new Promise(resolve => $.ajax({
+                url: `${source.endpoint}/stream?level=${encodeURIComponent(level)}&count=${encodeURIComponent(count)}`,
+                type: "GET",
+                dataType: "json",
+                success: logEvents => resolve((Array.isArray(logEvents) ? logEvents : []).map(log => ({...log, source: source.label}))),
+                error: (xhr, status, error) => {
+                    console.error(`Streaming logs from ${source.label} failed:`, error);
+                    resolve(null);
+                }
+            }));
+        }
+
+        /**
+         * Show the latest entries of every log source, merged by time and, when there are several sources, marked with
+         * the source each came from. What is shown is what the download saves.
+         */
+        async function refreshLogData() {
+            if (logSources.length === 0 || !isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
+                return;
+            }
+            const level = $("#logLevelFilter").val();
+            const count = Number($("#logCountFilter").val()) || 25;
+            const answers = await Promise.all(logSources.map(source => fetchLogsFrom(source, level, count)));
+            if (answers.every(answer => answer === null)) {
+                return;
+            }
+            const logEvents = answers.filter(Array.isArray).flat()
+                .sort((left, right) => new Date(left.timestamp).getTime() - new Date(right.timestamp).getTime())
+                .slice(-count);
+            const logDataStream = $("#logDataStream").empty();
+            logEvents.forEach(log => {
+                const logLevel = String(log.level ?? "");
+                const entry = $("<div>").append(document.createTextNode(`${new Date(log.timestamp).toLocaleString()} - `));
+                if (logSources.length > 1) {
+                    entry.append(document.createTextNode(`${log.source} - `));
+                }
+                entry.append($("<span>", {class: `log-${logLevel.toLowerCase()}`, text: `[${logLevel}]`}))
+                    .append(document.createTextNode(` - ${log.message ?? ""}`));
+                logDataStream.append(entry);
+            });
+            if (scrollSwitch.selected) {
+                logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
             }
         }
 
@@ -182,7 +213,7 @@ async function initializeLoggingOperations() {
                 return;
             }
             const logFileStream = $("#logFileStream");
-            $.ajax({
+            return $.ajax({
                 url: CasActuatorEndpoints.logFile(),
                 type: "GET",
                 success: response => {
@@ -196,29 +227,16 @@ async function initializeLoggingOperations() {
             });
         }
 
-        function refreshLogData() {
-            if (!isPalantirPollingContextActive(Tabs.LOGGING, "#logdatastream-tab")) {
-                return;
-            }
-            fetchLogsFrom(CasActuatorEndpoints.cloudWatchLogs());
-            fetchLogsFrom(CasActuatorEndpoints.gcpLogs());
-            fetchLogsFrom(CasActuatorEndpoints.loggingConfig());
-        }
+        const refreshActiveLogStreams = PalantirPolling.every("log streams", () => Promise.all([refreshLogData(), refreshLogFile()]),
+            {tab: Tabs.LOGGING, panel: "#logdatastream-tab", status: "#logdatastream-tab"});
 
-        function refreshActiveLogStreams() {
-            refreshLogData();
-            refreshLogFile();
-        }
-
-        setInterval(refreshActiveLogStreams, palantirSettings().refreshInterval);
-        window.addEventListener(palantirPollingContextEvent, refreshActiveLogStreams);
         refreshActiveLogStreams();
 
         $("#downloadLogsButton").off().on("click", () => {
             try {
                 $("#downloadLogsButton").prop("disabled", true);
                 hideBanner();
-                const text = $("#logDataStream").text();
+                const text = $("#logDataStream").children().map((_, entry) => entry.textContent).get().join("\n");
                 const blob = new Blob([text], {type: "text/plain"});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");

@@ -88,6 +88,12 @@ description: "Run and write tests in the CAS Gradle monorepo: testcas.sh categor
   wholesale; hardcoded 8080/8081 elsewhere in the tree is mostly harmless string-building and
   serialization anyway, and only tests that actually open a connection were ever exposed.
 
+- `ClientInfoHolder` is an `InheritableThreadLocal`, and many tests set a `ClientInfo` (`MockRequestContext.setClientInfo()`,
+  `ClientInfo.from(request)` on a `/tenants/...` path) without clearing it, so a worker thread can carry another test's tenant.
+  A test whose outcome depends on the request tenant (SSO participation, authentication handler selection, the `tenant`
+  authentication attribute) sets or clears `ClientInfoHolder` itself, as `DefaultSingleSignOnParticipationStrategyTests`
+  does in a `@BeforeEach`.
+
 ## Test authentications and principal attributes
 
 - `CoreAuthenticationTestUtils.getAuthentication(name, attributes)` puts the attributes on the authentication; its principal

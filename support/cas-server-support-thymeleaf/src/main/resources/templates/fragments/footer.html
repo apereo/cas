@@ -17,15 +17,19 @@
     <code class="host pl-2"
           th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show-host'))}"
           th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show-host'))} ? 'cas-theme-builder-off'"
-          data-cas-theme-builder-toggle="cas.footer.show-host"
-          th:text="${'🖥️ ' + host}">
+          data-cas-theme-builder-toggle="cas.footer.show-host">
+        <span aria-hidden="true">🖥️</span>
+        <span class="visually-hidden" th:text="#{screen.footer.host}"></span>
+        <span th:text="${host}"></span>
     </code>
     <span th:remove="tag" th:if="${clientInfo}">
         <code id="clientIpAddress" class="clientIpAddress pl-2"
               th:if="${#cas.themeBuilderEnabled or #cas.isTrue(#cas.theme('cas.footer.show-client-ip'))}"
               th:classappend="${!#cas.isTrue(#cas.theme('cas.footer.show-client-ip'))} ? 'cas-theme-builder-off'"
-              data-cas-theme-builder-toggle="cas.footer.show-client-ip"
-              th:text="${'🌍 ' + clientInfo.clientIpAddress}">
+              data-cas-theme-builder-toggle="cas.footer.show-client-ip">
+            <span aria-hidden="true">🌍</span>
+            <span class="visually-hidden" th:text="#{screen.footer.clientip}"></span>
+            <span th:text="${clientInfo.clientIpAddress}"></span>
         </code>
     </span>
 </footer>

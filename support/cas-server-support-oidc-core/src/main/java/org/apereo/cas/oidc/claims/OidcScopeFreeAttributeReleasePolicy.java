@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
 import module java.base;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class OidcScopeFreeAttributeReleasePolicy extends BaseOidcScopeAttributeReleasePolicy {
     /**
      * Indicates that the scope is not defined and any attribute release policy.

@@ -7,6 +7,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
+import org.jspecify.annotations.Nullable;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.ser.std.ToStringSerializer;
 import jakarta.persistence.Column;
@@ -70,4 +73,15 @@ public class ConsentDecision implements Serializable {
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;
+
+    /**
+     * Whether the decision belongs to the given tenant. A decision made in a tenant belongs only to that
+     * tenant, and a decision made without a tenant belongs only outside of any tenant.
+     *
+     * @param tenantId the tenant id, or blank outside of any tenant
+     * @return true if the decision belongs to the tenant
+     */
+    public boolean isAssignedToTenant(@Nullable final String tenantId) {
+        return Strings.CI.equals(StringUtils.defaultString(tenant), StringUtils.defaultString(tenantId));
+    }
 }

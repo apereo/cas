@@ -5,6 +5,7 @@ const os = require("os");
 const fs = require("fs");
 
 (async () => {
+    const sms = await cas.mockSmsServer();
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
@@ -65,6 +66,9 @@ const fs = require("fs");
 
     const message = await cas.extractFromEmail(browser);
     assert(message === "casuser @ 127.0.0.1");
+    const text = await sms.waitForMessage("13477465342", (msg) => msg.text.startsWith("casuser @ "));
+    assert(text.from === "3477465300");
+    assert(/^casuser @ 127\.0\.0\.1 with TGT-\d+-\S+$/.test(text.text), `Unexpected SMS text ${text.text}`);
     
     await cas.sleep(2000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
@@ -110,4 +114,5 @@ const fs = require("fs");
     await cas.gotoLogout(page);
     await cas.sleep(1000);
     await cas.closeBrowser(browser);
+    await sms.close();
 })();

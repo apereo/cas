@@ -100,6 +100,16 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("casTicketRegistryLockRepository")
+    private LockRepository casTicketRegistryLockRepository;
+
+    @Test
+    void verifyTicketRegistryLockIsAcquired() {
+        val result = casTicketRegistryLockRepository.execute(UUID.randomUUID().toString(), () -> Boolean.TRUE);
+        assertEquals(Optional.of(Boolean.TRUE), result);
+    }
+
     @Test
     void verifyCandidateRunRemovesTicketsExpiredOnUpdate() throws Throwable {
         val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext,

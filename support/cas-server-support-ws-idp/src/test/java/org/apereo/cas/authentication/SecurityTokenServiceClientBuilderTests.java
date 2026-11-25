@@ -70,6 +70,19 @@ class SecurityTokenServiceClientBuilderTests extends BaseCoreWsSecurityIdentityP
         assertNotNull(securityTokenServiceClientBuilder.buildClientForRelyingPartyTokenResponses(token, registeredService));
     }
 
+    @Test
+    void verifyAppliesToDefaultsToRealm() {
+        val registeredService = new WSFederationRegisteredService();
+        registeredService.setRealm(casProperties.getAuthn().getWsfedIdp().getIdp().getRealm());
+        registeredService.setServiceId("http://app.example.org/wsfed-idp");
+        registeredService.setName(UUID.randomUUID().toString());
+        registeredService.setId(RandomUtils.nextLong());
+        assertNull(registeredService.getAppliesTo());
+        assertEquals(registeredService.getRealm(), registeredService.getAppliesToOrRealm());
+        val client = securityTokenServiceClientBuilder.buildClientForSecurityTokenRequests(registeredService);
+        assertTrue(client.isEnableAppliesTo());
+    }
+
     private WSFederationRegisteredService getWsFederationRegisteredService() {
         val realm = casProperties.getAuthn().getWsfedIdp().getIdp().getRealm();
         val registeredService = new WSFederationRegisteredService();

@@ -4,7 +4,7 @@ const cas = require("../../cas.js");
 
 const ENTITY_ID = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
 const MANAGERS_URL = "https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadata/managers";
-const MANAGER_URL = `${MANAGERS_URL}/DynamoDbSamlRegisteredServiceMetadataResolver`;
+const MANAGER_URL = `${MANAGERS_URL}/Amazon%20DynamoDB`;
 const SP_TABLE = "DynamoDbCasSamlMetadata";
 const IDP_TABLE = "DynamoDbCasSamlIdPMetadata";
 
@@ -28,7 +28,7 @@ async function metadataDocuments() {
 
     await cas.logg("The DynamoDb metadata manager is listed, and documents can be fetched and replaced by id");
     const managers = JSON.parse(await cas.doRequest(MANAGERS_URL, "GET", {"Accept": "application/json"}));
-    const manager = managers.find((entry) => entry.name === "DynamoDbSamlRegisteredServiceMetadataResolver");
+    const manager = managers.find((entry) => entry.name === "Amazon DynamoDB");
     assert(manager !== undefined && manager.sourceId === "dynamodb://");
     const stored = JSON.parse(await cas.doRequest(`${MANAGER_URL}/${documents[0].id}`, "GET", {"Accept": "application/json"}));
     assert(stored.entityId === ENTITY_ID && stored.value === documents[0].value);

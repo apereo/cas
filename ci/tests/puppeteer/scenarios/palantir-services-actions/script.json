@@ -1,0 +1,26 @@
+{
+  "dependencies": "reports,palantir,javers",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--spring.security.user.name=casadmin",
+    "--spring.security.user.password=password",
+    "--spring.security.user.roles=ADMIN",
+
+    "--cas.http-web-request.header.content-security-policy=",
+
+    "--cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED"
+  ],
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+}

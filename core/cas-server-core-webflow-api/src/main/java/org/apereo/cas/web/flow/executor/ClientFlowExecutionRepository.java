@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.util.Assert;
@@ -49,6 +50,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
 
     private static final String WEBFLOW_USER_AGENT = ClientFlowExecutionKey.class.getName() + ".userAgent";
     private static final String WEBFLOW_CLIENT_IP_ADDRESS = ClientFlowExecutionKey.class.getName() + ".clientIpAddress";
+    private static final String WEBFLOW_TENANT = ClientFlowExecutionKey.class.getName() + ".tenant";
 
     @Getter
     private final FlowExecutionFactory flowExecutionFactory;
@@ -76,6 +78,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
             try {
                 val encoded = clientFlowExecutionKey.getData();
                 val state = (SerializedFlowExecutionState) determineTranscoder().decode(encoded);
+                verifyWebflowTenantMatchesRequest(state);
 
                 if (webflowProperties.getSession().isPinToSession()) {
                     verifyWebflowSessionIsCorrectlyPinned(state);
@@ -105,6 +108,7 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
             if (webflowProperties.getSession().isPinToSession()) {
                 recordWebflowSessionPinningInfo(execution);
             }
+            recordWebflowTenant(execution);
             val state = new SerializedFlowExecutionState(execution);
             return new ClientFlowExecutionKey(determineTranscoder().encode(state));
         } catch (final Exception e) {
@@ -136,6 +140,37 @@ public class ClientFlowExecutionRepository implements FlowExecutionRepository, F
         Assert.hasText(clientInfo.getClientIpAddress(), "Client IP address cannot be null or empty");
         execution.getConversationScope().put(WEBFLOW_USER_AGENT, clientInfo.getUserAgent());
         execution.getConversationScope().put(WEBFLOW_CLIENT_IP_ADDRESS, clientInfo.getClientIpAddress());
+    }
+
+    /**
+     * Record with the flow state the first tenant the flow runs in. Steps outside of any tenant leave the recorded
+     * tenant in place, so a flow cannot shed its tenant on the way to another one.
+     *
+     * @param execution the flow execution
+     */
+    protected void recordWebflowTenant(final FlowExecution execution) {
+        val clientInfo = Objects.requireNonNull(ClientInfoHolder.getClientInfo(), "Client info cannot be null");
+        val conversationScope = execution.getConversationScope();
+        if (StringUtils.isBlank((String) conversationScope.get(WEBFLOW_TENANT)) && StringUtils.isNotBlank(clientInfo.getTenant())) {
+            conversationScope.put(WEBFLOW_TENANT, clientInfo.getTenant());
+        }
+    }
+
+    /**
+     * Refuse to resume a flow that one tenant started in another tenant. A flow that moves between a tenant and
+     * the urls outside of any tenant is left alone, since callbacks from external identity and multifactor
+     * providers may arrive at the urls outside of any tenant.
+     *
+     * @param state the flow state
+     */
+    protected void verifyWebflowTenantMatchesRequest(final SerializedFlowExecutionState state) {
+        val currentTenant = ClientInfoHolder.getClientInfo().getTenant();
+        val flowTenant = (String) state.getConversationScope().get(WEBFLOW_TENANT);
+        if (StringUtils.isNotBlank(currentTenant) && StringUtils.isNotBlank(flowTenant)
+            && !Strings.CI.equals(currentTenant, flowTenant)) {
+            LOGGER.warn("Webflow execution started in tenant [{}] cannot be resumed in tenant [{}]", flowTenant, currentTenant);
+            throw new ClientFlowExecutionRepositoryException("Webflow execution key belongs to another tenant");
+        }
     }
 
     protected void verifyWebflowSessionIsCorrectlyPinned(final SerializedFlowExecutionState state) {

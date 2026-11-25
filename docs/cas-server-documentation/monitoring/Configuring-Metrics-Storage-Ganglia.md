@@ -13,4 +13,4 @@ Export CAS metrics to a Ganglia monitoring server.
 By default, metrics are exported to Ganglia running on your local
 machine. The Ganglia server host and port to use can be provided using:
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.ganglia" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.ganglia.metrics.export" %}

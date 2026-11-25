@@ -1,0 +1,18 @@
+{
+  "dependencies": "reports,palantir,audit-jdbc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.security.user.name=casadmin",
+    "--spring.security.user.password=password",
+    "--spring.security.user.roles=ADMIN",
+
+    "--cas.http-web-request.header.content-security-policy=",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.endpoint.ticketRegistry.access=READ_ONLY"
+  ]
+}

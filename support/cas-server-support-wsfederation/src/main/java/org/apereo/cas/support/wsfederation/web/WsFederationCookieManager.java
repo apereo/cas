@@ -71,9 +71,9 @@ public class WsFederationCookieManager {
         }
         val blob = EncodingUtils.hexDecode(serverState);
         val session = serializer.from(blob);
-        request.setAttribute(casProperties.getTheme().getParamName(), session.get(casProperties.getTheme().getParamName()));
-        request.setAttribute(casProperties.getLocale().getParamName(), session.get(casProperties.getLocale().getParamName()));
-        request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD));
+        request.setAttribute(casProperties.getTheme().getParamName(), session.get(casProperties.getTheme().getParamName() + '-' + contextId));
+        request.setAttribute(casProperties.getLocale().getParamName(), session.get(casProperties.getLocale().getParamName() + '-' + contextId));
+        request.setAttribute(CasProtocolConstants.PARAMETER_METHOD, session.get(CasProtocolConstants.PARAMETER_METHOD + '-' + contextId));
 
         val serviceKey = CasProtocolConstants.PARAMETER_SERVICE + '-' + contextId;
         val service = (Service) session.get(serviceKey);

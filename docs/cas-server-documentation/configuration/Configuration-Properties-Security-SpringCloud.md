@@ -18,8 +18,7 @@ encrypt settings and place them inside your CAS configuration.
 CAS will auto-decrypt at the appropriate moment.
 
 {% include_cached casproperties.html
-thirdPartyStartsWith="encrypt.key-store"
-thirdPartyExactMatch="spring.cloud.config.server.encrypt"
+thirdPartyStartsWith="encrypt.key-store,spring.cloud.config.server.encrypt"
 %}
 
 <div class="alert alert-info">:information_source: <strong>JCE Requirements</strong><p>To use the encryption and decryption

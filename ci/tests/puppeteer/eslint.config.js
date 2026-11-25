@@ -11,7 +11,8 @@ module.exports = [
                 ...globals.browser,
                 ...globals.node,
                 ...globals.commonjs,
-                ...globals.es2021
+                ...globals.es2021,
+                registeredServicesVersion: "writable"
             }
         },
         rules: {

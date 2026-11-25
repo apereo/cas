@@ -21,7 +21,8 @@ class PalantirServiceHistory {
 
     /**
      * Copy a value with the keys of every object sorted, so that two definitions with the same content
-     * write the same JSON.
+     * write the same JSON. A map whose order matters, such as a LinkedHashMap of MFA provider selections,
+     * keeps its order, so reordering it counts as a change.
      *
      * @param value the value to copy
      * @returns {*} the copy
@@ -31,12 +32,23 @@ class PalantirServiceHistory {
             return value.map(entry => PalantirServiceHistory.sortKeys(entry));
         }
         if (value !== null && typeof value === "object") {
-            return Object.keys(value).sort().reduce((sorted, key) => {
+            const keys = PalantirServiceHistory.isOrdered(value) ? Object.keys(value) : Object.keys(value).sort();
+            return keys.reduce((sorted, key) => {
                 sorted[key] = PalantirServiceHistory.sortKeys(value[key]);
                 return sorted;
             }, {});
         }
         return value;
+    }
+
+    /**
+     * Whether the order of an object's keys matters: a map typed as one that keeps its order.
+     *
+     * @param value the object
+     * @returns {boolean} true for an ordered map
+     */
+    static isOrdered(value) {
+        return /Linked|Ordered/.test(String(value["@class"] ?? ""));
     }
 
     /**
@@ -101,7 +113,7 @@ class PalantirServiceHistory {
                 classes: {"ui-dialog": "ui-corner-all palantir-history-dialog"},
                 buttons: [
                     {
-                        text: "Restore this version",
+                        text: "Restore This Version",
                         "class": "palantir-history-restore",
                         "data-palantir-write": "entityHistory",
                         click: () => {
@@ -270,7 +282,7 @@ class PalantirServiceHistory {
         const previous = PalantirServiceHistory.versions[PalantirServiceHistory.selected + 1];
         const selected = {label: PalantirServiceHistory.label(version), text: version.text};
         const [left, right] = againstCurrent
-            ? [selected, {label: "Current definition", text: PalantirServiceHistory.current}]
+            ? [selected, {label: "Current Definition", text: PalantirServiceHistory.current}]
             : [previous ? {label: PalantirServiceHistory.label(previous), text: previous.text} : null, selected];
         const restore = $(".palantir-history-restore");
         if (restore.data("ui-button")) {
@@ -451,7 +463,7 @@ class PalantirServiceHistory {
      */
     static restore(serviceId, revisionId) {
         Swal.fire({
-            title: "Restore this version?",
+            title: "Restore This Version?",
             text: `Version ${revisionId} will replace the current definition of service ${serviceId}.`,
             icon: "question",
             showCancelButton: true,

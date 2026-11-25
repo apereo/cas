@@ -5,6 +5,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,11 +55,27 @@ class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
     @Qualifier("deviceFingerprintUserAgentComponentExtractor")
     private DeviceFingerprintExtractor deviceFingerprintUserAgentComponentExtractor;
 
+    @Autowired
+    @Qualifier("browserFingerprintComponentExtractor")
+    private DeviceFingerprintExtractor browserFingerprintComponentExtractor;
+
     @Test
     void verifyOperation() {
         assertNotNull(deviceFingerprintClientIpComponentExtractor);
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);
         assertEquals(5, deviceFingerprintStrategy.getDeviceFingerprintExtractors().size());
+    }
+
+    @Test
+    void verifyDefaultComponentOrder() {
+        assertEquals(4, deviceFingerprintGeoLocationComponentExtractor.getOrder());
+        assertEquals(5, browserFingerprintComponentExtractor.getOrder());
+        val orders = deviceFingerprintStrategy.getDeviceFingerprintExtractors()
+            .stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(DeviceFingerprintExtractor::getOrder)
+            .toList();
+        assertEquals(List.of(1, 2, 3, 4, 5), orders);
     }
 }

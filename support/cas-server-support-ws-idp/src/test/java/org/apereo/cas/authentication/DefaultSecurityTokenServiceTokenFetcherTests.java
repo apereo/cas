@@ -39,9 +39,9 @@ class DefaultSecurityTokenServiceTokenFetcherTests extends BaseCoreWsSecurityIde
 
         val registeredService = new WSFederationRegisteredService();
         registeredService.setRealm(realm);
-        registeredService.setServiceId("http://app.example.org/wsfed-idp");
+        registeredService.setServiceId("http://app.example44.org/wsfed-idp");
         registeredService.setName("WSFED App");
-        registeredService.setId(100);
+        registeredService.setId(4400);
         registeredService.setAppliesTo(realm);
         registeredService.setWsdlLocation("classpath:wsdl/ws-trust-1.4-service.wsdl");
         servicesManager.save(registeredService);

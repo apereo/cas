@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,5 +38,28 @@ class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
     void removeNonExistingService() {
         var registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         assertTrue(getNewServiceRegistry().delete(registeredService));
+    }
+
+    @Test
+    void verifyServicesGivenAsUnmodifiableListCanChange() {
+        val existing = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val registry = new InMemoryServiceRegistry(applicationContext, List.of(existing), List.of());
+        assertEquals(1, registry.size());
+        registry.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+        assertEquals(2, registry.size());
+        assertTrue(registry.delete(existing));
+        assertDoesNotThrow(registry::deleteAll);
+        assertEquals(0, registry.size());
+    }
+
+    @Test
+    void verifyChangedCopyOfServiceIsDeleted() {
+        val registry = getNewServiceRegistry();
+        val saved = registry.save(RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString()));
+        val copy = RegisteredServiceTestUtils.getRegisteredService(saved.getServiceId());
+        copy.setId(saved.getId());
+        copy.setDescription(UUID.randomUUID().toString());
+        assertTrue(registry.delete(copy));
+        assertNull(registry.findServiceById(saved.getId()));
     }
 }

@@ -45,6 +45,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Import(WSFederationValidateRequestCallbackControllerTests.WSFederationValidateRequestCallbackControllerTestConfiguration.class)
 class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+    private static final String RELYING_PARTY_TOKEN = "<saml:AttributeValue xmlns:saml=\"urn:oasis:names:tc:SAML:1.0:assertion\">"
+        + "R&amp;D &lt;Team&gt; &#xD;</saml:AttributeValue>";
+
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
@@ -146,6 +149,10 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         assertNotNull(mv.getViewName());
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
+        val parameters = (Map<?, ?>) mv.getModel().get("parameters");
+        assertNotNull(parameters);
+        assertEquals(RELYING_PARTY_TOKEN, parameters.get(WSFederationConstants.WRESULT));
+        assertEquals(serviceId, mv.getModel().get("originalUrl"));
     }
 
     private MvcResult performFederationRequest(final Map<String, String[]> parameters) throws Throwable {
@@ -181,7 +188,7 @@ class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecur
         @Bean
         public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);
-            when(producer.produce(any(), any(), any(), any(), any())).thenReturn(UUID.randomUUID().toString());
+            when(producer.produce(any(), any(), any(), any(), any())).thenReturn(RELYING_PARTY_TOKEN);
             return producer;
         }
 

@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^https://expired\\.sp\\.example\\.org$",
+  "name" : "Expired",
+  "id" : 5,
+  "evaluationOrder" : 5,
+  "metadataLocation" : "http://localhost:5615/metadata/expired.xml",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}

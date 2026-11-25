@@ -81,7 +81,11 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
             LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipients);
             return false;
         }
-        return recipients.stream().anyMatch(Unchecked.predicate(to -> smsSender.send(smsRequest.getFrom(), to, smsRequest.getText())));
+        val results = recipients
+            .stream()
+            .map(Unchecked.function(to -> smsSender.send(smsRequest.getFrom(), to, smsRequest.getText())))
+            .toList();
+        return results.contains(Boolean.TRUE);
     }
 
     @Override

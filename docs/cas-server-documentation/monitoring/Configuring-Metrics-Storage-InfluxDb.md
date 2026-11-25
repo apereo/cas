@@ -13,4 +13,4 @@ Export CAS metrics to an InfluxDB time-series database.
 By default, metrics are exported to Influx running on your local
 machine. The location of the Influx server to use can be provided using:
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.influx" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.influx.metrics.export" %}

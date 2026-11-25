@@ -96,18 +96,18 @@ public class AmazonCognitoAuthenticationAuthenticationHandler extends AbstractUs
         } catch (final NotAuthorizedException e) {
             val message = Objects.requireNonNull(e.getMessage());
             if (message.contains("expired")) {
-                throw new AccountExpiredException(message);
+                throw (AccountExpiredException) new AccountExpiredException(message).initCause(e);
             }
             if (message.contains("disabled")) {
-                throw new AccountDisabledException(message);
+                throw (AccountDisabledException) new AccountDisabledException(message).initCause(e);
             }
-            throw new FailedLoginException(e.getMessage());
+            throw (FailedLoginException) new FailedLoginException(e.getMessage()).initCause(e);
         } catch (final UserNotFoundException e) {
-            throw new AccountNotFoundException(e.getMessage());
+            throw (AccountNotFoundException) new AccountNotFoundException(e.getMessage()).initCause(e);
         } catch (final CredentialExpiredException | InvalidPasswordException e) {
-            throw new AccountPasswordMustChangeException(e.getMessage());
+            throw (AccountPasswordMustChangeException) new AccountPasswordMustChangeException(e.getMessage()).initCause(e);
         } catch (final Throwable e) {
-            throw new FailedLoginException(e.getMessage());
+            throw (FailedLoginException) new FailedLoginException(e.getMessage()).initCause(e);
         }
     }
 }

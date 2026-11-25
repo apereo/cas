@@ -17,7 +17,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -703,7 +702,7 @@ class CasOAuth20Configuration {
                 final CasConfigurationProperties casProperties) {
 
                 val cipherExecutorResolver = new DefaultCipherExecutorResolver(oauthDistributedSessionCookieCipherExecutor, tenantExtractor,
-                    OAuthProperties.class, bindingContext -> {
+                    "cas.authn.oauth.session-replication.cookie.crypto", bindingContext -> {
                     val properties = bindingContext.value();
                     val crypto = properties.getAuthn().getOauth().getSessionReplication().getCookie().getCrypto();
                     return crypto.isEnabled()
