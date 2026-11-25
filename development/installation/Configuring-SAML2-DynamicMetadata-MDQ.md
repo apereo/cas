@@ -1,0 +1,28 @@
+# Metadata Query Protocol - SAML2 Metadata Management
+
+Source: https://apereo.github.io/cas/development/installation/Configuring-SAML2-DynamicMetadata-MDQ.html
+
+CAS also supports the Metadata Query Protocol, also known as `MDQ`, which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata from a Metadata query server, the metadata location must be configured to point to the query server instance.
+
+MDQ may be configured using the below snippet as an example:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "evaluationOrder" : 10,
+  "metadataLocation" : "https://mdq.server.org/entities/{0}"
+}
+```
+
+…where `{0}` serves as an entityID placeholder for which metadata is to be queried. The placeholder is dynamically processed and replaced by CAS at runtime. Multiple locations may be comma-separated.
+
+CAS keeps a backup of the metadata of each entity it has queried, and queries the server again with a conditional request based on the `ETag` of the previous answer. When the server cannot answer, the backup of that entity is used.
+
+The following settings and properties are available from the CAS configuration catalog:
+
+- `cas.authn.saml-idp.metadata.mdq.basic-authn-password` (Optional; type `String`): Basic auth password in case the metadata instance is connecting to an MDQ server.
+- `cas.authn.saml-idp.metadata.mdq.basic-authn-username` (Optional; type `String`): Basic auth username in case the metadata instance is connecting to an MDQ server.
+- `cas.authn.saml-idp.metadata.mdq.supported-content-type` (Optional; type `String`; default `application/samlmetadata+xml`): The media type this instance asks an MDQ server for, sent as the `Accept` header. The SAML profile for the Metadata Query Protocol requires a conforming client to request `application/samlmetadata+xml`, which is the default. Override it only for a server that serves SAML metadata under a different media type.

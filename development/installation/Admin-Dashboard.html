@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    
+    
+    
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <meta name="description" content="Palantir, the CAS admin dashboard, for managing registered services, inspecting sessions and tickets and operating the server from the browser.">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#06304a">
+    <link rel="canonical" href="https://apereo.github.io/cas/development/installation/Admin-Dashboard.html">
+    
+    
+    
+    
+    <link rel="alternate" type="text/markdown" href="/cas/development/installation/Admin-Dashboard.md" title="This page as Markdown">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Apereo CAS Documentation">
+    <meta property="og:title" content="CAS - Admin Console">
+    <meta property="og:description" content="Palantir, the CAS admin dashboard, for managing registered services, inspecting sessions and tickets and operating the server from the browser.">
+    <meta property="og:url" content="https://apereo.github.io/cas/development/installation/Admin-Dashboard.html">
+    <meta property="og:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+    <meta property="og:image:alt" content="Apereo CAS">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="CAS - Admin Console">
+    <meta name="twitter:description" content="Palantir, the CAS admin dashboard, for managing registered services, inspecting sessions and tickets and operating the server from the browser.">
+    <meta name="twitter:image" content="https://apereo.github.io/cas/images/cas_logo.png">
+
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Admin Console",
+      "description": "Palantir, the CAS admin dashboard, for managing registered services, inspecting sessions and tickets and operating the server from the browser.",
+      "url": "https://apereo.github.io/cas/development/installation/Admin-Dashboard.html",
+      "inLanguage": "en",
+      "isPartOf": {"@type": "WebSite", "name": "Apereo CAS Documentation",
+                   "url": "https://apereo.github.io/cas/"},
+      "author": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"},
+      "publisher": {"@type": "Organization", "name": "Apereo Foundation", "url": "https://www.apereo.org/"}
+    }
+    </script>
+    
+
+    <script>
+        if (window.location.hostname === "apereo.github.io") {
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function () {
+                window.dataLayer.push(arguments);
+            };
+            window.gtag("js", new Date());
+            window.gtag("config", "G-W3M8JXP7GP");
+            const analytics = document.createElement("script");
+            analytics.async = true;
+            analytics.src = "https://www.googletagmanager.com/gtag/js?id=G-W3M8JXP7GP";
+            document.head.appendChild(analytics);
+        }
+    </script>
+
+    <script>
+        function readThemePreference() {
+            try {
+                return localStorage.getItem('cas-docs-theme') || 'system';
+            } catch (error) {
+                return 'system';
+            }
+        }
+
+        function systemTheme() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        }
+
+        function resolveTheme(preference) {
+            return preference === 'dark' || preference === 'light' ? preference : systemTheme();
+        }
+
+        function changeTheme(theme) {
+            if (theme !== 'dark' && theme !== 'light') {
+                return;
+            }
+
+            if (document.documentElement.getAttribute('data-bs-theme') !== theme) {
+                document.documentElement.setAttribute('data-bs-theme', theme);
+            }
+        }
+
+        (() => {
+            let preference = readThemePreference();
+            if (preference !== 'dark' && preference !== 'light') {
+                preference = 'system';
+
+            }
+
+            changeTheme(resolveTheme(preference));
+
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+                    if (readThemePreference() !== 'system') {
+                        return;
+                    }
+                    const theme = systemTheme();
+                    changeTheme(theme);
+                });
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" integrity="sha384-PPIZEGYM1v8zp5Py7UjFb79S58UeqCL9pYVnVPURKEqvioPROaVAJKKLzvH2rDnI" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3.9.0/dist/style.css" integrity="sha384-cHiDHRyv+KTDBfpMqc3t2SeQYjfK05cReQA49eigiKoBzOMi9WIFsBsNfetC5n2a" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha384-9623XJODy0qDAl6X6Y9xTBSzYUxM0ixdjO8zqJQeGzDP2Uwo1PqAOq6gXkk2ul99" crossorigin="anonymous" />
+    
+    
+    <link rel="stylesheet" type="text/css" media="screen" href='/cas/stylesheets/site.css'>
+    <link rel="stylesheet" type="text/css" media="print" href='/cas/stylesheets/site-print.css'>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..500&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" integrity="sha384-yT2pwyD9a3Oee/HtjWTccnRmchDWH2EDHjzH7gwf8yAK0RilKFL164FCHX9fzlxh" crossorigin="anonymous">
+
+    <title>CAS - Admin Console · Apereo CAS Documentation</title>
+
+</head>
+
+<body class="" data-docs-base="/cas" data-docs-version="development" data-docs-build="20261125033529">
+    <a class="skip-link" href="#cas-docs-container">Skip to content</a>
+    <header class="site-header">
+        <div class="masthead">
+            <a class="cas-brand" href="../../index.html" aria-label="Apereo CAS home">
+                <img class="brand-logo" src="/cas/images/cas_logo.png" width="119" height="60" alt="CAS">
+                <span class="brand-caption">APEREO CAS<span>Documentation</span></span>
+            </a>
+            <div class="brand-mission">
+                <p>Enterprise Authentication <span class="brand-mission-accent">for All Earthlings and Beyond</span></p>
+                <span>Identity, Single Sign-On and Access Management</span>
+            </div>
+            <a id="forkme_banner" aria-label="View CAS on GitHub" href="https://github.com/apereo/cas"><i class="fab fa-github" aria-hidden="true"></i><span>View on GitHub</span><span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="navigation-bar">
+            
+            <button onclick="navigateSidebar()" id="sidebarNavButton" class="icon-button" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Toggle documentation navigation" title="Toggle documentation navigation">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+            </button>
+            
+            <nav class="primary-navigation" aria-label="Main navigation">
+                <a href="../../index.html">Home</a>
+                <a href="https://github.com/apereo/cas/releases">Releases</a>
+                <a href="../../Support.html">Support</a>
+                <a href="../../Mailing-Lists.html">Mailing Lists</a>
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" id="cas-versions" data-bs-toggle="dropdown" aria-expanded="false">Versions</button>
+                    <div class="dropdown-menu" aria-labelledby="cas-versions">
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/development/installation/Admin-Dashboard.html" data-version-home="/cas/development/">Development</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/8.0.x/installation/Admin-Dashboard.html" data-version-home="/cas/8.0.x/">v8.0.x</a>
+                        
+                        
+                        
+                        
+                        <a class="dropdown-item cas-version-link" href="/cas/7.3.x/installation/Admin-Dashboard.html" data-version-home="/cas/7.3.x/">v7.3.x</a>
+                        
+                    </div>
+                </div>
+                <a href="https://apereo.github.io" target="_blank" rel="noopener">Blog <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+            </nav>
+            <div class="navigation-tools">
+                <div id="searchField"></div>
+                <button id="settingsSearchButton" class="icon-button" type="button" aria-label="Search configuration settings (press Shift twice)" title="Search configuration settings (Shift Shift)"><i class="fa fa-sliders" aria-hidden="true"></i></button>
+                <button id="themeToggle" class="icon-button" type="button" onclick="toggleDarkMode()" aria-label="Toggle color theme" title="Toggle color theme"><i class="fa fa-circle-half-stroke" aria-hidden="true"></i></button>
+            </div>
+        </div>
+        <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+    </header>
+
+    <div class="docs-shell">
+        
+        <aside id="sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+    <div class="sidebar-heading">
+<span class="eyebrow">APEREO CAS DOCUMENTATION</span><span class="sidebar-symbol" aria-hidden="true">✳</span>
+</div>
+    <nav id="sidebar-navigation" aria-label="Documentation topics"></nav>
+    <noscript><p>Browse the <a href="/cas/development/sidebar.html">documentation index</a>.</p></noscript>
+</aside>
+
+        
+        <main class="cas-docs-content">
+            
+            <div class="page-toolbar">
+                <nav id="docsNavBar" aria-label="Breadcrumb"></nav>
+                <div id="toolbarIcons" role="group" aria-label="Page tools"></div>
+            </div>
+            
+            
+            <aside id="dev-doc-info" aria-labelledby="dev-doc-title">
+                <span class="development-marker" aria-hidden="true"></span>
+                <div>
+                    <p id="dev-doc-title">WORKERS AHEAD!</p>
+                    <p class="dev-doc-summary">Development documentation for features that are
+                        <a href="https://github.com/apereo/cas/milestones">not released yet</a>.</p>
+                    <p class="dev-doc-details">You are viewing the <strong>development</strong> documentation for the Apereo CAS server. <strong>The
+                        functionality presented here <a href="https://github.com/apereo/cas/milestones">is not officially released yet</a></strong>.
+                        This is a work in progress and will be continually updated as development moves forward.
+                        <strong>You are most encouraged to test the changes presented.</strong>
+                    </p>
+                </div>
+            </aside>
+            
+            <article id="cas-docs-container" tabindex="-1">
+                
+<h1 id="admin-console--dashboard">Admin Console &amp; Dashboard</h1>
+
+<p>CAS provides a number of facilities and dashboard that can be used to administer and manage the CAS server deployment.
+Such options usually are not mutually exclusive and are designed to work together and present various aspects
+of the CAS configuration and build that might include application registrations, configuration properties, etc.</p>
+
+<ul id="casadminoptions" class="tab" data-tab="d423f93e-8610-485d-8fd8-d718eceb5e38" data-name="casadminoptions">
+  
+      <li class="active" id="casadminoptions-palantir">
+          <a href="#">Palantir </a>
+      </li>
+  
+      <li id="casadminoptions-spring-boot-admin">
+          <a href="#">Spring Boot Admin </a>
+      </li>
+  
+</ul>
+<ul class="tab-content" id="d423f93e-8610-485d-8fd8-d718eceb5e38" data-name="casadminoptions">
+  
+      <li class="active">
+<p>Palantir is the next generation of the <a href="https://github.com/apereo/cas-management">CAS Management</a> tool. It is now part of the 
+CAS codebase in an attempt to both streamline the development and release processes and to ensure the tool
+remains consistent and up to date. Its intention is to act as the overall admin management tool and console for the CAS server,
+and presents a user interface to allow one to add and modify application registrations, observe CAS server status, 
+state of single sign-on sessions, access strategy and authorization, protocol payload simulations and a lot more.</p>
+
+<p>Support is enabled by adding the following module into the overlay:</p>
+
+<div style="display: block">
+
+    <div class="cas-module-controls nav-pills">
+        <ul class="nav cas-modules" role="tablist" aria-label="Dependency format">
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="mavenorgapereocascasserversupportpalantir-tab" data-bs-toggle="tab" href="#mavenorgapereocascasserversupportpalantir" role="tab" aria-controls="mavenorgapereocascasserversupportpalantir" aria-selected="false">Apache Maven</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link" id="gradleorgapereocascasserversupportpalantir-tab" data-bs-toggle="tab" href="#gradleorgapereocascasserversupportpalantir" role="tab" aria-controls="gradleorgapereocascasserversupportpalantir" aria-selected="false">Gradle</a></li>
+<li class="nav-item cas-module" role="presentation"><a class="nav-link" id="bomorgapereocascasserversupportpalantir-tab" data-bs-toggle="tab" href="#bomorgapereocascasserversupportpalantir" role="tab" aria-controls="bomorgapereocascasserversupportpalantir" aria-selected="false">BOM - Spring</a></li>
+            <li class="nav-item cas-module" role="presentation"><a class="nav-link active" id="bomGradleorgapereocascasserversupportpalantir-tab" data-bs-toggle="tab" href="#bomGradleorgapereocascasserversupportpalantir" role="tab" aria-controls="bomGradleorgapereocascasserversupportpalantir" aria-selected="true">BOM - Gradle</a></li>
+</ul>
+        <div class="dropdown cas-module">
+            <button class="nav-link dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-expanded="false">Resources<span class="caret"></span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="https://getcas.apereo.org?dependencies=webapp-tomcat,support-palantir" target="_blank" rel="noopener">Show in CAS Initializr <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a>
+                <a class="dropdown-item" href="javascript:generateOverlay('cas-server-support-palantir',%20'cas-overlay');">Generate CAS Server WAR Overlay</a>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="cas-module-tabs tab-content clearfix">
+        <div class="tab-pane fade" id="mavenorgapereocascasserversupportpalantir" role="tabpanel" aria-labelledby="mavenorgapereocascasserversupportpalantir-tab">
+<span>
+      <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td>
+<td class="rouge-code"><pre><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apereo.cas<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>cas-server-support-palantir<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${cas.version}<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+    </span>
+
+        </div>
+
+
+        <div class="tab-pane fade" id="gradleorgapereocascasserversupportpalantir" role="tabpanel" aria-labelledby="gradleorgapereocascasserversupportpalantir-tab">
+
+            <span>
+    
+<div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-palantir:${project.'cas.version'}"</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade" id="bomorgapereocascasserversupportpalantir" role="tabpanel" aria-labelledby="bomorgapereocascasserversupportpalantir-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencyManagement</span> <span class="o">{</span>
+    <span class="n">imports</span> <span class="o">{</span>
+        <span class="n">mavenBom</span> <span class="s2">"org.apereo.cas:cas-server-support-bom:${project.'cas.version'}"</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-palantir"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+        <div class="tab-pane fade show active" id="bomGradleorgapereocascasserversupportpalantir" role="tabpanel" aria-labelledby="bomGradleorgapereocascasserversupportpalantir-tab">
+<span>
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td>
+<td class="rouge-code"><pre><span class="n">dependencies</span> <span class="o">{</span>
+    <span class="cm">/*
+        The following platform references are included automatically and are listed for reference only.
+
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        
+    */</span>
+    <span class="n">implementation</span> <span class="s2">"org.apereo.cas:cas-server-support-palantir"</span>
+<span class="o">}</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+  </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<p>Accessing the Palantir dashboard will by default require a form-based user authentication. The credentials
+used to access this feature are those presented by Spring Security configuration:</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.name" data-default="user">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.name</code><span class="cas-property-summary">Default user name.</span>
+</div>
+        <div class="cas-property-default" title="user"><code>user</code></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><code>user</code></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.password" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.password</code><span class="cas-property-summary">Password for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Password for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="thirdparty" data-name="spring.security.user.roles" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">spring.security.user.roles</code><span class="cas-property-summary">Granted roles for the default user name.</span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-thirdparty"><i class="fa fa-cubes" aria-hidden="true"></i>Third party</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"><p>Granted roles for the default user name.</p></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>List&lt;String&gt;</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.springframework.boot.security.autoconfigure.SecurityProperties$User">SecurityProperties$User</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p>You need to make sure the authenticated user is assigned a <code class="language-plaintext highlighter-rouge">ROLE_ADMIN</code> role/authority to be able to access critical functionality.</p>
+
+<p>Palantir also supports routing authentication requests to the CAS server itself. This feature is 
+disabled by default and needs to be explicitly enabled.</p>
+
+<!-- fragment:keep -->
+
+<p><strong>Feature Activation</strong></p>
+
+<p>To activate this feature, the following feature toggle(s) must be turned on:</p>
+
+<div class="language-properties highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr>
+<td class="rouge-gutter gl"><pre class="lineno">1
+</pre></td>
+<td class="rouge-code"><pre><span class="py">CasFeatureModule.Palantir.cas-authentication.enabled</span><span class="p">=</span><span class="s">true</span>
+</pre></td>
+</tr></tbody></table></code></pre></div></div>
+
+<p>To learn more about configuration feature toggles,
+please <a href="/cas/development/configuration/Configuration-Feature-Toggles.html">see this page</a>.</p>
+
+<p>Once enabled, you may create an application registration entry for Palantir and assign a specific access strategy
+to it to only allow access to authorized users, or you may instruct Palantir to reject authentication attempts
+that do not pass the access requirement rules.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="required" data-name="cas.palantir.cas-authentication.required-attribute-name" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.palantir.cas-authentication.required-attribute-name</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"><span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.admin.PalantirProperties.PalantirCasProperties">PalantirCasProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+<div class="cas-property" data-kind="required" data-name="cas.palantir.cas-authentication.required-attribute-value" data-default="" data-regex="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.palantir.cas-authentication.required-attribute-value</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags">
+<span class="cas-property-tag cas-property-tag-required"><i class="fa fa-asterisk" aria-hidden="true"></i>Required</span><span class="cas-property-tag"><i class="fa fa-asterisk" aria-hidden="true"></i>Regex</span>
+</div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+<dt>Defined by</dt>
+<dd><code title="org.apereo.cas.configuration.model.support.admin.PalantirProperties.PalantirCasProperties">PalantirCasProperties</code></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p>By default, authenticated users are assigned a <code class="language-plaintext highlighter-rouge">ROLE_USER</code> role/authority. To access critical functionality as an admin,
+you will need to resolve and release a <code class="language-plaintext highlighter-rouge">role</code> attribute to Palantir with a value of <code class="language-plaintext highlighter-rouge">ADMIN</code> or <code class="language-plaintext highlighter-rouge">ROLE_ADMIN</code></p>
+
+<p>Furthermore, note that Palantir requires a number of actuator endpoints, such as <code class="language-plaintext highlighter-rouge">info</code>, <code class="language-plaintext highlighter-rouge">env</code>, etc that are 
+provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You
+will need to make sure these endpoints are enabled and exposed for your CAS deployment. There are startup checks in 
+place to ensure required actuator endpoints are present and configured. For best results, you may want to enable
+and expose all actuator endpoints and certainly require authentication access for each endpoint.</p>
+
+<p>Once enabled, Palantir is available at <code class="language-plaintext highlighter-rouge">/cas/palantir</code>.</p>
+
+<p>Palantir follows the light or dark appearance of the operating system. The theme button in its navigation
+bar switches between light and dark, and the settings dialog can return Palantir to the operating system’s choice;
+the choice is remembered by the browser. <em>Reset preferences</em>, in the settings dialog, removes everything Palantir keeps
+in the browser, such as the theme, views, filters, editor options and drafts of unsaved edits, and reloads Palantir
+with its defaults; the sign-in session is kept. The pages that refresh on their own, such as events, logs and metrics,
+refresh only while they are shown and the browser tab is in view, one request at a time, as often as the settings
+dialog says; changing how often applies at once, without reloading.</p>
+
+<p>Palantir opens on <em>Home</em> (<kbd>g</kbd>), a page of widgets: the server and its health, the health checks charted as on
+the system page, heap and processor use, HTTP requests (a minute, average and slowest time, errors), the URLs that
+answer slowest on average, leaving out Palantir’s own, actuator and static requests, runtime metrics
+(garbage collection pauses, errors logged, system load), single sign-on sessions, applications by type, leaving out
+the services CAS registers for itself, and the latest changes to applications with who made them. With
+<a href="../services/Configuring-Service-Version-History.html">service change history</a> installed, the changes of every CAS
+server are listed from that shared history; without it, those of the server Palantir runs on since it started. A widget’s title opens the page it summarizes. Widgets can
+be dragged to another place, moved with their arrow buttons or hidden; <em>Customize</em> brings hidden widgets back or resets
+the page, and the browser remembers the order and the hidden widgets. <em>Spotlight</em> in a widget’s header puts the other
+widgets away and lets that widget fill the page, magnified, text and charts alike; leaving the spotlight, with the same button or <kbd>Esc</kbd>, brings
+the page back as it was. The page is drawn from one summary that the server
+puts together and keeps for a few seconds per part, so it costs one request per refresh, and only the parts the shown
+widgets need are put together: hiding a widget that is slow to fill takes its work off the server for that person, and
+the server widget then says only that CAS is running when the health widget is hidden;
+a widget whose data comes from an actuator endpoint that is not exposed is left out. The health checks are named only
+to administrators and to those the health endpoint itself shows its components to; others see the overall health only.
+Reloading Palantir stays on the page that was showing.</p>
+
+<p>Changes Palantir makes, to the actuator endpoints and to Palantir itself, rely on the browser’s session and so carry a
+CSRF token, which Palantir sends on its own; a change made with the session but without the token is refused. Scripts
+and other clients that authenticate each request themselves, such as with basic authentication or a bearer token, are
+not asked for a token.</p>
+
+<p>Every page has a link, such as <code class="language-plaintext highlighter-rouge">/palantir/dashboard#system</code>, and so do applications and users:
+<code class="language-plaintext highlighter-rouge">#applications/42</code> opens <em>Applications</em> with application 42 selected, and <code class="language-plaintext highlighter-rouge">#users/casuser</code> looks that user up. The
+link of the page shown is in the address bar, so it can be copied and pasted into a ticket, and the browser’s <em>Back</em>
+and <em>Forward</em> move between the pages shown. An application’s menu offers <em>Copy Link</em>.</p>
+
+<p>The search button in the navigation bar, also opened with <code class="language-plaintext highlighter-rouge">Ctrl+K</code> (<code class="language-plaintext highlighter-rouge">⌘K</code> on macOS) or <code class="language-plaintext highlighter-rouge">/</code>, finds any page or
+section of Palantir, including the sections inside a section such as the key rotation of OpenID Connect, a registered application by its name, identifier or service id, and common actions such as
+creating an application, switching the theme, opening the settings or signing out. Arrow keys move through the matches and
+<code class="language-plaintext highlighter-rouge">Enter</code> opens one. Typing a username also offers to look that user up. It opens with the last search, selected so typing
+replaces it, and with the match chosen last marked, so <code class="language-plaintext highlighter-rouge">Enter</code> opens it again; this is remembered in the browser.</p>
+
+<p>The <em>Users</em> page gathers what CAS holds about one user: single sign-on sessions, registered multifactor devices,
+trusted devices, attribute consent decisions, resolved attributes, accounts the user may impersonate, the passwordless
+account, password history, throttled login attempts, the interrupt the user would see at login and recent audit events, over the last day, week or month. Each source that has something
+recorded for the user gets a card, which expands to show its records and its usual actions, such as ending a session,
+removing a device or revoking a consent decision; the first card starts expanded. A source is only consulted when the
+actuator endpoint behind it is enabled and exposed, and the page itself is hidden when none of them is. OAuth and
+OpenID Connect tokens load with the other cards: the ticket registry is asked for that user’s tokens only, which
+registries backed by a database or a cache look up by user. The attribute release preview picks its application the way the access check does:
+typing a name, service id, client id or id suggests the matching applications.</p>
+
+<p><kbd>Shift</kbd>+<kbd>Z</kbd> turns zen mode on and off: the CAS header, the navigation bar and the footer are put away so
+the page has the whole window, while the keyboard shortcuts and the search keep working. The browser remembers the
+choice, and a small button at the top right leaves zen mode.</p>
+
+<p>The <em>Throttles</em> page lists every throttled login attempt, or only those of one username, matched regardless of case.
+The <em>Consent</em> page and the audit events likewise show the consent decisions or the audit records of one username.</p>
+
+<p>The multifactor section lists the <a href="../mfa/Configuring-Multifactor-Authentication.html">multifactor authentication providers</a>
+CAS registers by rank, each with how it is doing: for Duo Security, whether Duo answers and how quickly, from the Duo
+ping endpoint, and for providers that keep registrations, how many users registered. The selected provider shows its
+rank, failure mode, registered users, bypass rules and how many of its settings differ from their defaults, and its
+settings grouped as identity and ranking, behavior, bypass, storage and security. Each setting appears once, with the
+value that takes effect and the property source it comes from, its description and whether it keeps its default;
+secrets stay hidden. A setting can be looked up in the configuration metadata or overridden when the configuration
+can be changed at runtime, and settings left at their default can be shown as well. A filter narrows the providers
+and their settings. A Duo Security provider also looks a user up in Duo: how Duo treats their next sign-in, and, with the Duo
+Admin API, their name, email address, account status, enrollment, last login, devices, groups and bypass codes.
+From there, new bypass codes can be created and shown once, and the account’s status, name and email address changed.</p>
+
+<p>Under <em>Multifactor Credential Repositories</em>, the multifactor section has a card for each repository of registered
+<a href="../mfa/GoogleAuthenticator-Authentication.html">Google Authenticator</a> accounts,
+<a href="../mfa/FIDO2-WebAuthn-Authentication-Registration.html">WebAuthn</a> devices and
+<a href="../mfa/YubiKey-Authentication.html">YubiKey</a> accounts whose actuator endpoint is enabled, with how many records it
+holds and for how many users. <em>Export</em> downloads every record as a zip, <em>Import</em> takes such a zip or a single JSON
+record, so records can move from one server or repository to another, and <em>Delete All</em> removes every record after a
+confirmation. Removing one user’s devices is done from the <em>Users</em> page or the devices section.</p>
+
+<p><em>System Metrics</em> opens on a board of pinned metrics, each with its current value in its own unit, a trend while the
+page is open and a warning when usage passes three quarters or nine tenths; the pins are kept in the browser. The
+explorer lists every metric by family, filterable by name, and shows the selected one’s statistics, with the average
+where it has a count and a total, a live trend, and a breakdown by any of its tags; clicking a bar narrows the metric
+to that tag value, and the metric can be pinned to the board as narrowed.</p>
+
+<p>When the history of application definitions is recorded, the change history of an application lists its versions,
+latest first with who changed each one, and shows the selected version side by side with the current definition or with the version before it,
+highlighting the lines and words that differ. <em>Restore this version</em> makes the selected version the current definition
+again, after a confirmation.</p>
+
+<p>The authentication section lists, under <em>Interrupts</em>, which <a href="../webflow/Webflow-Customization-Interrupt.html">interrupt</a>
+a user would see at login, optionally signing in to a given application: the message, links and data of the interrupt,
+whether it blocks the login, and what each interrupt source answered.
+Under <em>Impersonation</em>, it shows the accounts a user may <a href="../authentication/Surrogate-Authentication.html">impersonate</a>
+as cards, or says that the user may impersonate any account or none. When attribute resolution is available, each card
+can fetch the attributes of its account, which opens attribute resolution with that account filled in.</p>
+
+<p>Writing a new application definition by hand starts from a template: CAS ships templates for the protocols the
+deployment supports, such as releasing selected attributes, requiring multifactor authentication, persistent SAML2
+NameIDs, public OpenID Connect clients with PKCE or pairwise subject identifiers, which can be filtered by protocol and
+searched, or the definition can start blank, be pasted or be read from a file. The editor then checks the JSON as it is
+typed, marks the line of a problem CAS reports when validating or saving, and can switch to the wizard, listing any
+setting the wizard does not cover with a way back. Templates of your own can be offered by placing application
+definitions as JSON files in a folder; the dashboard reads them again whenever a file in the folder is added, removed
+or changed, so a new or edited template is offered the next time the dashboard is shown.</p>
+
+<!-- fragment:keep -->
+
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+
+
+<div class="cas-properties">
+    <div class="cas-properties-list">
+<div class="cas-property" data-kind="optional" data-name="cas.palantir.templates-directory" data-default="">
+    <div class="cas-property-head">
+        <div class="cas-property-key">
+<code class="cas-property-name">cas.palantir.templates-directory</code><span class="cas-property-summary"></span>
+</div>
+        <div class="cas-property-default"><span>no default</span></div>
+        <div class="cas-property-tags"></div>
+    </div>
+    <div class="cas-property-detail">
+        <div class="cas-property-info">
+            <div class="cas-property-description"></div>
+            <dl class="cas-property-meta">
+<dt>Type</dt>
+<dd><code>String</code></dd>
+<dt>Default</dt>
+<dd><em>none</em></dd>
+</dl>
+        </div>
+    </div>
+</div>
+</div>
+<p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+<div class="cas-properties-topics"><details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+<!-- fragment:keep -->
+
+<p></p>
+
+<p><strong>Configuration Metadata</strong></p>
+
+<p>The collection of configuration properties listed in this section are automatically generated from the CAS source and components that contain the actual field
+definitions, types, descriptions, modules, etc. This metadata may not always be 100% accurate, or could be lacking details and sufficient explanations.</p>
+
+<p><strong>Be Selective</strong></p>
+
+<p>This section is meant as a guide only. Do NOT copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you
+need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as reference. All these
+ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p>
+
+<p><strong>YAGNI</strong></p>
+
+<p>Note that for nearly ALL use cases, declaring and configuring properties listed here is sufficient. You should NOT have to explicitly massage a CAS XML/Java/etc
+configuration file to design an authentication handler, create attribute release policies, etc. CAS at runtime will auto-configure all required changes for you.
+If you are unsure about the meaning of a given CAS setting, do NOT turn it on without hesitation. Review the codebase or better yet, ask questions to clarify
+the intended behavior.</p>
+
+<p><strong>Naming Convention</strong></p>
+
+<p>Property names can be specified in very relaxed terms. For instance <code class="language-plaintext highlighter-rouge">cas.someProperty</code>, <code class="language-plaintext highlighter-rouge">cas.some-property</code>, <code class="language-plaintext highlighter-rouge">cas.some_property</code> are all valid names. While all
+forms are accepted by CAS, there are certain components (in CAS and other frameworks used) whose activation at runtime is conditional on a property value, where
+this property is required to have been specified in CAS configuration using kebab case. This is both true for properties that are owned by CAS as well as those
+that might be presented to the system via an external library or framework such as Spring Boot, etc.</p>
+
+<div class="alert alert-info">
+<img class="emoji" title=":information_source:" alt=":information_source:" src="https://github.githubassets.com/images/icons/emoji/unicode/2139.png" height="20" width="20"> <strong>Note</strong> <p>
+When possible, properties should be stored in lower-case kebab format, such as <code>cas.property-name=value</code>.
+The only possible exception to this rule is when naming actuator endpoints; The name of the
+actuator endpoints (i.e. <code>ssoSessions</code>) <strong>MUST</strong> remain in camelCase mode. 
+</p>
+</div>
+
+<p>Settings and properties that are controlled by the CAS platform directly always begin with the prefix <code class="language-plaintext highlighter-rouge">cas</code>. All other settings are controlled and provided
+to CAS via other underlying frameworks and may have their own schemas and syntax. BE CAREFUL with
+the distinction. Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition
+or fail to adhere to the dot-notation syntax and such, your setting is entirely refused by CAS and likely the feature it controls will never be activated in the
+way you intend.</p>
+
+<p><strong>Validation</strong></p>
+
+<p>Configuration properties are automatically validated on CAS startup to report issues with configuration binding, especially if defined CAS settings cannot be
+recognized or validated by the configuration schema. Additional validation processes are also handled
+via <a href="/cas/development/configuration/Configuration-Metadata-Repository.html">Configuration Metadata</a> and property migrations applied automatically on
+startup by Spring Boot and family.</p>
+
+<p><strong>Indexed Settings</strong></p>
+
+<p>CAS settings able to accept multiple values are typically documented with an index, such as <code class="language-plaintext highlighter-rouge">cas.some.setting[0]=value</code>. The index <code class="language-plaintext highlighter-rouge">[0]</code> is meant to be
+incremented by the adopter to allow for distinct multiple configuration blocks.</p>
+
+            </div>
+        </details></div>
+</div>
+
+<p><em>Import</em> accepts an application definition in JSON or YAML, or a zip of JSON definitions such as the one <em>Export</em>
+produces; an imported application replaces one with the same id. Several JSON or several YAML definitions can be
+chosen at once and are imported one after another, naming any that could not be imported; an archive is imported on
+its own, and the dashboard says how many of its definitions were imported and how many could not be read. An import
+stops once CAS no longer accepts it, such as after the session expired, and says which files were left. While the file uploads and CAS imports it, the dashboard shows the progress of the upload and that the server
+is busy.</p>
+
+<p>Before changes to an existing application are saved, the application is read again. When someone else saved or
+deleted it after the edit started, also when the edit was kept as a draft and resumed later, the dashboard shows what
+they changed and asks whether to keep editing or to save anyway.</p>
+
+<p>An endpoint whose access level is read-only only answers reads, so the dashboard disables what would change something
+through it, such as saving an application, ending a session or changing a logger, and explains why.</p>
+
+<p>The wizard asks for what an application answers, such as its service id, redirect URI or entity id, in the section of
+its protocol, next to the protocol’s other settings.
+Among its advanced sections, the wizard sets an application’s delegated authentication policy, when its access
+strategy checks the required and rejected attributes, and which users an interrupt notification applies to; its
+consent policy can leave attributes and services out of consent. Access can be decided by Cerbos, Permit.io or
+Amazon Verified Permissions, or, for surrogate sessions, by the surrogate’s attributes or a Groovy script; OpenID
+Connect claims can be released per scope, for a custom scope or regardless of scope, with claims mapped to attributes;
+SAML2 service providers can be given the attributes released to attribute queries or those mapped from entity
+attributes. The wizard also matches services by the start of their URL, keeps applications out of single sign-on
+altogether, sets the salt and source attribute of anonymous and pairwise identifiers, and sets how OpenID Connect relying parties
+sign backchannel authentication requests and whether those requests may carry a user code.</p>
+
+<p>Settings CAS can chain have a switch above their type that makes them a chain: the access strategy, its activation
+criteria and delegated authentication policy, the attribute release policy, its activation criteria, value filters and
+consent policy, and the single sign-on participation policy. A chain shows how it decides, such as whether every
+strategy must allow access or any one may, or how released attributes are merged, and a tab per member; the
+section’s fields edit the member whose tab is chosen, and members can be added, moved and removed. A member the wizard
+has no fields for, such as a chain inside the chain, is kept as it is and edited as JSON. Where to send a user the
+chained access strategies refuse belongs to the chain itself, so it stays with the chain when members change and moves
+to the one strategy left when the chain is turned off.</p>
+
+<p>Fields of the wizard whose values come from a standard or from the server suggest them as they are typed, each with a
+short description, while still taking any value: SAML2 metadata locations (a URL, a metadata query server, a file or
+a Groovy script, and the prefix of each metadata manager the server has, such as MongoDB,
+a relational database, Redis, DynamoDB or Amazon S3), SAML2 NameID formats, authentication context classes, bindings,
+XML signature, digest and encryption algorithms, entity attributes and their values, such as entity categories, OpenID Connect signing and encryption
+algorithms, client authentication methods, subject types and the default issuer, OAuth token types and the client ids
+of other applications as audiences, the WS-Federation protocol, token types, namespaces and default realm, CAS ticket
+lifetimes and uses, durations, time units, HTTP methods and header names, locales and time zones, and the attributes,
+authentication handlers and multifactor providers of the server. Fields that hold a list are completed one entry at a time.</p>
+
+<p>When adding a SAML2 service provider, <em>From Metadata</em> fills the wizard from the provider’s metadata: from a URL,
+which CAS reads on the dashboard’s behalf without registering, caching or storing it, or from metadata XML pasted or
+chosen as a file. When the metadata is an aggregate, the dashboard asks which service provider to use. The entity id,
+name, description, information and privacy URLs, logo, metadata location, a single declared NameID format, assertion
+signing, an attribute release policy for a research and scholarship category or for the attributes the provider
+requests, and its contacts are filled in for review before saving.</p>
+
+<p>A SAML2 application asks for its metadata location before its entity id. When the metadata location is a metadata
+store, such as MongoDB or Amazon S3, or a metadata query (MDQ) server, and the application has no entity id yet, the
+wizard asks whether the application should accept every service provider of that source. Accepting sets the entity id
+to <code class="language-plaintext highlighter-rouge">.+</code>: CAS then trusts every service provider whose metadata it finds there, none of them needs an application of its
+own, and the application’s policies apply to all of them. Otherwise the entity id, or a pattern of entity ids, is
+entered as usual.</p>
+
+<p>When SAML2 service provider metadata management is available, <em>Upload Metadata</em> beside the metadata location stores
+the provider’s metadata with a metadata manager and points the application at it, and <em>Manage Metadata</em> closes the
+wizard, asking first when it holds unsaved changes, and shows the entries of the application’s metadata manager under
+<em>Protocols</em>. Choosing the metadata file to upload suggests a name for it from the metadata: the service provider’s
+display name, else its organization’s display name or name, else the host of its entity id or the last part of an
+entity id that is a URN; an aggregate is named after the name it gives itself. A name already typed is kept. After the
+upload, an application with no name yet takes the name of its service provider the same way.</p>
+
+<p>The applications chart and the authentication flow diagrams can be magnified to fill the window, with their
+magnify button or a click on them; a magnified diagram can be zoomed and moved.</p>
+
+<p>The feature catalog lists the CAS features present in the deployment and their modules. When dynamic configuration
+sources are available, the menu of a feature or module turns it off or on by storing its feature flag in the
+configuration source the operator chooses; CAS decides which features run when it starts, so the catalog marks what
+changes after a restart, and a feature turned off stays listed so it can be turned on again.</p>
+
+<p>The dynamic configuration sources, whose properties can be changed at runtime, list their properties with a menu
+to view, update or delete a value. When <a href="../configuration/Configuration-Properties-Security-CAS.html">configuration security</a>
+is set up, the menu also encrypts a plain value or decrypts an encrypted one, stores the result in the same source and
+offers to refresh CAS so that the change takes effect.</p>
+
+<p>A SAML2 application whose metadata comes from a web address links to it; one whose metadata is held by a metadata
+manager, such as MongoDB, a relational database or Git, is tagged with that source and links to the service provider
+metadata management under protocols with that manager selected, and a file or classpath location is tagged as such.</p>
+
+<p><em>Check Metadata Health</em>, in the menu of a SAML2 application, reports on the provider’s metadata: whether CAS can
+download it from its location, on the dashboard’s behalf, and finds the service provider in it, whether CAS resolves
+it the way it does at login, with its signature and validity checks, and when the metadata and the certificates the
+provider publishes expire, warning a month ahead. The metadata that was read is shown. Nothing is registered, stored
+or removed from the metadata cache.</p>
+
+<p><em>Rotate Client Secrets</em>, in the menu of an OAuth or OpenID Connect application, replaces every client secret, or only
+the expired ones, with new random secrets that expire after the chosen duration, and shows the new secrets once so they
+can be handed to the application. A public client, without secrets, has nothing to rotate.</p>
+
+<p>An application can be disabled from its context menu, and enabled again, after confirming; disabled applications are
+marked in the table and the cards. An access strategy that has no switch of its own is combined with a disabled
+default strategy while the application is disabled, and left as it was once it is enabled again. Applications can be
+selected by clicking their card or row, and clicked again to deselect them, with Shift to select a range, or all of
+those the search and type filter show at once, and the selection exported,
+as a zip of their definitions that <em>Import</em> accepts, disabled or enabled together (those already in that state are
+left alone), or deleted together; <em>Delete All</em> removes every application from the service registry after the operator confirms. Once an action
+succeeds for every selected application, the selection is cleared; if it fails for any of them, the selection is kept
+so the action can be tried again.</p>
+
+<p><em>Access Check</em>, under the access pages, tells whether a user may access an application and why, the way CAS decides
+at sign-in. The application field takes a service URL, a client id or an entity id, and suggests registered
+applications by name or identifier; under the field, the application CAS resolves the value to is shown, matched in
+evaluation order, with a warning when another application is matched before the one picked. When a value is both the
+entity id of a service provider and a URL a CAS application answers, the dashboard asks which of them to check; an
+application picked from the list is checked with the parameter of its own protocol. The applications’ menu
+offers <em>Check Access</em> to open the check for an application. The password is checked only on request. The answer shows a verdict with its reason, the steps CAS
+went through as a row of passed and failed steps (whether the application is enabled and has not expired, whether the
+user signed in, and the access strategy’s activation and required and rejected attributes, or the answer of a strategy
+that decides by other means), each required or rejected attribute with the values it names next to the user’s values,
+the user’s attributes and the application’s definition, with links to open the application or edit its access
+strategy. The last checks are kept in the browser, without passwords.</p>
+
+<p><em>Duplicate Application</em> opens a copy of an application in the wizard as a new application, named after the original,
+with its service id left empty and, where the application has them, a new client id and secret. When the wizard or the
+definition editor holds changes that are not saved, closing it asks whether to keep editing, keep a draft and close, or
+discard the changes. Drafts are kept by the browser, never on the server, while changes stay unsaved, so a reload or a closed
+tab loses nothing; reopening the application, or a new application of the same type, offers to resume the draft.
+Secrets are left out of drafts and put back from the saved application when a draft resumes; a chained policy that was
+moved or removed in the draft gets back its own secret, or none when it can no longer be told apart from the others. A draft
+is dropped once it is thirty days old.</p>
+
+<p>Switching to a page or to a tab inside it puts the cursor in its first field, such as the username of a lookup, so
+typing can start at once. <code class="language-plaintext highlighter-rouge">Esc</code> leaves the field again, and the single-key shortcuts work as before.
+Pressing <code class="language-plaintext highlighter-rouge">?</code> outside a text field, or choosing <em>Keyboard shortcuts</em> in the search palette, lists every keyboard shortcut.
+Rows with actions in Palantir’s tables can be reached with the keyboard: <code class="language-plaintext highlighter-rouge">Enter</code> chooses the focused row and <code class="language-plaintext highlighter-rouge">Shift+F10</code>
+opens its actions, as a right click does. When a new application asks for its type, the number shown on each type
+chooses it; those numbers only choose a type while the types are shown and leave the page’s own shortcuts alone.</p>
+
+</li>
+  
+      <li>
+<p>CAS takes advantage of Spring Boot Admin server to manage and monitor its internal state visually. As a Spring Boot Admin client, CAS registers 
+itself with the Spring Boot Admin server over HTTP and reports back its status and health to the server’s web interface.</p>
+
+<p>More details about this integration is <a href="../monitoring/Configuring-SpringBootAdmin.html">available here</a>.</p>
+
+</li>
+  
+</ul>
+
+
+            </article>
+            <div class="article-end" aria-hidden="true">
+<span></span><span>CAS</span><span></span>
+</div>
+        </main>
+        
+        <aside class="docs-toc" aria-label="On this page">
+    <nav id="pageContents" aria-label="Table of contents">
+        <p class="eyebrow">ON THIS PAGE</p>
+        <ul class="section-nav"></ul>
+    </nav>
+    <a class="toc-top" href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+</aside>
+
+        
+    </div>
+
+    <footer class="site-footer">
+        <a class="footer-brand" href="../../index.html">APEREO <strong>CAS</strong></a>
+        <p>CAS is supported by the <a href="https://www.apereo.org/">Apereo Foundation</a>.</p>
+        <a href="#cas-docs-container">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+    <div id="docs-status" class="visually-hidden" role="status" aria-live="polite"></div>
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" title="Back to top">
+        <svg viewbox="0 0 40 40" aria-hidden="true"><circle class="back-to-top-track" cx="20" cy="20" r="18.5" pathlength="100"></circle><circle class="back-to-top-ring" cx="20" cy="20" r="18.5" pathlength="100"></circle></svg>
+        <svg class="back-to-top-arrow" viewbox="0 0 16 16" aria-hidden="true"><path d="M8 12.5v-9M3.75 7.5 8 3.25l4.25 4.25"></path></svg>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha384-1H217gwSVyLSIfaLxHbE7dRb3v4mYCKbpQvzx0cegeju1MVsGrX5xXxAvs/HgeFs" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"></script>
+
+    <script src="/cas/javascripts/URI.js"></script>
+    <script src="/cas/javascripts/site.js"></script>
+    
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@docsearch/js@3.9.0/dist/umd/index.js" integrity="sha384-QhsjJ84XKaqUeM7eZpvYApdPamFboJLQg4BD2CCCSiUOL4cWzLp5caae6oW/oAXh" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js" integrity="sha384-ficRBwtap/VLzILv81vIvgp30PoJYnlCm96tPpNYHXAf+h9SIThOZxxIzRUzbpAh" crossorigin="anonymous"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha384-bcXRY0im+IjB6RvmBpbgdkqjLV0pCTbaJRJ9IRPeQaWCYlzRn9pPaPmCvONr9h9z" crossorigin="anonymous"></script>
+
+    <script>
+        let pageSection = "Installation";
+        let siteUrl = "https://apereo.github.io";
+        let basePath = "/cas";
+
+        
+    </script>
+</body>
+
+</html>

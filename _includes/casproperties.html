@@ -1,0 +1,142 @@
+<!-- fragment:keep -->
+{%- assign casPropertyResults = site.data[siteDataVersion] | cas_properties: include.properties, include.includes, include.excludes -%}
+{%- assign thirdPartyPropertyResults = site.data[siteDataVersion] | cas_third_party_properties: include.thirdParty, include.thirdPartyExactMatch, include.thirdPartyStartsWith, include.excludes -%}
+{%- assign propertyResults = casPropertyResults | concat: thirdPartyPropertyResults | uniq -%}
+{%- assign includeRsaKeys = include.includeRsaKeys -%}
+{%- assign displayEmailServers = include.displayEmailServers | default: "true" -%}
+
+{%- unless include.topics == "false" -%}
+{%- assign casPropertyTopics = "|" -%}
+{%- for property in propertyResults -%}
+{%- assign propertyName = property.name -%}
+{%- if propertyName contains ".crypto" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "signing|" -%}{%- endif -%}
+{%- if propertyName contains ".jpa" or propertyName contains ".jdbc" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "rdbms|" -%}{%- endif -%}
+{%- if propertyName contains ".mail" and displayEmailServers == "true" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "email|" -%}{%- endif -%}
+{%- if propertyName contains "groovy" or propertyName contains "script" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "groovy|" -%}{%- endif -%}
+{%- if propertyName contains ".ldap" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "ldap|" -%}{%- endif -%}
+{%- if propertyName contains ".credential-criteria" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "credential-criteria|" -%}{%- endif -%}
+{%- if propertyName contains ".password-encoder" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "password-encoder|" -%}{%- endif -%}
+{%- if propertyName contains ".password-policy" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "password-policy|" -%}{%- endif -%}
+{%- if propertyName contains ".principal-transformation" -%}{%- assign casPropertyTopics = casPropertyTopics | append: "principal-transformation|" -%}{%- endif -%}
+{%- endfor -%}
+{%- endunless %}
+{::nomarkdown}
+{% unless include.intro == "false" %}
+<p>The following settings and properties are available from the CAS configuration catalog:</p>
+{% endunless %}
+
+<div class="cas-properties{% if include.disableSearch == "true" %} cas-properties-compact{% endif %}">
+    <div class="cas-properties-list">
+        {%- for property in propertyResults -%}
+        {% include casproperty.html property=property %}
+        {%- endfor -%}
+    </div>
+    {%- if propertyResults.size == 0 -%}
+    <p class="cas-properties-none">No settings in the configuration catalog match this section.</p>
+    {%- endif -%}
+    {%- unless include.intro == "false" -%}
+    <p class="cas-properties-legend">
+        <strong>Required</strong> settings may be needed to activate or affect the feature; review them even when they have a default.
+        <strong>Optional</strong> settings only need to be set to change a default or to turn on the behavior they control.
+        <strong>Third party</strong> settings belong to libraries such as Spring Boot that CAS builds on; their own documentation may have more detail.
+    </p>
+    {%- endunless -%}
+
+    {%- unless include.topics == "false" -%}
+    <div class="cas-properties-topics">
+        {%- if casPropertyTopics contains "|signing|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-user-secret" aria-hidden="true"></i>Signing &amp; encryption</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture signingEncConfig -%}{% include_cached {{ version }}/signing-encryption-configuration.md includeRsaKeys=includeRsaKeys %}{%- endcapture -%}
+                {{ signingEncConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|rdbms|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-database" aria-hidden="true"></i>Hibernate &amp; JDBC</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture rdbmsConfig -%}{% include_cached {{ version }}/rdbms-configuration.md %}{%- endcapture -%}
+                {{ rdbmsConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|email|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-envelope" aria-hidden="true"></i>Email servers</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture emailConfig -%}{% include_cached {{ version }}/email-notifications-configuration.md %}{%- endcapture -%}
+                {{ emailConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|groovy|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-laptop-code" aria-hidden="true"></i>Groovy scripting</summary>
+            <div class="cas-properties-topic-body">
+                <p>CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default,
+                    dynamically build constructs, attributes, access strategies and a lot more. To activate the functionality
+                    described here, you may need to prepare CAS to support and integrate with Apache Groovy.</p>
+                <p>Please <a href="{{ baseUrl }}integration/Apache-Groovy-Scripting.html">review this guide</a> to configure your build.</p>
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|ldap|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-server" aria-hidden="true"></i>LDAP &amp; Active Directory</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture ldapConfig -%}{% include_cached {{ version }}/ldap-configuration.md %}{%- endcapture -%}
+                {{ ldapConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|credential-criteria|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-user-check" aria-hidden="true"></i>Authentication</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture authnConfig -%}{% include_cached {{ version }}/authentication-credential-selection-configuration.md %}{%- endcapture -%}
+                {{ authnConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|password-encoder|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-key" aria-hidden="true"></i>Password encoding</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture passwordEncoderConfig -%}{% include_cached {{ version }}/password-encoding-configuration.md %}{%- endcapture -%}
+                {{ passwordEncoderConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|password-policy|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-lock" aria-hidden="true"></i>Password policy</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture passwordPolicyConfig -%}{% include_cached {{ version }}/password-policy-configuration.md %}{%- endcapture -%}
+                {{ passwordPolicyConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- if casPropertyTopics contains "|principal-transformation|" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-person-booth" aria-hidden="true"></i>Principal transformation</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture principalTransformationConfig -%}{% include_cached {{ version }}/principal-transformation-configuration.md %}{%- endcapture -%}
+                {{ principalTransformationConfig | markdownify }}
+            </div>
+        </details>
+        {%- endif -%}
+        {%- unless include.disableNotes == "true" -%}
+        <details class="cas-properties-topic">
+            <summary><i class="fa fa-newspaper" aria-hidden="true"></i>Notes on configuration</summary>
+            <div class="cas-properties-topic-body">
+                {%- capture notesConfig -%}{%- include_cached config-guidelines.md %}{%- endcapture -%}
+                {{ notesConfig | markdownify }}
+            </div>
+        </details>
+        {%- endunless -%}
+    </div>
+    {%- endunless -%}
+</div>
+{:/nomarkdown}

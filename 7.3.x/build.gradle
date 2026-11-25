@@ -1,0 +1,17 @@
+description = "Apereo CAS Documentation"
+
+javadoc {
+    enabled = false
+}
+
+compileJava {
+    enabled = false
+}
+
+test {
+    enabled = false
+}
+
+ext {
+    publishable = false
+}
