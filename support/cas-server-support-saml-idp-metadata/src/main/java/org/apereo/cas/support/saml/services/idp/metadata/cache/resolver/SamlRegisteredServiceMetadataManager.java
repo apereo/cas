@@ -67,4 +67,14 @@ public interface SamlRegisteredServiceMetadataManager extends NamedObject {
      * @return the source
      */
     String getSourceId();
+
+    /**
+     * Other names the manager goes by, such as the name it had before it was given one people read, so that requests
+     * made with that name keep finding it.
+     *
+     * @return the other names
+     */
+    default Set<String> getAliases() {
+        return Set.of();
+    }
 }

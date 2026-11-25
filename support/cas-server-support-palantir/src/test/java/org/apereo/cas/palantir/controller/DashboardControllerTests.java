@@ -4,6 +4,7 @@ import module java.base;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.overview.PalantirApplicationChanges;
 import org.apereo.cas.palantir.overview.PalantirOverview;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -14,6 +15,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.InetAddressUtils;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -28,8 +30,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.health.contributor.CompositeHealthContributor;
+import org.springframework.boot.health.contributor.Health;
+import org.springframework.boot.health.contributor.HealthIndicator;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,10 +56,12 @@ import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -110,7 +120,7 @@ class DashboardControllerTests {
         val mapper = JsonMapper.builder().build();
         for (val template : templates) {
             val service = serializer.from(template.get("definition"));
-            assertNotNull(service, template.get("definition"));
+            assertNotNull(service, () -> template.get("definition"));
             assertNotNull(service.getName());
             assertNotNull(service.getDescription());
             assertFieldsKept(service.getName(), mapper.readTree(template.get("definition")), mapper.readTree(serializer.toString(service)));
@@ -132,12 +142,22 @@ class DashboardControllerTests {
             .getModel();
         assertNotNull(model.get("casServerPrefix"));
         assertTrue(model.containsKey("authentication"));
-        assertTrue(model.containsKey("httpRequestMethod"));
-        assertTrue(model.containsKey("httpRequestSecure"));
+        assertFalse(model.containsKey("httpRequestMethod"));
+        assertFalse(model.containsKey("httpRequestSecure"));
+        assertFalse(model.containsKey("httpRequestHeaders"));
+        assertEquals(Boolean.TRUE, model.get("isRoleAdmin"));
         assertTrue(model.containsKey("actuatorEndpoints"));
         assertTrue(model.containsKey("actuatorEndpointAccess"));
         assertTrue(model.containsKey("serviceTemplates"));
+        val serviceProperties = ((List<?>) model.get("serviceProperties")).stream().map(entry -> (Map<?, ?>) entry).toList();
+        assertTrue(serviceProperties.stream().anyMatch(property ->
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName().equals(property.get("name"))
+                && !String.valueOf(property.get("description")).isBlank()));
+        assertTrue(serviceProperties.stream().noneMatch(property -> "TOKEN_AS_SERVICE_TICKET".equals(property.get("name"))));
         assertEquals(Boolean.FALSE, model.get("configurationEncryptionAvailable"));
+        val strategies = (Collection<?>) model.get("supportedAccessStrategies");
+        assertTrue(strategies.contains(DefaultRegisteredServiceAccessStrategy.class.getName()));
+        assertFalse(strategies.contains("org.apereo.cas.permit.PermitRegisteredServiceAccessStrategy"));
 
         mvc.perform(get("/palantir/").with(authentication(authentication))).andExpect(status().isOk());
         mvc.perform(get("/palantir").with(authentication(authentication))).andExpect(status().isOk());
@@ -159,7 +179,10 @@ class DashboardControllerTests {
 
         mvc.perform(get("/palantir/dashboard/session")
             .with(authentication(authentication))
-            .session(session)).andExpect(status().isOk());
+            .session(session))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("casuser"))
+            .andExpect(jsonPath("$.id").doesNotExist());
         SecurityContextHolder.clearContext();
         mvc.perform(get("/palantir/dashboard/session"))
             .andExpect(status().is3xxRedirection());
@@ -220,6 +243,107 @@ class DashboardControllerTests {
             assertTrue(user.isEmpty());
         } finally {
             overview.destroy();
+        }
+    }
+
+    /**
+     * The runtime section gives the warnings logged, the share of processor time spent collecting garbage, the live
+     * data left after a collection and the open files, each with its limit when the server records one.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewRuntimeMetrics() {
+        val registry = new SimpleMeterRegistry();
+        registry.counter("log4j2.events", "level", "warn").increment(3);
+        Gauge.builder("jvm.gc.overhead", () -> .05).register(registry);
+        Gauge.builder("jvm.gc.live.data.size", () -> 512).register(registry);
+        Gauge.builder("jvm.gc.max.data.size", () -> 1024).register(registry);
+        Gauge.builder("process.files.open", () -> 40).register(registry);
+        val overview = new PalantirOverview(applicationContext,
+            applicationContext.getBeanProvider(ServicesManager.class), applicationContext.getBeanProvider(TicketRegistry.class),
+            new StaticListableBeanFactory(Map.of("meterRegistry", registry)).getBeanProvider(MeterRegistry.class),
+            applicationContext.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            val sections = (Map<String, Object>) overview.summarize(Set.of("metrics"), true, Set.of("traffic")).get("sections");
+            val traffic = (Map<String, Object>) sections.get("traffic");
+            assertEquals(3.0, traffic.get("warningsLogged"));
+            assertEquals(.05, traffic.get("gcOverhead"));
+            assertEquals(Map.of("used", 512.0, "max", 1024.0), traffic.get("liveData"));
+            assertEquals(Map.of("used", 40.0), traffic.get("files"));
+        } finally {
+            overview.destroy();
+        }
+    }
+
+    /**
+     * A section kept from earlier is shown until it expires, unless the summary is asked for fresh, as when the
+     * operator refreshes the home page or one of its cards.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewFreshSummarySkipsKeptSections() {
+        val status = new AtomicReference<>(Health.up().build());
+        val context = new StaticApplicationContext();
+        context.getBeanFactory().registerSingleton("memoryHealthIndicator", (HealthIndicator) status::get);
+        context.refresh();
+        val overview = new PalantirOverview(context,
+            context.getBeanProvider(ServicesManager.class), context.getBeanProvider(TicketRegistry.class),
+            context.getBeanProvider(MeterRegistry.class), context.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            final Function<Boolean, Object> health = fresh -> ((Map<String, Object>) ((Map<String, Object>) overview
+                .summarize(Set.of("health"), true, Set.of("health"), fresh).get("sections")).get("health")).get("status");
+            assertEquals("UP", health.apply(false));
+            status.set(Health.down().build());
+            assertEquals("UP", health.apply(false));
+            assertEquals("DOWN", health.apply(true));
+        } finally {
+            overview.destroy();
+            context.close();
+        }
+    }
+
+    /**
+     * A health check made of several checks, such as one per LDAP server being monitored, is listed once with the
+     * worst status of its checks, in the order the health endpoint is told to use, where CAS puts WARN first; one with
+     * no checks in it is left out.
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    void verifyOverviewHealthOfGroupedChecks() {
+        val context = new StaticApplicationContext();
+        context.getEnvironment().getPropertySources().addFirst(new MapPropertySource("health",
+            Map.of("management.endpoint.health.status.order", "WARN,DOWN,OUT_OF_SERVICE,UNKNOWN,UP")));
+        context.getBeanFactory().registerSingleton("warningHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of(
+                "Primary", () -> Health.up().build(),
+                "Secondary", () -> Health.status(new Status("WARN")).build())));
+        context.getBeanFactory().registerSingleton("pooledLdapConnectionFactoryHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of(
+                "Production LDAP", () -> Health.up().build(),
+                "Backup LDAP", () -> Health.down().build())));
+        context.getBeanFactory().registerSingleton("emptyHealthIndicator",
+            CompositeHealthContributor.fromMap(Map.<String, HealthIndicator>of()));
+        context.getBeanFactory().registerSingleton("memoryHealthIndicator", (HealthIndicator) () -> Health.up().build());
+        context.refresh();
+        val overview = new PalantirOverview(context,
+            context.getBeanProvider(ServicesManager.class), context.getBeanProvider(TicketRegistry.class),
+            context.getBeanProvider(MeterRegistry.class), context.getBeanProvider(PalantirApplicationChanges.class));
+        try {
+            val sections = (Map<String, Object>) overview.summarize(Set.of("health"), true, Set.of("health")).get("sections");
+            val health = (Map<String, Object>) sections.get("health");
+            val components = ((List<Map<String, Object>>) health.get("components")).stream()
+                .collect(Collectors.toMap(component -> (String) component.get("name"), component -> component.get("status")));
+            assertEquals(Map.of("pooledLdapConnectionFactory", "DOWN", "memory", "UP", "warning", "WARN"), components);
+            assertEquals("WARN", health.get("status"));
+            assertEquals(Boolean.TRUE, health.get("failing"));
+            assertEquals("WARN", PalantirOverview.overallStatus(List.of("UP", "WARN"), List.of("WARN", "DOWN", "UP")));
+            assertEquals("DOWN", PalantirOverview.overallStatus(List.of("UP", "WARN", "DOWN"), List.of("DOWN", "OUT_OF_SERVICE", "UP", "UNKNOWN")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of("UP", "SLOW"), List.of("WARN", "DOWN", "OUT_OF_SERVICE", "UNKNOWN", "UP")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of("SLOW"), List.of("DOWN", "UP")));
+            assertEquals("UP", PalantirOverview.overallStatus(List.of(), List.of("DOWN", "UP")));
+        } finally {
+            overview.destroy();
+            context.close();
         }
     }
 
@@ -344,6 +468,87 @@ class DashboardControllerTests {
     }
 
     @Nested
+    @TestPropertySource(properties = {
+        "spring.security.user.name=casadmin",
+        "spring.security.user.password=Mellon",
+        "spring.security.user.roles=ADMIN",
+        "management.endpoints.web.exposure.include=health",
+        "management.endpoint.health.show-components=when-authorized",
+        "management.endpoint.health.roles=OPERATOR"
+    })
+    class SecurityTests {
+        private static RequestPostProcessor browserSession() {
+            return request -> {
+                request.setRequestedSessionId("browser-session");
+                request.setRequestedSessionIdFromCookie(true);
+                return request;
+            };
+        }
+
+        @Test
+        void verifyLoginIgnoresRedirectTarget() throws Throwable {
+            mvc.perform(post("/adminlogin")
+                    .param("username", "casadmin")
+                    .param("password", "Mellon")
+                    .param("redirectTo", "https://attacker.example.org"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(result -> assertFalse(String.valueOf(result.getResponse().getRedirectedUrl()).contains("attacker.example.org")));
+        }
+
+        @Test
+        void verifyBrowserSessionWritesCarryToken() throws Throwable {
+            mvc.perform(post("/palantir/dashboard/logout").with(browserSession()))
+                .andExpect(status().isForbidden());
+            mvc.perform(post("/actuator/health").with(browserSession()))
+                .andExpect(status().isForbidden());
+            mvc.perform(post("/palantir/dashboard/logout").with(browserSession()).with(csrf()))
+                .andExpect(status().is3xxRedirection());
+        }
+
+        @Test
+        void verifyHealthChecksFollowTheHealthEndpoint() throws Throwable {
+            val user = new UsernamePasswordAuthenticationToken("casuser", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(user)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.status").exists())
+                .andExpect(jsonPath("$.sections.health.components").doesNotExist());
+
+            val operator = new UsernamePasswordAuthenticationToken("casoperator", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_OPERATOR")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(operator)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.components").isArray());
+
+            val administrator = new UsernamePasswordAuthenticationToken("casadmin", "password",
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+            mvc.perform(get("/palantir/dashboard/overview").param("sections", "health").with(authentication(administrator)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sections.health.components").isArray());
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "management.endpoints.web.base-path=/",
+        "management.endpoints.web.exposure.include=health,info"
+    })
+    class RootActuatorTests {
+        @Test
+        void verifyBrowserSessionWritesToRootActuatorsCarryToken() throws Throwable {
+            val browserSession = (RequestPostProcessor) request -> {
+                request.setRequestedSessionId("browser-session");
+                request.setRequestedSessionIdFromCookie(true);
+                return request;
+            };
+            mvc.perform(post("/health").with(browserSession)).andExpect(status().isForbidden());
+            mvc.perform(post("/info").with(browserSession)).andExpect(status().isForbidden());
+            mvc.perform(post("/adminlogin").with(browserSession))
+                .andExpect(result -> assertNotEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus()));
+        }
+    }
+
+    @Nested
     @TestPropertySource(properties = "cas.palantir.templates-directory=${java.io.tmpdir}/palantir-shared-templates")
     class SharedTemplatesTests {
         private final Path directory = Path.of(System.getProperty("java.io.tmpdir"), "palantir-shared-templates");
@@ -377,6 +582,12 @@ class DashboardControllerTests {
             Files.writeString(directory.resolve("portal.json"), """
                 { "@class": "org.apereo.cas.services.CasRegisteredService", "serviceId": "^https://portal.example.org/.*", "name": "Portal" }
                 """);
+            assertEquals(2, serviceTemplates().stream().filter(template -> "shared".equals(template.get("source"))).count());
+
+            val intranet = directory.resolve("intranet.json");
+            Files.writeString(intranet, Files.readString(intranet).replace("Our intranet applications", "Every intranet application"));
+            Files.setLastModifiedTime(intranet, FileTime.fromMillis(Files.getLastModifiedTime(intranet).toMillis() + 5000));
+            assertTrue(serviceTemplates().stream().anyMatch(template -> template.get("definition").contains("Every intranet application")));
             assertEquals(2, serviceTemplates().stream().filter(template -> "shared".equals(template.get("source"))).count());
         }
     }

@@ -52,7 +52,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             return createHandlerResult(credential, principal, new ArrayList<>());
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            throw new FailedLoginException(e.getMessage());
+            throw (FailedLoginException) new FailedLoginException(e.getMessage()).initCause(e);
         }
     }
 }

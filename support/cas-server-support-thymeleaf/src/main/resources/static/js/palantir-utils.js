@@ -348,6 +348,175 @@ function loadPalantirScriptOnce(url) {
     return loading;
 }
 
+/**
+ * The scripts of each page, fetched the first time the page is opened rather than on every visit, so a visit fetches
+ * only what it shows. The scripts every page uses, such as the rail, the endpoints, the dialogs, the charts and the
+ * command palette, come with the dashboard; the rest are grouped into bundles that the dashboard's configuration
+ * lists, and each page names the bundles it is built with. A bundle can need others, and those are fetched along with
+ * it: the applications' wizard needs the editor, the diff library, the fields other pages build their dialogs with,
+ * and the SAML2 metadata tools of the Protocols page, and a page with code fields needs the editor. An action that
+ * opens what another page shows, such as the release preview from the applications' menu, fetches that page's bundle
+ * first. Home fetches the applications once the browser is idle, so opening the wizard from it does not wait. The
+ * scripts of a bundle are fetched together but run in the order they are listed, after the bundles it needs. A script
+ * that ran is never fetched again, so trying again after a failed fetch only fetches what failed.
+ */
+class PalantirScripts {
+    static NEEDS = Object.freeze({
+        applications: ["ace", "diff", "fields", "protocols"],
+        fields: ["ace"],
+        configuration: ["ace"],
+        protocols: ["ace"],
+        tickets: ["ace"],
+        access: ["fields"],
+        attributes: ["fields"],
+        authentication: ["fields"],
+        tenants: ["fields"],
+        home: ["metrics"],
+        system: ["metrics"],
+        users: ["access"]
+    });
+
+    static PAGES = Object.freeze({
+        applications: ["applications"],
+        system: ["system"],
+        tickets: ["tickets"],
+        tasks: ["tasks"],
+        access: ["access"],
+        logging: ["logging"],
+        sessions: ["sso"],
+        configuration: ["configuration"],
+        attributes: ["attributes"],
+        authentication: ["authentication"],
+        consent: ["consent"],
+        protocols: ["protocols"],
+        throttles: ["throttles"],
+        mfa: ["mfa"],
+        tenants: ["tenants"],
+        cluster: ["cluster"],
+        users: ["users"],
+        home: ["home"]
+    });
+
+    static loading = new Map();
+
+    static scripts = new Map();
+
+    static load(...names) {
+        return Promise.all(PalantirScripts.withNeeds(names).map(name => PalantirScripts.bundle(name))).then(() => undefined);
+    }
+
+    /**
+     * The bundles to fetch for the given ones: the ones they need, and the ones those need, first.
+     *
+     * @param names the bundles
+     * @returns {string[]} every bundle to fetch, each once, a bundle after the ones it needs
+     */
+    static withNeeds(names) {
+        const ordered = [];
+        const visited = new Set();
+        const visit = name => {
+            if (visited.has(name)) {
+                return;
+            }
+            visited.add(name);
+            (PalantirScripts.NEEDS[name] ?? []).forEach(visit);
+            ordered.push(name);
+        };
+        names.forEach(visit);
+        return ordered;
+    }
+
+    static bundle(name) {
+        const existing = PalantirScripts.loading.get(name);
+        if (existing) {
+            return existing;
+        }
+        const urls = PalantirDashboardConfiguration.all().scripts?.[name] ?? [];
+        const loading = Promise.all(urls.map(url => PalantirScripts.script(url)))
+            .then(() => undefined)
+            .catch(error => {
+                PalantirScripts.loading.delete(name);
+                throw error;
+            });
+        PalantirScripts.loading.set(name, loading);
+        return loading;
+    }
+
+    static script(url) {
+        const existing = PalantirScripts.scripts.get(url);
+        if (existing) {
+            return existing;
+        }
+        const loading = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = url;
+            script.async = false;
+            script.addEventListener("load", () => resolve());
+            script.addEventListener("error", () => {
+                script.remove();
+                PalantirScripts.scripts.delete(url);
+                reject(new Error(`Unable to load ${url}`));
+            });
+            document.head.append(script);
+        });
+        PalantirScripts.scripts.set(url, loading);
+        return loading;
+    }
+
+    static forPage(tabIndex) {
+        const tab = Tabs.byIndex(tabIndex);
+        return PalantirScripts.load(...(PalantirScripts.PAGES[tab?.key] ?? []));
+    }
+
+    /**
+     * Fetch bundles before an action that uses what they define, telling the operator when they could not be fetched.
+     *
+     * @param names the bundles
+     * @returns {Promise<boolean>} true once they are loaded, false when they could not be fetched
+     */
+    static async ready(...names) {
+        try {
+            await PalantirScripts.load(...names);
+            return true;
+        } catch (error) {
+            PalantirScripts.failed(error);
+            return false;
+        }
+    }
+
+    static whenIdle() {
+        return new Promise(resolve => {
+            if (typeof requestIdleCallback === "function") {
+                requestIdleCallback(() => resolve(), {timeout: 3000});
+            } else {
+                setTimeout(resolve, 500);
+            }
+        }).then(() => PalantirScripts.load("applications"));
+    }
+
+    static failed(error) {
+        console.error("Unable to load the page's scripts:", error);
+        displayBanner("Part of the dashboard could not be loaded. Reload the page to try again.");
+    }
+}
+
+/**
+ * Open the application wizard, fetching it first when it has not been used yet.
+ *
+ * @param args what openRegisteredServiceWizardDialog takes
+ * @returns {Promise<boolean>} true once the wizard is open, false when it could not be fetched
+ */
+async function openPalantirWizard(...args) {
+    try {
+        await PalantirScripts.load("applications");
+    } catch (error) {
+        PalantirScripts.failed(error);
+        return false;
+    }
+    await openRegisteredServiceWizardDialog(...args);
+    return true;
+}
+
 function hideBanner() {
     notyf.dismissAll();
 }
@@ -357,6 +526,630 @@ function closeAllDialogs() {
 }
 
 const PALANTIR_READ_ONLY = "palantir-read-only";
+
+/**
+ * The pop-ups Palantir shows again and again, so they look and behave the same everywhere: one that asks the operator
+ * to wait, one that asks before a change, and ones that report an error or a change done. Titles are text, never
+ * markup, so names and other values can go in them as they are.
+ */
+class PalantirDialogs {
+    /**
+     * Ask the operator to wait while something is fetched or done; close it with <code>Swal.close()</code>.
+     *
+     * @param title what is happening
+     * @param text more about it, if anything
+     */
+    static wait(title, text = "") {
+        Swal.fire({
+            icon: "info",
+            titleText: title,
+            text: text,
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading()
+        });
+    }
+
+    /**
+     * Ask the operator before a change, with a button to go ahead and one to decline. Any other option of the pop-up,
+     * such as html, the labels of the buttons or the icon, can be given as well; <code>title</code> is shown as text.
+     *
+     * @param options the options of the pop-up, with its title
+     * @returns {Promise<object>} the answer, whose <code>isConfirmed</code> says whether to go ahead
+     */
+    static confirm(options) {
+        const {title, ...rest} = options;
+        return Swal.fire({
+            icon: "question",
+            showConfirmButton: true,
+            showDenyButton: true,
+            ...rest,
+            ...(title === undefined ? {} : {titleText: title})
+        });
+    }
+
+    /**
+     * Report that something could not be done.
+     *
+     * @param title what could not be done
+     * @param text why, if known; an error or a failed request is shown by its message
+     * @returns {Promise<object>} resolved once the pop-up is closed
+     */
+    static error(title, text = "") {
+        const reason = typeof text === "string" ? text : String(text?.message ?? text?.responseText ?? text ?? "");
+        return Swal.fire({icon: "error", titleText: title, text: reason});
+    }
+
+    /**
+     * Report that something was done.
+     *
+     * @param title what was done
+     * @param text more about it, if anything
+     * @returns {Promise<object>} resolved once the pop-up is closed
+     */
+    static done(title, text = "") {
+        return Swal.fire({icon: "success", titleText: title, text: text});
+    }
+}
+
+/**
+ * Let a poll run one at a time: while what it started is still on its way, such as a request to a slow endpoint, a
+ * later call waits for it rather than starting another, so polling never piles up requests.
+ *
+ * @param poll the poll, returning what it started (a promise or a jQuery request) when it starts something
+ * @returns {function(...*): *} the poll, run one at a time
+ */
+function palantirOneAtATime(poll) {
+    let running = null;
+    return function (...args) {
+        if (running !== null) {
+            return running;
+        }
+        const started = poll.apply(this, args);
+        if (started && typeof started.then === "function") {
+            running = Promise.resolve(started)
+                .catch(error => console.debug("A poll did not finish", error))
+                .finally(() => {
+                    running = null;
+                });
+            return running;
+        }
+        return started;
+    };
+}
+
+/**
+ * Show that a lookup is on its way inside the panel it fills, rather than in a pop-up that blocks the whole dashboard
+ * until the server answers. The panel is marked busy at once; if the answer takes longer than a moment, a line above
+ * the results, or under the form that asked, shows a moving bar, what is being looked up and a Cancel link, the button
+ * that started it shows a spinner, and the tables and cards already shown are dimmed but stay until the answer
+ * replaces them. Clicking the button again
+ * while the lookup runs does nothing. A lookup that fails says so on the same line, which stays until the next one.
+ */
+class PalantirBusy {
+    static DELAY = 200;
+
+    static running = new WeakSet();
+
+    /**
+     * Run a lookup that fills a panel.
+     *
+     * @param options <code>region</code>: the results the lookup fills; <code>after</code>: what the line goes under,
+     *        such as the form that asked, when not right above the results; <code>button</code>: the button that started
+     *        it, if any, and <code>busy</code>: what the button says meanwhile; <code>label</code>: what is being looked
+     *        up, such as "Looking up casuser"; <code>failure</code>: what could not be done, such as "The sessions could
+     *        not be read", or null when the caller reports a failure itself, which is then thrown;
+     *        <code>request</code>: starts the lookup and returns the jQuery request, or a promise
+     * @returns {Promise<{answered: boolean, value: *}>} whether the server answered, and its answer; false when the
+     *        lookup was already running, was cancelled or failed
+     */
+    static async during({region, after = null, button = null, busy = "Looking Up", label, failure = null, request}) {
+        const panel = $(region).first();
+        const element = panel[0];
+        if (!element || PalantirBusy.running.has(element)) {
+            return {answered: false, value: undefined};
+        }
+        PalantirBusy.running.add(element);
+        const line = PalantirBusy.line(panel, after);
+        const started = {request: null, cancelled: false};
+        panel.attr("aria-busy", "true");
+        const shown = setTimeout(() => PalantirBusy.show(panel, line, {button, busy, label}, started), PalantirBusy.DELAY);
+        try {
+            started.request = request();
+            const value = await started.request;
+            line.prop("hidden", true).removeClass("is-error").empty();
+            return {answered: true, value};
+        } catch (error) {
+            if (started.cancelled || error?.statusText === "abort" || failure === null) {
+                line.prop("hidden", true).removeClass("is-error").empty();
+                if (!started.cancelled && error?.statusText !== "abort") {
+                    throw error;
+                }
+            } else {
+                console.error(failure, error);
+                PalantirBusy.fail(line, failure, error);
+            }
+            return {answered: false, value: undefined};
+        } finally {
+            clearTimeout(shown);
+            PalantirBusy.running.delete(element);
+            panel.removeAttr("aria-busy").removeClass("is-loading");
+            PalantirBusy.restore(button);
+        }
+    }
+
+    /**
+     * The line that tells how a panel's lookup is going, made the first time it is needed.
+     *
+     * @param panel the panel
+     * @param after what the line goes under, if not right above the panel
+     * @returns {jQuery} the line
+     */
+    static line(panel, after) {
+        const anchor = after === null ? null : $(after).first();
+        const existing = anchor === null ? panel.prev(".palantir-busy") : anchor.next(".palantir-busy");
+        if (existing.length > 0) {
+            return existing;
+        }
+        const line = $("<div>", {class: "palantir-busy", role: "status", "aria-live": "polite", hidden: true});
+        if (anchor === null) {
+            panel.before(line);
+        } else {
+            anchor.after(line);
+        }
+        return line;
+    }
+
+    static show(panel, line, {button, busy, label}, started) {
+        panel.addClass("palantir-busy-region is-loading");
+        const cancel = $("<button>", {type: "button", class: "palantir-busy__cancel", text: "Cancel"})
+            .on("click", () => {
+                started.cancelled = true;
+                started.request?.abort?.();
+            });
+        line.removeClass("is-error").empty().prop("hidden", false).append(
+            $("<span>", {class: "palantir-progress__track palantir-busy__track is-busy", "aria-hidden": "true"})
+                .append($("<span>", {class: "palantir-progress__bar"})),
+            $("<span>", {class: "palantir-busy__text", text: `${label}…`}),
+            typeof started.request?.abort === "function" ? cancel : "");
+        const target = $(button).first();
+        const text = target.find(".mdc-button__label");
+        if (text.length > 0 && target.data("palantirBusyLabel") === undefined) {
+            target.data("palantirBusyLabel", text.html()).addClass("is-busy");
+            text.empty().append($("<i>", {class: "mdc-tab__icon mdi mdi-loading mdi-spin", "aria-hidden": "true"}), busy);
+        }
+    }
+
+    static restore(button) {
+        const target = $(button).first();
+        const original = target.data("palantirBusyLabel");
+        if (original !== undefined) {
+            target.find(".mdc-button__label").html(original);
+            target.removeData("palantirBusyLabel").removeClass("is-busy");
+        }
+    }
+
+    static fail(line, failure, error) {
+        const reason = error?.responseJSON?.message ?? error?.responseJSON?.error
+            ?? (error?.status === 0 ? "CAS did not answer." : null)
+            ?? (error?.status ? `CAS answered ${error.status}${error.statusText ? ` ${error.statusText}` : ""}.` : null)
+            ?? String(error?.message ?? error ?? "");
+        line.addClass("is-error").empty().prop("hidden", false).append(
+            $("<i>", {class: "mdi mdi-alert-circle-outline", "aria-hidden": "true"}),
+            $("<span>", {class: "palantir-busy__text", text: reason ? `${failure}: ${reason}` : `${failure}.`}));
+    }
+}
+
+/**
+ * The one scheduler of everything Palantir reads again on its own, such as a table of events or the charts of a page.
+ * Each poll says when it applies, such as only while its page or panel is shown; a single clock then runs the polls
+ * that apply as often as the refresh interval in the settings says, so a change of the interval applies at once.
+ * A poll is counted as run when it is registered, since its page reads it then, and whenever it is run by hand, so the
+ * clock never reads the same thing twice in a row.
+ * The clock asks whether a poll applies only once the poll is due, since asking whether a panel is shown lays the page
+ * out. Nothing runs while the browser tab is hidden; a poll runs one request at a time; and a poll that was due while
+ * it did not apply, such as when its page was hidden, is asked again when the page, panel or window shown changes, and
+ * runs as soon as it applies, or else at its next time. A poll can show how it is going in the panels it fills (see
+ * {@link PalantirPollStatus}), where it can also be paused; a paused poll is not run by the clock, and a poll whose
+ * panel has a menu open or text selected waits until they are gone, so a redraw never takes them away.
+ */
+class PalantirPolling {
+    static BEAT = 1000;
+
+    static polls = [];
+
+    static clock = null;
+
+    /**
+     * Read something again and again.
+     *
+     * @param name what the poll reads, for the log
+     * @param run reads it, returning what it started (a promise or a jQuery request), if anything
+     * @param options <code>tab</code> and <code>panel</code>: the page, and the panel on it, that must be shown;
+     *        <code>when</code>: any other condition; <code>every</code>: how often, in milliseconds, when not as often as
+     *        the refresh interval; <code>status</code>: the panels that show how the poll is going, if any;
+     *        <code>focus</code>: whether the poll reads only while the window has focus, as a poll of a panel does
+     * @returns {function(): *} the poll, to run it at once, one request at a time, such as after a change
+     */
+    static every(name, run, {tab = null, panel = null, when = null, every = null, status = null, focus = panel !== null} = {}) {
+        const poll = {
+            name, last: Date.now(), missed: false, asked: 0, status, focus,
+            paused: false, held: false, refreshing: false, succeeded: Date.now(), failed: null
+        };
+        poll.run = palantirOneAtATime(() => {
+            poll.last = Date.now();
+            poll.missed = false;
+            return PalantirPollStatus.track(poll, run());
+        });
+        poll.applies = () => {
+            if (tab !== null) {
+                const index = typeof tab === "number" ? tab : tab.index;
+                const shown = panel === null ? currentActiveTab === index : isPalantirPollingContextActive(tab, panel);
+                if (!shown) {
+                    return false;
+                }
+            }
+            return when === null || when() === true;
+        };
+        poll.period = () => every ?? palantirSettings().refreshInterval;
+        PalantirPolling.polls.push(poll);
+        PalantirPolling.start();
+        return poll.run;
+    }
+
+    static start() {
+        if (PalantirPolling.clock !== null) {
+            return;
+        }
+        PalantirPolling.clock = setInterval(() => PalantirPolling.beat(), PalantirPolling.BEAT);
+        document.addEventListener("visibilitychange", () => PalantirPolling.beat(true));
+        window.addEventListener(palantirPollingContextEvent, () => PalantirPolling.beat(true));
+        window.addEventListener("storage", event => {
+            if (event.key === null || event.key === PALANTIR_SETTINGS_KEY) {
+                forgetPalantirSettings();
+            }
+        });
+    }
+
+    /**
+     * Run the polls that are due and apply.
+     *
+     * @param changed whether the page, panel or window shown changed, so the polls that were due while they did not
+     *        apply are asked again
+     */
+    static beat(changed = false) {
+        if (document.visibilityState !== "visible") {
+            return;
+        }
+        const now = Date.now();
+        for (const poll of PalantirPolling.polls) {
+            PalantirPolling.consider(poll, now, changed);
+            PalantirPollStatus.render(poll, now);
+        }
+    }
+
+    static consider(poll, now, changed) {
+        const period = poll.period();
+        const due = poll.missed ? changed || now - poll.asked >= period : now - poll.last >= period;
+        if (!due || poll.paused) {
+            return;
+        }
+        poll.held = poll.status !== null && PalantirPollStatus.holding(poll);
+        if (poll.held) {
+            return;
+        }
+        let applies = false;
+        poll.asked = now;
+        try {
+            applies = poll.applies();
+        } catch (error) {
+            console.debug(`Palantir could not tell whether to read ${poll.name} again`, error);
+        }
+        if (!applies) {
+            poll.missed = true;
+            return;
+        }
+        try {
+            poll.run();
+        } catch (error) {
+            console.debug(`Palantir could not read ${poll.name} again`, error);
+        }
+    }
+}
+
+/**
+ * How a poll is going, shown at the top of each panel it fills: when it last read, whether a read is on its way,
+ * whether the operator paused it, whether it waits because the window is in the background or because a menu is open
+ * or text is selected in the panel, and whether the last read failed. The time since the last read is updated by the
+ * clock, as text only. The pill offers Pause, so a table can be read or copied from without rows moving under it.
+ */
+class PalantirPollStatus {
+    static STATES = Object.freeze({
+        live: "mdi-check-circle-outline",
+        refreshing: "mdi-refresh mdi-spin",
+        paused: "mdi-pause",
+        background: "mdi-eye-off-outline",
+        held: "mdi-hand-back-left-outline",
+        failed: "mdi-alert-outline"
+    });
+
+    /**
+     * Follow a read the clock or the page started: on its way until it settles, then read or failed. A read that
+     * answers <code>false</code> failed too.
+     *
+     * @param poll the poll
+     * @param started what the read started, if anything
+     * @returns {*} what the read started
+     */
+    static track(poll, started) {
+        if (!started || typeof started.then !== "function") {
+            return started;
+        }
+        poll.refreshing = true;
+        PalantirPollStatus.render(poll, Date.now());
+        return Promise.resolve(started)
+            .then(result => {
+                if (result === false) {
+                    poll.failed = Date.now();
+                } else {
+                    poll.succeeded = Date.now();
+                    poll.failed = null;
+                }
+                return result;
+            }, error => {
+                poll.failed = Date.now();
+                throw error;
+            })
+            .finally(() => {
+                poll.refreshing = false;
+                PalantirPollStatus.render(poll, Date.now());
+            });
+    }
+
+    /**
+     * Whether a poll should wait: a menu is open, or text is selected in one of its panels, which a redraw would lose.
+     *
+     * @param poll the poll
+     * @returns {boolean} true while it should wait
+     */
+    static holding(poll) {
+        const selection = document.getSelection();
+        if (selection && !selection.isCollapsed && selection.anchorNode
+            && PalantirPollStatus.panels(poll).some(panel => panel.contains(selection.anchorNode))) {
+            return true;
+        }
+        return Array.from(document.querySelectorAll(".context-menu-list.context-menu-root"))
+            .some(menu => menu.style.display !== "none" && menu.isConnected);
+    }
+
+    static panels(poll) {
+        return poll.status === null ? [] : Array.from(document.querySelectorAll(poll.status));
+    }
+
+    static describe(poll, now) {
+        if (poll.paused) {
+            return {state: "paused", text: "Paused by you", action: "Resume"};
+        }
+        if (poll.refreshing) {
+            return {state: "refreshing", text: "Refreshing…", action: "Pause"};
+        }
+        if (poll.focus && (document.visibilityState !== "visible" || !document.hasFocus())) {
+            return {state: "background", text: "Paused while the window is in the background", action: null};
+        }
+        if (poll.held) {
+            return {state: "held", text: "Waiting while a menu is open or text is selected", action: "Pause"};
+        }
+        if (poll.failed !== null) {
+            const time = new Date(poll.failed).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+            return {state: "failed", text: `Refresh failed ${time} · retrying`, action: "Pause"};
+        }
+        const seconds = Math.max(0, Math.round((now - poll.succeeded) / 1000));
+        const ago = seconds < 5 ? "just now" : seconds < 60 ? `${seconds}s ago` : `${Math.floor(seconds / 60)} min ago`;
+        const period = Math.round(poll.period() / 1000);
+        const every = period < 60 ? `every ${period}s` : `every ${Math.round(period / 60)} min`;
+        return {state: "live", text: `Updated ${ago} · ${every}`, action: "Pause"};
+    }
+
+    /**
+     * Show how a poll is going in its panels, changing only what changed.
+     *
+     * @param poll the poll
+     * @param now the time
+     */
+    static render(poll, now) {
+        if (poll.status === null) {
+            return;
+        }
+        const {state, text, action} = PalantirPollStatus.describe(poll, now);
+        for (const panel of PalantirPollStatus.panels(poll)) {
+            const pill = PalantirPollStatus.pill(poll, panel);
+            if (pill.dataset.state !== state) {
+                pill.dataset.state = state;
+                pill.querySelector(".palantir-poll-status__icon").className = `palantir-poll-status__icon mdi ${PalantirPollStatus.STATES[state]}`;
+            }
+            const label = pill.querySelector(".palantir-poll-status__text");
+            if (label.textContent !== text) {
+                label.textContent = text;
+            }
+            const toggle = pill.querySelector(".palantir-poll-status__toggle");
+            toggle.hidden = action === null;
+            if (action !== null && toggle.dataset.action !== action) {
+                toggle.dataset.action = action;
+                toggle.setAttribute("aria-pressed", String(action === "Resume"));
+                toggle.querySelector(".mdi").className = `mdi ${action === "Resume" ? "mdi-play" : "mdi-pause"}`;
+                toggle.querySelector(".palantir-poll-status__action").textContent = action;
+            }
+        }
+    }
+
+    /**
+     * The pill of a poll in a panel, made the first time it is shown: in the panel's place for it, marked
+     * <code>data-palantir-poll-status</code>, such as a toolbar, or else at the top of the panel.
+     *
+     * @param poll the poll
+     * @param panel the panel
+     * @returns {HTMLElement} the pill
+     */
+    static pill(poll, panel) {
+        const slot = panel.querySelector("[data-palantir-poll-status]") ?? panel;
+        const existing = Array.from(slot.children).find(child => child.matches(".palantir-poll-status"));
+        if (existing) {
+            return existing;
+        }
+        const pill = $("<div>", {class: "palantir-poll-status", "data-poll": poll.name})
+            .append($("<span>", {class: "palantir-poll-status__state"}).append(
+                $("<i>", {class: "palantir-poll-status__icon mdi", "aria-hidden": "true"}),
+                $("<span>", {class: "palantir-poll-status__text"})))
+            .append($("<button>", {type: "button", class: "palantir-poll-status__toggle", title: `Pause or resume reading ${poll.name} again`})
+                .append($("<i>", {class: "mdi mdi-pause", "aria-hidden": "true"}),
+                    $("<span>", {class: "palantir-poll-status__action", text: "Pause"}))
+                .on("click", () => PalantirPollStatus.toggle(poll)))[0];
+        slot.prepend(pill);
+        return pill;
+    }
+
+    /**
+     * Pause a poll, or resume it, reading at once if it is due.
+     *
+     * @param poll the poll
+     */
+    static toggle(poll) {
+        poll.paused = !poll.paused;
+        if (!poll.paused) {
+            poll.missed = true;
+            PalantirPolling.beat(true);
+        }
+        PalantirPollStatus.render(poll, Date.now());
+    }
+}
+
+const PALANTIR_LARGE_IDS = new Set();
+
+/**
+ * Keep a numeric id too large for an exact JavaScript number as the text of its digits, and remember that it is a
+ * number, so {@link palantirStringifyJson} writes it back as one. Text that only looks like such a number, such as a
+ * value someone typed in a map, is not remembered and stays text.
+ *
+ * @param digits the digits of the id
+ * @returns {string} the digits
+ */
+function palantirLargeId(digits) {
+    PALANTIR_LARGE_IDS.add(digits);
+    return digits;
+}
+
+/**
+ * Read JSON keeping every id exactly as CAS wrote it. CAS ids, such as those of applications, are 64-bit numbers, and
+ * JavaScript numbers are exact only up to 2^53, so two neighbouring large ids would read as the same number and an
+ * action on one could reach the other. An id too large to be exact is read as the text of its digits instead; ids that
+ * fit stay numbers.
+ *
+ * @param text the JSON text
+ * @returns {*} the value it holds
+ */
+function palantirParseJson(text) {
+    return JSON.parse(String(text).replace(/("id"\s*:\s*)(-?(?:0|[1-9]\d*))(?=\s*[,}\]])/g,
+        (match, key, digits) => Number.isSafeInteger(Number(digits)) ? match : `${key}"${palantirLargeId(digits)}"`));
+}
+
+/**
+ * Write JSON the way CAS reads it: an id kept as the text of its digits by {@link palantirParseJson}, because it is too
+ * large for an exact JavaScript number, is written as the number it is. Only ids that were numbers, read so or entered
+ * as one ({@link palantirLargeId}), are written back as numbers; an id that was text, such as an entry of a map holding
+ * digits, stays text.
+ *
+ * @param value the value
+ * @param indent the indentation, as JSON.stringify takes it
+ * @returns {string} the JSON text
+ */
+function palantirStringifyJson(value, indent) {
+    return JSON.stringify(value, null, indent).replace(/("id"\s*:\s*)"(-?(?:0|[1-9]\d*))"/g,
+        (match, key, digits) => PALANTIR_LARGE_IDS.has(digits) && !Number.isSafeInteger(Number(digits)) ? `${key}${digits}` : match);
+}
+
+if (typeof $ !== "undefined" && $.ajaxSetup) {
+    $.ajaxSetup({converters: {"text json": palantirParseJson}});
+}
+
+/**
+ * Send the CSRF token with every request Palantir makes that changes something on this server. CAS asks for the token
+ * on such requests to the actuator and to Palantir when they rely on the browser's session, so another site cannot
+ * make them on the operator's behalf; the token is read from the cookie CAS sets for the page.
+ */
+class PalantirCsrf {
+    static HEADER = "X-CSRF-TOKEN";
+
+    static PARAMETER = "_csrf";
+
+    static token() {
+        const cookie = document.cookie.split(";").map(entry => entry.trim()).find(entry => entry.startsWith("XSRF-TOKEN="));
+        if (!cookie) {
+            return null;
+        }
+        try {
+            return decodeURIComponent(cookie.slice("XSRF-TOKEN=".length)) || null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    static needed(method, url) {
+        if (["GET", "HEAD", "OPTIONS", "TRACE"].includes(String(method ?? "GET").toUpperCase())) {
+            return false;
+        }
+        try {
+            return new URL(url, window.location.href).origin === window.location.origin;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * Add the token to a form that is about to be posted to this server, such as the one that signs out.
+     *
+     * @param form the form
+     */
+    static addTo(form) {
+        const token = PalantirCsrf.token();
+        if (token !== null && PalantirCsrf.needed(form.method || "POST", form.action)) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = PalantirCsrf.PARAMETER;
+            input.value = token;
+            form.appendChild(input);
+        }
+    }
+
+    static install() {
+        if (typeof $ !== "undefined" && $.ajaxPrefilter) {
+            $.ajaxPrefilter((options, originalOptions, xhr) => {
+                const token = PalantirCsrf.token();
+                if (token !== null && PalantirCsrf.needed(options.type ?? options.method, options.url)) {
+                    xhr.setRequestHeader(PalantirCsrf.HEADER, token);
+                }
+            });
+        }
+        if (typeof window.fetch === "function") {
+            const send = window.fetch.bind(window);
+            window.fetch = (input, init = {}) => {
+                const request = input instanceof Request ? input : null;
+                const method = init.method ?? request?.method ?? "GET";
+                const url = request ? request.url : String(input);
+                const token = PalantirCsrf.token();
+                if (token === null || !PalantirCsrf.needed(method, url)) {
+                    return send(input, init);
+                }
+                const headers = new Headers(init.headers ?? request?.headers ?? undefined);
+                if (!headers.has(PalantirCsrf.HEADER)) {
+                    headers.set(PalantirCsrf.HEADER, token);
+                }
+                return send(input, {...init, headers});
+            };
+        }
+    }
+}
+
+PalantirCsrf.install();
 
 /**
  * A modal progress dialog for work the operator has to wait for: a message saying what is happening, a bar that
@@ -573,6 +1366,32 @@ function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
 }
 
 /**
+ * Escape text for markup, the one way Palantir does it: put a value that may come from outside, such as from CAS or
+ * from what someone typed, into HTML as text, in elements and attributes alike.
+ *
+ * @param value the value; nothing is written as an empty string
+ * @returns {string} the escaped text
+ */
+function escapePalantirMarkup(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
+    })[character]);
+}
+
+/**
+ * The renderer of a DataTables column that holds text: the cell keeps its value as it is for sorting, searching and
+ * grouping, and shows it escaped, so a column of plain text needs no escaping where its rows are added. Use it as the
+ * column's <code>render</code>.
+ *
+ * @param data the cell value
+ * @param type the DataTables rendering type
+ * @returns {*} the escaped text for display, otherwise the value
+ */
+function palantirTextColumn(data, type) {
+    return type === "display" ? escapePalantirMarkup(data) : data ?? "";
+}
+
+/**
  * A value shown as code in a table cell or a card: the value is escaped, so text that came from a request, such as a
  * username, a user agent or an attribute value, is shown as written and never read as markup.
  *
@@ -581,9 +1400,7 @@ function renderPalantirRecordCards(table, cardsId, card, emptyMessage) {
  */
 function palantirCode(value) {
     const text = value === null || value === undefined ? "" : typeof value === "object" ? JSON.stringify(value) : String(value);
-    return `<code>${text.replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-    })[character])}</code>`;
+    return `<code>${escapePalantirMarkup(text)}</code>`;
 }
 
 function palantirReadOnlyMessage(name) {
@@ -1009,15 +1826,36 @@ function initializeTabs(root) {
                 const tabId = $(this).attr("id");
                 if (tabId) {
                     const active = $(this).tabs("option", "active");
-                    const storedTabs = localStorage.getItem("ActiveTabs");
-                    const activeTabs = storedTabs ? JSON.parse(storedTabs) : {};
-                    activeTabs[tabId] = active;
-                    localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
+                    const panel = $(this).find("> ul > li").eq(active).attr("aria-controls");
+                    try {
+                        const activeTabs = JSON.parse(localStorage.getItem("ActiveTabs") ?? "{}") ?? {};
+                        activeTabs[tabId] = panel ?? active;
+                        localStorage.setItem("ActiveTabs", JSON.stringify(activeTabs));
+                    } catch (error) {
+                        console.debug("The inner page shown is not remembered", error);
+                    }
                 }
                 notifyPalantirPollingContextChanged();
             }
         }).off().on("click", () => updateNavigationSidebar());
     });
+}
+
+/**
+ * The position of the inner page a container of jQuery UI tabs remembers: the page is remembered by the id of its
+ * panel, which does not change when pages are added or moved; a position remembered by an older version of Palantir
+ * is still read.
+ *
+ * @param tabs the container
+ * @param remembered the id of the panel, or the position
+ * @returns {number} the position of that page in the container, or -1 when it has no such page
+ */
+function palantirInnerTabIndex(tabs, remembered) {
+    if (typeof remembered === "number" || /^\d+$/.test(String(remembered ?? ""))) {
+        return Number(remembered);
+    }
+    return tabs.find("> ul > li").toArray().findIndex(item => item.getAttribute("aria-controls") === remembered
+        || $(item).find("a").attr("href") === `#${remembered}`);
 }
 
 function initializeMenus(root) {
@@ -1956,5 +2794,240 @@ class PalantirMagnifier {
             });
             return null;
         });
+    }
+}
+
+/**
+ * Put the cursor in the first field of a page or inner tab as soon as the operator switches to it, so typing a
+ * username, a query or a filter does not need another click. A field marked data-palantir-autofocus wins over the
+ * first one; one inside data-palantir-no-autofocus is never chosen, and neither is one that opens a calendar or a list of
+ * suggestions when it gets focus, unless it is marked.
+ *
+ * Focus is only moved when it is nowhere the operator is working: on the page, on the navigation or tab list that was
+ * just used, or on something that the switch hid. It stays put while a dialog is open over the page, while the arrow
+ * keys move along a tab list, and on touch screens, where focusing a field would pop up the keyboard. Escape in a field
+ * of a page lets go of it again, so the single-key shortcuts that typing in a field turns off work at once.
+ */
+class PalantirPanelFocus {
+    static FIELDS = [
+        "input:not([type])", "input[type=text]", "input[type=search]", "input[type=email]", "input[type=password]",
+        "input[type=number]", "input[type=url]", "input[type=tel]", "textarea"
+    ].join(", ");
+
+    static NAVIGATION = ".ui-tabs-nav, #palantirNavigation, nav.sidebar-navigation, #dashboardTabBar";
+
+    static POPUPS = ".hasDatepicker, .ui-autocomplete-input, .ts-wrapper input";
+
+    static arrowingTabs = false;
+
+    static placed = null;
+
+    static initialize() {
+        document.addEventListener("pointerdown", () => {
+            PalantirPanelFocus.arrowingTabs = false;
+        }, true);
+        document.addEventListener("keydown", event => {
+            const key = typeof event.key === "string" ? event.key : "";
+            PalantirPanelFocus.arrowingTabs = /^(Arrow|Home$|End$)/.test(key) && Boolean(event.target.closest?.(".ui-tabs-nav"));
+        }, true);
+        document.addEventListener("keydown", event => PalantirPanelFocus.release(event));
+        document.addEventListener("input", event => {
+            if (event.target === PalantirPanelFocus.placed) {
+                PalantirPanelFocus.placed = null;
+            }
+        }, true);
+        $(document).off("tabsactivate.palantirPanelFocus").on("tabsactivate.palantirPanelFocus", (_event, ui) => {
+            if (ui?.newPanel?.length) {
+                PalantirPanelFocus.into(ui.newPanel);
+            }
+        });
+    }
+
+    static usable(field) {
+        const element = $(field);
+        return !field.disabled && !field.readOnly && field.tabIndex >= 0 && element.is(":visible")
+            && element.closest("[data-palantir-no-autofocus], [aria-hidden='true'], [inert], .ace_editor").length === 0;
+    }
+
+    static field(panel) {
+        const root = $(panel);
+        const preferred = root.find("[data-palantir-autofocus]").filter((_, field) => PalantirPanelFocus.usable(field)).first();
+        return preferred.length ? preferred : root.find(PalantirPanelFocus.FIELDS)
+            .filter((_, field) => PalantirPanelFocus.usable(field) && !$(field).is(PalantirPanelFocus.POPUPS)).first();
+    }
+
+    static allowed(panel) {
+        if (PalantirPanelFocus.arrowingTabs || window.matchMedia?.("(pointer: coarse)")?.matches) {
+            return false;
+        }
+        if (typeof Swal !== "undefined" && Swal.isVisible()) {
+            return false;
+        }
+        const dialogs = $(".ui-dialog:visible");
+        if (dialogs.length && !$(panel).closest(dialogs.last()).length) {
+            return false;
+        }
+        const active = document.activeElement;
+        return !active || active === document.body || active === PalantirPanelFocus.placed || !$(active).is(":visible")
+            || $(active).closest(PalantirPanelFocus.NAVIGATION).length > 0;
+    }
+
+    static into(panel) {
+        requestAnimationFrame(() => {
+            const root = $(panel);
+            if (root.length && root.is(":visible") && PalantirPanelFocus.allowed(root)) {
+                PalantirPanelFocus.field(root).each((_, field) => {
+                    field.focus({preventScroll: true});
+                    PalantirPanelFocus.placed = field;
+                });
+            }
+        });
+    }
+
+    static release(event) {
+        const field = event.target;
+        if (event.key !== "Escape" || event.defaultPrevented || !(field instanceof HTMLElement) || !field.matches(PalantirPanelFocus.FIELDS)
+            || $(field).closest(".ui-dialog, .swal2-container, .ace_editor").length > 0 || !$(field).closest(".attribute-tab").length) {
+            return;
+        }
+        field.blur();
+    }
+}
+
+/**
+ * The registered applications Palantir has read, by id, shared by every page that names or opens one, with the
+ * sequence of the latest read of them, so a late answer to an earlier read never replaces a newer one.
+ */
+let palantirServicesRequest = 0;
+
+let palantirServicesLatest = Promise.resolve(true);
+
+const registeredServicesById = new Map();
+
+/**
+ * Bumped whenever the registered applications are read again, so views that derive from them, such as the access
+ * check's sorted list, know to derive it again.
+ */
+let registeredServicesVersion = 0;
+
+/**
+ * The text of a registered service description, without its markup, for search and tooltips.
+ *
+ * @param value the description
+ * @returns {string} the text
+ */
+function describePalantirDescription(value) {
+    const body = new DOMParser().parseFromString(String(value ?? ""), "text/html").body;
+    body.querySelectorAll("script, style, template, noscript").forEach(element => element.remove());
+    body.querySelectorAll("p, br").forEach(element => element.after(" "));
+    return body.textContent.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Describe the protocol of a registered service class for badges and summaries.
+ *
+ * @param serviceClass the fully qualified registered service class
+ * @returns {{key: string, short: string, label: string}} the badge key, its short text and a readable name
+ */
+function applicationProtocolOf(serviceClass) {
+    const friendly = PalantirDashboardConfiguration.supportedServiceTypes()[serviceClass];
+    const name = String(serviceClass ?? "");
+    const protocols = [
+        {match: "CasRegisteredService", key: "cas", short: "CAS", label: "CAS"},
+        {match: "SamlRegisteredService", key: "saml", short: "SAML", label: "SAML2 Service Provider"},
+        {match: "OidcRegisteredService", key: "oidc", short: "OIDC", label: "OpenID Connect Relying Party"},
+        {match: "OAuthRegisteredService", key: "oauth", short: "OAuth", label: "OAuth Client"},
+        {match: "WSFederationRegisteredService", key: "wsfed", short: "WS", label: "WS-Federation Relying Party"}
+    ];
+    const protocol = protocols.find(entry => name.includes(entry.match));
+    if (protocol) {
+        return {key: protocol.key, short: protocol.short, label: friendly || protocol.label};
+    }
+    return {key: "other", short: name.split(".").pop().replace("RegisteredService", "").slice(0, 5) || "App", label: friendly || name.split(".").pop()};
+}
+
+/**
+ * The name of a property source as the configuration pages show it.
+ *
+ * @param propertySource the name CAS reports
+ * @returns {string} the name without the bootstrap prefix
+ */
+function configPropertySourceName(propertySource) {
+    return propertySource.replace("bootstrapProperties-", "");
+}
+
+/**
+ * Offer to refresh the CAS runtime context after a configuration change, then reload what the opened pages show of it.
+ *
+ * @param title the title of the question
+ */
+function refreshCasServerConfiguration(title) {
+    if (CasActuatorEndpoints.refresh()) {
+        Swal.fire({
+            showConfirmButton: true,
+            showCancelButton: true,
+            icon: "question",
+            title: title,
+            width: "35%",
+            confirmButtonText: "Refresh",
+            html: `Do you want to refresh the CAS runtime context to apply the changes?
+            <p class="text-justify"/>CAS will rebind components to external configuration properties <strong>internally without a restart</strong>,
+            allowing components to be refreshed to reflect the changes. In-flight requests and operations keep running normally
+            using the existing/old CAS components until they are fully refreshed in the runtime application context.
+            <p class="text-justify"/>
+            <strong>Note: Not every component is refreshable.</strong> Configuration properties that control
+            fundamental aspects of CAS operation <strong>(specially those that are not owned or controlled by CAS)</strong>
+            may not be dynamically reloaded. In such cases, a full restart of the CAS server
+            may be required for the changes to take effect.
+            `
+        })
+            .then((reloadResult) => {
+                if (reloadResult.isConfirmed) {
+                    Swal.close();
+                    PalantirDialogs.wait("Refreshing CAS Server", "Please wait while the CAS application context is being refreshed...");
+
+                    const endpoint = CasActuatorEndpoints.refresh();
+                    $.post(endpoint)
+                        .done(() => {
+                            const authentication = isDashboardTabInitialized(Tabs.AUTHENTICATION);
+                            if (authentication && typeof reloadAuthenticationHandlersTable === "function") {
+                                reloadAuthenticationHandlersTable();
+                            }
+                            if (isDashboardTabInitialized(Tabs.PERSON_DIRECTORY) && typeof reloadAttributeRepositoriesTable === "function") {
+                                reloadAttributeRepositoriesTable();
+                            }
+                            const providers = authentication && typeof loadExternalIdentityProvidersTable === "function"
+                                ? loadExternalIdentityProvidersTable() : Promise.resolve();
+                            providers.then(() => {
+                                Swal.close();
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: "CAS configuration has been reloaded successfully.",
+                                    icon: "success",
+                                    timer: 1000,
+                                    timerProgressBar: true,
+                                    showConfirmButton: true
+                                });
+                            });
+                        })
+                        .fail((jqXHR, textStatus, errorThrown) => {
+                            console.error("Error:", textStatus, errorThrown);
+                            Swal.close();
+                            Swal.fire("Error", "Failed to reload CAS configuration.", "error");
+                            displayBanner(jqXHR);
+                        });
+                }
+            });
+    }
+}
+
+/**
+ * Show the configuration CAS reports again on the Configuration page, when that page has been opened.
+ *
+ * @param response what the environment endpoint answered
+ */
+function reloadPalantirConfigurationTable(response) {
+    if (typeof reloadConfigurationTable === "function" && isDashboardTabInitialized(Tabs.CONFIGURATION)) {
+        reloadConfigurationTable(response);
     }
 }

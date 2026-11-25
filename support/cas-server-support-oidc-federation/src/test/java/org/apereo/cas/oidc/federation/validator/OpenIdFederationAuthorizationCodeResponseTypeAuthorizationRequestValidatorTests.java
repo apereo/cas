@@ -412,7 +412,7 @@ class OpenIdFederationAuthorizationCodeResponseTypeAuthorizationRequestValidator
         assertTrue(preHandle(AUTHORIZE_URL, clientId, Map.of(OAuth20Constants.REQUEST, signRequestObject(requestObjectClaims(clientId, longLived)
             .expirationTime(Date.from(Instant.now().plusSeconds(540))).build(), RELYING_PARTY_KEY))).getLeft());
         val timeToLive = usedRequestObject(clientId, longLived).getExpirationPolicy().getTimeToLive();
-        assertTrue(timeToLive > 540 && timeToLive <= 600, String.valueOf(timeToLive));
+        assertTrue(timeToLive > 540 && timeToLive <= 600, () -> String.valueOf(timeToLive));
     }
 
     @Test

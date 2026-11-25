@@ -45,8 +45,10 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,6 +68,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.X509)
 @AutoConfiguration
+@Slf4j
 public class CasX509AuthenticationAutoConfiguration {
 
     private static final int HEX = 16;
@@ -127,6 +130,32 @@ public class CasX509AuthenticationAutoConfiguration {
             case "threshold" -> thresholdExpiredCRLRevocationPolicy;
             default -> denyRevocationPolicy;
         };
+    }
+
+    /**
+     * Gets the policy for unavailable CRL data. The threshold policy only judges how long
+     * expired CRL data may still be used and has no CRL to evaluate when none is available,
+     * so it is replaced with the deny policy, which is what the setting falls back to for any other
+     * value it does not recognize.
+     *
+     * @param propertyName                       the name of the setting that carries the policy
+     * @param policy                             the configured policy
+     * @param allowRevocationPolicy              the allow revocation policy
+     * @param thresholdExpiredCRLRevocationPolicy the threshold expired crl revocation policy
+     * @param denyRevocationPolicy               the deny revocation policy
+     * @return the revocation policy
+     */
+    private static RevocationPolicy getUnavailableCRLRevocationPolicy(final String propertyName,
+                                                                      final String policy,
+                                                                      final RevocationPolicy allowRevocationPolicy,
+                                                                      final RevocationPolicy thresholdExpiredCRLRevocationPolicy,
+                                                                      final RevocationPolicy denyRevocationPolicy) {
+        if (Strings.CI.equals(policy.trim(), "threshold")) {
+            LOGGER.warn("[{}] is set to [{}], which only applies to expired CRL data and not to unavailable CRL data. "
+                + "CAS applies the [DENY] policy instead when CRL data is unavailable.", propertyName, policy);
+            return denyRevocationPolicy;
+        }
+        return getRevocationPolicy(policy, allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy);
     }
 
     private static PrincipalResolver getPrincipalResolver(final CasConfigurationProperties casProperties,
@@ -201,7 +230,8 @@ public class CasX509AuthenticationAutoConfiguration {
             .<URI, byte[]>build();
 
         return new CRLDistributionPointRevocationChecker(x509.isCheckAll(),
-            getRevocationPolicy(x509.getCrlUnavailablePolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
+            getUnavailableCRLRevocationPolicy("cas.authn.x509.crl-unavailable-policy", x509.getCrlUnavailablePolicy(),
+                allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
             getRevocationPolicy(x509.getCrlExpiredPolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
             cache, crlFetcher, x509.isThrowOnFetchFailure());
     }
@@ -229,7 +259,8 @@ public class CasX509AuthenticationAutoConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val x509CrlResources = x509.getCrlResources().stream().map(applicationContext::getResource).collect(Collectors.toSet());
         return new ResourceCRLRevocationChecker(x509.isCheckAll(),
-            getRevocationPolicy(x509.getCrlResourceUnavailablePolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
+            getUnavailableCRLRevocationPolicy("cas.authn.x509.crl-resource-unavailable-policy", x509.getCrlResourceUnavailablePolicy(),
+                allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
             getRevocationPolicy(x509.getCrlResourceExpiredPolicy(), allowRevocationPolicy, thresholdExpiredCRLRevocationPolicy, denyRevocationPolicy),
             x509.getRefreshIntervalSeconds(), crlFetcher, x509CrlResources);
     }

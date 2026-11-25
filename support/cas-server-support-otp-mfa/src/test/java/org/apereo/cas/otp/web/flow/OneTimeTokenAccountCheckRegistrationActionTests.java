@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,6 +66,7 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
             .build();
         val repository = mock(OneTimeTokenCredentialRepository.class);
         when(repository.get(anyString())).thenReturn((Collection) List.of(account));
+        when(repository.getForCurrentTenant(anyString())).thenCallRealMethod();
         val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties, tenantExtractor);
 
         val context = MockRequestContext.create(applicationContext);
@@ -74,6 +76,38 @@ class OneTimeTokenAccountCheckRegistrationActionTests {
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+    }
+
+    @Test
+    void verifyAccountsOfOtherTenantsAreIgnored() throws Throwable {
+        val account = OneTimeTokenAccount.builder()
+            .username("casuser")
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of())
+            .name(UUID.randomUUID().toString())
+            .tenant("shire")
+            .build();
+        val repository = mock(OneTimeTokenCredentialRepository.class);
+        when(repository.get(anyString())).thenReturn((Collection) List.of(account));
+        when(repository.getForCurrentTenant(anyString())).thenCallRealMethod();
+        val action = new OneTimeTokenAccountCheckRegistrationAction(repository, casProperties, tenantExtractor);
+
+        val context = MockRequestContext.create(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(context.getApplicationContext(),
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+        val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(context.getApplicationContext());
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
+        val previousClientInfo = ClientInfoHolder.getClientInfo();
+        try {
+            context.setClientInfo();
+            assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
+            ClientInfoHolder.getClientInfo().setTenant("Shire");
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+        } finally {
+            ClientInfoHolder.setClientInfo(previousClientInfo);
+        }
     }
 
     @Test

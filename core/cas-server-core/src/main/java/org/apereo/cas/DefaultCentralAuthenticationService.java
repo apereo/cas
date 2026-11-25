@@ -121,6 +121,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val proxyGrantingTicket = Objects.requireNonNull(configurationContext.getTicketRegistry().getTicket(proxyGrantingTicketId, ProxyGrantingTicket.class));
                     val registeredService = configurationContext.getServicesManager().findServiceBy(service);
                     try {
+                        ensureTicketTenantMatchesService(proxyGrantingTicket, service);
                         enforceRegisteredServiceAccess(service, proxyGrantingTicket, registeredService);
                         RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicket);
                     } catch (final Throwable e) {
@@ -188,21 +189,20 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     recordFailedValidationAttempt(serviceTicket);
                     throw new UnrecognizableServiceForServiceTicketValidationException(selectedService);
                 }
-                if (StringUtils.isNotBlank(serviceTicket.getTenantId())) {
-                    if (!Strings.CI.equals(Objects.requireNonNull(resolvedService).getTenant(), serviceTicket.getTenantId())) {
-                        LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
-                            serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
-                        recordFailedValidationAttempt(serviceTicket);
-                        throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
-                            .formatted(resolvedService.getTenant(), serviceTicketId));
-                    }
-                    if (configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
-                        LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
-                            serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
-                        recordFailedValidationAttempt(serviceTicket);
-                        throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
-                            .formatted(serviceTicket.getTenantId(), serviceTicketId));
-                    }
+                if (!isSameTenant(serviceTicket.getTenantId(), Objects.requireNonNull(resolvedService).getTenant())) {
+                    LOGGER.warn("Service ticket [{}] is not assigned to the same tenant [{}] as the service [{}]",
+                        serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                    recordFailedValidationAttempt(serviceTicket);
+                    throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                        .formatted(resolvedService.getTenant(), serviceTicketId));
+                }
+                if (StringUtils.isNotBlank(serviceTicket.getTenantId())
+                    && configurationContext.getTenantExtractor().getTenantsManager().findTenant(serviceTicket.getTenantId()).isEmpty()) {
+                    LOGGER.warn("Service ticket [{}] is not assigned to a known valid tenant [{}] for service [{}]",
+                        serviceTicketId, serviceTicket.getTenantId(), resolvedService.getId());
+                    recordFailedValidationAttempt(serviceTicket);
+                    throw new UnknownTenantException("Unknown tenant %s for service ticket %s"
+                        .formatted(serviceTicket.getTenantId(), serviceTicketId));
                 }
 
                 serviceTicket.update();
@@ -440,6 +440,27 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 Optional.of(serviceTicket.getService()));
     }
 
+    /**
+     * Ensure a granting ticket is only used in the tenant it was created in. A ticket created in one tenant,
+     * or outside of any tenant, cannot obtain tickets for the services of another tenant; a ticket without
+     * a tenant only matches a service without a tenant. The refusal leaves the ticket in place, since it
+     * remains valid in its own tenant.
+     *
+     * @param ticket  the granting ticket
+     * @param service the requested service
+     */
+    private static void ensureTicketTenantMatchesService(final Ticket ticket, final Service service) {
+        if (!isSameTenant(ticket.getTenantId(), service.getTenant())) {
+            LOGGER.warn("Ticket [{}] of tenant [{}] cannot be used for service [{}] of tenant [{}]",
+                ticket.getId(), ticket.getTenantId(), DigestUtils.abbreviate(service.getId()), service.getTenant());
+            throw new UnauthorizedSsoServiceException();
+        }
+    }
+
+    private static boolean isSameTenant(@Nullable final String first, @Nullable final String second) {
+        return Strings.CI.equals(StringUtils.defaultString(first), StringUtils.defaultString(second));
+    }
+
     private static @Nullable Authentication evaluatePossibilityOfMixedPrincipals(
         @Nullable final AuthenticationResult context,
         final TicketGrantingTicket ticketGrantingTicket) {
@@ -470,6 +491,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             val credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
             val ticketGrantingTicket = Objects.requireNonNull(configurationContext.getTicketRegistry().getTicket(ticketGrantingTicketId, TicketGrantingTicket.class));
             val selectedService = resolveServiceFromAuthenticationRequest(service);
+            ensureTicketTenantMatchesService(ticketGrantingTicket, Objects.requireNonNull(selectedService));
             val registeredService = configurationContext.getServicesManager().findServiceBy(selectedService);
 
             val currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);

@@ -10,6 +10,7 @@ import lombok.With;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jspecify.annotations.Nullable;
 
 /**
  * This is {@link SmsRequest}.
@@ -32,7 +33,7 @@ public class SmsRequest {
 
     private final List<String> to;
 
-    private final String tenant;
+    private final @Nullable String tenant;
     
     /**
      * Determines whether the principal has an attribute value.

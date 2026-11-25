@@ -48,10 +48,51 @@ async function verifyTenant(browser, tenantId) {
     await context.close();
 }
 
+async function verifySessionStaysInTenant(browser) {
+    const service = "https://localhost:9859/anything/cas";
+    const page = await cas.newPage(browser);
+    await cas.gotoLoginForTenant(page, "shire");
+    await cas.sleep(1000);
+    await cas.loginWith(page, "casadmin", "P@ssw0rd");
+    await cas.sleep(1000);
+    const cookie = await cas.assertCookie(page);
+    await page.setCookie({...cookie, path: "/cas/tenants/moria"});
+
+    await cas.gotoLoginForTenant(page, "moria", service);
+    await cas.sleep(1000);
+    await cas.assertTicketParameter(page, false);
+    await cas.assertVisibility(page, "#username");
+
+    await cas.doRequest("https://localhost:8443/cas/tenants/shire/login", "GET", {"X-Tenant-Id": "moria"}, 400);
+    await cas.doRequest("https://localhost:8443/cas/tenants/shire/login", "GET", {"X-Tenant-Id": "shire"}, 200);
+    await cas.gotoLogoutForTenant(page, "shire");
+    await page.close();
+}
+
+async function verifyLoginFlowStaysInTenant(browser) {
+    const context = await browser.createBrowserContext();
+    const page = await cas.newPage(context);
+    await cas.gotoLoginForTenant(page, "shire");
+    await cas.sleep(1000);
+    const shireExecution = await page.$eval("input[name=execution]", (el) => el.value);
+
+    await cas.gotoLoginForTenant(page, "moria");
+    await cas.sleep(1000);
+    await page.$eval("input[name=execution]", (el, value) => el.value = value, shireExecution);
+    await cas.loginWith(page, "casweb", "p@ssw0rd");
+    await cas.sleep(1000);
+    await cas.assertCookie(page, false);
+    await context.close();
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     await verifyTenant(browser, "shire");
     await cas.separator();
     await verifyTenant(browser, "moria");
+    await cas.separator();
+    await verifySessionStaysInTenant(browser);
+    await cas.separator();
+    await verifyLoginFlowStaysInTenant(browser);
     await cas.closeBrowser(browser);
 })();

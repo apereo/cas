@@ -16,4 +16,4 @@ This feature is enabled via the following module:
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-session-mongo" %}
 
 {% include_cached casproperties.html 
-thirdPartyStartsWith="spring.session.mongodb,spring.data.mongodb" %}
+thirdPartyStartsWith="spring.mongodb" %}

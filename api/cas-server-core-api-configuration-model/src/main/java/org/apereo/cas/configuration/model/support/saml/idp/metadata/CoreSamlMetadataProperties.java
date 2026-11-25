@@ -70,7 +70,12 @@ public class CoreSamlMetadataProperties implements Serializable {
     private String maximumCacheDuration = "P1D";
 
     /**
-     * Whether valid metadata is required.
+     * Whether metadata must still be within its validity period, given by its {@code validUntil}, to be used.
+     * When turned off, metadata resolvers keep metadata whose {@code validUntil} has passed, such as an expired
+     * aggregate whose entries carry no {@code validUntil} of their own, and signing and encryption keys are still
+     * looked up in such metadata. A service provider whose own metadata entry has passed its {@code validUntil}
+     * is always refused, whatever this setting says. Turning this off removes the protection that {@code validUntil}
+     * gives against stale metadata, such as keys that have since been replaced, and is not recommended.
      */
     private boolean requireValidMetadata = true;
 

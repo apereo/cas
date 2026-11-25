@@ -15,9 +15,11 @@ import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterContext;
+import org.opensaml.saml.saml2.metadata.EntitiesDescriptor;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import java.security.cert.CertificateExpiredException;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -77,6 +79,40 @@ class ClasspathResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
         val exception = assertThrows(FilterException.class,
             () -> new EntityDescriptorCertificatesExpirationFilter().filter(entityDescriptor, new MetadataFilterContext()));
         assertInstanceOf(CertificateExpiredException.class, exception.getCause());
+    }
+
+    @Test
+    void verifyExpiredCertificateEntitiesRemovedFromAggregate() throws Throwable {
+        val metadata = new ClassPathResource("aggregate-expired-cert.xml").getContentAsString(StandardCharsets.UTF_8);
+        val aggregate = SamlUtils.transformSamlObject(openSamlConfigBean, metadata, EntitiesDescriptor.class);
+        assertNotNull(aggregate);
+        val filtered = assertInstanceOf(EntitiesDescriptor.class,
+            new EntityDescriptorCertificatesExpirationFilter().filter(aggregate, new MetadataFilterContext()));
+        assertEquals(List.of("https://valid.example.org"),
+            filtered.getEntityDescriptors().stream().map(EntityDescriptor::getEntityID).toList());
+        assertEquals(1, filtered.getEntitiesDescriptors().size());
+        assertEquals(List.of("https://nested-valid.example.org"),
+            filtered.getEntitiesDescriptors().getFirst().getEntityDescriptors().stream().map(EntityDescriptor::getEntityID).toList());
+    }
+
+    @Test
+    void verifyResolverRefusesExpiredCertificateEntitiesOfAggregate() throws Throwable {
+        val resolver = getClasspathResourceMetadataResolver();
+        val service = new SamlRegisteredService();
+        service.setName("AggregateExpiredCertificates");
+        service.setId(1000);
+        service.setMetadataLocation("classpath:aggregate-expired-cert.xml");
+        service.setMetadataCriteriaRoles(StringUtils.EMPTY);
+        service.setValidateMetadataCertificates(true);
+        val metadataResolver = resolver.resolve(service).iterator().next();
+        assertNotNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://valid.example.org"))));
+        assertNotNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://nested-valid.example.org"))));
+        assertNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://expired.example.org"))));
+        assertNull(metadataResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://nested-expired.example.org"))));
+
+        service.setValidateMetadataCertificates(false);
+        val uncheckedResolver = resolver.resolve(service).iterator().next();
+        assertNotNull(uncheckedResolver.resolveSingle(new CriteriaSet(new EntityIdCriterion("https://expired.example.org"))));
     }
 
     @Test

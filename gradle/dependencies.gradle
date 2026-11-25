@@ -322,7 +322,7 @@ ext.libraries = [
                 }
         ],
         swagger                    : [
-                dependencies.create(libs.swagger.core.jakarta.get()) {
+                dependencies.create(libs.swagger.core.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "tools.jackson.core", module: "jackson-databind")
@@ -330,7 +330,7 @@ ext.libraries = [
                     exclude(group: "org.apache.commons", module: "commons-lang3")
                     exclude(group: "javax.validation", module: "validation-api")
                 },
-                dependencies.create(libs.swagger.jaxrs2.jakarta.get()) {
+                dependencies.create(libs.swagger.rest.get()) {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "tools.jackson.core", module: "jackson-databind")
                     exclude(group: "tools.jackson.core", module: "jackson-core")
@@ -1868,6 +1868,19 @@ ext.libraries = [
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
+                },
+                dependencies.create(libs.spring.boot.starter.zipkin.get()) {
+                    exclude(group: "tools.jackson.core", module: "jackson-annotations")
+                    exclude(group: "tools.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-beans")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework", module: "spring-aop")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-web")
                 }
         ],
         opentelemetry : [

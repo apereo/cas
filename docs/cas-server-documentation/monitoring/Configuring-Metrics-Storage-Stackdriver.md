@@ -11,4 +11,4 @@ category: Monitoring & Statistics
 The Stackdriver registry periodically pushes metrics to Stackdriver. To export metrics to SaaS Stackdriver, 
 you must provide your Google Cloud project ID.
 
-{% include_cached casproperties.html thirdPartyStartsWith="management.metrics.export.stackdriver" %}
+{% include_cached casproperties.html thirdPartyStartsWith="management.stackdriver.metrics.export" %}

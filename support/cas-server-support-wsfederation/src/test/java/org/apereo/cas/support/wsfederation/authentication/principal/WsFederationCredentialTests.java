@@ -29,6 +29,43 @@ class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
+    void verifyIsValidWithoutAudience() {
+        val standardCred = getCredential();
+        standardCred.setAudience(null);
+        assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000));
+        assertFalse(standardCred.isValid(null, ISSUER, 2000));
+    }
+
+    @Test
+    void verifyIsValidWithoutIssuer() {
+        val standardCred = getCredential();
+        standardCred.setIssuer(null);
+        assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000));
+    }
+
+    @Test
+    void verifyIsValidWithoutNotOnOrAfter() {
+        val standardCred = getCredential();
+        standardCred.setNotOnOrAfter(null);
+        assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000));
+    }
+
+    @Test
+    void verifyIsValidNotYetValid() {
+        val standardCred = getCredential();
+        standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1));
+        standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(2));
+        assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000));
+    }
+
+    @Test
+    void verifyIsValidWithoutNotBefore() {
+        val standardCred = getCredential();
+        standardCred.setNotBefore(null);
+        assertTrue(standardCred.isValid(AUDIENCE, ISSUER, 2000));
+    }
+
+    @Test
     void verifyIsValidBadIssuer() {
         val standardCred = getCredential();
         standardCred.setIssuer("urn:NotThem");

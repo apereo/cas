@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -319,6 +320,18 @@ class RedisServerTicketRegistryTests {
             for (var i = 0; i < 25; i++) {
                 assertEquals(criteria1.getCount(), getNewTicketRegistry().query(criteria1).size());
             }
+            val decodedCriteria = new TicketRegistryQueryCriteria()
+                .setCount(3L)
+                .setDecode(Boolean.TRUE)
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(authentication.getPrincipal().getId());
+            assertEquals(decodedCriteria.getCount(), getNewTicketRegistry().query(decodedCriteria).size());
+
+            val otherAuthentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            getNewTicketRegistry().addTicket(Stream.generate(() -> new TicketGrantingTicketImpl(
+                    new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY).getNewTicketId(TicketGrantingTicket.PREFIX),
+                    otherAuthentication, NeverExpiresExpirationPolicy.INSTANCE))
+                .limit(3));
 
             ((Cleanable) getNewTicketRegistry()).clean();
             val criteria2 = new TicketRegistryQueryCriteria()
@@ -327,6 +340,22 @@ class RedisServerTicketRegistryTests {
                 .setPrincipal(authentication.getPrincipal().getId());
             val queryResults = getNewTicketRegistry().query(criteria2);
             assertEquals(5, queryResults.size());
+            assertTrue(queryResults.stream().allMatch(ticket -> ((TicketGrantingTicket) ticket).getAuthentication()
+                .getPrincipal().getId().equals(authentication.getPrincipal().getId())));
+            val otherResults = getNewTicketRegistry().query(new TicketRegistryQueryCriteria()
+                .setDecode(Boolean.TRUE)
+                .setType(TicketGrantingTicket.PREFIX)
+                .setPrincipal(otherAuthentication.getPrincipal().getId()));
+            assertEquals(3, otherResults.size());
+        }
+
+        @RepeatedTest(2)
+        void verifyTicketsTrackedByPrincipal() {
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(TicketGrantingTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ProxyGrantingTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ServiceTicket.class));
+            assertFalse(RedisTicketRegistry.isTrackedByPrincipal(ProxyTicket.class));
+            assertTrue(RedisTicketRegistry.isTrackedByPrincipal(TicketGrantingTicketAwareTicket.class));
         }
 
         @RepeatedTest(2)

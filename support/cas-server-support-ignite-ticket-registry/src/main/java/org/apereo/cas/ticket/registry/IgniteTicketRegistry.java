@@ -244,6 +244,36 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
         }
     }
 
+    /**
+     * The decoded tickets of one type that belong to a principal are read through the index on the principal of that
+     * type's table, as {@link #getSessionsFor(String)} does for sessions; any other query is answered as every
+     * registry answers it.
+     *
+     * @param criteria the criteria
+     * @return the results
+     */
+    @Override
+    public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
+        val definition = StringUtils.isBlank(criteria.getType()) ? null : ticketCatalog.find(criteria.getType());
+        if (definition == null || !criteria.isDecode() || StringUtils.isBlank(criteria.getPrincipal())
+            || StringUtils.isNotBlank(criteria.getId())) {
+            return super.query(criteria);
+        }
+        val sql = "SELECT * FROM %s where principal=?".formatted(definition.getProperties().getStorageName());
+        val payloads = new ArrayList<byte[]>();
+        try (val resultSet = ignite.sql().execute(null, sql, digestIdentifier(criteria.getPrincipal()))) {
+            resultSet.forEachRemaining(row -> payloads.add(row.bytesValue("ticket")));
+        }
+        try (val tickets = decodeTickets(payloads)) {
+            return tickets
+                .map(Ticket.class::cast)
+                .filter(Objects::nonNull)
+                .filter(ticket -> !ticket.isExpired())
+                .limit(criteria.getCount() > 0 ? criteria.getCount() : Long.MAX_VALUE)
+                .collect(Collectors.toList());
+        }
+    }
+
     @Override
     public long countSessionsFor(final String principalId) {
         return getSessionsFor(principalId).count();

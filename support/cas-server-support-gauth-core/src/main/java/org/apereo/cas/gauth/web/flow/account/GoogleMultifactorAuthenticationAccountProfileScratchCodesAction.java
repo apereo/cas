@@ -42,7 +42,7 @@ public class GoogleMultifactorAuthenticationAccountProfileScratchCodesAction ext
     protected @Nullable Event doExecuteInternal(final RequestContext requestContext) {
         val deviceId = NumberUtils.toLong(requestContext.getRequestParameters().getRequired("id"), -1);
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-        val account = repository.get(principal, deviceId);
+        val account = repository.getForCurrentTenant(principal, deviceId);
         if (account == null) {
             LOGGER.warn("Google Authenticator device [{}] is not registered for [{}]", deviceId, principal);
             WebUtils.addErrorMessageToContext(requestContext, "screen.account.mfadevices.scratchcodes.failed");

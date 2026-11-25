@@ -1,0 +1,55 @@
+.cas-skip-link {
+    position: fixed;
+    inset-block-start: .5rem;
+    inset-inline-start: .5rem;
+    z-index: 1100;
+    transform: translateY(calc(-100% - 1rem));
+    padding: .5rem 1rem;
+    background: white;
+    color: #17212b;
+}
+
+.cas-skip-link:focus {
+    transform: none;
+}
+
+#app-bar :is(button, select, a):is(:hover, :focus-visible) {
+    outline: 2px solid white;
+    outline-offset: 1px;
+    box-shadow: 0 0 0 4px #17212b;
+}
+
+#attribute-tabs [role="tab"]:is(:hover, :focus-visible),
+#view-genericsuccess-authn-data th:is(:hover, :focus-within):has(.dt-column-order) {
+    outline: 2px solid currentColor;
+    outline-offset: -3px;
+}
+
+#view-genericsuccess-authn-data .dt-paging [aria-disabled="true"] {
+    color: #52606d !important;
+    opacity: 1;
+}
+
+#view-genericsuccess-authn-data .dt-search input::-webkit-search-cancel-button {
+    display: none;
+}
+
+#view-genericsuccess-authn-data .dt-search button {
+    margin-inline-start: .25rem;
+}
+
+#view-genericsuccess-authn-data .attribute-tab table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#view-genericsuccess-authn-data :is(.mdc-data-table__cell, .mdc-data-table__header-cell) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 36rem) {
+    #view-genericsuccess-authn-data .dt-search input {
+        max-width: 100%;
+    }
+}

@@ -2,6 +2,7 @@ package org.apereo.cas.qr.authentication;
 
 import module java.base;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,9 @@ import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is {@link JsonResourceQRAuthenticationDeviceRepository}.
+ * Changes and the reads that refresh the devices from the resource run one at a time: a change writes a snapshot of
+ * the devices, and two changes whose snapshots were written out of order would otherwise lose one of them, which the
+ * next read would then drop from memory as well.
  *
  * @author Misagh Moayyed
  * @since 6.3.0
@@ -25,6 +29,8 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
     private final ConcurrentMap<String, String> devices = new ConcurrentHashMap<>();
 
     private final Resource jsonResource;
+
+    private final CasReentrantLock lock = new CasReentrantLock();
 
     public JsonResourceQRAuthenticationDeviceRepository(final Resource jsonResource) {
         this.jsonResource = jsonResource;
@@ -41,36 +47,46 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
 
     @Override
     public boolean isAuthorizedDeviceFor(final String deviceId, final String subject) {
-        readFromJsonResource();
-        return devices.containsKey(deviceId) && devices.get(deviceId).equals(subject);
+        return lock.execute(() -> {
+            readFromJsonResource();
+            return subject.equals(devices.get(deviceId));
+        });
     }
 
     @Override
     public void authorizeDeviceFor(final String deviceId, final String subject) {
-        devices.put(deviceId, subject);
-        writeToJsonResource();
+        lock.execute(() -> {
+            devices.put(deviceId, subject);
+            writeToJsonResource();
+        });
     }
 
     @Override
     public void removeDevice(final String device) {
-        devices.remove(device);
-        writeToJsonResource();
+        lock.execute(() -> {
+            devices.remove(device);
+            writeToJsonResource();
+        });
     }
 
     @Override
     public void removeAll() {
-        devices.clear();
-        writeToJsonResource();
+        lock.execute(() -> {
+            devices.clear();
+            writeToJsonResource();
+        });
     }
 
     @Override
     public List<String> getAuthorizedDevicesFor(final String subject) {
-        readFromJsonResource();
-        return devices.entrySet()
-            .stream()
-            .filter(entry -> entry.getValue().equals(subject))
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toList());
+        return lock.execute(() -> {
+            readFromJsonResource();
+            return devices.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equals(subject))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        });
     }
 
     private void writeToJsonResource() {

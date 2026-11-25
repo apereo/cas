@@ -24,7 +24,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.webflow.execution.RequestContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -92,7 +91,14 @@ class WsFederationResponseValidatorTests {
         assertThrows(IllegalArgumentException.class, () -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
     }
 
-    private RequestContext prepareContext() throws Exception {
+    @Test
+    void verifyUnparsableToken() throws Throwable {
+        val context = prepareContext();
+        context.setParameter(WsFederationResponseValidator.WRESULT, "<RequestSecurityTokenResponse>");
+        assertThrows(IllegalArgumentException.class, () -> wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context));
+    }
+
+    private MockRequestContext prepareContext() throws Exception {
         val context = MockRequestContext.create(applicationContext);
 
         context.setRemoteAddr("185.86.151.11");

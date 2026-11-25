@@ -82,6 +82,53 @@ class DefaultCentralAuthenticationServiceTests {
                 () -> getCentralAuthenticationService().validateServiceTicket(unknownTenantTicket.getId(), service2));
             assertNull(getTicketRegistry().getTicket(unknownTenantTicket.getId()));
         }
+
+        @Test
+        void verifyTicketGrantingTicketCannotGrantTicketsForAnotherTenant() throws Throwable {
+            val shireService = getTenantService("shire");
+            val londonService = getTenantService("london");
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), shireService);
+            val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            assertEquals("shire", ticketGrantingTicket.getTenantId());
+
+            assertThrows(UnauthorizedSsoServiceException.class,
+                () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), londonService, ctx));
+            assertThrows(UnauthorizedSsoServiceException.class,
+                () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx));
+            assertNotNull(getTicketRegistry().getTicket(ticketGrantingTicket.getId()));
+
+            val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), shireService, ctx);
+            val proxyCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(),
+                RegisteredServiceTestUtils.getHttpBasedServiceCredentials());
+            val proxyGrantingTicket = getCentralAuthenticationService().createProxyGrantingTicket(serviceTicket.getId(), proxyCtx);
+            assertEquals("shire", proxyGrantingTicket.getTenantId());
+            assertThrows(UnauthorizedSsoServiceException.class,
+                () -> getCentralAuthenticationService().grantProxyTicket(proxyGrantingTicket.getId(), londonService));
+            assertThrows(UnauthorizedSsoServiceException.class,
+                () -> getCentralAuthenticationService().grantProxyTicket(proxyGrantingTicket.getId(), getService()));
+            val proxyTicket = getCentralAuthenticationService().grantProxyTicket(proxyGrantingTicket.getId(), shireService);
+            assertEquals("shire", proxyTicket.getTenantId());
+        }
+
+        @Test
+        void verifyTicketGrantingTicketWithoutTenantCannotGrantTicketsForTenant() throws Throwable {
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), getService());
+            val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+            assertNull(ticketGrantingTicket.getTenantId());
+            assertThrows(UnauthorizedSsoServiceException.class,
+                () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getTenantService("shire"), ctx));
+
+            val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
+            assertThrows(UnknownTenantException.class,
+                () -> getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), getTenantService("london")));
+        }
+
+        private Service getTenantService(final String tenant) {
+            val request = new MockHttpServletRequest();
+            request.setContextPath("/tenants/%s/login".formatted(tenant));
+            request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, CoreAuthenticationTestUtils.CONST_TEST_URL);
+            return getWebApplicationServiceFactory().createService(request);
+        }
     }
 
     @Nested
