@@ -23,7 +23,8 @@
   <a href="https://apereo.github.io/cas/">Documentation</a> ·
   <a href="https://github.com/apereo/cas/releases">Releases</a> ·
   <a href="https://apereo.github.io/cas/Support.html">Support</a> ·
-  <a href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">Contribute</a>
+  <a href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">Contribute</a> ·
+  <a href="README.zh-CN.md">简体中文</a>
 </p>
 
 ---
