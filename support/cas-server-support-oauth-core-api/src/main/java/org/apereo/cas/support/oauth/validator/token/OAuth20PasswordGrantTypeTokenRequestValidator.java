@@ -49,7 +49,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(configurationContext.getServicesManager(), clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-        val service = configurationContext.getWebApplicationServiceServiceFactory().createService(registeredService.getServiceId());
+        val service = configurationContext.getWebApplicationServiceServiceFactory().createService(registeredService.getClientId());
         val audit = AuditableContext.builder()
             .service(service)
             .registeredService(registeredService)
