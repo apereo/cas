@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This is {@link DefaultScimPrincipalAttributeMapperTests}.
  *
  * @author Jerome LELEU
- * @since 8.0.1
+ * @since 8.0.5
  */
 @Tag("SCIM")
 class DefaultScimPrincipalAttributeMapperTests {
