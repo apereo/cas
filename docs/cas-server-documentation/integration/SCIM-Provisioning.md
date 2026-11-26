@@ -77,6 +77,11 @@ public ScimPrincipalAttributeMapper scim2PrincipalAttributeMapper() {
 CAS can also provision groups to SCIM targets. The groups are populated from the principal attribute `groups`.
 Memberships can be dynamically created, updated or removed based on the principal's group memberships.
 
+CAS identifies each member by the SCIM user ID in `value` and includes the user's resource URI in `$ref` when available.
+Group updates preserve existing members and add each new user once. If an earlier CAS version provisioned members
+that your SCIM server stored with only an ID in `$ref`, remove those entries on the server so CAS can provision
+them with a `value`.
+
 ## Per Application
 
 SCIM relevant settings can be specified per application in form of service properties. 
